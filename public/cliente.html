@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pedio · Menú de mesa</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/cliente.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div>
+        <p class="top-sub" id="restName">Kaiten Bar</p>
+        <h1 class="top-title">Mesa <span id="tableNum">4</span></h1>
+      </div>
+      <div class="top-status" id="callStatus" hidden></div>
+    </header>
+
+    <!-- Vista: Menú -->
+    <main class="view" id="view-menu">
+      <nav class="cats" id="cats"></nav>
+      <div id="menuList"></div>
+      <div class="spacer"></div>
+    </main>
+
+    <!-- Vista: Mis pedidos -->
+    <main class="view" id="view-orders" hidden>
+      <h2 class="view-title">Mis pedidos</h2>
+      <div id="ordersList"></div>
+      <div class="spacer"></div>
+    </main>
+
+    <button class="cart-bar" id="cartBar" hidden>
+      <span class="cart-count" id="cartCount">0</span>
+      <span>Ver mi pedido</span>
+      <strong id="cartTotal">$0</strong>
+    </button>
+
+    <nav class="tabbar">
+      <button class="tab active" data-tab="menu"><span class="tab-ico">📖</span>Menú</button>
+      <button class="tab" data-tab="orders"><span class="tab-ico">🧾</span>Pedidos<span class="dot" id="ordersDot" hidden></span></button>
+      <button class="tab" data-action="mozo"><span class="tab-ico">🙋</span>Mozo</button>
+      <button class="tab" data-action="cuenta"><span class="tab-ico">💳</span>Cuenta</button>
+    </nav>
+
+    <div class="sheet-backdrop" id="backdrop" hidden></div>
+    <section class="sheet" id="sheet" hidden></section>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/cliente.js"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedio · Panel del restaurante</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/restaurante.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="side">
+      <div class="brand"><span class="brand-mark">注</span><div class="lbl"><strong>Pedio</strong><small id="restName">Kaiten Bar</small></div></div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="pedidos">🧾 <span class="lbl">Pedidos</span> <span class="count" id="navNew" hidden></span></button>
+        <button class="nav-item" data-view="mesas">🪑 <span class="lbl">Mesas</span></button>
+        <button class="nav-item" data-view="menu">📖 <span class="lbl">Menú</span></button>
+      </nav>
+      <div class="side-foot">
+        <a class="btn btn-ghost btn-sm" href="demo.html" target="_top" title="Modo demo">▶<span class="lbl"> Modo demo</span></a>
+        <button class="btn btn-ghost btn-sm" id="resetBtn" title="Reiniciar datos">↺<span class="lbl"> Reiniciar datos</span></button>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="kpis" id="kpis"></header>
+
+      <div class="content">
+        <section class="view" id="view-pedidos">
+          <div class="view-head"><h1>Pedidos</h1><p class="muted">Los pedidos de las mesas llegan acá en tiempo real.</p></div>
+          <div class="board" id="board"></div>
+        </section>
+
+        <section class="view" id="view-mesas" hidden>
+          <div class="view-head row">
+            <div><h1>Mesas</h1><p class="muted">Estado del salón. Tocá una mesa para ver el detalle.</p></div>
+            <a class="btn btn-ghost" href="qr.html" target="_blank">🖨️ QR de las mesas</a>
+          </div>
+          <div class="tables" id="tables"></div>
+        </section>
+
+        <section class="view" id="view-menu" hidden>
+          <div class="view-head row">
+            <div><h1>Menú</h1><p class="muted">Los cambios se ven al instante en el celular de los clientes.</p></div>
+            <button class="btn btn-primary" id="newItemBtn">+ Nuevo plato</button>
+          </div>
+          <div id="menuAdmin"></div>
+        </section>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <h2>Solicitudes <span class="count" id="callCount" hidden></span></h2>
+      <div id="calls"></div>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/restaurante.js"></script>
+</body>
+</html>

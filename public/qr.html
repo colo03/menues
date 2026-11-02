@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedio · QR de mesas</title>
+  <link rel="stylesheet" href="css/base.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+  <style>
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 32px 16px; }
+    .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .head h1 { font-size: 28px; font-weight: 800; }
+    .head p { color: var(--ink-2); margin-top: 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+    .card { background: var(--surface); border-radius: 18px; padding: 18px; text-align: center; box-shadow: var(--shadow); break-inside: avoid; }
+    .card .mark { display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: #fff; font-weight: 800; }
+    .card h2 { font-size: 22px; font-weight: 800; margin: 8px 0 10px; }
+    .card .qr svg { width: 100%; max-width: 170px; height: auto; display: block; margin: 0 auto; }
+    .card p { font-size: 14px; font-weight: 700; margin-top: 8px; }
+    .card a { font-size: 11px; color: var(--ink-3); word-break: break-all; }
+    .warn { background: var(--warn-soft); color: var(--warn); padding: 12px 14px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; }
+    @media print {
+      body { background: #fff; }
+      .head .btn, .warn { display: none; }
+      .card { box-shadow: none; border: 1px solid #ddd; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h1>QR de las mesas</h1>
+        <p>Imprimilos y poné uno en cada mesa. El celular tiene que estar en la misma red Wi-Fi.</p>
+      </div>
+      <button class="btn btn-primary" onclick="print()">🖨️ Imprimir</button>
+    </div>
+    <div id="warn"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <script>
+    (async () => {
+      const [info, state] = await Promise.all([
+        fetch('api/info').then((r) => r.json()),
+        fetch('api/state').then((r) => r.json()),
+      ]);
+      if (info.baseUrl.includes('127.0.0.1')) {
+        document.getElementById('warn').innerHTML = '<div class="warn">No se detectó una red Wi-Fi: los QR solo van a funcionar en esta computadora.</div>';
+      }
+      const cards = [];
+      for (let n = 1; n <= state.restaurant.tables; n++) {
+        const url = `${info.baseUrl}/cliente.html?mesa=${n}`;
+        let svg = '';
+        if (window.qrcode) {
+          const qr = qrcode(0, 'M');
+          qr.addData(url);
+          qr.make();
+          svg = qr.createSvgTag({ cellSize: 5, margin: 2, scalable: true });
+        }
+        cards.push(`<div class="card">
+          <span class="mark">注</span>
+          <h2>Mesa ${n}</h2>
+          <div class="qr">${svg || '<p>(sin internet para generar el QR)</p>'}</div>
+          <p>Escaneá para pedir</p>
+          <a href="${url}" target="_blank">${url}</a>
+        </div>`);
+      }
+      document.getElementById('grid').innerHTML = cards.join('');
+    })();
+  </script>
+</body>
+</html>

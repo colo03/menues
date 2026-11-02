@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedio · Demo</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    body { background: #1f1b16; color: #fff; height: 100vh; overflow: hidden; }
+    .bar { display: flex; align-items: center; gap: 16px; padding: 10px 20px; height: 56px; }
+    .bar strong { font-size: 16px; }
+    .bar .muted { color: rgba(255,255,255,.55); font-size: 13px; }
+    .bar .grow { flex: 1; }
+    .bar select { background: #2c2620; border: 1px solid #3d362e; color: #fff; padding: 6px 10px; border-radius: 8px; }
+    .bar a { color: rgba(255,255,255,.75); font-size: 13px; text-decoration: none; }
+    .stage { display: grid; grid-template-columns: auto 1fr; gap: 24px; padding: 0 20px 20px; height: calc(100vh - 56px); }
+    .phone-col { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .label { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.5); }
+    .phone { width: 390px; flex: 1; max-height: 820px; border-radius: 46px; padding: 12px; background: #0d0b09; box-shadow: 0 0 0 2px #3d362e, 0 30px 80px rgba(0,0,0,.5); position: relative; }
+    .phone::before { content: ''; position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 110px; height: 28px; border-radius: 20px; background: #0d0b09; z-index: 2; }
+    .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 36px; background: #faf7f2; }
+    .panel-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .panel { flex: 1; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px #3d362e; }
+    .panel iframe { width: 100%; height: 100%; border: 0; background: #faf7f2; }
+    @media (max-width: 900px) {
+      body { overflow: auto; height: auto; }
+      .stage { grid-template-columns: 1fr; height: auto; }
+      .phone { height: 760px; width: min(390px, 100%); }
+      .panel { height: 900px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bar">
+    <strong>注 Pedio · Demo en vivo</strong>
+    <span class="muted">Pedí desde el celular y mirá cómo llega al restaurante</span>
+    <span class="grow"></span>
+    <label class="muted">Mesa del cliente
+      <select id="mesa"></select>
+    </label>
+    <a href="index.html">Inicio</a>
+  </div>
+  <div class="stage">
+    <div class="phone-col">
+      <span class="label">📱 Cliente</span>
+      <div class="phone"><iframe id="phone" title="Vista del cliente"></iframe></div>
+    </div>
+    <div class="panel-col">
+      <span class="label">🖥️ Restaurante</span>
+      <div class="panel"><iframe src="restaurante.html" title="Panel del restaurante"></iframe></div>
+    </div>
+  </div>
+  <script>
+    const sel = document.getElementById('mesa');
+    const phone = document.getElementById('phone');
+    for (let i = 1; i <= 12; i++) sel.add(new Option(`Mesa ${i}`, i, i === 4, i === 4));
+    const go = () => { phone.src = `cliente.html?mesa=${sel.value}`; };
+    sel.addEventListener('change', go);
+    go();
+  </script>
+</body>
+</html>
