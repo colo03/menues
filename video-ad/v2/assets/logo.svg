@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
+  <rect width="64" height="64" rx="16" fill="#D9412B"/>
+  <circle cx="32" cy="16.5" r="3" fill="#FAF7F2"/>
+  <path d="M15 39C15 28.5066 22.6112 20 32 20C41.3888 20 49 28.5066 49 39H15Z" fill="#FAF7F2"/>
+  <rect x="12" y="42" width="40" height="4.5" rx="2.25" fill="#FAF7F2"/>
+  <path d="M26.5 31.5L30.5 35.5L38.5 27.5" stroke="#D9412B" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="80" y="43" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" letter-spacing="-0.8" fill="#1F1B16">Sale<tspan fill="#D9412B">Listo</tspan></text>
+</svg>

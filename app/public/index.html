@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · Sistema Integral para Restaurantes y Mozos</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 52px 16px; }
+    .mark {
+      width: 56px; height: 56px; border-radius: 14px; background: var(--accent); color: #fff;
+      display: grid; place-items: center; font-size: 28px; font-weight: 800; margin-bottom: 20px;
+    }
+    h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.02em; max-width: 780px; }
+    .lead { font-size: 18px; color: var(--ink-2); max-width: 720px; margin: 14px 0 34px; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; }
+    .card {
+      background: var(--surface); border-radius: 18px; padding: 22px; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: inherit;
+      border: 2px solid transparent; transition: border-color .15s, transform .15s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card .ico { font-size: 32px; }
+    .card h2 { font-size: 18px; font-weight: 800; }
+    .card p { color: var(--ink-2); font-size: 13.5px; }
+    .card .go { margin-top: auto; font-weight: 700; color: var(--accent); font-size: 14px; }
+    .card.hl { background: var(--ink); color: #fff; }
+    .card.hl p { color: rgba(255,255,255,.72); }
+    .flow { margin-top: 44px; display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+    .step { padding: 16px; border-radius: 14px; background: var(--surface-2); }
+    .step b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+    .step span { font-size: 13.5px; color: var(--ink-2); }
+    h3 { margin-top: 44px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <img src="logo.svg" alt="SaleListo" style="height:54px;margin-bottom:20px;display:block">
+    <h1>Pedidos desde la mesa sin Wi-Fi, conectados con Cocina, Barra y Mozos.</h1>
+    <p class="lead">El restaurante arma su salón por bloques, carga su menú con precios y gestiona sus mozos en vivo. El cliente escanea el QR fijo de su mesa con 4G/5G, el pedido viaja separado a Cocina y Barra, y el sistema asigna y avisa al mozo correspondiente.</p>
+
+    <div class="cards">
+      <a class="card hl" href="demo.html">
+        <span class="ico">▶</span>
+        <h2>Demo Circuito Completo</h2>
+        <p>Celular del cliente, celular del mozo y pantallas de Encargado / Cocina / Barra al mismo tiempo.</p>
+        <span class="go">Abrir demo interactiva →</span>
+      </a>
+      <a class="card" href="restaurante.html">
+        <span class="ico">🖥️</span>
+        <h2>Panel del Restaurante</h2>
+        <p>Constructor por bloques (Interior, Terraza, Barra…), mozos en vivo, menú con fotos y arqueo de caja.</p>
+        <span class="go">Abrir panel (PIN: 1234) →</span>
+      </a>
+      <a class="card" href="mozo.html">
+        <span class="ico">🏃</span>
+        <h2>App Móvil del Mozo</h2>
+        <p>Alertas con sonido/vibración de retiros en Barra y Cocina, llamados de sus mesas y toma manual.</p>
+        <span class="go">Abrir app del mozo →</span>
+      </a>
+      <a class="card" href="cocina.html">
+        <span class="ico">🍳</span>
+        <h2>Pantalla Cocina y Barra</h2>
+        <p>Comandera digital de alto contraste con filtro separado para Cocina, Barra o ambos.</p>
+        <span class="go">Abrir comandera →</span>
+      </a>
+      <a class="card" href="qr.html">
+        <span class="ico">🖨️</span>
+        <h2>QRs con Token Fijo</h2>
+        <p>Tarjetas listas para imprimir agrupadas por bloque con código único anti-bromas por mesa.</p>
+        <span class="go">Ver e imprimir QRs →</span>
+      </a>
+    </div>
+
+    <h3>Flujo punta a punta</h3>
+    <div class="flow">
+      <div class="step"><b>1 · Diseño por Bloques</b><span>Armás Interior, Terraza, Exterior, Barra o Sectores con QRs fijos.</span></div>
+      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente escanea y pide sin pedir clave de Wi-Fi.</span></div>
+      <div class="step"><b>3 · Cocina + Barra</b><span>Las bebidas entran directo a Barra y los platos a Cocina.</span></div>
+      <div class="step"><b>4 · Asignación de Mozo</b><span>Por bloque pre-asignado o automático según carga en vivo.</span></div>
+      <div class="step"><b>5 · Aviso y Cierre</b><span>El celular del mozo avisa qué llevar, llamados y cuenta exacta.</span></div>
+    </div>
+  </div>
+</body>
+</html>

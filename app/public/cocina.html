@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · Pantalla Cocina y Barra</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/cocina.css">
+</head>
+<body>
+  <header class="k-bar">
+    <div class="k-brand">
+      <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;border-radius:10px;flex:none">
+      <div>
+        <strong id="kRestName">Kaiten Bar</strong>
+        <small>Comandera en tiempo real</small>
+      </div>
+    </div>
+
+    <div class="k-stations" id="stationTabs">
+      <button class="k-st active" data-st="todas">🔥 Todo</button>
+      <button class="k-st" data-st="cocina">🍳 Solo Cocina</button>
+      <button class="k-st" data-st="barra">🍸 Solo Barra</button>
+    </div>
+
+    <div class="k-right">
+      <button class="audio-pill off" id="kAudioBtn">🔇 Activar sonido</button>
+      <a class="btn btn-sm btn-ghost" href="restaurante.html" style="color:#fff;border-color:rgba(255,255,255,.2)">Panel</a>
+    </div>
+  </header>
+
+  <main class="k-board" id="kBoard"></main>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/cocina.js"></script>
+</body>
+</html>

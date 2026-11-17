@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · Panel del Restaurante</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/restaurante.css">
+</head>
+<body>
+  <!-- Pantalla de ingreso por PIN -->
+  <div class="pin-gate" id="pinGate" hidden>
+    <form class="pin-box" id="pinForm">
+      <img src="mark.svg" alt="SaleListo" style="width:48px;height:48px;margin:0 auto 12px;display:block">
+      <h2>Panel del Encargado</h2>
+      <p class="muted">Ingresá el PIN del restaurante para administrar salón, mozos, menú y caja.</p>
+      <input class="input" type="password" id="pinInput" placeholder="PIN (ej: 1234)" required style="text-align:center;font-size:20px;letter-spacing:.2em;margin:14px 0">
+      <button class="btn btn-primary" style="width:100%">Ingresar al panel</button>
+    </form>
+  </div>
+
+  <div class="layout" id="adminLayout" hidden>
+    <aside class="side">
+      <div class="brand">
+        <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;border-radius:10px;flex:none">
+        <div class="lbl">
+          <strong>SaleListo</strong>
+          <small id="restName">Kaiten Bar</small>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-view="pedidos">🧾 <span class="lbl">Comandas</span> <span class="count" id="navNew" hidden></span></button>
+        <button class="nav-item" data-view="mesas">🏗️ <span class="lbl">Salón y Bloques</span></button>
+        <button class="nav-item" data-view="mozos">🏃 <span class="lbl">Mozos</span> <span class="count soft" id="navWaiters"></span></button>
+        <button class="nav-item" data-view="menu">📖 <span class="lbl">Menú y Precios</span></button>
+        <button class="nav-item" data-view="caja">💰 <span class="lbl">Caja y Ajustes</span></button>
+      </nav>
+
+      <div class="side-foot">
+        <button class="audio-pill off" id="adminAudioBtn" style="width:100%;justify-content:center">🔇 <span class="lbl">Activar sonido</span></button>
+        <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳<span class="lbl"> Cocina / Barra</span></a>
+        <a class="btn btn-ghost btn-sm" href="mozo.html" target="_blank">📱<span class="lbl"> App Mozo</span></a>
+        <a class="btn btn-ghost btn-sm" href="demo.html" target="_top">▶<span class="lbl"> Demo 4 vistas</span></a>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="kpis" id="kpis"></header>
+
+      <div class="content">
+        <!-- 1. Comandas -->
+        <section class="view" id="view-pedidos">
+          <div class="view-head row">
+            <div>
+              <h1>Comandas en tiempo real</h1>
+              <p class="muted">Los pedidos entran directo y separados a Cocina y Barra asignando mozo en simultáneo.</p>
+            </div>
+            <div class="pill-group" id="boardStationFilter">
+              <button class="pill active" data-bst="todas">Todas</button>
+              <button class="pill" data-bst="cocina">🍳 Cocina</button>
+              <button class="pill" data-bst="barra">🍸 Barra</button>
+            </div>
+          </div>
+          <div class="board" id="board"></div>
+        </section>
+
+        <!-- 2. Salón y Bloques -->
+        <section class="view" id="view-mesas" hidden>
+          <div class="view-head row">
+            <div>
+              <h1>Salón por Bloques y Mesas</h1>
+              <p class="muted">Armá tu restaurante con bloques pre-armados, asigná sectores o dejalo en automático.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-ghost" id="toggleDesignBtn">🛠️ Diseñar bloques y mesas</button>
+              <a class="btn btn-ghost" href="qr.html" target="_blank">🖨️ QRs fijos</a>
+            </div>
+          </div>
+          <div id="designToolbar" class="design-toolbar" hidden>
+            <div>
+              <strong>🛠️ Modo Diseño del Salón activo</strong>
+              <p class="muted">Agregá bloques pre-armados (Interior, Terraza, Exterior, Barra, Sector 1/2…), configurá mesas y elegí mozos por bloque.</p>
+            </div>
+            <button class="btn btn-primary" id="addBlockBtn">+ Agregar Bloque Pre-armado</button>
+          </div>
+          <div id="blocksContainer"></div>
+        </section>
+
+        <!-- 3. Mozos -->
+        <section class="view" id="view-mozos" hidden>
+          <div class="view-head row">
+            <div>
+              <h1>Mozos en turno y Asignación</h1>
+              <p class="muted">Agregá, pausá o eliminá mozos en el momento. Si uno sale de turno, sus mesas se reasignan solas.</p>
+            </div>
+            <button class="btn btn-primary" id="newWaiterBtn">+ Agregar mozo</button>
+          </div>
+          <div class="assign-banner" id="assignBanner"></div>
+          <div class="waiters-grid" id="waitersGrid"></div>
+        </section>
+
+        <!-- 4. Menú -->
+        <section class="view" id="view-menu" hidden>
+          <div class="view-head row">
+            <div>
+              <h1>Menú, Categorías y Precios</h1>
+              <p class="muted">Cada categoría define si sus productos entran directo a Cocina o a Barra.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-ghost" id="bulkPriceBtn">📈 Ajuste % precios</button>
+              <button class="btn btn-ghost" id="newCatBtn">+ Categoría</button>
+              <button class="btn btn-primary" id="newItemBtn">+ Nuevo plato / bebida</button>
+            </div>
+          </div>
+          <div id="menuAdmin"></div>
+        </section>
+
+        <!-- 5. Caja y Configuración -->
+        <section class="view" id="view-caja" hidden>
+          <div class="view-head">
+            <h1>Caja del día y Configuración</h1>
+            <p class="muted">Arqueo por medio de pago, propinas por mozo y ajustes generales del restaurante.</p>
+          </div>
+          <div id="cajaAdmin"></div>
+        </section>
+      </div>
+    </div>
+
+    <aside class="rail">
+      <h2>Solicitudes en vivo <span class="count" id="callCount" hidden></span></h2>
+      <div id="calls"></div>
+    </aside>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" hidden>
+    <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/restaurante.js"></script>
+</body>
+</html>

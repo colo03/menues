@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · QRs Fijos de Mesas</title>
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px; }
+    .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+    .head h1 { font-size: 28px; font-weight: 800; }
+    .head p { color: var(--ink-2); margin-top: 4px; max-width: 680px; }
+    .block-sec { margin-bottom: 28px; }
+    .block-sec h2 { font-size: 19px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--surface); border-radius: 18px; padding: 18px; text-align: center;
+      box-shadow: var(--shadow); break-inside: avoid; border: 1px solid var(--line);
+    }
+    .card .mark {
+      display: inline-grid; place-items: center; width: 30px; height: 30px;
+      border-radius: 8px; background: var(--accent); color: #fff; font-weight: 800;
+    }
+    .card .blk { display: block; font-size: 11.5px; font-weight: 700; color: var(--ink-2); text-transform: uppercase; margin-top: 6px; }
+    .card h3 { font-size: 23px; font-weight: 800; margin: 2px 0 10px; }
+    .card .qr svg { width: 100%; max-width: 165px; height: auto; display: block; margin: 0 auto; }
+    .card p { font-size: 13px; font-weight: 700; margin-top: 8px; }
+    .card a { font-size: 10.5px; color: var(--ink-3); word-break: break-all; text-decoration: none; }
+    .info-box {
+      background: var(--info-soft); color: var(--info); padding: 12px 16px;
+      border-radius: 12px; margin-bottom: 20px; font-size: 13.5px; font-weight: 600;
+    }
+    @media print {
+      body { background: #fff; }
+      .head .btn, .info-box { display: none; }
+      .card { box-shadow: none; border: 1px solid #ccc; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h1 id="title">QRs con Token Fijo por Mesa</h1>
+        <p>Cada QR tiene un código secreto permanente propio de esa mesa. Generados internamente sin depender de librerías externas. Cuando publiques el sistema en internet, funcionan directo con los datos 4G/5G del cliente sin pedir Wi-Fi.</p>
+      </div>
+      <div style="display:flex;gap:8px">
+        <a class="btn btn-ghost" href="restaurante.html">← Volver al panel</a>
+        <button class="btn btn-primary" onclick="print()">🖨️ Imprimir tarjetas QR</button>
+      </div>
+    </div>
+    <div id="banner"></div>
+    <div id="blocksOut"></div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script>
+    (async () => {
+      const data = await fetch('api/qrs').then((r) => r.json());
+      document.getElementById('title').textContent = `QRs de Mesas · ${data.restaurantName}`;
+      document.getElementById('banner').innerHTML = `<div class="info-box">🔗 Dirección actual codificada en los QRs: <strong>${escapeHtml(data.baseUrl)}</strong> ${data.baseUrl.startsWith('https://') ? '· ✅ Lista para 4G/5G sin Wi-Fi' : '· (Modo prueba local; al subir a internet usará automáticamente tu dominio HTTPS)'}</div>`;
+
+      document.getElementById('blocksOut').innerHTML = data.blocks.map((b) => `
+        <section class="block-sec">
+          <h2>${b.icon} ${escapeHtml(b.name)}</h2>
+          <div class="grid">
+            ${b.tables.map((t) => `
+              <div class="card">
+                <img src="mark.svg" alt="SaleListo" style="width:30px;height:30px;border-radius:8px;display:inline-block">
+                <span class="blk">${escapeHtml(b.name)}</span>
+                <h3>Mesa ${escapeHtml(t.code)}</h3>
+                <div class="qr">${t.svg}</div>
+                <p>Escaneá para pedir</p>
+                <a href="${escapeHtml(t.url)}" target="_blank">${escapeHtml(t.url)}</a>
+              </div>`).join('') || '<p style="color:var(--ink-3)">Sin mesas activas en este bloque.</p>'}
+          </div>
+        </section>`).join('');
+    })();
+  </script>
+</body>
+</html>

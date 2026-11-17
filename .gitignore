@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+env/
+*.egg-info/
+
+# SaleListo runtime data (SQLite & uploaded dish photos)
+app/data/*.db*
+app/data/uploads/*
+!app/data/.gitkeep
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Video Ad local B-roll, intermediate render frames & uncompressed WAV stems
+video-ad/v2/broll/
+video-ad/v2/broll_check/
+video-ad/v2/build/
+video-ad/v2/qa_frames/
+video-ad/v2/audio/*.wav
+video-ad/v2/audio/vo/*.wav
+video-ad/v2/audio/vo_edge_backup/
+
+# Environment & secrets
+.env
+.env.*
+
+# OS & editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/

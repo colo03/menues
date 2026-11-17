@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SaleListo · App del Mozo</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/mozo.css">
+</head>
+<body>
+  <div class="mozo-app" id="loginView"></div>
+
+  <div class="mozo-app" id="waiterApp" hidden>
+    <header class="m-top">
+      <div class="m-who">
+        <span class="m-avatar" id="wAvatar">L</span>
+        <div>
+          <strong id="wName">Mozo</strong>
+          <small id="wRest">Kaiten Bar</small>
+        </div>
+      </div>
+      <div class="m-controls">
+        <button class="audio-pill off" id="audioBtn" title="Sonido y vibración">🔇 Sonido</button>
+        <button class="shift-pill on" id="shiftBtn">En turno</button>
+        <button class="btn btn-xs btn-ghost" id="logoutBtn" title="Cambiar de mozo">Salir</button>
+      </div>
+    </header>
+
+    <!-- Pestaña 1: Avisos prioritarios -->
+    <main class="m-view" id="mview-alerts">
+      <div id="alertsContent"></div>
+      <div class="m-spacer"></div>
+    </main>
+
+    <!-- Pestaña 2: Mesas -->
+    <main class="m-view" id="mview-tables" hidden>
+      <div class="m-filter-bar">
+        <button class="pill active" data-tfilter="mine" id="fMine">Mis mesas</button>
+        <button class="pill" data-tfilter="all" id="fAll">Todo el salón</button>
+      </div>
+      <div id="tablesContent"></div>
+      <div class="m-spacer"></div>
+    </main>
+
+    <!-- Pestaña 3: Tomar pedido manual -->
+    <main class="m-view" id="mview-order" hidden>
+      <div class="pad-head">
+        <div class="field">
+          <label>Elegí la mesa para cargarle pedido</label>
+          <select class="input" id="padTable"></select>
+        </div>
+        <input class="input" id="padSearch" placeholder="🔍 Buscar plato o bebida…" style="margin-top:8px">
+      </div>
+      <div id="padItems"></div>
+      <div class="m-spacer"></div>
+    </main>
+
+    <button class="pad-bar" id="padBar" hidden>
+      <span class="pad-count" id="padCount">0</span>
+      <span>Revisar y enviar comanda</span>
+      <strong id="padTotal">$0</strong>
+    </button>
+
+    <nav class="m-tabbar">
+      <button class="m-tab active" data-mtab="alerts">
+        <span class="ico">🔔</span>Avisos
+        <span class="m-badge" id="alertsBadge" hidden>0</span>
+      </button>
+      <button class="m-tab" data-mtab="tables">
+        <span class="ico">🪑</span>Mesas
+        <span class="m-badge soft" id="myTablesBadge" hidden>0</span>
+      </button>
+      <button class="m-tab" data-mtab="order">
+        <span class="ico">➕</span>Cargar pedido
+      </button>
+    </nav>
+
+    <div class="sheet-backdrop" id="mBackdrop" hidden></div>
+    <section class="sheet" id="mSheet" hidden></section>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/mozo.js"></script>
+</body>
+</html>
