@@ -2,18 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>SaleListo Ad v3 · Línea gráfica unificada</title>
+<title>SaleListo Ad v4 · Diagramas simples</title>
 <style>
-@font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-500.ttf'); font-weight: 500; }
-@font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-600.ttf'); font-weight: 600; }
 @font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-700.ttf'); font-weight: 700; }
 @font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-800.ttf'); font-weight: 800; }
-/* Tokens oficiales: branding/tokens.css (Propuesta 06 · Salón en Orden) */
+/* Tokens oficiales: branding/tokens.css (Propuesta 01 · Pase Limpio) */
 :root {
-  --bg: #faf7f2; --surface: #ffffff; --surface-2: #f3eee6; --line: #e6dfd3;
-  --ink: #1c1917; --ink-2: #57534e; --accent: #d9412b; --accent-soft: #fceae6;
-  --ok: #2f8a57; --ok-soft: #e3f3ea; --bar: #6d28d9; --bar-soft: #efeafe;
-  --kitchen: #d97706; --kitchen-soft: #fef1dc;
+  --bg: #faf7f2; --surface: #ffffff; --line: #e6dfd3; --ink: #1c1917; --accent: #d9412b; --accent-soft: #fceae6;
+  --ok: #2f8a57; --ok-soft: #e3f3ea;
   --shadow-float: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 48px -8px rgba(28, 25, 23, 0.14);
   --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.06);
 }
@@ -22,179 +18,49 @@ html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c191
 body { font-family: 'PJS', sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
 #vp { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: #1c1917; }
 .abs { position: absolute; }
-/* Fondo: B-roll con deriva lineal 3 % y velo cálido constante */
 .layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
 .layer img { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
 .layer .veil { position: absolute; inset: 0; background: rgba(28, 25, 23, 0.46); }
-.layer .grad { position: absolute; left: 0; top: 0; width: 1080px; height: 640px; background: linear-gradient(180deg, rgba(28,25,23,0.50) 0%, rgba(28,25,23,0.22) 60%, rgba(28,25,23,0) 100%); }
 .layer .cream { position: absolute; inset: 0; background: rgba(250, 247, 242, 0.90); }
-/* Titular editorial superior */
-.title { position: absolute; left: 80px; top: 220px; width: 920px; text-align: center; color: #faf7f2; font-weight: 800; font-size: 62px; line-height: 1.12; letter-spacing: -0.025em; text-wrap: balance; text-shadow: 0 2px 18px rgba(28,25,23,0.32); }
-.title .k { background: #d9412b; color: #faf7f2; border-radius: 12px; padding: 0 0.16em 0.03em; text-shadow: none; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-/* Tarjeta Maestra SaleListo */
-#card { position: absolute; left: 90px; top: 610px; width: 900px; height: 850px; background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-float); overflow: hidden; }
-#head { position: absolute; left: 0; top: 0; width: 898px; height: 112px; border-bottom: 1px solid var(--line); }
-#head img { position: absolute; left: 40px; top: 34px; width: 44px; height: 44px; display: block; }
-#head .brand { position: absolute; left: 98px; top: 33px; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; line-height: 46px; }
-.pill { position: absolute; right: 40px; top: 31px; height: 50px; padding: 0 22px; border-radius: 999px; font-size: 22px; font-weight: 700; white-space: nowrap; display: flex; align-items: center; gap: 10px; }
-.pill .dot { width: 10px; height: 10px; border-radius: 50%; background: currentColor; }
-.c-accent { background: var(--accent-soft); color: var(--accent); }
-.c-ok { background: var(--ok-soft); color: var(--ok); }
-.c-kitchen { background: var(--kitchen-soft); color: var(--kitchen); }
-.c-bar { background: var(--bar-soft); color: var(--bar); }
-#body { position: absolute; left: 40px; top: 113px; width: 820px; height: 736px; }
-.view { position: absolute; left: 0; top: 36px; width: 820px; height: 680px; }
-.kick { position: absolute; left: 0; top: 0; font-size: 22px; font-weight: 600; color: var(--ink-2); letter-spacing: 0.01em; }
-.h { position: absolute; left: 0; top: 34px; font-size: 32px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; }
-.sub { position: absolute; background: var(--surface-2); border: 1px solid var(--line); border-radius: 15px; }
-.soft { background: var(--bg); }
-.chip { position: absolute; display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px; border-radius: 999px; font-size: 20px; font-weight: 700; white-space: nowrap; }
-.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
-.t1 { position: absolute; font-size: 25px; font-weight: 700; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
-.t2 { position: absolute; font-size: 20px; font-weight: 500; color: var(--ink-2); white-space: nowrap; }
-.ico { position: absolute; width: 64px; height: 64px; border-radius: 15px; background: var(--surface); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
-.okc { position: absolute; border-radius: 50%; background: var(--ok); display: flex; align-items: center; justify-content: center; }
-.ring { position: absolute; border-radius: 50%; border: 3px solid var(--ok); }
-svg { display: block; }
-/* Cierre institucional */
+/* Titular unico: 2 o 3 palabras, una linea */
+.title { position: absolute; left: 60px; top: 486px; width: 960px; text-align: center; color: #faf7f2; font-weight: 800; font-size: 88px; line-height: 1.1; letter-spacing: -0.03em; white-space: nowrap; text-shadow: 0 2px 22px rgba(28,25,23,0.35); }
+.title .k { background: #d9412b; color: #faf7f2; border-radius: 16px; padding: 0 0.16em 0.04em; text-shadow: none; }
+/* Lienzo blanco persistente 720x720 */
+#card { position: absolute; left: 180px; top: 660px; width: 720px; height: 720px; background: var(--surface); border-radius: 36px; box-shadow: var(--shadow-float); overflow: hidden; }
+#stage { position: absolute; left: 0; top: 0; }
+#stage text { font-family: 'PJS', sans-serif; }
+/* Cierre */
 #closing { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
-#closing .logo { position: absolute; left: 170px; top: 560px; width: 740px; height: 198px; }
-#closing .badge { position: absolute; left: 0; top: 826px; width: 1080px; display: flex; justify-content: center; }
-#closing .badge span { display: inline-flex; align-items: center; gap: 12px; height: 76px; padding: 0 36px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); border: 1px solid #f5c9bf; font-size: 36px; font-weight: 800; letter-spacing: -0.01em; }
-#closing .cta { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
-#closing .cta .hl { position: absolute; left: 0; top: 976px; width: 1080px; text-align: center; font-size: 56px; font-weight: 800; letter-spacing: -0.025em; color: var(--ink); }
-#closing .ccard { position: absolute; left: 160px; top: 1086px; width: 760px; height: 268px; background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-card); }
-#closing .lbl { position: absolute; left: 48px; font-size: 21px; font-weight: 600; color: var(--ink-2); }
-#closing .val { position: absolute; left: 48px; font-size: 40px; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; }
+#closing .logo { position: absolute; left: 170px; top: 610px; width: 740px; height: 198px; object-fit: contain; }
+#closing .badge { position: absolute; left: 0; top: 880px; width: 1080px; display: flex; justify-content: center; }
+#closing .badge span { display: inline-flex; align-items: center; height: 84px; padding: 0 42px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); border: 2px solid #f5c9bf; font-size: 42px; font-weight: 800; letter-spacing: -0.01em; }
+#closing .ccard { position: absolute; left: 150px; top: 1030px; width: 780px; height: 260px; background: var(--surface); border: 1px solid var(--line); border-radius: 32px; box-shadow: var(--shadow-card); }
+#closing .row { position: absolute; left: 44px; height: 80px; display: flex; align-items: center; gap: 24px; }
+#closing .row .ic { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+#closing .row .v { font-size: 44px; font-weight: 800; color: var(--ink); letter-spacing: -0.015em; white-space: nowrap; }
 </style>
 </head>
 <body>
 <div id="vp">
   <div id="bg">
-    <div class="layer" id="L0"><img><div class="veil"></div><div class="grad"></div><div class="cream"></div></div>
-    <div class="layer" id="L1"><img><div class="veil"></div><div class="grad"></div><div class="cream"></div></div>
+    <div class="layer" id="L0"><img><div class="veil"></div><div class="cream"></div></div>
+    <div class="layer" id="L1"><img><div class="veil"></div><div class="cream"></div></div>
   </div>
   <div id="titles"></div>
+  <div id="card"><svg id="stage" width="720" height="720" viewBox="0 0 720 720"></svg></div>
 
-  <!-- ===================== Tarjeta Maestra (E01 a E05) ===================== -->
-  <div id="card">
-    <div id="head">
-      <img src="../assets/mark.svg" alt="">
-      <div class="brand">SaleListo</div>
-      <div class="pill c-accent" id="pE01a"><span class="dot"></span>Hora pico</div>
-      <div class="pill c-ok" id="pE01"><span class="dot"></span>Salón en orden</div>
-      <div class="pill c-ok" id="pE02"><span class="dot"></span>Mesa T2 · 4G activo</div>
-      <div class="pill c-accent" id="pE03"><span class="dot"></span>Mesa T2 · Comanda dividida</div>
-      <div class="pill c-ok" id="pE04"><span class="dot"></span>3 bloques equilibrados</div>
-      <div class="pill c-ok" id="pE05"><span class="dot"></span>Vista mozo · Listo para llevar</div>
-    </div>
-    <div id="body">
-
-      <!-- E01: alivio del salón -->
-      <div class="view" id="vE01">
-        <div class="kick">Hora pico · Tareas del mozo</div>
-        <div class="h">Carga del mozo en el salón</div>
-        <div id="e1rows"></div>
-        <div class="sub soft" id="e1foot" style="left:0;top:560px;width:820px;height:112px">
-          <div class="okc" style="left:28px;top:30px;width:52px;height:52px">__CHECK26__</div>
-          <div class="t1" style="left:100px;top:24px;font-weight:800">Carga resuelta por SaleListo</div>
-          <div class="t2" style="left:100px;top:62px">Menos viajes, más atención en la mesa</div>
-          <div class="chip c-ok" style="right:28px;top:35px"><span class="dot"></span>3 de 3</div>
-        </div>
-      </div>
-
-      <!-- E02: escaneo QR con 4G -->
-      <div class="view" id="vE02">
-        <div class="sub soft" style="left:0;top:0;width:330px;height:330px;overflow:hidden">
-          <div id="qr" class="abs" style="left:31px;top:31px;width:266px;height:266px"></div>
-          <div class="abs" style="left:126px;top:126px;width:76px;height:76px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center"><img src="../assets/mark.svg" style="width:58px;height:58px" alt=""></div>
-          <div id="scan" class="abs" style="left:22px;top:31px;width:284px;height:5px;border-radius:3px;background:#d9412b;box-shadow:0 0 18px 5px rgba(217,65,43,0.30)"></div>
-        </div>
-        <div class="abs" style="left:362px;top:24px;width:458px;height:300px">
-          <div class="kick">Mesa T2 · Terraza</div>
-          <div class="h" style="width:458px">Escaneo con los datos del cliente</div>
-          <div class="abs" style="left:0;top:132px;width:440px;font-size:23px;font-weight:500;line-height:1.42;color:var(--ink-2)">La carta se abre en su celular, sin pedirle nada al mozo.</div>
-        </div>
-        <div id="e2rows"></div>
-      </div>
-
-      <!-- E03: comanda dividida en Cocina y Barra -->
-      <div class="view" id="vE03">
-        <div class="kick">Comanda automática</div>
-        <div class="sub soft" style="left:0;top:44px;width:820px;height:228px">
-          <div class="abs" style="left:32px;top:26px;font-size:30px;font-weight:800;letter-spacing:-0.02em">Pedido · Mesa T2</div>
-          <div class="chip c-accent" style="right:28px;top:26px"><span class="dot"></span>Nuevo</div>
-          <div class="abs" style="left:32px;top:90px;width:756px;height:1px;background:var(--line)"></div>
-          <div class="abs" style="left:32px;top:126px;width:12px;height:12px;border-radius:50%;background:var(--kitchen)"></div>
-          <div class="t1" style="left:58px;top:114px;font-weight:600">Burger Doble</div>
-          <div class="t1" style="right:32px;top:114px">x1</div>
-          <div class="abs" style="left:32px;top:178px;width:12px;height:12px;border-radius:50%;background:var(--bar)"></div>
-          <div class="t1" style="left:58px;top:166px;font-weight:600">Gin Tonic</div>
-          <div class="t1" style="right:32px;top:166px">x2</div>
-        </div>
-        <svg class="abs" style="left:0;top:272px" width="820" height="82" viewBox="0 0 820 82">
-          <path id="cnL" d="M410 0 V30 Q410 36 404 36 H205 Q199 36 199 42 V82" fill="none" stroke="#cfc6b8" stroke-width="3" stroke-linecap="round"/>
-          <path id="cnR" d="M410 0 V30 Q410 36 416 36 H615 Q621 36 621 42 V82" fill="none" stroke="#cfc6b8" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <div id="e3st"></div>
-      </div>
-
-      <!-- E04: bloques del salón y mozos -->
-      <div class="view" id="vE04">
-        <div class="kick">Salón en vivo</div>
-        <div class="h">Bloques asignados por mozo</div>
-        <div id="e4cols"></div>
-        <div class="sub soft" id="e4bar" style="left:0;top:560px;width:820px;height:112px">
-          <div class="okc" style="left:28px;top:30px;width:52px;height:52px">__CHECK26__</div>
-          <div class="t1" style="left:100px;top:24px;font-weight:800">Carga pareja en vivo</div>
-          <div class="t2" style="left:100px;top:62px">Reasignación automática</div>
-          <div class="chip c-ok" style="right:28px;top:35px"><span class="dot"></span>2 mesas por mozo</div>
-        </div>
-      </div>
-
-      <!-- E05: aviso al mozo -->
-      <div class="view" id="vE05">
-        <div class="kick">Aviso puntual al mozo</div>
-        <div class="abs" style="left:0;top:44px;width:72px;height:72px;border-radius:50%;background:var(--ink);color:#faf7f2;font-size:30px;font-weight:800;display:flex;align-items:center;justify-content:center">L</div>
-        <div class="abs" style="left:92px;top:48px;font-size:28px;font-weight:800;letter-spacing:-0.02em">Lucas · Terraza</div>
-        <div class="t2" style="left:92px;top:88px;font-weight:600">Celular del mozo · Mesa T2</div>
-        <div class="ring" id="h1" style="left:748px;top:44px;width:72px;height:72px"></div>
-        <div class="ring" id="h2" style="left:748px;top:44px;width:72px;height:72px"></div>
-        <div class="abs" style="left:748px;top:44px;width:72px;height:72px;border-radius:50%;background:var(--ok-soft);display:flex;align-items:center;justify-content:center">__BELL__</div>
-        <div class="sub" id="e5wait" style="left:0;top:156px;width:820px;height:120px">
-          <div class="ico" style="left:28px;top:27px">__CLOCK__</div>
-          <div class="abs" style="left:114px;top:22px;font-size:30px;font-weight:800;color:var(--ink-2)">En preparación</div>
-          <div class="t2" style="left:114px;top:66px">Te avisamos cuando salga</div>
-        </div>
-        <div class="sub" id="e5ready" style="left:0;top:156px;width:820px;height:120px;background:var(--ok-soft);border-color:#cfe5d8">
-          <div class="okc" style="left:28px;top:28px;width:64px;height:64px">__CHECK32__</div>
-          <div class="abs" style="left:114px;top:20px;font-size:32px;font-weight:800;color:var(--ok);letter-spacing:-0.02em">Listo para llevar</div>
-          <div class="t2" style="left:114px;top:66px;color:var(--ink);font-weight:600">Retirá en el pase: Mesa T2</div>
-        </div>
-        <div id="e5rows"></div>
-        <div class="sub soft" id="e5foot" style="left:0;top:560px;width:820px;height:112px">
-          <div class="okc" style="left:28px;top:30px;width:52px;height:52px">__CHECK26__</div>
-          <div class="t1" style="left:100px;top:24px;font-weight:800">Mozos aliviados</div>
-          <div class="t2" style="left:100px;top:62px">1 solo viaje efectivo a la mesa</div>
-          <div class="chip c-ok" style="right:28px;top:35px"><span class="dot"></span>Cero viajes en vano</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ===================== Cierre institucional (E06) ===================== -->
   <div id="closing">
     <img class="logo" id="cLogo" src="../assets/logo.svg" alt="SaleListo">
-    <div class="badge" id="cBadge"><span>0% comisión mensual</span></div>
-    <div class="cta" id="cCta">
-      <div class="hl">Simplificá tu salón hoy</div>
-      <div class="ccard">
-        <div class="lbl" style="top:34px">WhatsApp</div>
-        <div class="val" style="top:64px">(+54)1138436571</div>
-        <div class="abs" style="left:48px;top:134px;width:664px;height:1px;background:var(--line)"></div>
-        <div class="lbl" style="top:156px">Correo</div>
-        <div class="val" style="top:186px;font-size:38px">simonguerenu@gmail.com</div>
+    <div class="badge" id="cBadge"><span>0% comisión</span></div>
+    <div class="ccard" id="cCta">
+      <div class="row" style="top:40px">
+        <div class="ic" style="background:#e3f3ea"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2f8a57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.4 18.5z"/></svg></div>
+        <div class="v">(+54)1138436571</div>
+      </div>
+      <div class="abs" style="left:44px;top:129px;width:692px;height:2px;background:#e6dfd3"></div>
+      <div class="row" style="top:140px">
+        <div class="ic" style="background:#fceae6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d9412b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></div>
+        <div class="v" style="font-size:42px">simonguerenu@gmail.com</div>
       </div>
     </div>
   </div>
@@ -203,7 +69,7 @@ svg { display: block; }
 <script>
 // ============================================================ helpers
 const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
-// Curva maestra única del sistema de marca: cubic-bezier(0.22, 1, 0.36, 1), sin rebote ni overshoot
+// Curva maestra unica: cubic-bezier(0.22, 1, 0.36, 1), sin rebote
 function bezier(x1, y1, x2, y2) {
   const bx = t => 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
   const by = t => 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
@@ -215,48 +81,78 @@ function bezier(x1, y1, x2, y2) {
   };
 }
 const ease = bezier(0.22, 1, 0.36, 1);
+const inout = x => { x = clamp(x); return x * x * (3 - 2 * x); };   // solo para recorridos sobre curvas (sin rebote)
 const A = (t, t0, d = 0.5) => ease(clamp((t - t0) / d));
 const lin = (t, a, b) => clamp((t - a) / (b - a));
 const $ = id => document.getElementById(id);
 const hex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
-const mix = (a, b, p) => { const x = hex(a), y = hex(b); return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * p)).join(',')})`; };
-function show(e, o, dy = 0, extra = '') {
-  o = clamp(o);
-  e.style.opacity = o.toFixed(4);
-  e.style.visibility = o <= 0.002 ? 'hidden' : 'visible';
-  e.style.transform = `translateY(${dy.toFixed(2)}px)${extra}`;
-}
+const mix = (a, b, p) => { const x = hex(a), y = hex(b); return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * clamp(p))).join(',')})`; };
+function op(e, o) { o = clamp(o); e.style.opacity = o.toFixed(4); e.style.visibility = o <= 0.002 ? 'hidden' : 'visible'; }
+function show(e, o, dy = 0) { op(e, o); e.style.transform = `translateY(${dy.toFixed(2)}px)`; }
+function vis(g, o, dy = 0) { op(g, o); g.setAttribute('transform', `translate(0 ${dy.toFixed(2)})`); }
+function place(g, x, y, s = 1, o = 1) { g.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${s.toFixed(4)})`); op(g, o); }
 
-// ============================================================ iconos
-const CHECK = s => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-const IC = {
-  menu: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 8h7M8.5 12h7M8.5 16h4"/></svg>`,
-  paper: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4L6 21z"/><path d="M9 8h6M9 12h6"/></svg>`,
-  walk: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>`,
-  clock: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#57534e" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>`,
-  bell: `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#2f8a57" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>`,
+const INK = '#1c1917', MUTE = '#d6cdc0', ACC = '#d9412b', OK = '#2f8a57', KIT = '#d97706', BAR = '#6d28d9';
+const ST = `fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"`;
+
+// ============================================================ iconos vectoriales propios (centrados en 0,0)
+const ICON = {
+  // campana de servicio sobre bandeja (~184 px)
+  cloche: `<g ${ST} stroke="${INK}">
+    <path d="M-72 28 A72 72 0 0 1 72 28 Z" fill="#ffffff"/>
+    <path d="M-92 46 H92"/>
+    <circle cx="0" cy="-54" r="9" fill="#ffffff"/>
+    <path d="M-40 4 A46 46 0 0 1 -16 -22" stroke="${MUTE}"/></g>`,
+  // hamburguesa (~136 x 130 px)
+  burger: `<g ${ST} stroke="${INK}">
+    <path d="M-64 -8 C-64 -50 -36 -64 0 -64 C36 -64 64 -50 64 -8 Z" fill="#fef1dc"/>
+    <path d="M-68 8 Q-57 -2 -45 8 T-22 8 T0 8 T22 8 T45 8 T68 8" stroke="${OK}"/>
+    <rect x="-64" y="18" width="128" height="22" rx="11" fill="#57534e"/>
+    <path d="M-62 48 H62 V52 C62 62 54 66 42 66 H-42 C-54 66 -62 62 -62 52 Z" fill="#fef1dc"/></g>
+    <g fill="${INK}"><circle cx="-22" cy="-38" r="3.5"/><circle cx="0" cy="-47" r="3.5"/><circle cx="22" cy="-38" r="3.5"/></g>`,
+  // copa / trago (~120 x 128 px)
+  glass: `<path d="M-41 -36 H41 C37 -8 22 2 0 2 C-22 2 -37 -8 -41 -36 Z" fill="#efeafe"/>
+    <g ${ST} stroke="${INK}">
+    <path d="M-46 -62 H46 C46 -12 26 6 0 6 C-26 6 -46 -12 -46 -62 Z"/>
+    <path d="M0 6 V54"/><path d="M-32 60 H32"/>
+    <circle cx="38" cy="-64" r="16" fill="#fef1dc"/><path d="M38 -64 L38 -78 M38 -64 L50 -56 M38 -64 L26 -56"/></g>`,
+  // olla con vapor (color heredado)
+  pot: `<g ${ST} stroke="currentColor">
+    <path d="M-44 -6 H44 V22 C44 34 36 40 24 40 H-24 C-36 40 -44 34 -44 22 Z"/>
+    <path d="M-44 4 H-56 M44 4 H56"/><path d="M-50 -16 H50"/><path d="M-10 -26 H10"/>
+    <path d="M-18 -40 q-7 -9 0 -18 M0 -40 q-7 -9 0 -18 M18 -40 q-7 -9 0 -18" stroke-width="3.5"/></g>`,
+  // copa simple de barra (color heredado)
+  cup: `<g ${ST} stroke="currentColor">
+    <path d="M-34 -46 H34 C34 -8 20 4 0 4 C-20 4 -34 -8 -34 -46 Z"/>
+    <path d="M-30 -26 H30" stroke-width="3.5"/>
+    <path d="M0 4 V38"/><path d="M-24 44 H24"/></g>`,
+  // comanda (blanca, sobre nodo bermellon)
+  ticket: `<g ${ST} stroke="#ffffff" stroke-width="3.5"><path d="M-17 -22 H17 V22 L11 17 L5 22 L0 17 L-5 22 L-11 17 L-17 22 Z"/><path d="M-8 -9 H8 M-8 2 H8"/></g>`,
+  // mozo (blanco)
+  person: `<g fill="#ffffff"><circle cx="0" cy="-9" r="10"/><path d="M-19 21 C-19 6 -10 1 0 1 C10 1 19 6 19 21 Z"/></g>`,
+  alert: c => `<circle r="36" fill="${c}"/><path d="M0 -15 V5" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/><circle cy="17" r="4.5" fill="#ffffff"/>`,
+  check: (s, w) => `<path d="M${-0.42 * s} ${0.02 * s} L${-0.12 * s} ${0.32 * s} L${0.44 * s} ${-0.3 * s}" fill="none" stroke="#ffffff" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`,
 };
 
 // ============================================================ QR ilustrativo (sin URL)
-function fakeQR(n = 25, px = 266) {
+function fakeQR(n = 25, px = 300) {
   let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const m = px / n; let s = `<svg width="${px}" height="${px}" viewBox="0 0 ${px} ${px}">`;
-  const finder = (x, y) => { s += `<rect x="${x * m}" y="${y * m}" width="${7 * m}" height="${7 * m}" rx="${m * 1.4}" fill="#1c1917"/><rect x="${(x + 1) * m}" y="${(y + 1) * m}" width="${5 * m}" height="${5 * m}" rx="${m}" fill="#faf7f2"/><rect x="${(x + 2) * m}" y="${(y + 2) * m}" width="${3 * m}" height="${3 * m}" rx="${m * 0.7}" fill="#1c1917"/>`; };
+  const m = px / n; let s = '';
+  const finder = (x, y) => { s += `<rect x="${x * m}" y="${y * m}" width="${7 * m}" height="${7 * m}" rx="${m * 1.6}" fill="${INK}"/><rect x="${(x + 1) * m}" y="${(y + 1) * m}" width="${5 * m}" height="${5 * m}" rx="${m}" fill="#ffffff"/><rect x="${(x + 2) * m}" y="${(y + 2) * m}" width="${3 * m}" height="${3 * m}" rx="${m * 0.7}" fill="${INK}"/>`; };
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
     const inF = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
-    const inC = x >= 8 && x <= 16 && y >= 8 && y <= 16;
-    if (!inF && !inC && rnd() < 0.5) s += `<rect x="${(x * m + 0.6).toFixed(2)}" y="${(y * m + 0.6).toFixed(2)}" width="${(m - 1.2).toFixed(2)}" height="${(m - 1.2).toFixed(2)}" rx="2" fill="#1c1917"/>`;
+    const inC = x >= 9 && x <= 15 && y >= 9 && y <= 15;
+    if (!inF && !inC && rnd() < 0.5) s += `<rect x="${(x * m + 0.8).toFixed(2)}" y="${(y * m + 0.8).toFixed(2)}" width="${(m - 1.6).toFixed(2)}" height="${(m - 1.6).toFixed(2)}" rx="2.4" fill="${INK}"/>`;
   }
   finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
-  return s + '</svg>';
+  return s;
 }
 
-// ============================================================ construcción
+// ============================================================ construccion del lienzo
 let TL = null, FC = {}, S = {}, M = {};
 const R = {};
+const g = (html, attrs = '') => `<g ${attrs}>${html}</g>`;
 function build() {
-  const vp = $('vp');
-  vp.innerHTML = vp.innerHTML.replaceAll('__CHECK26__', CHECK(26)).replaceAll('__CHECK32__', CHECK(32)).replaceAll('__BELL__', IC.bell).replaceAll('__CLOCK__', IC.clock);
   // titulares
   const tw = $('titles');
   TL.scenes.forEach(s => {
@@ -265,88 +161,90 @@ function build() {
     d.innerHTML = s.title.split('|').map((p, i) => i % 2 ? `<span class="k">${p}</span>` : p).join('');
     tw.appendChild(d);
   });
-  // E01: tres tareas del mozo
-  const rows1 = [
-    ['menu', 'Repartir cartas y clave de Wi-Fi', 'Mesa por mesa, toda la noche'],
-    ['paper', 'Llevar comandas en papel', 'Ida y vuelta a la cocina'],
-    ['walk', 'Ir y venir a la barra', 'Sin saber si ya está listo'],
-  ];
-  R.e1 = rows1.map((r, i) => {
-    const d = document.createElement('div'); d.className = 'sub';
-    Object.assign(d.style, { left: '0px', top: `${108 + i * 146}px`, width: '820px', height: '128px' });
-    d.innerHTML = `<div class="ico" style="left:28px;top:31px">${IC[r[0]]}</div>
-      <div class="okc" style="left:34px;top:37px;width:52px;height:52px">${CHECK(26)}</div>
-      <div class="t1" style="left:116px;top:28px">${r[1]}</div><div class="t2" style="left:116px;top:68px">${r[2]}</div>
-      <div class="chip c-accent" style="right:28px;top:43px"><span class="dot"></span>Pendiente</div>
-      <div class="chip c-ok" style="right:28px;top:43px;background:#fff"><span class="dot"></span>Resuelto</div>`;
-    $('e1rows').appendChild(d);
-    const ch = d.querySelectorAll('.chip');
-    return { box: d, ico: d.querySelector('.ico'), ok: d.querySelector('.okc'), pend: ch[0], done: ch[1] };
+
+  const C = 360;
+  // ---------- E01: alertas -> calma
+  const AL = [[128, 136, ACC], [592, 136, KIT], [360, 626, ACC]];
+  let s1 = '';
+  AL.forEach((a, k) => {
+    const dx = C - a[0], dy = C - a[1], L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+    s1 += `<path id="e1l${k}" d="M${(a[0] + ux * 52).toFixed(1)} ${(a[1] + uy * 52).toFixed(1)} L${(C - ux * 138).toFixed(1)} ${(C - uy * 138).toFixed(1)}" stroke="${MUTE}" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 14" fill="none"/>`;
   });
-  // E02: QR + indicadores
-  $('qr').innerHTML = fakeQR();
-  const rows2 = ['4G directo del cliente', 'Sin clave de Wi-Fi', 'Carta abierta al instante'];
-  R.e2 = rows2.map((txt, i) => {
-    const d = document.createElement('div'); d.className = 'sub';
-    Object.assign(d.style, { left: '0px', top: `${362 + i * 106}px`, width: '820px', height: '94px' });
-    d.innerHTML = `<div class="abs" style="left:28px;top:25px;width:44px;height:44px;border-radius:50%;border:2px solid #cfc6b8"></div>
-      <div class="okc" style="left:28px;top:25px;width:44px;height:44px">${CHECK(22)}</div>
-      <div class="t1" style="left:96px;top:29px">${txt}</div>
-      <div class="chip c-ok" style="right:28px;top:26px;background:#fff"><span class="dot"></span>Activo</div>`;
-    $('e2rows').appendChild(d);
-    return { box: d, ring: d.children[0], ok: d.children[1], txt: d.children[2], chip: d.children[3] };
+  AL.forEach((a, k) => {
+    s1 += `<g id="e1a${k}"><circle id="e1p${k}" r="36" fill="none" stroke="${a[2]}" stroke-width="3"/><g id="e1b${k}">${ICON.alert(a[2])}</g></g>`;
   });
-  // E03: estaciones
-  const st = [['Cocina', 'c-kitchen', '#d97706', 'Burger Doble', 'x1'], ['Barra', 'c-bar', '#6d28d9', 'Gin Tonic', 'x2']];
-  R.e3 = st.map((s, i) => {
-    const d = document.createElement('div'); d.className = 'sub soft';
-    Object.assign(d.style, { left: `${i * 422}px`, top: '354px', width: '398px', height: '300px', overflow: 'hidden' });
-    d.innerHTML = `<div class="abs" style="left:0;top:0;width:398px;height:6px;background:${s[2]}"></div>
-      <div class="chip ${s[1]}" style="left:28px;top:32px"><span class="dot"></span>${s[0]}</div>
-      <div class="abs" style="left:28px;top:104px;font-size:32px;font-weight:800;letter-spacing:-0.02em">${s[3]}</div>
-      <div class="abs" style="left:28px;top:150px;font-size:26px;font-weight:700;color:var(--ink-2)">${s[4]}</div>
-      <div class="abs" style="left:28px;top:226px;width:342px;height:1px;background:var(--line)"></div>
-      <div class="abs" style="left:28px;top:252px;width:11px;height:11px;border-radius:50%;background:${s[2]}"></div>
-      <div class="t2" style="left:50px;top:242px;font-weight:600">En preparación</div>`;
-    $('e3st').appendChild(d);
-    return d;
+  s1 += `<circle id="e1bgc" cx="${C}" cy="${C}" r="122" fill="#f3eee6"/>`;
+  s1 += `<g id="e1clo">${ICON.cloche}</g>`;
+  s1 += `<g id="e1mark"><image href="../assets/mark.svg" x="-78" y="-78" width="156" height="156"/></g>`;
+  s1 += `<circle id="e1ring" cx="${C}" cy="${C}" r="146" fill="none" stroke="${OK}" stroke-width="4" stroke-linecap="round" transform="rotate(-90 ${C} ${C})"/>`;
+  s1 += `<g id="e1ok"><circle r="32" fill="${OK}"/>${ICON.check(40, 6)}</g>`;
+
+  // ---------- E02: QR 4G -> carta -> Pedir
+  let s2 = `<g id="e2qr">
+      <rect x="184" y="214" width="352" height="352" rx="32" fill="#ffffff" stroke="#e6dfd3" stroke-width="3"/>
+      <g transform="translate(210 240)">${fakeQR()}</g>
+      <rect x="320" y="350" width="80" height="80" rx="18" fill="#ffffff"/>
+      <image href="../assets/mark.svg" x="328" y="358" width="64" height="64"/>
+      <g id="e2scan"><rect x="190" y="-14" width="340" height="28" rx="14" fill="${ACC}" opacity="0.16"/><rect x="190" y="-3" width="340" height="6" rx="3" fill="${ACC}"/></g>
+    </g>
+    <g id="e2pill"><rect x="-74" y="-36" width="148" height="72" rx="36" fill="${OK}"/><text x="0" y="14" text-anchor="middle" font-size="40" font-weight="800" fill="#ffffff">4G</text></g>
+    <g id="e2food">
+      <circle cx="232" cy="300" r="112" fill="#fef1dc" opacity="0.6"/><g transform="translate(232 300)">${ICON.burger}</g>
+      <circle cx="488" cy="300" r="112" fill="#efeafe" opacity="0.7"/><g transform="translate(488 304)">${ICON.glass}</g>
+    </g>
+    <circle id="e2rip0" cx="${C}" cy="560" r="60" fill="none" stroke="${ACC}" stroke-width="4"/>
+    <circle id="e2rip1" cx="${C}" cy="560" r="60" fill="none" stroke="${ACC}" stroke-width="4"/>
+    <g id="e2btn"><rect x="-170" y="-56" width="340" height="112" rx="56" fill="${ACC}"/><text x="0" y="16" text-anchor="middle" font-size="46" font-weight="800" fill="#ffffff">Pedir</text>
+      <circle id="e2dot" cx="112" cy="14" r="20" fill="#ffffff"/></g>`;
+
+  // ---------- E03: comanda -> Cocina / Barra
+  const P3 = [`M${C} 168 C${C} 300 170 300 170 462`, `M${C} 168 C${C} 300 550 300 550 462`];
+  let s3 = `<path id="e3c0" d="${P3[0]}" fill="none" stroke="${MUTE}" stroke-width="4" stroke-linecap="round"/>
+    <path id="e3c1" d="${P3[1]}" fill="none" stroke="${MUTE}" stroke-width="4" stroke-linecap="round"/>`;
+  [['Cocina', 170, KIT, '#fef1dc', ICON.pot], ['Barra', 550, BAR, '#efeafe', ICON.cup]].forEach((b, k) => {
+    s3 += `<g id="e3box${k}"><rect id="e3r${k}" x="${b[1] - 125}" y="462" width="250" height="208" rx="32" fill="#faf7f2" stroke="#e6dfd3" stroke-width="3"/>
+      <g id="e3i${k}" transform="translate(${b[1]} 540)" style="color:#a8a29e">${b[4]}</g>
+      <text id="e3t${k}" x="${b[1]}" y="638" text-anchor="middle" font-size="38" font-weight="800" fill="#a8a29e">${b[0]}</text></g>`;
   });
-  R.cn = [$('cnL'), $('cnR')].map(p => { const L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; return { p, L }; });
-  // E04: bloques del salón
-  const cols = [['Interior', 'S', 'Sofi', ['I1', 'I2']], ['Terraza', 'L', 'Lucas', ['T1', 'T2']], ['Barra', 'N', 'Nico', ['B1', 'B2']]];
-  R.e4 = cols.map((c, i) => {
-    const d = document.createElement('div'); d.className = 'sub';
-    Object.assign(d.style, { left: `${i * 280}px`, top: '108px', width: '260px', height: '420px' });
-    const tile = (id, k) => {
-      const t2 = id === 'T2';
-      return `<div class="abs" style="left:23px;top:${174 + k * 118}px;width:212px;height:102px;background:#fff;border:1px solid ${t2 ? '#f5c9bf' : 'var(--line)'};border-radius:14px">
-        <div class="abs" style="left:20px;top:14px;font-size:30px;font-weight:800">${id}</div>
-        <div class="abs" style="left:20px;top:60px;font-size:18px;font-weight:600;color:${t2 ? 'var(--accent)' : 'var(--ink-2)'}">${t2 ? 'Pedido en curso' : '4 personas'}</div></div>`;
-    };
-    d.innerHTML = `<div class="abs" style="left:23px;top:22px;font-size:25px;font-weight:800;letter-spacing:-0.01em">${c[0]}</div>
-      <div class="abs" style="left:23px;top:78px;width:212px;height:64px;border-radius:999px;border:2px dashed #cfc6b8;font-size:19px;font-weight:600;color:var(--ink-2);display:flex;align-items:center;justify-content:center">Sin asignar</div>
-      <div class="abs" style="left:23px;top:78px;width:212px;height:64px;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-card)">
-        <div class="abs" style="left:10px;top:9px;width:44px;height:44px;border-radius:50%;background:var(--ink);color:#faf7f2;font-size:19px;font-weight:800;display:flex;align-items:center;justify-content:center">${c[1]}</div>
-        <div class="abs" style="left:66px;top:15px;font-size:23px;font-weight:700">${c[2]}</div>
-        <div class="abs" style="right:18px;top:26px;width:11px;height:11px;border-radius:50%;background:var(--ok)"></div>
-      </div>${tile(c[3][0], 0)}${tile(c[3][1], 1)}`;
-    $('e4cols').appendChild(d);
-    return { ph: d.children[1], tag: d.children[2] };
+  s3 += `<g id="e3node"><circle cx="${C}" cy="118" r="52" fill="${ACC}"/><g transform="translate(${C} 118)">${ICON.ticket}</g></g>`;
+  s3 += `<g id="e3m0"><g transform="scale(0.78)">${ICON.burger}</g></g><g id="e3m1"><g transform="scale(0.78)">${ICON.glass}</g></g>`;
+
+  // ---------- E04: 3 mozos -> 3 sectores parejos
+  const COLS = [['Interior', 150, ACC, '#fceae6'], ['Terraza', 360, OK, '#e3f3ea'], ['Barra', 570, BAR, '#efeafe']];
+  let s4 = '';
+  COLS.forEach((c, k) => {
+    s4 += `<rect id="e4col${k}" x="${c[1] - 96}" y="262" width="192" height="300" rx="30" fill="#faf7f2" stroke="#e6dfd3" stroke-width="3"/>`;
+    s4 += `<circle id="e4slot${k}" cx="${c[1]}" cy="196" r="42" fill="none" stroke="${MUTE}" stroke-width="3" stroke-dasharray="7 9"/>`;
+    for (let j = 0; j < 4; j++) {
+      const x = c[1] + (j % 2 ? 40 : -40), y = 366 + Math.floor(j / 2) * 92;
+      s4 += `<rect id="e4t${k}${j}" x="${x - 32}" y="${y - 32}" width="64" height="64" rx="15" fill="#ffffff" stroke="${MUTE}" stroke-width="3.5"/>`;
+    }
+    s4 += `<text x="${c[1]}" y="634" text-anchor="middle" font-size="36" font-weight="800" fill="${INK}">${c[0]}</text>`;
   });
-  // E05: filas por estación
-  const rows5 = [['Cocina', 'c-kitchen', 'Burger Doble x1'], ['Barra', 'c-bar', 'Gin Tonic x2']];
-  R.e5 = rows5.map((r, i) => {
-    const d = document.createElement('div'); d.className = 'sub soft';
-    Object.assign(d.style, { left: '0px', top: `${296 + i * 112}px`, width: '820px', height: '96px' });
-    d.innerHTML = `<div class="chip ${r[1]}" style="left:28px;top:27px"><span class="dot"></span>${r[0]}</div>
-      <div class="t1" style="left:${r[0] === 'Cocina' ? 178 : 166}px;top:31px">${r[2]}</div>
-      <div class="chip c-kitchen" style="right:28px;top:27px"><span class="dot"></span>En preparación</div>
-      <div class="chip c-ok" style="right:28px;top:27px"><span class="dot"></span>Listo</div>`;
-    $('e5rows').appendChild(d);
-    const ch = d.querySelectorAll('.chip');
-    return { wait: ch[1], ok: ch[2] };
-  });
-  R.L = [$('L0'), $('L1')].map(l => ({ el: l, img: l.querySelector('img'), veil: l.querySelector('.veil'), grad: l.querySelector('.grad'), cream: l.querySelector('.cream') }));
+  COLS.forEach((c, k) => { s4 += `<g id="e4m${k}"><circle r="40" fill="${c[2]}"/>${ICON.person}</g>`; });
+
+  // ---------- E05: celular vibra -> Listo
+  let s5 = `<g transform="translate(${C} 372)">
+      <g id="e5waves">
+        ${[0, 1].map(k => [1, -1].map(sd => `<path class="e5w${k}" d="M${sd * (160 + k * 40)} ${-70 - k * 30} Q${sd * (190 + k * 50)} 0 ${sd * (160 + k * 40)} ${70 + k * 30}" fill="none" stroke="${OK}" stroke-width="4" stroke-linecap="round"/>`).join('')).join('')}
+      </g>
+      <rect x="-124" y="-226" width="248" height="452" rx="44" fill="#ffffff" stroke="${INK}" stroke-width="4"/>
+      <rect id="e5scr" x="-106" y="-194" width="212" height="392" rx="26" fill="#faf7f2"/>
+      <rect x="-30" y="-212" width="60" height="9" rx="4.5" fill="${INK}"/>
+      <circle id="e5wait" cx="0" cy="-36" r="62" fill="none" stroke="${MUTE}" stroke-width="4" stroke-dasharray="2 13" stroke-linecap="round"/>
+      <g id="e5okc" transform="translate(0 -36)"><circle r="66" fill="${OK}"/></g>
+      <path id="e5chk" d="M-30 -36 L-8 -14 L32 -58" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <text id="e5lbl" x="0" y="104" text-anchor="middle" font-size="46" font-weight="800" fill="${OK}">¡Listo!</text>
+    </g>`;
+
+  $('stage').innerHTML = g(s1, 'id="gE01"') + g(s2, 'id="gE02"') + g(s3, 'id="gE03"') + g(s4, 'id="gE04"') + g(s5, 'id="gE05"');
+
+  R.e1lines = [0, 1, 2].map(k => $('e1l' + k));
+  R.ring = $('e1ring'); R.ringL = 2 * Math.PI * 146; R.ring.style.strokeDasharray = `${R.ringL} ${R.ringL}`;
+  R.cn = [0, 1].map(k => { const p = $('e3c' + k), L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; return { p, L }; });
+  R.chk = $('e5chk'); R.chkL = R.chk.getTotalLength(); R.chk.style.strokeDasharray = `${R.chkL} ${R.chkL}`;
+  R.AL = AL; R.COLS = COLS;
+  R.L = [$('L0'), $('L1')].map(l => ({ el: l, img: l.querySelector('img'), veil: l.querySelector('.veil'), cream: l.querySelector('.cream') }));
 }
 
 // ============================================================ fondo
@@ -362,25 +260,23 @@ function paintLayer(L, k, t) {
   setImg(L.img, `../build/frames_src/${s.id}/f_${String(i).padStart(4, '0')}.jpg`);
   const nx = TL.scenes[k + 1];
   const a = s.start - (k > 0 ? s.xfade / 2 : 0), b = s.end + (nx ? nx.xfade / 2 : 0);
-  const q = lin(t, a, b);                                  // deriva lineal continua
+  const q = lin(t, a, b);                                  // deriva lineal 3 %
   const closing = s.id === 'E06';
-  const base = closing ? 1.08 : 1.0;                       // el cierre desenfocado necesita margen de borde
+  const base = closing ? 1.08 : 1.0;
   L.img.style.transform = `scale(${(base * (1 + 0.03 * q)).toFixed(5)})`;
   L.img.style.filter = closing ? 'blur(12px)' : 'none';
   L.veil.style.display = closing ? 'none' : 'block';
-  L.grad.style.display = closing ? 'none' : 'block';
   L.cream.style.display = closing ? 'block' : 'none';
 }
 
-// ============================================================ ventanas por escena
+// ============================================================ ventanas por escena (relevo secuencial, nunca dos textos a la vez)
 const IN_D = 0.48, OUT_D = 0.30;
-// relevo secuencial de estados en el mismo lugar (sin superponer textos): sale en 0.24 s y luego entra en 0.48 s
-function swap(oldE, newE, t, t0, dy = 0) { const po = A(t, t0, 0.24), pn = A(t, t0 + 0.20, IN_D); show(oldE, 1 - po); show(newE, pn, (1 - pn) * dy); }
 function sceneVis(s, t, opts = {}) {
-  const tin = opts.tin ?? s.start - 0.02;
+  const tin = opts.tin ?? s.start + 0.02;
   const pin = opts.noIn ? 1 : A(t, tin, IN_D);
   const pout = opts.noOut ? 0 : A(t, s.end - OUT_D - 0.02, OUT_D);
-  return { o: pin * (1 - pout), dy: (1 - pin) * 14 - pout * 10 };
+  const o = (t < s.end - 0.02 || opts.noOut) ? pin * (1 - pout) : 0;
+  return { o, dy: (1 - pin) * 14 - pout * 10 };
 }
 
 // ============================================================ render
@@ -390,7 +286,7 @@ window.renderFrame = async function (f) {
   const sc = TL.scenes;
   let i = 0; for (let k = 0; k < sc.length; k++) if (t >= sc[k].start) i = k;
 
-  // --- fondo: crossfade limpio entre B-rolls
+  // --- fondo: crossfade 0.48 s entre B-rolls
   let tr = null;
   for (let k = 1; k < sc.length; k++) {
     const a = sc[k].start - sc[k].xfade / 2, b = sc[k].start + sc[k].xfade / 2;
@@ -410,68 +306,129 @@ window.renderFrame = async function (f) {
     show(e, v.o, v.dy);
   });
 
-  // --- Tarjeta Maestra: entra una vez, se mantiene anclada, sale al cierre
+  // --- lienzo blanco: entra una vez, se mantiene anclado, sale hacia el cierre
   const e6 = S.E06.start;
-  // salida al cierre: opacidad lineal alineada al crossfade hacia crema (sin caída brusca de luminancia)
-  const cin = A(t, 0.30, 0.65), cfade = lin(t, e6 - S.E06.xfade / 2, e6 + S.E06.xfade / 2), cout = A(t, e6 - S.E06.xfade / 2, 0.60);
-  show($('card'), cin * (1 - cfade), (1 - cin) * 16 - cout * 10);
-
-  // --- pildora del cabezal y vistas internas
-  const pa = 1 - A(t, M.e1_ok, 0.24);
-  show($('pE01a'), pa, -(1 - pa) * 6);
-  const pb = A(t, M.e1_ok + 0.22, IN_D) * (1 - A(t, S.E01.end - OUT_D - 0.02, OUT_D));
-  show($('pE01'), pb, (1 - A(t, M.e1_ok + 0.22, IN_D)) * 8);
-  ['E02', 'E03', 'E04', 'E05'].forEach(id => {
-    const v = sceneVis(S[id], t, id === 'E05' ? { noOut: true } : {});
-    show($('p' + id), v.o, v.dy * 0.6);
-  });
+  const cin = A(t, 0.24, 0.65), cfade = lin(t, e6 - S.E06.xfade / 2, e6 + S.E06.xfade / 2), cout = A(t, e6 - S.E06.xfade / 2, 0.60);
+  show($('card'), cin * (1 - cfade), (1 - cin) * 18 - cout * 10);
   ['E01', 'E02', 'E03', 'E04', 'E05'].forEach(id => {
     const v = sceneVis(S[id], t, id === 'E01' ? { noIn: true } : id === 'E05' ? { noOut: true } : {});
-    show($('v' + id), v.o, v.dy);
+    vis($('g' + id), v.o, v.dy);
   });
 
-  // --- E01: las tareas pasan con calma a resueltas
-  R.e1.forEach((r, k) => {
-    const p = A(t, M.e1_ok + 0.10 * k, 0.60);
-    r.box.style.background = mix('#f3eee6', '#e3f3ea', p);
-    r.box.style.borderColor = mix('#e6dfd3', '#cfe5d8', p);
-    swap(r.ico, r.ok, t, M.e1_ok + 0.10 * k); swap(r.pend, r.done, t, M.e1_ok + 0.10 * k);
-  });
-  { const p = A(t, M.e1_ok + 0.36, 0.55); show($('e1foot'), p, (1 - p) * 14); }
+  // ================= E01: alertas alrededor del mozo -> isotipo + anillo verde
+  {
+    const C = 360, ok = M.e1_ok;
+    const off = A(t, ok, 0.42);
+    R.AL.forEach((a, k) => {
+      const pin = A(t, 0.55 + 0.32 * k, 0.5);
+      const o = pin * (1 - off);
+      const breathe = 1 + 0.035 * Math.sin((t - 0.55 - 0.32 * k) * Math.PI * 2 / 1.5) * (t > 0.55 + 0.32 * k ? 1 : 0);
+      place($('e1a' + k), a[0], a[1], (0.82 + 0.18 * pin) * (1 - 0.3 * off), o);
+      $('e1b' + k).setAttribute('transform', `scale(${breathe.toFixed(4)})`);
+      const ph = ((t - 0.75 - 0.32 * k) % 1.5 + 1.5) % 1.5 / 1.5;
+      const p = $('e1p' + k); p.setAttribute('r', (36 + 30 * ease(ph)).toFixed(2)); p.style.opacity = (t > 0.75 + 0.32 * k ? 0.55 * (1 - ph) : 0).toFixed(3);
+      const ln = R.e1lines[k]; op(ln, A(t, 0.70 + 0.32 * k, 0.5) * (1 - off)); ln.style.strokeDashoffset = (-t * 26).toFixed(2);
+    });
+    const pc = A(t, ok, 0.32);
+    place($('e1clo'), C, C + 6, 1 - 0.1 * pc, 1 - pc);
+    const pm = A(t, ok + 0.18, 0.55);
+    place($('e1mark'), C, C, 0.86 + 0.14 * pm, pm);
+    $('e1bgc').setAttribute('fill', mix('#f3eee6', '#ffffff', pm));
+    const pr = A(t, ok + 0.36, 0.75);
+    R.ring.style.strokeDashoffset = (R.ringL * (1 - pr)).toFixed(2); op(R.ring, pr > 0 ? 1 : 0);
+    const pk = A(t, ok + 0.86, 0.45);
+    place($('e1ok'), C + 103, C + 103, 0.8 + 0.2 * pk, pk);
+  }
 
-  // --- E02: un barrido de escaneo y los indicadores 4G se encienden
-  { const q = lin(t, M.qr, M.qr + 0.55); const sc_ = $('scan');
-    sc_.style.top = `${(31 + 262 * ease(q)).toFixed(2)}px`;
-    sc_.style.opacity = (q > 0 && q < 1) ? Math.min(1, q / 0.15, (1 - q) / 0.15).toFixed(3) : 0; }
-  R.e2.forEach((r, k) => {
-    const p = A(t, M.g4 + 0.10 * k, 0.55);
-    r.box.style.background = mix('#f3eee6', '#e3f3ea', p);
-    r.box.style.borderColor = mix('#e6dfd3', '#cfe5d8', p);
-    r.txt.style.color = mix('#57534e', '#1c1917', p);
-    swap(r.ring, r.ok, t, M.g4 + 0.10 * k); show(r.chip, A(t, M.g4 + 0.10 * k + 0.20, IN_D));
-  });
+  // ================= E02: escaneo del QR con 4G -> carta -> Pedir
+  {
+    const s0 = S.E02.start, qr = M.qr, food = M.e2_food, tap = M.e2_tap;
+    const pp = A(t, s0 + 0.30, IN_D), qout = A(t, food, 0.30);
+    place($('e2pill'), 360, 146, 1, pp * (1 - qout));
+    op($('e2qr'), 1 - qout);
+    const q = lin(t, qr, qr + 0.95);
+    $('e2scan').setAttribute('transform', `translate(0 ${(244 + 292 * inout(q)).toFixed(2)})`);
+    op($('e2scan'), (q > 0 && q < 1) ? Math.min(1, q / 0.12, (1 - q) / 0.12) : 0);
+    const pf = A(t, food + 0.22, IN_D);
+    const ef = $('e2food'); op(ef, pf); ef.setAttribute('transform', `translate(0 ${((1 - pf) * 14).toFixed(2)})`);
+    const pb = A(t, food + 0.50, IN_D);
+    const press = 1 - 0.05 * Math.sin(Math.PI * lin(t, tap, tap + 0.30));
+    place($('e2btn'), 360, 560 + (1 - pb) * 14, press, pb);
+    const pd = lin(t, tap - 0.05, tap + 0.55);
+    op($('e2dot'), (pd > 0 && pd < 1) ? 0.55 * Math.sin(Math.PI * pd) : 0);
+    [0, 1].forEach(k => {
+      const r = lin(t, tap + 0.05 + 0.22 * k, tap + 1.05 + 0.22 * k), e = $('e2rip' + k);
+      e.setAttribute('r', (60 + 110 * ease(r)).toFixed(2));
+      e.style.opacity = (r > 0 && r < 1) ? (0.45 * (1 - r)).toFixed(3) : 0;
+    });
+  }
 
-  // --- E03: la comanda se divide en Cocina y Barra
-  { const p = A(t, M.split, 0.55);
-    R.cn.forEach(c => { c.p.style.strokeDashoffset = (c.L * (1 - p)).toFixed(2); c.p.style.opacity = p > 0 ? 1 : 0; });
-    const p2 = A(t, M.split + 0.10, 0.55);
-    R.e3.forEach(d => show(d, p2, (1 - p2) * 14)); }
+  // ================= E03: la comanda se divide sola (Cocina / Barra)
+  {
+    const s0 = S.E03.start, sp = M.e3_lines, go = M.e3_go, TRAV = 0.85;
+    place($('e3node'), 0, 0, 1, A(t, s0 + 0.10, IN_D));
+    const pl = A(t, sp, 0.60);
+    R.cn.forEach((c, k) => {
+      c.p.style.strokeDashoffset = (c.L * (1 - pl)).toFixed(2); op(c.p, pl > 0 ? 1 : 0);
+      const u = inout(lin(t, go, go + TRAV));
+      const pt = c.p.getPointAtLength(c.L * (0.36 + 0.60 * u));
+      const arrive = A(t, go + TRAV - 0.12, 0.40);
+      const appear = A(t, go - 0.05, 0.40);
+      place($('e3m' + k), pt.x, pt.y, 0.55 + 0.45 * appear - 0.25 * arrive, appear * (1 - arrive));
+      const lit = A(t, go + TRAV - 0.08, 0.50);
+      const col = k ? BAR : KIT, soft = k ? '#efeafe' : '#fef1dc';
+      c.p.style.stroke = mix(MUTE, col, u);
+      $('e3r' + k).setAttribute('fill', mix('#faf7f2', soft, lit));
+      $('e3r' + k).setAttribute('stroke', mix('#e6dfd3', col, lit));
+      $('e3i' + k).style.color = mix('#a8a29e', col, lit);
+      $('e3t' + k).setAttribute('fill', mix('#a8a29e', col, lit));
+    });
+  }
 
-  // --- E04: cada bloque recibe su mozo y la carga queda pareja
-  R.e4.forEach((c, k) => swap(c.ph, c.tag, t, M.tags + 0.12 * k, 10));
-  { const p = A(t, M.even, 0.55); show($('e4bar'), p, (1 - p) * 14); }
+  // ================= E04: cada mozo encastra en su sector, 4 · 4 · 4
+  {
+    const s0 = S.E04.start, drop = M.tags, DUR = 0.70;
+    R.COLS.forEach((c, k) => {
+      const pa = A(t, s0 + 0.30 + 0.10 * k, IN_D);
+      const u = ease(lin(t, drop + 0.20 * k, drop + 0.20 * k + DUR));
+      const x0 = 276 + 84 * k, y0 = 88;
+      place($('e4m' + k), x0 + (c[1] - x0) * u, y0 + (196 - y0) * u, 0.85 + 0.15 * pa, pa);
+      const land = A(t, drop + 0.20 * k + DUR * 0.6, 0.45);
+      op($('e4slot' + k), 1 - land);
+      $('e4col' + k).setAttribute('stroke', mix('#e6dfd3', c[2], land * 0.55));
+      for (let j = 0; j < 4; j++) {
+        const lt = A(t, drop + 0.20 * k + DUR * 0.6 + 0.07 * j, 0.45);
+        const el = $(`e4t${k}${j}`);
+        el.setAttribute('fill', mix('#ffffff', c[3], lt));
+        el.setAttribute('stroke', mix(MUTE, c[2], lt));
+      }
+    });
+  }
 
-  // --- E05: aviso sereno "Listo para llevar"
-  [M.vibra, M.vibra + 0.40].forEach((s0, k) => {
-    const q = lin(t, s0, s0 + 1.2); const h = $('h' + (k + 1));
-    h.style.opacity = (q > 0 && q < 1) ? (0.35 * (1 - q)).toFixed(3) : 0;
-    h.style.transform = `scale(${(1 + 0.75 * ease(q)).toFixed(4)})`;
-  });
-  swap($('e5wait'), $('e5ready'), t, M.vibra + 0.05, 14);
-  R.e5.forEach((r, k) => swap(r.wait, r.ok, t, M.vibra + 0.30 + 0.12 * k));
-  { const p = A(t, M.simpl, 0.55); show($('e5foot'), p, (1 - p) * 14); }
+  // ================= E05: el celu vibra con calma -> ¡Listo!
+  {
+    const vb = M.vibra, ls = M.listo;
+    [0, 1].forEach(k => {
+      let o = 0, dx = 0;
+      for (let c = 0; c < 3; c++) {
+        const u = lin(t, vb + c * 0.62 + k * 0.16, vb + c * 0.62 + k * 0.16 + 0.95);
+        if (u > 0 && u < 1) { o = Math.max(o, 0.9 * Math.sin(Math.PI * u)); dx = 16 * ease(u); }
+      }
+      document.querySelectorAll('.e5w' + k).forEach((w, j) => { w.style.opacity = o.toFixed(3); w.setAttribute('transform', `translate(${(j ? -dx : dx).toFixed(2)} 0)`); });
+    });
+    const pg = A(t, ls - 0.10, 0.55);
+    $('e5scr').setAttribute('fill', mix('#faf7f2', '#e3f3ea', pg));
+    op($('e5wait'), 1 - A(t, ls - 0.10, 0.30));
+    $('e5wait').style.strokeDashoffset = (-t * 20).toFixed(2);
+    const pc = A(t, ls - 0.05, 0.50);
+    $('e5okc').setAttribute('transform', `translate(0 -36) scale(${(0.7 + 0.3 * pc).toFixed(4)})`); op($('e5okc'), pc);
+    const pk = A(t, ls + 0.15, 0.50);
+    R.chk.style.strokeDashoffset = (R.chkL * (1 - pk)).toFixed(2); op(R.chk, pk > 0 ? 1 : 0);
+    const pl = A(t, ls + 0.35, IN_D);
+    op($('e5lbl'), pl); $('e5lbl').setAttribute('transform', `translate(0 ${((1 - pl) * 12).toFixed(2)})`);
+  }
 
-  // --- E06: cierre institucional
+  // ================= E06: cierre institucional
   { const pl = A(t, M.logo, 0.60), pbg = A(t, M.badge, 0.55), pc = A(t, M.contact, 0.60);
     $('closing').style.display = t >= e6 - 0.3 ? 'block' : 'none';
     show($('cLogo'), pl, (1 - pl) * 14); show($('cBadge'), pbg, (1 - pbg) * 14); show($('cCta'), pc, (1 - pc) * 14); }
@@ -485,8 +442,10 @@ window.init = async function (tl, fc) {
   tl.scenes.forEach(s => { S[s.id] = s; });
   build();
   await document.fonts.ready;
-  await Promise.all([500, 600, 700, 800].map(w => document.fonts.load(`${w} 40px PJS`)));
+  await Promise.all([700, 800].map(w => document.fonts.load(`${w} 40px PJS`)));
   await Promise.all([...document.querySelectorAll('img')].filter(i => i.src).map(i => i.decode().catch(() => {})));
+  const pre = new Image(); pre.src = '../assets/mark.svg'; await pre.decode().catch(() => {});
+  await new Promise(r => setTimeout(r, 300));
   return true;
 };
 </script>

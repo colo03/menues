@@ -1,4 +1,4 @@
-"""Plan maestro del spot v3 (linea grafica unificada y motion sobrio).
+﻿"""Plan maestro del spot v4 (diagramas vectoriales simples, max. 5 palabras por pantalla).
 - Lee la toma continua aprobada (v2/audio/vo/vo_fast.wav + vo_words.json, ATEMPO 1.07, entrada 0.12 s).
 - 6 escenas respiradas (E01..E06) ancladas al inicio de la frase de la locucion (sin snap a beat, sin cortes rapidos).
 - Calcula las marcas de la unica accion de cada escena y los 5 acentos SFX suaves del guion v3.
@@ -48,11 +48,11 @@ XFADE_END = 0.55    # crossfade hacia el cierre institucional
 
 # id, ancla (palabra, ocurrencia, desplazamiento), archivo, in-point, foco X, titular (|palabra clave|), pildora
 SCENES = [
-    ("E01", None,                "bar_busy_4043.mp4",         1.5, 0.50, "Bajales esa |exigencia|",       "Salón en orden"),
-    ("E02", ("con", 1, 0),       "phone_hands_4915.mp4",      2.0, 0.50, "Escanean el QR con su |4G|",    "Mesa T2 · 4G activo"),
-    ("E03", ("pide", 1, -1),     "kitchen_plating_13261.mp4", 4.5, 0.50, "Cocina y Barra, |sin papel|",   "Mesa T2 · Comanda dividida"),
-    ("E04", ("salón", 1, 0),     "resto_customers_4385.mp4",  2.5, 0.54, "Salón y equipo en |equilibrio|", "3 bloques equilibrados"),
-    ("E05", ("celu", 1, -1),     "waiter_drinks_43984.mp4",   1.2, 0.50, "Avisa recién al estar |listo|", "Vista mozo · Listo para llevar"),
+    ("E01", None,                "bar_busy_4043.mp4",         1.5, 0.50, "Menos |corridas|",               ""),
+    ("E02", ("con", 1, 0),       "phone_hands_4915.mp4",      2.0, 0.50, "Escaneá con |4G|",               ""),
+    ("E03", ("pide", 1, -1),     "kitchen_plating_13261.mp4", 4.5, 0.50, "Se divide |sola|",               ""),
+    ("E04", ("salón", 1, 0),     "resto_customers_4385.mp4",  2.5, 0.66, "Salón |parejo|",                 ""),
+    ("E05", ("celu", 1, -1),     "waiter_drinks_43984.mp4",   1.2, 0.50, "Vibra al |salir|",               ""),
     ("E06", ("cero", 2, -1),     "friends_cafe_43248.mp4",    1.0, 0.52, "",                              ""),
 ]
 
@@ -143,7 +143,11 @@ def main():
         "e1_in": 0.18,                                   # entrada de la Tarjeta Maestra
         "e1_ok": find("bajales")["t0"],                  # filas a verde + pildora "Salon en orden"
         "qr": find("qr")["t0"],                          # barra de escaneo
-        "g4": find("4g")["t0"],                          # indicadores 4G / sin Wi-Fi / carta
+        "g4": find("4g")["t0"],                          # pildora 4G
+        "e2_food": find("qr")["t0"] + 1.0,               # QR -> hamburguesa + copa
+        "e2_tap": find("carta")["t0"] + 0.25,            # tap sobre el boton Pedir
+        "e3_lines": find("comanda")["t0"] - 0.30,        # se dibujan las 2 curvas
+        "e3_go": find("separa")["t0"] - 0.15,            # hamburguesa y copa viajan a Cocina y Barra
         "split": find("separa")["t0"],                   # division Cocina / Barra
         "tags": find("bloques")["t0"],                   # mozos asignados a cada bloque
         "even": find("equipo")["t0"],                    # barra "Carga pareja en vivo"

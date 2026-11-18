@@ -16,20 +16,20 @@ En un salón gastronómico en hora pico ya existe movimiento físico constante. 
 
 ---
 
-## 2. Identidad Vectorial Oficial ("Salón en Orden")
+## 2. Identidad Vectorial Oficial ("Pase Limpio")
 
-Tras explorar y contrastar seis caminos conceptuales en `branding/propuestas_logos/` ([catalogo_logos.png](propuestas_logos/catalogo_logos.png)), la identidad oficial adoptada en todo el proyecto corresponde a la **Propuesta 06 · Salón en Orden**.
+Tras explorar y contrastar seis caminos conceptuales en `branding/propuestas_logos/` ([catalogo_logos.png](propuestas_logos/catalogo_logos.png)), la identidad oficial adoptada en todo el proyecto corresponde a la **Propuesta 01 · Pase Limpio**.
 
 ### 2.1. Activos Oficiales Canónicos
 | Archivo | Aplicación | Especificación Técnica |
 | :--- | :--- | :--- |
-| [logo.svg](logo.svg) (`app/public/logo.svg`) | Portadas, cierres institucionales y cabeceras sobre fondos claros (`#faf7f2` o `#ffffff`) | `viewBox="0 0 239 64"` · Isotipo bermellón `#D9412B` + wordmark **SaleListo** trazado 100% a curvas `<path>` en tinta carbón `#1C1917` con punto de la `i` en `#D9412B`. |
-| [logo-dark.svg](logo-dark.svg) (`app/public/logo-dark.svg`) | Barras superiores oscuras (`demo.html`) y aplicaciones sobre fondos carbón (`#1c1917`) | `viewBox="0 0 239 64"` · Geometría idéntica a `logo.svg` con wordmark en crema cálido `#FAF7F2` y punto de la `i` en `#D9412B`. |
-| [mark.svg](mark.svg) (`app/public/mark.svg`) | Favicon (`24px`), barras laterales, tarjetas QR, cabezal de Comandera y cabezal fijo de la Tarjeta Maestra en Video Ad | `viewBox="0 0 64 64"` · Squircle continuo G2 en `#D9412B` con tres módulos arquitectónicos redondeados en `#FAF7F2` dispuestos a `45°` formando un check en proporción áurea (`1 : 1.56`). |
+| [logo.svg](logo.svg) (`app/public/logo.svg`) | Portadas, cierres institucionales y cabeceras sobre fondos claros (`#faf7f2` o `#ffffff`) | `viewBox="0 0 239 64"` · Isotipo bermellón `#D9412B` (campana geométrica con corte en espacio negativo `#FAF7F2`) + wordmark **SaleListo** trazado 100% a curvas `<path>` en tinta carbón `#1C1917` con punto de la `i` en `#D9412B`. |
+| [logo-dark.svg](logo-dark.svg) (`app/public/logo-dark.svg`) | Barras oscuras (`demo.html`), insignias oscuras y visores sobre cualquier fondo (incluido blanco `#ffffff` en GitHub) | `viewBox="0 0 274 96"` · Insignia oscura auto-contenida con placa redondeada `<rect width="274" height="96" rx="20" fill="#1C1917"/>` y margen óptico equilibrado alrededor del isotipo oficial y del wordmark en crema cálido `#FAF7F2` con punto de la `i` en `#D9412B`. |
+| [mark.svg](mark.svg) (`app/public/mark.svg`) | Favicon (`24px`), barras laterales, tarjetas QR, cabezal de Comandera y símbolo central en Video Ad | `viewBox="0 0 64 64"` · Squircle continuo G2 en `#D9412B` con campana de pase minimalista esculpida en curvas `<path>` booleanas `#FAF7F2` y tilde ascendente a `45°` en espacio negativo, sin trazos ni parches externos. |
 
 ### 2.2. Fundamento y Reglas de Uso del Logo
-1. **Significado estructural**: Los tres bloques modulares redondeados dentro del squircle bermellón sintetizan tanto los **sectores organizados del salón** (*Interior, Terraza, Barra*) como la **tríada conectada del servicio** (*Mesa QR -> Cocina y Barra -> Mozo*) encajando en un tilde sereno de *"SaleListo"*.
-2. **Independencia tipográfica total**: El wordmark está convertido íntegramente a contornos vectoriales a partir de `Plus Jakarta Sans` (`Sale` en `700 Bold` + `Listo` en `800 ExtraBold`) con kerning óptico par por par, garantizando renderizado idéntico en navegadores móviles, impresión QR y fotogramas de video.
+1. **Significado estructural**: La campana de pase geométrica en `#FAF7F2` sobre el squircle bermellón `#D9412B` es atravesada en su hombro superior derecho por un tilde ascendente en espacio negativo, sintetizando el instante exacto en que el pedido sale listo desde Cocina o Barra hacia el salón (*"SaleListo"*).
+2. **Independencia tipográfica y contraste garantizado**: El wordmark está convertido íntegramente a contornos vectoriales a partir de `Plus Jakarta Sans` (`Sale` en `700 Bold` + `Listo` en `800 ExtraBold`) con kerning óptico par por par. La variante `logo-dark.svg` incluye su propia placa carbón `#1C1917` (`rx="20"`) para impedir que la tipografía crema pierda contraste cuando el archivo se previsualiza sobre lienzos blancos.
 3. **Integridad geométrica**:
    - **Prohibido** aplicar `border-radius` CSS pequeños sobre `<img src="mark.svg">` que recorten o deformen la curvatura squircle nativa del archivo vectorial.
    - **Área de resguardo mínima**: equivalente al `25%` del alto del isotipo alrededor de todo el bloque de marca.

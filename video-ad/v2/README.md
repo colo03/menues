@@ -1,8 +1,8 @@
-﻿# SaleListo Spot v3 · Pipeline de Producción
+# SaleListo Spot v4 · Pipeline de Producción
 
 Entregable final: [`../SaleListo_Ad.mp4`](../SaleListo_Ad.mp4) (`1080x1920`, `60 fps`, H.264 High `libx264 -preset slow -crf 20` + AAC `48 kHz`, `faststart`, `29.11 s`, `-14 LUFS` / `-1.5 dBTP`).
 
-Dirección de arte: [`../guion.md`](../guion.md) (v3) y [`../../branding/sistema_de_marca.md`](../../branding/sistema_de_marca.md). Una sola línea gráfica de punta a punta: 6 escenas respiradas (`E01` a `E06`, 4.0 s a 5.5 s), Tarjeta Maestra SaleListo persistente con el isotipo `mark.svg` en el cabezal, deriva lineal del 3 % sobre el B-roll, crossfade de 0.48 s, curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote y una sola acción clara por escena. Cierre institucional sobre crema `#faf7f2` con `logo.svg`, `0% comisión mensual`, `(+54)1138436571` y `simonguerenu@gmail.com`.
+Dirección de arte: [`../guion.md`](../guion.md) (v4) y [`../../branding/sistema_de_marca.md`](../../branding/sistema_de_marca.md). v4 "casi sin texto": 6 escenas de 4.0 s a 5.5 s, máximo 5 palabras en pantalla en las escenas 1 a 5 (titular de 2 o 3 palabras + etiquetas de 36 a 46 px), cada idea contada con un único diagrama vectorial grande dentro de un lienzo blanco persistente de 720x720 (radio 36 px), deriva lineal del 3 % sobre el B-roll, crossfade de 0.48 s y curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote. Cierre sobre crema `#faf7f2` con `logo.svg`, `0% comisión`, `(+54)1138436571` y `simonguerenu@gmail.com`.
 
 ## Pasos (re-ejecutables desde `video-ad/v2/`)
 
@@ -17,4 +17,4 @@ Dirección de arte: [`../guion.md`](../guion.md) (v3) y [`../../branding/sistema
 - **B-roll:** Mixkit (Mixkit Free License, uso comercial sin atribución obligatoria). Clips locales en `broll/` (descargables con `python tools/dl_broll.py`).
 - **Música:** *"Gimme that Groove!"* de Michael Ramir C. (Mixkit Stock Music Free License).
 - **SFX:** `scan`, `pop`, `ding`, `vibrate` y `success` generados con ElevenLabs (acentos suaves, sin `glitch`, `impact`, `riser` ni `whoosh`).
-- **Marca:** `assets/logo.svg`, `assets/logo-dark.svg` y `assets/mark.svg` copiados byte a byte desde [`../../app/public/`](../../app/public/) (Propuesta 06 · Salón en Orden). Tipografía `Plus Jakarta Sans` (licencia OFL) en `assets/fonts/`.
+- **Marca:** `assets/logo.svg`, `assets/logo-dark.svg` y `assets/mark.svg` copiados byte a byte desde [`../../app/public/`](../../app/public/) (Propuesta 01 · Pase Limpio). Tipografía `Plus Jakarta Sans` (licencia OFL) en `assets/fonts/`.

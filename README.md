@@ -40,7 +40,7 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 ├── branding/                     # Sistema de marca unificado de SaleListo (fuente de verdad visual)
 │   ├── sistema_de_marca.md       # Paleta, tipografía, radios, sombras, motion sobrio y Tarjeta Maestra del video
 │   ├── tokens.css                # Tokens CSS compartidos por la app y el spot publicitario
-│   ├── logo.svg · logo-dark.svg  # Logotipo horizontal oficial (Propuesta 06 · Salón en Orden), claro y oscuro
+│   ├── logo.svg · logo-dark.svg  # Logotipo horizontal oficial (Propuesta 01 · Pase Limpio), claro e insignia oscura
 │   ├── mark.svg                  # Isotipo oficial 64x64 (favicon, cabezal de la app y del video)
 │   └── propuestas_logos/         # Las 6 propuestas de logos bocetadas, lámina comparativa y fundamentos
 ├── comercial/                    # Estrategia comercial y prospección B2B verificada
@@ -116,7 +116,7 @@ Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md) 
 ## Identidad Visual y Sistema de Marca
 
 - **Sistema unificado ([`branding/`](./branding/sistema_de_marca.md))**: Una sola línea gráfica para la app web y el spot publicitario. [`sistema_de_marca.md`](./branding/sistema_de_marca.md) documenta la paleta maestra (crema `#faf7f2`, tinta `#1c1917`, bermellón `#d9412b`, verde `#2f8a57`, Barra `#6d28d9`, Cocina `#d97706`), la tipografía `Plus Jakarta Sans`, radios, sombras y el motion sobrio con curva única sin rebote. Los mismos valores viven como variables en [`tokens.css`](./branding/tokens.css).
-- **Logo oficial (Propuesta 06 · Salón en Orden)**: Tres módulos redondeados a 45° sobre squircle bermellón que forman un check, más el wordmark **SaleListo** trazado a curvas. Los archivos [`logo.svg`](./branding/logo.svg), [`logo-dark.svg`](./branding/logo-dark.svg) y [`mark.svg`](./branding/mark.svg) son idénticos byte a byte en `branding/`, `app/public/` y `video-ad/v2/assets/`.
+- **Logo oficial (Propuesta 01 · Pase Limpio)**: Campana de pase geométrica con tilde ascendente en espacio negativo sobre squircle bermellón, más el wordmark **SaleListo** trazado a curvas (y variante `logo-dark.svg` con placa redondeada oscura `#1C1917` propia para contraste total sobre fondos blancos u oscuros). Los archivos [`logo.svg`](./branding/logo.svg), [`logo-dark.svg`](./branding/logo-dark.svg) y [`mark.svg`](./branding/mark.svg) son idénticos byte a byte en `branding/`, `app/public/` y `video-ad/v2/assets/`.
 - **Exploración de logos ([`branding/propuestas_logos/`](./branding/propuestas_logos/README.md))**: Las 6 propuestas bocetadas en SVG (logo + isotipo de cada una), con la lámina comparativa [`catalogo_logos.png`](./branding/propuestas_logos/catalogo_logos.png) en fondo claro, oscuro y favicon de 24 px.
 
 ---
