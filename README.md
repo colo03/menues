@@ -35,7 +35,14 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 │       ├── mozo.html             # App móvil del mozo con alertas sonoras, vibración y carga manual
 │       ├── cocina.html           # Comandera digital (KDS) filtrable por Cocina, Barra o Ambos
 │       ├── cliente.html          # Carta interactiva y seguimiento en vivo para el comensal
-│       └── qr.html               # Planchas de códigos QR listas para imprimir por bloque
+│       ├── qr.html               # Planchas de códigos QR listas para imprimir por bloque
+│       └── logo.svg · logo-dark.svg · mark.svg  # Identidad oficial (copia idéntica de branding/)
+├── branding/                     # Sistema de marca unificado de SaleListo (fuente de verdad visual)
+│   ├── sistema_de_marca.md       # Paleta, tipografía, radios, sombras, motion sobrio y Tarjeta Maestra del video
+│   ├── tokens.css                # Tokens CSS compartidos por la app y el spot publicitario
+│   ├── logo.svg · logo-dark.svg  # Logotipo horizontal oficial (Propuesta 06 · Salón en Orden), claro y oscuro
+│   ├── mark.svg                  # Isotipo oficial 64x64 (favicon, cabezal de la app y del video)
+│   └── propuestas_logos/         # Las 6 propuestas de logos bocetadas, lámina comparativa y fundamentos
 ├── comercial/                    # Estrategia comercial y prospección B2B verificada
 │   ├── modelo_de_negocios.md     # Unit economics, ROI para el local y matriz de planes SaaS
 │   ├── propuestas_restaurantes.md# Playbook comercial, ICPs y propuestas para 26 locales reales
@@ -43,9 +50,9 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 ├── video-ad/                     # Spot publicitario vertical (1080x1920, 60 fps) y pipeline v2
 │   ├── SaleListo_Ad.mp4          # Video comercial final listo para Reels, TikTok, Shorts y WhatsApp
 │   ├── locucion_argentina.mp3    # Toma continua original en español argentino (ElevenLabs)
-│   ├── guion.md                  # Guion creativo y escaleta técnica de 14 cortes
+│   ├── guion.md                  # Guion creativo v3 y escaleta de 6 escenas respiradas (E01 a E06)
 │   ├── referencias_ads.md        # Relevamiento de referencias Gastro-Tech y Motion SaaS
-│   └── v2/                       # Motor programático de composición UI 2.5D, audio y mezcla
+│   └── v2/                       # Motor programático de composición (Tarjeta Maestra), audio y mezcla
 ├── docs/                         # Documentación técnica y evolución arquitectónica
 │   ├── arquitectura_salelisto.md # Diseño del sistema, flujo en tiempo real y reglas de negocio
 │   └── auditoria_inicial_beta.md # Diagnóstico histórico del prototipo inicial y resolución de bugs
@@ -103,6 +110,14 @@ El repositorio está preparado en su raíz para publicarse directamente con HTTP
 4. Abrí `/qr.html` e imprimí los códigos QR definitivos para las mesas.
 
 Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md) y en [`docs/arquitectura_salelisto.md`](./docs/arquitectura_salelisto.md).
+
+---
+
+## Identidad Visual y Sistema de Marca
+
+- **Sistema unificado ([`branding/`](./branding/sistema_de_marca.md))**: Una sola línea gráfica para la app web y el spot publicitario. [`sistema_de_marca.md`](./branding/sistema_de_marca.md) documenta la paleta maestra (crema `#faf7f2`, tinta `#1c1917`, bermellón `#d9412b`, verde `#2f8a57`, Barra `#6d28d9`, Cocina `#d97706`), la tipografía `Plus Jakarta Sans`, radios, sombras y el motion sobrio con curva única sin rebote. Los mismos valores viven como variables en [`tokens.css`](./branding/tokens.css).
+- **Logo oficial (Propuesta 06 · Salón en Orden)**: Tres módulos redondeados a 45° sobre squircle bermellón que forman un check, más el wordmark **SaleListo** trazado a curvas. Los archivos [`logo.svg`](./branding/logo.svg), [`logo-dark.svg`](./branding/logo-dark.svg) y [`mark.svg`](./branding/mark.svg) son idénticos byte a byte en `branding/`, `app/public/` y `video-ad/v2/assets/`.
+- **Exploración de logos ([`branding/propuestas_logos/`](./branding/propuestas_logos/README.md))**: Las 6 propuestas bocetadas en SVG (logo + isotipo de cada una), con la lámina comparativa [`catalogo_logos.png`](./branding/propuestas_logos/catalogo_logos.png) en fondo claro, oscuro y favicon de 24 px.
 
 ---
 

@@ -13,7 +13,6 @@ const WORKERS = parseInt(args.workers || '7', 10);
 const QUALITY = parseInt(args.quality || '95', 10);
 const FC = {};
 for (const d of fs.readdirSync(path.join(V2, 'build', 'frames_src'))) FC[d] = fs.readdirSync(path.join(V2, 'build', 'frames_src', d)).length;
-const LOGO = fs.readFileSync(path.join(V2, 'assets', 'logo.svg'), 'utf8');
 
 let frames;
 if (args.frames) frames = String(args.frames).split(',').map(Number);
@@ -25,7 +24,6 @@ async function worker(browser, id, list) {
   page.on('console', m => { if (m.type() === 'error') console.log(`[w${id}] console:`, m.text()); });
   page.on('pageerror', e => console.log(`[w${id}] pageerror:`, e.message));
   await page.goto('file:///' + path.join(V2, 'src', 'ad_v2.html').replace(/\\/g, '/'), { waitUntil: 'load' });
-  await page.evaluate((logo) => { window.LOGO_SVG = logo; }, LOGO);
   await page.evaluate(async (tl, fc) => await window.init(tl, fc), TL, FC);
   const cdp = await page.target().createCDPSession();
   const t0 = Date.now();

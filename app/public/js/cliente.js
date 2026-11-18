@@ -42,7 +42,7 @@
       : '';
     wrap.innerHTML = `
       <div class="invalid-card">
-        <span style="font-size:52px">📱</span>
+        <img src="logo.svg" alt="SaleListo" style="height:38px;margin:0 auto 14px;display:block">
         <h2>Escaneá el QR de tu mesa</h2>
         <p>Para ver el menú de <strong>${escapeHtml(s.restaurant?.name || 'nuestro local')}</strong> y pedir desde tu celular sin pedir Wi-Fi, apuntá la cámara al código QR ubicado en tu mesa.</p>
         ${demoHtml}

@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================================
+   SaleListo · Tokens Maestros de Diseño y Movimiento Unificado
+   Fuente única de verdad para Web App, Documentación y Video Ad (1080x1920)
+   ========================================================================== */
+
+:root {
+  /* 1. Paleta Maestra Armónica y Controlada */
+  --bg: #faf7f2;              /* Crema cálido · Lienzo principal */
+  --surface: #ffffff;         /* Superficie principal de tarjetas y paneles */
+  --surface-2: #f3eee6;       /* Superficie suave · Agrupadores y sub-bloques */
+  --surface-3: #e8e0d4;       /* Superficie terciaria · Estados activos suaves */
+  --line: #e6dfd3;            /* Línea divisoria y borde editorial sutil (1px) */
+  --line-strong: #d6cdc0;     /* Borde enfatizado suave en controles */
+
+  --ink: #1c1917;             /* Tinta carbón principal */
+  --ink-2: #57534e;           /* Tinta secundaria descriptiva */
+  --ink-3: #8a837c;           /* Tinta terciaria · Metadatos y estados vacíos */
+
+  --accent: #d9412b;          /* Acento principal · Bermellón SaleListo */
+  --accent-hover: #bf3520;    /* Hover de acción principal */
+  --accent-ink: #ffffff;      /* Texto sobre acento principal */
+  --accent-soft: #fceae6;     /* Fondo suave bermellón */
+
+  --ok: #2f8a57;              /* Éxito · Listo para llevar / En turno / Entregado */
+  --ok-hover: #257046;
+  --ok-soft: #e3f3ea;
+
+  --bar: #6d28d9;             /* Estación Barra · Violeta profundo */
+  --bar-soft: #efeafe;
+
+  --kitchen: #d97706;         /* Estación Cocina · Ámbar gastronómico */
+  --kitchen-soft: #fef1dc;
+
+  /* Alias semánticos compatibles con la aplicación web */
+  --warn: #d97706;
+  --warn-soft: #fef1dc;
+  --info: #2563eb;
+  --info-soft: #e6effd;
+
+  /* Superficies oscuras armónicas (Comandera KDS, Cabezal Mozo y Velos B-Roll) */
+  --dark-bg: #1c1917;
+  --dark-surface: #26221f;
+  --dark-line: #38322e;
+  --dark-ink: #faf7f2;
+  --dark-ink-2: rgba(250, 247, 242, 0.68);
+  --scrim-warm: rgba(28, 25, 23, 0.46);
+
+  /* 2. Sistema Tipográfico Único */
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font: var(--font-sans);
+
+  --text-xs: 0.75rem;         /* 12px · Chips, etiquetas y metadatos */
+  --text-sm: 0.84375rem;      /* 13.5px · Subtítulos y descripciones compactas */
+  --text-base: 0.9375rem;    /* 15px · Cuerpo de interfaz */
+  --text-md: 1.0625rem;       /* 17px · Títulos de tarjeta */
+  --text-lg: 1.25rem;         /* 20px · Encabezados de sección y códigos de mesa */
+  --text-xl: 1.5rem;          /* 24px · Títulos de vista y KPIs */
+  --text-2xl: clamp(1.875rem, 4.5vw, 2.75rem); /* Portada y titulares hero */
+
+  /* Escala equivalente para Lienzo Vertical de Video Ad (1080x1920) */
+  --video-headline-size: 62px;
+  --video-card-radius: 24px;  /* Equivalente óptico 1.5x de 16px en 1080p */
+  --video-subcard-radius: 15px; /* Equivalente óptico 1.5x de 10px en 1080p */
+  --video-card-title: 30px;
+  --video-card-body: 24px;
+  --video-pill-size: 20px;
+
+  /* 3. Geometría y Radios Consistentes */
+  --radius-card: 16px;        /* Tarjetas y contenedores estructurales */
+  --radius: var(--radius-card);
+  --radius-control: 10px;     /* Controles, botones, inputs y sub-tarjetas */
+  --radius-sm: 8px;           /* Controles compactos */
+  --radius-pill: 999px;       /* Chips, etiquetas de estación y píldoras */
+  --radius-sheet: 20px;       /* Modales y hojas inferiores */
+
+  /* 4. Elevación Editorial Suave (Sin bordes duros innecesarios) */
+  --shadow-xs: 0 1px 2px rgba(28, 25, 23, 0.04);
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.06);
+  --shadow: var(--shadow-card);
+  --shadow-float: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 48px -8px rgba(28, 25, 23, 0.14);
+
+  /* 5. Movimiento Sobrio y Cohesivo (Cero Rebote / Cero Frenesí) */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 180ms;          /* Micro-interacciones de hover y foco en UI */
+  --dur-ui: 320ms;            /* Apertura serena de modales, sheets y avisos */
+  --dur-scene: 500ms;         /* Transiciones canónicas entre escenas (450ms a 650ms) */
+  --dur-enter: 550ms;         /* Entrada suave de titulares y estados de tarjeta */
+  --broll-drift-from: 1;
+  --broll-drift-to: 1.03;     /* Deriva lineal cinematográfica del 3% sin golpes */
+}
+
+/* Anatomía Unificada de Tarjeta Maestra y Píldoras Semánticas */
+.sl-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+}
+
+.sl-card-float {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  color: var(--ink);
+}
+
+.sl-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.sl-brand-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.015em;
+}
+
+.sl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1.2;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.sl-pill-accent { background: var(--accent-soft); color: var(--accent); }
+.sl-pill-ok { background: var(--ok-soft); color: var(--ok); }
+.sl-pill-kitchen { background: var(--kitchen-soft); color: var(--kitchen); }
+.sl-pill-bar { background: var(--bar-soft); color: var(--bar); }

@@ -4,21 +4,25 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Demo en Vivo 4 Pantallas</title>
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    body { background: #181512; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    body { background: var(--dark-bg); color: var(--dark-ink); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .bar {
-      display: flex; align-items: center; gap: 14px; padding: 10px 18px; min-height: 54px;
-      background: #231f1a; border-bottom: 1px solid #352f28; flex-wrap: wrap;
+      display: flex; align-items: center; gap: 12px; padding: 10px 18px; min-height: 54px;
+      background: var(--dark-surface); border-bottom: 1px solid var(--dark-line); flex-wrap: wrap;
     }
-    .bar strong { font-size: 15px; }
+    .bar-brand { display: inline-flex; align-items: center; gap: 10px; }
+    .bar-sep { color: rgba(250, 247, 242, 0.28); font-weight: 700; }
+    .bar strong { font-size: 14.5px; font-weight: 700; color: rgba(250, 247, 242, 0.9); }
     .bar .grow { flex: 1; }
     .bar select {
-      background: #2f2923; border: 1px solid #453c33; color: #fff;
-      padding: 6px 10px; border-radius: 8px; font-size: 13px; font-weight: 600;
+      background: var(--dark-bg); border: 1px solid var(--dark-line); color: var(--dark-ink);
+      padding: 6px 10px; border-radius: var(--radius-control); font-size: 13px; font-weight: 600;
     }
-    .bar label { font-size: 12.5px; color: rgba(255,255,255,.75); display: inline-flex; align-items: center; gap: 6px; }
-    .bar a { color: rgba(255,255,255,.8); font-size: 13px; text-decoration: none; font-weight: 600; }
+    .bar label { font-size: 12.5px; color: rgba(250, 247, 242, 0.75); display: inline-flex; align-items: center; gap: 6px; }
+    .bar a { color: rgba(250, 247, 242, 0.85); font-size: 13px; text-decoration: none; font-weight: 600; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--dark-line); transition: background var(--dur-fast) var(--ease-out); }
+    .bar a:hover { background: rgba(250, 247, 242, 0.08); }
 
     .stage {
       flex: 1; display: grid; grid-template-columns: 350px 350px 1fr; gap: 16px;
@@ -26,22 +30,22 @@
     }
     .col-wrap { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; }
     .col-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-    .label { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.6); }
+    .label { font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(250, 247, 242, 0.62); }
 
     .phone {
-      flex: 1; border-radius: 38px; padding: 10px; background: #0c0a08;
-      box-shadow: 0 0 0 2px #3a332b, 0 20px 60px rgba(0,0,0,.45); min-height: 0;
+      flex: 1; border-radius: 38px; padding: 10px; background: #12100e;
+      box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42); min-height: 0;
     }
-    .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 28px; background: #faf7f2; }
+    .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 28px; background: var(--bg); }
 
     .panel {
-      flex: 1; border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px #3a332b; min-height: 0;
+      flex: 1; border-radius: var(--radius-card); overflow: hidden; box-shadow: 0 0 0 1px var(--dark-line); min-height: 0;
     }
-    .panel iframe { width: 100%; height: 100%; border: 0; background: #faf7f2; }
+    .panel iframe { width: 100%; height: 100%; border: 0; background: var(--bg); }
 
-    .r-tabs { display: flex; gap: 4px; background: #26211c; padding: 3px; border-radius: 9px; }
-    .r-tab { padding: 4px 10px; border-radius: 7px; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.68); }
-    .r-tab.active { background: var(--accent); color: #fff; }
+    .r-tabs { display: flex; gap: 4px; background: var(--dark-surface); padding: 3px; border-radius: var(--radius-control); border: 1px solid var(--dark-line); }
+    .r-tab { padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: rgba(250, 247, 242, 0.7); transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+    .r-tab.active { background: var(--accent); color: #ffffff; }
 
     @media (max-width: 1260px) {
       body { height: auto; overflow: auto; }
@@ -57,7 +61,11 @@
 </head>
 <body>
   <header class="bar">
-    <strong>SaleListo · Circuito Completo en Tiempo Real</strong>
+    <div class="bar-brand">
+      <img src="logo-dark.svg" alt="SaleListo" style="height:28px;display:block;flex:none">
+      <span class="bar-sep">·</span>
+      <strong>Circuito Completo en Tiempo Real</strong>
+    </div>
     <span class="grow"></span>
     <label>📱 Mesa Cliente: <select id="clientTableSel"></select></label>
     <label>🏃 Celular Mozo: <select id="waiterSel"></select></label>

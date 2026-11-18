@@ -1,79 +1,74 @@
-# Relevamiento de Referencias Publicitarias: Gastro-Tech y Motion SaaS (v2)
+# Investigación de Referencias Publicitarias Exitosas: Gastro-Tech y Motion B2B Sobrio (v3)
 
-**Proyecto:** SaleListo Video Ad v2 (Vertical 9:16, 1080x1920)  
-**Objetivo:** Transformar el spot v1 estático en una pieza audiovisual ágil, sensorial y auto-explicativa inspirada en los mejores anuncios cortos de software gastronómico y SaaS moderno.
-
----
-
-## 1. Diagnóstico Puntual: Qué Volvió Estático al Video v1
-
-Al auditar `guion.md` y la estructura de producción de la versión 1 (`SaleListo_Ad_1080x1920.mp4`), surgen cinco cuellos de botella concretos que explican el feedback del usuario (*"le falta dinamismo, b-rolls, musica, menos texto y mas animaciones intuitivas"*):
-
-1. **Ritmo de diapositiva (5 planos en 30 segundos):** Cada escena duraba entre `5.0s` y `7.0s` fijos sobre el mismo encuadre. En formatos verticales (Instagram Reels, TikTok, Shorts y estados/mensajes de WhatsApp), un plano estático de más de `2.5s` dispara el abandono inmediato.
-2. **Cero video real gastronómico (B-roll ausente):** Toda la pieza dependía de fondos planos CSS (`#181512` y `#faf7f2`). En gastronomía, el dueño o encargado necesita sentir el calor del salón, la barra despachando y la cocina viva; sin imagen real, el software parece frío y abstracto.
-3. **Saturación de texto en pantalla:** Cada escena acumulaba un titular largo de 6 a 8 palabras, tres píldoras inferiores con explicaciones entre paréntesis (por ejemplo: `Sin pedir Wi-Fi (Usa 4G / 5G)`), textos de interfaz pequeños y estados parpadeantes (`30 a 40 palabras visibles por corte`), forzando al espectador a leer en lugar de mirar.
-4. **Locución sobrecargada y sin colchón musical:** El guion v1 tenía `82 palabras`, lo que obligó a acelerar digitalmente la voz sintetizada (`rate +32%` y `atempo 1.25`), y la pista final salió sin música comercial de fondo ni efectos sonoros táctiles que marcaran cada acción visual.
-5. **Beneficios escritos en vez de física visual:** En lugar de ver cómo un pedido viaja y se bifurca solo entre Cocina y Barra o cómo el mapa asigna al mozo y hace vibrar su teléfono, la v1 apilaba etiquetas estáticas descriptivas.
+**Proyecto:** SaleListo Video Ad v3 (`1080x1920`, `9:16`, `60 fps`, `~30s`)  
+**Objetivo de Rediseño Visual:** Conservar el corazón narrativo y la locución argentina continua aprobada (`video-ad/locucion_argentina.mp3`), eliminando el frenesí de cámara, las animaciones saltarinas y la fragmentación gráfica de la v2 para adoptar el estándar visual de las campañas B2B y gastro-tech más exitosas del mundo.
 
 ---
 
-## 2. Análisis de Ejemplos Reales de Alto Impacto
+## 1. Diagnóstico Comparativo: Por Qué la v2 Generó Fatiga Visual (`v1` vs `v2` vs Estándar v3)
 
-### 2.1. Toast POS (Reels y TikTok Ads B2B: "Rush Chaos to Flow")
-Los anuncios cortos de mayor conversión de **Toast POS** para captación de restaurantes combinan empatía operativa real con micro-demostraciones de interfaz:
+La evolución del spot mostró los dos extremos opuestos antes de llegar al punto de equilibrio profesional:
+- **En `v1` (exceso de rigidez):** 5 placas estáticas sin B-roll, sin música y con 35 a 40 palabras por pantalla.
+- **En `v2` (sobrecorrección hiperactiva):** 14 cortes en `29.65s` (`~1.8s` por plano en el tramo demostrativo), 7 tipos distintos de transiciones violentas con desenfoque direccional (`whipL`, `whipR`, `whipU` de `70px-80px`, `zoom` `1.7x`, `zoomOut`, `split`, `veil`), golpes de zoom en cada compás (`beat-punch`), paneos bruscos del `9% al 12%` cambiando de dirección en cada corte, física subamortiguada con rebote elástico (`spring(t, 15, 7)` y `eBack` con *overshoot* en más de 25 elementos) y **12 widgets visualmente desconectados entre sí** (círculo oscuro con RGB glitch, visor láser con anillos neón, botón gigante con estela de cometa, KDS negro `#181512`, tarjeta blanca de barra, grilla de 3 columnas, carcasa 3D de teléfono con líneas cómicas de vibración, etcétera).
 
-- **Estructura y ritmo de edición:**
-  - **Gancho (0.0s - 3.0s):** 2 cortes rápidos (`1.2s` a `1.6s` cada uno) en plena hora pico nocturna. Luz cálida de salón lleno, comandas trabadas o camareros corriendo. Cero logos corporativos lentos al inicio.
-  - **Pivote de alivio (3.0s - 4.0s):** Golpe musical limpio (*beat drop*) acompañado de un barrido rápido (*whip-zoom*) hacia la solución en mano.
-  - **Demostración en flujo (4.0s - 24.0s):** Cortes cada `1.5s` a `2.2s` alternando acción física en restaurante con tarjetas UI limpias flotando encima.
-- **Uso de B-roll + UI flotante:**
-  - El B-roll real ocupa el lienzo vertical `9:16` con iluminación cálida (tonos ámbar/madera) y movimiento continuo de cámara.
-  - Encima no se pega una captura completa ilegible del sistema, sino **una sola tarjeta modular recortada** con esquinas redondeadas, sombra profunda (`drop-shadow`) y animación de toque (*tap ripple*).
-- **Tipografía:** Titulares enormes de 2 a 4 palabras (`Lost tickets = Lost profit`, `Syncs instantly`, `+20% table turns`).
-
-### 2.2. Sunday App (QR Dining Video Ads: "The 10-Second Action")
-Las campañas en video corto de **Sunday App** (pedidos y pagos por QR en mesa) son referencia directa para comunicar velocidad sin fricción:
-
-- **Foco visual absoluto en la mesa real:** Primer plano auténtico de una mano acercando el smartphone al QR físico apoyado en una mesa cálida con platos y copas reales en desenfoque (*bokeh*).
-- **Demostración sin texto técnico:** Para comunicar *"sin descargar apps"* y *"instantáneo"*, muestran el encuadre del QR disparando un destello y abriendo la carta interactiva en menos de `0.4s`, seguido de un único botón coral/acento que confirma con un tilde verde elástico.
-- **Contraste emocional en el personal:** Intercalan planos breves (`1.5s`) del mozo caminando relajado y sonriente entregando el pedido exacto sin libreta ni idas y vueltas innecesarias.
-
-### 2.3. Square for Restaurants (Campañas "Chaos to Control" / Ecosistema Conectado)
-Los spots verticales de **Square for Restaurants** resuelven muy bien el desafío de mostrar múltiples pantallas conectadas (cliente, cocina, barra y salón) en menos de 30 segundos:
-
-- **Split-Screen gastronómico en vivo:** Dividen la pantalla vertical en dos mitades horizontales (arriba fuego/emplatado en cocina; abajo coctelería/barra tirando cerveza) y superponen sobre cada mitad el ticket digital correspondiente iluminándose en tiempo real.
-- **Montaje causa-efecto:** Cada corte hereda el movimiento del anterior (*match-cut* direccional): el toque del cliente en la mesa lanza un pulso que entra en la pantalla de cocina/barra, y el botón de *"Listo"* en barra dispara el aviso que vibra en el bolsillo del camarero.
-- **Diseño sonoro rítmico:** Los cambios de estado en el KDS (`Nuevo` -> `Listo`) suenan con campanas sutiles y clics táctiles sincronizados a la percusión del track musical.
-
-### 2.4. Motion Reels SaaS Estilo Apple / Stripe / Linear (UI 2.5D + Kinetic Type)
-Para que las tarjetas de interfaz sobre el B-roll se vean de nivel agencia internacional y no como cajas HTML planas:
-
-- **Profundidad 2.5D y Glassmorphism sutil:** Las tarjetas flotan con leve inclinación o escala elástica (`cubic-bezier(0.22, 1, 0.36, 1)` o curvas *spring*), bordes finos translúcidos (`1px solid`), sombras multicapa suaves y desenfoque selectivo del video de fondo (`backdrop-filter` o oscurecimiento radial suave `scrim`) en el momento exacto en que la UI reclama foco.
-- **Coreografía de cursores, trazos y nodos:** En vez de explicar con texto cómo viaja un dato, una línea curva luminosa (`SVG path` animado con `stroke-dashoffset`) conecta el origen con los dos destinos (`Cocina` y `Barra`), o un punto de color salta con imán hacia un bloque del mapa (`Terraza · Mesa T2`).
-- **Tipografía cinética minimalista:**
-  - Aparición por máscara desde línea base (*mask slide-up*) o golpe seco de escala (*stomp* `1.14 -> 1.00`) clavado en el golpe de bombo o caja de la música.
-  - Jerarquía estricta: fuente geométrica ExtraBold (`Plus Jakarta Sans 800`), interlineado compacto (`1.05`), `letter-spacing: -0.03em`, máximo **2 a 4 palabras por plano**.
+En publicidad B2B de software operativo, **el exceso de movimiento comunica estrés, exactamente lo opuesto a la promesa de SaleListo** (*bajarle la exigencia a los mozos y ordenar el salón*).
 
 ---
 
-## 3. Patrones Concretos Aplicables a SaleListo v2
+## 2. Benchmark de Campañas Reales Exitosas y Principios Transferibles
 
-| Dimensión | Qué hacía v1 (Problema) | Patrón Extraído de Referencias para v2 (Solución) |
+### 2.1. Toast POS ("Built for Busy" y "Built for Restaurants", agencia Arnold)
+- **Contraste emocional entre entorno vivo y software sereno:** Los spots insignia de Toast abren sobre la realidad física y cálida del restaurante (luz ámbar de salón, cocina real, movimiento humano genuino), pero **la cámara y la interfaz jamás entran en pánico**. Mientras el entorno gastronómico tiene vida propia, el encuadre mantiene un movimiento lento, lineal y controlado que posiciona al sistema como el ancla de calma del turno.
+- **Integración contextual sin artificios:** En lugar de efectos pirotécnicos (orbes voladores, rayos láser o temblores artificiales), muestran piezas limpias de interfaz con tipografía clara e indicadores de estado reales vinculados directamente con el alivio humano del personal.
+- **Aplicación directa a SaleListo v3:** Usar los B-rolls reales en plano completo con gradación cálida uniforme y deriva apenas perceptible, dejando que la serenidad de la tarjeta gráfica transmita control operativo desde el primer segundo.
+
+### 2.2. Square for Restaurants ("Big in Restaurants" / Ecosistema Conectado)
+- **Línea editorial unificada sobre imagen real:** Square evita mezclar diez estilos de pantallas distintas en 30 segundos. Utiliza una sola familia cromática y geométrica (superficies claras editoriales, tipografía geométrica limpia, bordes sutiles y sombras suaves) superpuesta con aire generoso sobre escenas reales de salón, barra y cocina.
+- **Sincronía por bloques narrativos, no por golpes de batería:** Los cambios visuales acompañan las frases completas de la locución (cada `4.5s a 5.5s`), permitiendo que el dueño o encargado gastronómico comprenda una ventaja operativa completa antes de pasar a la siguiente.
+- **Aplicación directa a SaleListo v3:** Sincronizar las **6 escenas** exactamente con los **6 bloques respirados de la locución aprobada**, eliminando cortes intermedios innecesarios a mitad de frase.
+
+### 2.3. Apple Product Films (WWDC y Spots de UI en iOS)
+- **Filosofía estricta "No-Bounce" (amortiguación crítica $\zeta = 1.0$):** En los films de producto de Apple, los contenedores estructurales, tarjetas y paneles **nunca rebotan ni oscilan** al llegar a su posición. El rebote elástico se percibe juguetón o amateur; la amortiguación crítica (`cubic-bezier(0.22, 1, 0.36, 1)` o resorte sin *overshoot*) transmite precisión, solidez y madurez de producto.
+- **Contenedor Persistente (*Persistent Container*):** En lugar de hacer desaparecer una tarjeta con un barrido brusco para traer otro objeto distinto desde fuera de cuadro, Apple ancla un contenedor maestro en el centro visual y hace evolucionar suavemente su contenido interno (*layout continuity* con escalonamiento suave de `50ms a 80ms` entre jerarquías).
+- **Aplicación directa a SaleListo v3:** Prohibir todo `spring` con rebote (`cos(w*t)`), todo `eBack` con sobreimpulso y todo temblor sinusoidal (`Math.sin`). Adoptar un único **Escenario / Tarjeta Maestra SaleListo** que permanece estable en coordenadas y lenguaje visual mientras su interior evoluciona con suavidad escena tras escena.
+
+### 2.4. Stripe y Linear (Product Launch Videos B2B SaaS)
+- **Estabilidad espacial que genera confianza empresarial:** El análisis de los videos de lanzamiento de Linear y Stripe demuestra que mantener la ventana o tarjeta principal en un espacio cartesiano fijo evita que el ojo del espectador tenga que "buscar dónde mirar" cada dos segundos. Esa quietud espacial comunica confiabilidad técnica inmediata.
+- **Ritmo calmo y legible (*Calm Pacing*):** Sostienen cada estado interactivo un mínimo de `4.0s a 5.5s` con **una sola acción teleológica por escena** (cada movimiento existe únicamente para explicar un cambio de estado del sistema: escaneo confirmado, comanda dividida en dos renglones claros, bloque asignado, aviso de retiro listo).
+- **Materialidad sobria:** Bordes finos de `1px` (`--line`), radios consistentes, píldoras semánticas armónicas y sombras difusas editoriales en lugar de resplandores neón saturados o bordes gruesos de `5px`.
+
+### 2.5. Airbnb Product Releases y Uber Eats for Merchants (Spots de 30s)
+- **Cadencia de 5 a 6 escenas en 30 segundos:** Los anuncios comerciales de 30 segundos orientados a anfitriones y comercios gastronómicos que logran mayor recordación de marca trabajan con **5 a 6 escenas amplias (`~4.8s` promedio)** unidas por fundidos cruzados suaves (*editorial crossfades* de `0.45s a 0.55s`), sin *whip-pans* ni cortes estroboscópicos.
+- **Paneo cinematográfico lineal del `2% al 4%`:** El video de fondo se mueve con una deriva lineal casi imperceptible (`scale 1.00 -> 1.03` o desplazamiento suave de `8px a 14px` a lo largo de `5 segundos`), aportando vida cinematográfica sin marear ni competir con la lectura de la interfaz.
+
+---
+
+## 3. Matriz de Reglas de Oro para SaleListo v3 (`v2` Descartado -> `v3` Adoptado)
+
+| Dimensión Audiovisual | Qué hacía `v2` (Causa de Rechazo) | Estándar Adoptado en `v3` (Inspirado en Referencias) |
 |---|---|---|
-| **Ritmo de cortes** | 5 escenas largas de `5.0s` a `7.0s` | **16 cortes dinámicos** de `1.6s` a `2.2s` cada uno (~`1.85s` promedio) dentro de `30.0s` totales. |
-| **Fondo visual** | Colores planos CSS (`#181512`, `#faf7f2`) | **B-rolls gastronómicos reales en movimiento** (Ken Burns `scale 1.03 -> 1.10`, paneos suaves, split-screen en Cocina/Barra y grading cálido). |
-| **Texto en pantalla** | 25 a 40 palabras simultáneas por escena | **1 a 4 palabras máximas por plano** en tipografía gigante (`Plus Jakarta Sans 800`). Cero párrafos y cero listas largas. |
-| **Explicación de producto** | Píldoras de texto descriptivas | **Animaciones intuitivas auto-explicativas:** pulso 4G al escanear QR -> trazo que se bifurca a `🍳 Cocina` y `🍸 Barra` -> grilla de bloques `Interior / Terraza / Barra` asignando punto de color del mozo -> alerta vibrando con rebote en el celular (`Retirar en Barra · Mesa T2`) -> tilde verde. |
-| **Locución** | 82 palabras aceleradas con `atempo 1.25` | **66 palabras conversacionales** en voseo argentino natural y fresco, dejando aire entre frases para que respiren la música y los SFX. |
-| **Música y SFX** | Sin música ni efectos en la mezcla final | **Track instrumental comercial con groove** (ElevenLabs Music ~120 BPM) con *ducking* automático (`-15 dB` bajo voz, `-5 dB` en intro/respiros/cierre) + **6 micro-SFX puntuales** (`scan`, `pulso 4G`, `whoosh split`, `ding barra`, `vibración celular`, `check pop`). |
+| **Cantidad y duración de planos** | `14 cortes` hiperactivos (`1.5s a 2.2s`), imposibles de asimilar con calma. | **`6 escenas` amplias y serenas (`4.3s a 5.6s` cada una)** alineadas 1 a 1 con las ideas de la locución. |
+| **Coherencia gráfica (Branding)** | `12 widgets` de estilos dispares (KDS negro, teléfono 3D, orbes neón, círculos oscuros, etcétera). | **1 sola Tarjeta Maestra SaleListo persistente** de principio a fin, con cabezal fijo de marca (`mark.svg`), misma tipografía, mismos radios y misma paleta oficial de `branding/sistema_de_marca.md`. |
+| **Movimiento de cámara (B-Roll)** | Zooms bruscos del `9% al 12%` + `beat-punch` cada 4 pulsos + `split-screen` partido. | **Deriva lineal serena del `2.5% al 3.5%`** (`scale 1.01 -> 1.04` en `5s`), **cero `beat-punch`** y encuadre completo limpio con velo cálido constante. |
+| **Transiciones entre escenas** | `whipL`, `whipR`, `whipU` con blur de `80px`, `zoom 1.7x` y barridos de pantalla completa. | **`Crossfade` editorial suave (`0.48s`) en el B-roll** mientras la Tarjeta Maestra permanece anclada y transiciona su vista interna con fundido y desplazamiento corto (`16px`, sin rebote). |
+| **Física de animaciones UI** | Resortes elásticos saltarines (`spring` subamortiguado), `eBack` en cada palabra, sacudidas y ondas múltiples. | **Curva única sin rebote (`cubic-bezier(0.22, 1, 0.36, 1)`)**, duraciones pausadas (`0.45s a 0.65s`) y **1 sola micro-interacción clara por escena**. |
+| **Titulares superiores** | 13 titulares saltando palabra por palabra con *stomp* elástico cada `1.7s`. | **5 titulares editoriales breves + cierre de marca**, entrando completos con deslizamiento suave de `14px` y opacidad progresiva (`0.45s`), legibles durante toda la escena. |
+| **Diseño sonoro (SFX)** | `18 eventos SFX` incluyendo `glitch`, `impact_low`, múltiples `whoosh` y golpes fuertes. | **Locución continua intacta + groove musical suave (`-14 LUFS`) + solo 5 acentos sonoros sutiles y orgánicos** (`scan` suave, `pop` limpio, `ding` cálido de pase, `vibrate` sobrio y acorde limpio de cierre). |
 
 ---
 
-## 4. Guía Rápida de Contraste y Legibilidad sobre B-Roll (9:16)
+## 4. Arquitectura Visual Común del Spot ("Un Solo Escenario de Marca")
 
-1. **Tratamiento del B-Roll:** Aplicar corrección de color cálida uniforme (realce suave en ámbar/dorados, sombras ricas en carbón `#1f1b16`) y un *scrim* degradado superior/inferior (`rgba(31, 27, 22, 0.45)`) para que los titulares blancos o crema nunca pierdan lectura sobre luces del fondo.
-2. **Zonas seguras verticales (`1080x1920`):**
-   - **Tercio superior (`y: 170px - 390px`):** Titular cinético corto (2 a 4 palabras).
-   - **Centro visual (`y: 440px - 1420px`):** Acción principal del B-roll integrada con la tarjeta UI animada de SaleListo.
-   - **Margen inferior (`y: 1480px - 1920px`):** Libre de textos críticos durante el spot para no chocar con la interfaz nativa de Reels/TikTok/Shorts (excepto en la placa final limpia centrada).
-3. **Identidad gráfica innegociable:** Respetar los activos reales de SaleListo (`logo.svg`, `mark.svg`), fuente `Plus Jakarta Sans` y paleta oficial: crema `#faf7f2`, superficie `#ffffff`, carbón `#1f1b16`, coral `#d9412b`, verde éxito `#2f8a57`, ámbar cocina `#c98a12` / `#f59e0b` y violeta barra `#7c3aed`.
+Para cumplir estrictamente el pedido de **mantener una línea gráfica común durante todo el transcurso del video**, las escenas `E01` a `E05` comparten la misma estructura espacial sobre el lienzo `1080x1920`, desembocando con total naturalidad en la escena `E06` (cierre institucional sobre la misma paleta crema y carbón):
+
+1. **Fondo cinematográfico unificado (`1080x1920`):**
+   - Selección de 6 planos reales Full HD / HD de `video-ad/v2/broll/` (uno por escena, sin repetir clips ni partir la pantalla, todos con duración nativa holgada entre `9.4s` y `15.0s`).
+   - Tratamiento cromático cálido idéntico en las 6 escenas + velo editorial constante `--scrim-warm: rgba(28, 25, 23, 0.46)` para garantizar contraste impecable sin cambios bruscos de tinte.
+2. **Franja titular serena (`tercio superior`):**
+   - Un único titular conciso por escena en `Plus Jakarta Sans` (`800`, `58px a 64px`, `line-height: 1.08`, `letter-spacing: -0.025em`), en crema `#faf7f2` con palabra clave puntual enfatizada con sobriedad en bermellón oficial `#d9412b` (cero cajas saltarinas y cero *stomp* elástico).
+3. **Tarjeta Maestra SaleListo (`centro visual anclado`):**
+   - Mismo contenedor editorial claro (`--surface: #ffffff`), borde fino (`1px solid #e6dfd3`), radio invariable (`24px`, equivalente óptico `1.5x` de `--radius-card: 16px`), sub-bloques internos `#faf7f2` / `#f3eee6` con radio `15px` y sombra difusa `--shadow-float` definidos en `branding/sistema_de_marca.md` y `branding/tokens.css`.
+   - **Cabezal persistente de identidad (`Header`):** incluye siempre a la izquierda el nuevo isotipo oficial **Propuesta 06 · Salón en Orden** (`mark.svg`, squircle bermellón `#D9412B` con tres módulos arquitectónicos redondeados en `#FAF7F2` formando el check armónico, sin recortar su curvatura nativa) junto a `SaleListo` (`#1c1917`, `800`), y a la derecha una píldora semántica (`999px`) que actualiza el contexto operativo (`Salón en orden`, `Mesa T2 · 4G`, `Comanda automática`, `3 Bloques en equilibrio`, `Listo para llevar`).
+   - **Cuerpo de acción única (`Body`):** dentro de ese mismo marco limpio ocurre **una sola demostración pausada por escena** con curva `cubic-bezier(0.22, 1, 0.36, 1)` (`450ms a 650ms`) y `3.0s a 4.0s` de reposo legible, usando los acentos oficiales (`#d9412b` bermellón, `#2f8a57` verde servicio, `#d97706` ámbar cocina y `#6d28d9` violeta barra).
+4. **Cierre institucional cohesivo (`E06`):**
+   - Fundido editorial sereno (`500ms`) hacia el lienzo cálido de marca (`--bg: #faf7f2` con velo `90%` sobre ambiente desenfocado sutil), presentando el nuevo logotipo vectorial completo (`logo.svg`, `viewBox="0 0 239 64"`), la píldora `0% comisión mensual` (`#fceae6` / `#d9412b`) y la tarjeta editorial limpia con los únicos datos de contacto oficiales (`(+54)1138436571` y `simonguerenu@gmail.com`).

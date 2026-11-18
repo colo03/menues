@@ -1,8 +1,8 @@
-﻿"""Mezcla final de audio del spot v2.
+﻿"""Mezcla final de audio del spot (v3, diseño sonoro sobrio).
 - Musica: "Gimme that Groove!" (Mixkit, licencia libre) recortada al largo del spot con remate final real del tema.
-- Locucion: bloques V1..V6 (Edge-TTS o ElevenLabs, mismos nombres en v2/audio/vo/).
-- SFX: ElevenLabs (v2/audio/sfx/*.mp3) + sintetizados aqui (impact, glitch, snap, riser, shimmer, split).
-- Ducking por envolvente: musica -14 dB bajo la voz, -6 dB en respiros, plena en intro y remate.
+- Locucion: toma continua aprobada (v2/audio/vo/vo_fast.wav = video-ad/locucion_argentina.mp3).
+- SFX: solo los acentos suaves del timeline (v2/audio/sfx/*.mp3). synth() queda como archivo historico y no se usa.
+- Ducking por envolvente suave: musica -13.5 dB bajo la voz, -6 dB en respiros, -5.5 dB en el remate.
 Salida: v2/audio/mix_v2.wav (48 kHz estereo, -14 LUFS, TP -1.5 dBTP)
 """
 import json, os, shutil, subprocess, re
@@ -146,8 +146,9 @@ def synth():
 
 def main():
     sfx_dir = os.path.join(V2, "audio", "sfx")
-    S = synth()
-    for k in ("whoosh1", "whoosh2", "scan", "pop", "ding", "vibrate", "success"):
+    # v3: solo acentos organicos suaves (scan, pop, vibrate, ding, success); sin glitch, impact, riser ni whoosh
+    S = {}
+    for k in sorted({s["name"] for s in TL["sfx"]}):
         S[k] = load(os.path.join(sfx_dir, f"{k}.mp3"))
     # normaliza cada SFX a pico -1 dBFS (las ganancias del timeline mandan)
     for k in S:
@@ -196,15 +197,14 @@ def main():
 
     # ---------------- envolvente de ducking (dB)
     tt = np.arange(N) / SR
-    env = np.full(N, -6.0)                      # respiros entre frases
-    env[tt < 0.10] = 0.0                        # golpe de intro
+    env = np.full(N, -6.0)                      # respiros entre frases (sin golpe de intro)
     end_v6 = max(r[1] for r in regions)
     for s, e in regions:
-        att, rel = 0.10, 0.28
+        att, rel = 0.18, 0.40                   # ducking suave, sin bombeo
         k = np.clip((tt - (s - att)) / att, 0, 1) * np.clip(((e + rel) - tt) / rel, 0, 1)
-        env = np.minimum(env, -6.0 - 8.0 * np.clip(k * 1.0, 0, 1))  # -14 dB bajo voz
-    up = np.clip((tt - (end_v6 + 0.05)) / 0.25, 0, 1)
-    env = env * (1 - up) + (-1.0) * up          # remate final casi pleno
+        env = np.minimum(env, -6.0 - 7.5 * np.clip(k * 1.0, 0, 1))  # -13.5 dB bajo voz
+    up = np.clip((tt - (end_v6 + 0.04)) / 0.60, 0, 1)
+    env = env * (1 - up) + (-5.5) * up          # recuperacion progresiva suave a -5.5 dB para el remate
     music_d = music * db(env)[:, None]
 
     # ---------------- SFX

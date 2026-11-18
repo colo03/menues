@@ -4,38 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Sistema Integral para Restaurantes y Mozos</title>
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="stylesheet" href="css/base.css">
   <style>
     .wrap { max-width: 1040px; margin: 0 auto; padding: 52px 16px; }
-    .mark {
-      width: 56px; height: 56px; border-radius: 14px; background: var(--accent); color: #fff;
-      display: grid; place-items: center; font-size: 28px; font-weight: 800; margin-bottom: 20px;
-    }
-    h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -.02em; max-width: 780px; }
-    .lead { font-size: 18px; color: var(--ink-2); max-width: 720px; margin: 14px 0 34px; }
+    h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; max-width: 780px; }
+    .lead { font-size: 18px; color: var(--ink-2); max-width: 720px; margin: 14px 0 34px; line-height: 1.5; }
     .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; }
     .card {
-      background: var(--surface); border-radius: 18px; padding: 22px; box-shadow: var(--shadow);
+      background: var(--surface); border-radius: var(--radius-card); padding: 22px; box-shadow: var(--shadow-card);
       display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: inherit;
-      border: 2px solid transparent; transition: border-color .15s, transform .15s;
+      border: 1px solid var(--line);
+      transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
     }
-    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
-    .card .ico { font-size: 32px; }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-float); }
+    .card .ico { font-size: 30px; line-height: 1; }
     .card h2 { font-size: 18px; font-weight: 800; }
-    .card p { color: var(--ink-2); font-size: 13.5px; }
+    .card p { color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
     .card .go { margin-top: auto; font-weight: 700; color: var(--accent); font-size: 14px; }
-    .card.hl { background: var(--ink); color: #fff; }
-    .card.hl p { color: rgba(255,255,255,.72); }
+    .card.hl { background: var(--ink); border-color: var(--ink); color: var(--dark-ink); }
+    .card.hl:hover { border-color: var(--accent); }
+    .card.hl p { color: rgba(250, 247, 242, 0.72); }
     .flow { margin-top: 44px; display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
-    .step { padding: 16px; border-radius: 14px; background: var(--surface-2); }
+    .step { padding: 16px; border-radius: var(--radius-card); background: var(--surface-2); border: 1px solid var(--line); }
     .step b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 4px; }
     .step span { font-size: 13.5px; color: var(--ink-2); }
-    h3 { margin-top: 44px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); }
+    h3 { margin-top: 44px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <img src="logo.svg" alt="SaleListo" style="height:54px;margin-bottom:20px;display:block">
+    <img src="logo.svg" alt="SaleListo" style="height:50px;margin-bottom:22px;display:block">
     <h1>Pedidos desde la mesa sin Wi-Fi, conectados con Cocina, Barra y Mozos.</h1>
     <p class="lead">El restaurante arma su salón por bloques, carga su menú con precios y gestiona sus mozos en vivo. El cliente escanea el QR fijo de su mesa con 4G/5G, el pedido viaja separado a Cocina y Barra, y el sistema asigna y avisa al mozo correspondiente.</p>
 

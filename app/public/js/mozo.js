@@ -19,12 +19,13 @@
     lv.hidden = false;
     const pub = await fetch('api/waiters-public').then((r) => r.json());
     if (!pub.waiters.length) {
-      lv.innerHTML = `<div class="login-card"><h1>Sin mozos cargados</h1><p>Agregá mozos desde el Panel del Restaurante para ingresar acá.</p><a class="btn btn-primary" href="restaurante.html">Ir al Panel</a></div>`;
+      lv.innerHTML = `<div class="login-card"><img src="logo.svg" alt="SaleListo" style="height:36px;margin-bottom:14px;display:block"><h1>Sin mozos cargados</h1><p>Agregá mozos desde el Panel del Restaurante para ingresar acá.</p><a class="btn btn-primary" href="restaurante.html">Ir al Panel</a></div>`;
       return;
     }
     lv.innerHTML = `
       <div class="login-card">
-        <p style="font-size:12px;font-weight:800;color:var(--accent);text-transform:uppercase">${escapeHtml(pub.restaurant)}</p>
+        <img src="logo.svg" alt="SaleListo" style="height:36px;margin-bottom:14px;display:block">
+        <p style="font-size:12px;font-weight:800;color:var(--accent);text-transform:uppercase;margin-bottom:4px">${escapeHtml(pub.restaurant)}</p>
         <h1>App del Mozo</h1>
         <p>Elegí tu nombre para recibir en vivo los pedidos, retiros de barra/cocina y llamados de tus mesas.</p>
         <div class="w-pick-list">

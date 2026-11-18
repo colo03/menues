@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SaleListo · Catálogo Comparativo de Identidad Visual</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1800px;
+      background: #F3EEE6;
+      color: #1C1917;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      padding: 44px 52px 52px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .sheet-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #DED6C8;
+    }
+    .eyebrow {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #D9412B;
+      margin-bottom: 6px;
+    }
+    h1 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      color: #1C1917;
+    }
+    .meta-right {
+      text-align: right;
+      font-size: 13px;
+      color: #57534E;
+      line-height: 1.5;
+    }
+    .palette-chips {
+      display: inline-flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .p-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #FFFFFF;
+      border: 1px solid #E6DFD3;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #1C1917;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .card {
+      background: #FFFFFF;
+      border: 1px solid #E6DFD3;
+      border-radius: 20px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: 0 2px 6px rgba(28, 25, 23, 0.03), 0 12px 28px rgba(28, 25, 23, 0.04);
+    }
+    .card.winner {
+      border: 2px solid #D9412B;
+      box-shadow: 0 4px 12px rgba(217, 65, 43, 0.08), 0 16px 36px rgba(28, 25, 23, 0.06);
+    }
+    .card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    h2 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: #1C1917;
+    }
+    .sub {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #57534E;
+      margin-top: 2px;
+    }
+    .opt-pill, .winner-pill {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 4px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .opt-pill {
+      background: #F3EEE6;
+      color: #57534E;
+    }
+    .winner-pill {
+      background: #D9412B;
+      color: #FFFFFF;
+    }
+    .swatch {
+      position: relative;
+      height: 118px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 24px;
+    }
+    .light-swatch {
+      background: #FAF7F2;
+      border: 1px solid #EAE3D7;
+    }
+    .dark-swatch {
+      background: #1F1B16;
+      border: 1px solid #2E2922;
+    }
+    .swatch-tag {
+      position: absolute;
+      top: 9px;
+      left: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #8C8275;
+      text-transform: uppercase;
+    }
+    .dark-tag {
+      color: #8E8579;
+    }
+    .logo-img {
+      height: 54px;
+      width: auto;
+      display: block;
+      margin-top: 8px;
+    }
+    .logo-dark-inline svg {
+      height: 54px;
+      width: auto;
+      display: block;
+      margin-top: 8px;
+    }
+    .logo-dark-inline svg .wordmark-ink {
+      fill: #FAF7F2 !important;
+    }
+    .scale-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .scale-box {
+      border-radius: 11px;
+      padding: 10px 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 7px;
+      height: 82px;
+    }
+    .scale-box span {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .light-mini, .fav-light {
+      background: #FAF7F2;
+      border: 1px solid #EAE3D7;
+      color: #57534E;
+    }
+    .dark-mini, .fav-dark {
+      background: #1F1B16;
+      border: 1px solid #2E2922;
+      color: #A8A096;
+    }
+    .fav-tab {
+      width: 40px;
+      height: 40px;
+      border-radius: 9px;
+      background: #FFFFFF;
+      border: 1px solid #E6DFD3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fav-tab.dark {
+      background: #2A251F;
+      border-color: #3B342C;
+    }
+    .desc {
+      font-size: 12.5px;
+      line-height: 1.48;
+      color: #57534E;
+    }
+  </style>
+</head>
+<body>
+  <header class="sheet-header">
+    <div>
+      <div class="eyebrow">SaleListo · Exploración de Identidad Visual</div>
+      <h1>6 Propuestas de Logotipo + Isotipo Vectorial</h1>
+    </div>
+    <div class="meta-right">
+      <div>Pruebas de contraste sobre Crema (#FAF7F2), Carbón (#1F1B16) y Favicon real (24px)</div>
+      <div class="palette-chips">
+        <span class="p-chip"><span class="dot" style="background:#FAF7F2"></span>#FAF7F2</span>
+        <span class="p-chip"><span class="dot" style="background:#1F1B16"></span>#1F1B16</span>
+        <span class="p-chip"><span class="dot" style="background:#1C1917"></span>#1C1917</span>
+        <span class="p-chip"><span class="dot" style="background:#D9412B"></span>#D9412B</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="grid">
+    
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 01 · Pase Limpio</h2>
+            <p class="sub">Campana de pase geométrica + corte negativo</p>
+          </div>
+          <span class="opt-pill">OPCIÓN 01</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_1_logo.svg" alt="Propuesta 01 · Pase Limpio sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 64" fill="none">
+  <path d="M20 0H44C55.8 0 64 8.2 64 20V44C64 55.8 55.8 64 44 64H20C8.2 64 0 55.8 0 44V20C0 8.2 8.2 0 20 0Z" fill="#D9412B"/>
+  <rect x="27" y="12.2" width="10" height="4.2" rx="2.1" fill="#FAF7F2"/>
+  <path d="M14.5 40.5H49.5C50.33 40.5 51 39.83 51 39C50.1 28.2 41.95 20 32 20C22.05 20 13.9 28.2 13 39C13 39.83 13.67 40.5 14.5 40.5Z" fill="#FAF7F2"/>
+  <rect x="11.5" y="44.5" width="41" height="5" rx="2.5" fill="#FAF7F2"/>
+  <path d="M23 31.2L29 37.2L46.5 19.7" stroke="#D9412B" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path class="wordmark-ink" d="M90.44 44.64Q87.83 44.64 85.6 43.68Q83.37 42.73 81.77 41.02Q80.17 39.31 79.44 37.02L83.59 35.22Q84.59 37.58 86.46 38.92Q88.34 40.26 90.7 40.26Q92.02 40.26 93 39.84Q93.97 39.42 94.5 38.68Q95.04 37.94 95.04 36.91Q95.04 35.7 94.32 34.91Q93.6 34.12 92.17 33.68L86.91 31.98Q83.7 30.99 82.08 29Q80.47 27.01 80.47 24.33Q80.47 21.97 81.62 20.17Q82.78 18.37 84.86 17.35Q86.94 16.34 89.63 16.34Q92.09 16.34 94.16 17.21Q96.22 18.07 97.71 19.6Q99.2 21.13 99.93 23.19L95.81 25.03Q95 22.97 93.38 21.84Q91.76 20.72 89.63 20.72Q88.38 20.72 87.42 21.14Q86.46 21.57 85.93 22.32Q85.4 23.08 85.4 24.11Q85.4 25.25 86.13 26.11Q86.87 26.98 88.38 27.46L93.42 29.04Q96.69 30.11 98.33 31.98Q99.97 33.86 99.97 36.62Q99.97 38.97 98.76 40.78Q97.54 42.58 95.41 43.61Q93.27 44.64 90.44 44.64Z M108.88 44.64Q106.78 44.64 105.23 43.94Q103.69 43.24 102.84 41.94Q101.99 40.63 101.99 38.9Q101.99 37.24 102.73 35.94Q103.47 34.63 105.01 33.75Q106.56 32.87 108.91 32.5L115.46 31.43V35.11L109.83 36.07Q108.4 36.32 107.7 36.99Q107 37.65 107 38.72Q107 39.75 107.79 40.35Q108.58 40.96 109.76 40.96Q111.27 40.96 112.43 40.32Q113.59 39.67 114.23 38.53Q114.87 37.39 114.87 36.03V30.88Q114.87 29.59 113.86 28.73Q112.85 27.86 111.19 27.86Q109.65 27.86 108.45 28.69Q107.26 29.52 106.7 30.88L102.77 28.96Q103.36 27.38 104.62 26.22Q105.89 25.06 107.62 24.4Q109.35 23.74 111.38 23.74Q113.84 23.74 115.72 24.64Q117.6 25.54 118.65 27.14Q119.69 28.74 119.69 30.88V44.2H115.13V40.78L116.16 40.7Q115.39 41.99 114.32 42.86Q113.25 43.72 111.89 44.18Q110.53 44.64 108.88 44.64Z M123.19 44.2V16.34H128.01V44.2Z M140.93 44.64Q137.84 44.64 135.52 43.24Q133.2 41.84 131.91 39.45Q130.62 37.06 130.62 34.15Q130.62 31.14 131.93 28.8Q133.24 26.46 135.5 25.1Q137.76 23.74 140.56 23.74Q142.92 23.74 144.7 24.51Q146.48 25.28 147.74 26.65Q148.99 28.01 149.65 29.76Q150.31 31.5 150.31 33.53Q150.31 34.04 150.26 34.6Q150.2 35.15 150.05 35.55H134.6V31.87H147.33L145.05 33.6Q145.38 31.91 144.88 30.58Q144.39 29.26 143.26 28.49Q142.14 27.71 140.56 27.71Q139.05 27.71 137.87 28.47Q136.7 29.22 136.09 30.68Q135.48 32.13 135.63 34.19Q135.48 36.03 136.13 37.45Q136.77 38.86 138.04 39.64Q139.31 40.41 140.96 40.41Q142.62 40.41 143.78 39.71Q144.94 39.01 145.6 37.83L149.5 39.75Q148.91 41.18 147.66 42.29Q146.41 43.39 144.7 44.02Q142.99 44.64 140.93 44.64Z M153.7 44.2V16.78H159.4V39.23H170.99V44.2Z M172.54 44.2V24.11H178.06V44.2Z M188.95 44.64Q185.64 44.64 183.19 43.08Q180.75 41.51 179.86 38.86L183.91 36.95Q184.68 38.57 186.01 39.49Q187.33 40.41 188.95 40.41Q190.13 40.41 190.76 39.93Q191.38 39.45 191.38 38.61Q191.38 38.16 191.16 37.85Q190.94 37.54 190.5 37.28Q190.06 37.02 189.39 36.84L185.97 35.88Q183.51 35.18 182.18 33.62Q180.86 32.06 180.86 29.92Q180.86 28.04 181.81 26.65Q182.77 25.25 184.5 24.46Q186.23 23.67 188.47 23.67Q191.42 23.67 193.64 25.05Q195.87 26.43 196.79 28.93L192.71 30.84Q192.26 29.59 191.1 28.84Q189.95 28.08 188.47 28.08Q187.41 28.08 186.8 28.52Q186.19 28.96 186.19 29.74Q186.19 30.14 186.41 30.47Q186.63 30.8 187.13 31.06Q187.63 31.32 188.36 31.54L191.56 32.5Q194.07 33.23 195.39 34.72Q196.72 36.21 196.72 38.39Q196.72 40.26 195.74 41.66Q194.77 43.06 193.04 43.85Q191.31 44.64 188.95 44.64Z M208.6 44.42Q204.96 44.42 202.95 42.45Q200.95 40.48 200.95 36.95V28.89H197.56V24.11H197.75Q199.29 24.11 200.12 23.33Q200.95 22.56 200.95 21.02V19.54H206.47V24.11H211.18V28.89H206.47V36.58Q206.47 37.61 206.84 38.29Q207.2 38.97 207.98 39.31Q208.75 39.64 209.89 39.64Q210.15 39.64 210.48 39.6Q210.81 39.56 211.18 39.53V44.2Q210.63 44.27 209.93 44.35Q209.23 44.42 208.6 44.42Z M223.29 44.64Q220.31 44.64 217.86 43.28Q215.41 41.92 213.96 39.54Q212.5 37.17 212.5 34.15Q212.5 31.1 213.96 28.74Q215.41 26.39 217.86 25.03Q220.31 23.67 223.29 23.67Q226.27 23.67 228.7 25.03Q231.12 26.39 232.58 28.74Q234.03 31.1 234.03 34.15Q234.03 37.17 232.58 39.54Q231.12 41.92 228.7 43.28Q226.27 44.64 223.29 44.64ZM223.29 39.67Q224.8 39.67 225.92 38.97Q227.04 38.28 227.68 37.02Q228.33 35.77 228.33 34.15Q228.33 32.53 227.68 31.3Q227.04 30.07 225.92 29.35Q224.8 28.63 223.29 28.63Q221.78 28.63 220.64 29.35Q219.5 30.07 218.85 31.3Q218.21 32.53 218.21 34.15Q218.21 35.77 218.85 37.02Q219.5 38.28 220.64 38.97Q221.78 39.67 223.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="172.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_1_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_1_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_1_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_1_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Domo minimalista sobre squircle bermellón con corte ascendente en espacio negativo que rompe el borde superior derecho.</p>
+      </article>
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 02 · Comanda Bifurcada</h2>
+            <p class="sub">Ticket con pliegue dinámico Cocina / Barra</p>
+          </div>
+          <span class="opt-pill">OPCIÓN 02</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_2_logo.svg" alt="Propuesta 02 · Comanda Bifurcada sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 235 64" fill="none">
+  <path d="M19 4H42L56 18V48C56 54.63 50.63 60 44 60H36.8A4.8 4.8 0 0 0 27.2 60H20C13.37 60 8 54.63 8 48V15C8 8.92 12.92 4 19 4Z" fill="#D9412B"/>
+  <path d="M42 4V13C42 15.76 44.24 18 47 18H56L42 4Z" fill="#F6B8AE"/>
+  <path d="M32 47V36.5M32 36.5L21 25.5M32 36.5L43 25.5" stroke="#FAF7F2" stroke-width="5.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="21" cy="25.5" r="3.4" fill="#FAF7F2"/>
+  <circle cx="43" cy="25.5" r="3.4" fill="#FAF7F2"/>
+  <circle cx="32" cy="47.5" r="3.4" fill="#FAF7F2"/>
+  <path class="wordmark-ink" d="M86.44 44.64Q83.83 44.64 81.6 43.68Q79.37 42.73 77.77 41.02Q76.17 39.31 75.44 37.02L79.59 35.22Q80.59 37.58 82.46 38.92Q84.34 40.26 86.7 40.26Q88.02 40.26 89 39.84Q89.97 39.42 90.5 38.68Q91.04 37.94 91.04 36.91Q91.04 35.7 90.32 34.91Q89.6 34.12 88.17 33.68L82.91 31.98Q79.7 30.99 78.08 29Q76.47 27.01 76.47 24.33Q76.47 21.97 77.62 20.17Q78.78 18.37 80.86 17.35Q82.94 16.34 85.63 16.34Q88.09 16.34 90.16 17.21Q92.22 18.07 93.71 19.6Q95.2 21.13 95.93 23.19L91.81 25.03Q91 22.97 89.38 21.84Q87.76 20.72 85.63 20.72Q84.38 20.72 83.42 21.14Q82.46 21.57 81.93 22.32Q81.4 23.08 81.4 24.11Q81.4 25.25 82.13 26.11Q82.87 26.98 84.38 27.46L89.42 29.04Q92.69 30.11 94.33 31.98Q95.97 33.86 95.97 36.62Q95.97 38.97 94.76 40.78Q93.54 42.58 91.41 43.61Q89.27 44.64 86.44 44.64Z M104.88 44.64Q102.78 44.64 101.23 43.94Q99.69 43.24 98.84 41.94Q97.99 40.63 97.99 38.9Q97.99 37.24 98.73 35.94Q99.47 34.63 101.01 33.75Q102.56 32.87 104.91 32.5L111.46 31.43V35.11L105.83 36.07Q104.4 36.32 103.7 36.99Q103 37.65 103 38.72Q103 39.75 103.79 40.35Q104.58 40.96 105.76 40.96Q107.27 40.96 108.43 40.32Q109.59 39.67 110.23 38.53Q110.87 37.39 110.87 36.03V30.88Q110.87 29.59 109.86 28.73Q108.85 27.86 107.19 27.86Q105.65 27.86 104.45 28.69Q103.26 29.52 102.7 30.88L98.77 28.96Q99.36 27.38 100.62 26.22Q101.89 25.06 103.62 24.4Q105.35 23.74 107.38 23.74Q109.84 23.74 111.72 24.64Q113.6 25.54 114.65 27.14Q115.69 28.74 115.69 30.88V44.2H111.13V40.78L112.16 40.7Q111.39 41.99 110.32 42.86Q109.25 43.72 107.89 44.18Q106.53 44.64 104.88 44.64Z M119.19 44.2V16.34H124.01V44.2Z M136.93 44.64Q133.84 44.64 131.52 43.24Q129.2 41.84 127.91 39.45Q126.62 37.06 126.62 34.15Q126.62 31.14 127.93 28.8Q129.24 26.46 131.5 25.1Q133.76 23.74 136.56 23.74Q138.92 23.74 140.7 24.51Q142.48 25.28 143.74 26.65Q144.99 28.01 145.65 29.76Q146.31 31.5 146.31 33.53Q146.31 34.04 146.26 34.6Q146.2 35.15 146.05 35.55H130.6V31.87H143.33L141.05 33.6Q141.38 31.91 140.88 30.58Q140.39 29.26 139.26 28.49Q138.14 27.71 136.56 27.71Q135.05 27.71 133.87 28.47Q132.7 29.22 132.09 30.68Q131.48 32.13 131.63 34.19Q131.48 36.03 132.13 37.45Q132.77 38.86 134.04 39.64Q135.31 40.41 136.96 40.41Q138.62 40.41 139.78 39.71Q140.94 39.01 141.6 37.83L145.5 39.75Q144.91 41.18 143.66 42.29Q142.41 43.39 140.7 44.02Q138.99 44.64 136.93 44.64Z M149.7 44.2V16.78H155.4V39.23H166.99V44.2Z M168.54 44.2V24.11H174.06V44.2Z M184.95 44.64Q181.64 44.64 179.19 43.08Q176.75 41.51 175.86 38.86L179.91 36.95Q180.68 38.57 182.01 39.49Q183.33 40.41 184.95 40.41Q186.13 40.41 186.76 39.93Q187.38 39.45 187.38 38.61Q187.38 38.16 187.16 37.85Q186.94 37.54 186.5 37.28Q186.06 37.02 185.39 36.84L181.97 35.88Q179.51 35.18 178.18 33.62Q176.86 32.06 176.86 29.92Q176.86 28.04 177.81 26.65Q178.77 25.25 180.5 24.46Q182.23 23.67 184.47 23.67Q187.42 23.67 189.64 25.05Q191.87 26.43 192.79 28.93L188.71 30.84Q188.26 29.59 187.1 28.84Q185.95 28.08 184.47 28.08Q183.41 28.08 182.8 28.52Q182.19 28.96 182.19 29.74Q182.19 30.14 182.41 30.47Q182.63 30.8 183.13 31.06Q183.63 31.32 184.36 31.54L187.56 32.5Q190.07 33.23 191.39 34.72Q192.72 36.21 192.72 38.39Q192.72 40.26 191.74 41.66Q190.77 43.06 189.04 43.85Q187.31 44.64 184.95 44.64Z M204.6 44.42Q200.96 44.42 198.95 42.45Q196.95 40.48 196.95 36.95V28.89H193.56V24.11H193.75Q195.29 24.11 196.12 23.33Q196.95 22.56 196.95 21.02V19.54H202.47V24.11H207.18V28.89H202.47V36.58Q202.47 37.61 202.84 38.29Q203.2 38.97 203.98 39.31Q204.75 39.64 205.89 39.64Q206.15 39.64 206.48 39.6Q206.81 39.56 207.18 39.53V44.2Q206.63 44.27 205.93 44.35Q205.23 44.42 204.6 44.42Z M219.29 44.64Q216.31 44.64 213.86 43.28Q211.41 41.92 209.96 39.54Q208.5 37.17 208.5 34.15Q208.5 31.1 209.96 28.74Q211.41 26.39 213.86 25.03Q216.31 23.67 219.29 23.67Q222.27 23.67 224.7 25.03Q227.12 26.39 228.58 28.74Q230.03 31.1 230.03 34.15Q230.03 37.17 228.58 39.54Q227.12 41.92 224.7 43.28Q222.27 44.64 219.29 44.64ZM219.29 39.67Q220.8 39.67 221.92 38.97Q223.04 38.28 223.68 37.02Q224.33 35.77 224.33 34.15Q224.33 32.53 223.68 31.3Q223.04 30.07 221.92 29.35Q220.8 28.63 219.29 28.63Q217.78 28.63 216.64 29.35Q215.5 30.07 214.85 31.3Q214.21 32.53 214.21 34.15Q214.21 35.77 214.85 37.02Q215.5 38.28 216.64 38.97Q217.78 39.67 219.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="168.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_2_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_2_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_2_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_2_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Silueta de comanda con muesca inferior y pliegue en esquina que divide un origen único en dos rutas simultáneas.</p>
+      </article>
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 03 · Mesa QR Cenital</h2>
+            <p class="sub">Plato cenital + 3 nodos de esquina QR</p>
+          </div>
+          <span class="opt-pill">OPCIÓN 03</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_3_logo.svg" alt="Propuesta 03 · Mesa QR Cenital sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 64" fill="none">
+  <path d="M6 21V12.5C6 8.91 8.91 6 12.5 6H21" stroke="#D9412B" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M43 6H51.5C55.09 6 58 8.91 58 12.5V21" stroke="#D9412B" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M6 43V51.5C6 55.09 8.91 58 12.5 58H21" stroke="#D9412B" stroke-width="5.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="51.5" cy="51.5" r="4.2" fill="#D9412B"/>
+  <circle cx="32" cy="32" r="13.8" stroke="#D9412B" stroke-width="5.8"/>
+  <circle cx="32" cy="32" r="4.0" fill="#D9412B"/>
+  <path class="wordmark-ink" d="M87.44 44.64Q84.83 44.64 82.6 43.68Q80.37 42.73 78.77 41.02Q77.17 39.31 76.44 37.02L80.59 35.22Q81.59 37.58 83.46 38.92Q85.34 40.26 87.7 40.26Q89.02 40.26 90 39.84Q90.97 39.42 91.5 38.68Q92.04 37.94 92.04 36.91Q92.04 35.7 91.32 34.91Q90.6 34.12 89.17 33.68L83.91 31.98Q80.7 30.99 79.08 29Q77.47 27.01 77.47 24.33Q77.47 21.97 78.62 20.17Q79.78 18.37 81.86 17.35Q83.94 16.34 86.63 16.34Q89.09 16.34 91.16 17.21Q93.22 18.07 94.71 19.6Q96.2 21.13 96.93 23.19L92.81 25.03Q92 22.97 90.38 21.84Q88.76 20.72 86.63 20.72Q85.38 20.72 84.42 21.14Q83.46 21.57 82.93 22.32Q82.4 23.08 82.4 24.11Q82.4 25.25 83.13 26.11Q83.87 26.98 85.38 27.46L90.42 29.04Q93.69 30.11 95.33 31.98Q96.97 33.86 96.97 36.62Q96.97 38.97 95.76 40.78Q94.54 42.58 92.41 43.61Q90.27 44.64 87.44 44.64Z M105.88 44.64Q103.78 44.64 102.23 43.94Q100.69 43.24 99.84 41.94Q98.99 40.63 98.99 38.9Q98.99 37.24 99.73 35.94Q100.47 34.63 102.01 33.75Q103.56 32.87 105.91 32.5L112.46 31.43V35.11L106.83 36.07Q105.4 36.32 104.7 36.99Q104 37.65 104 38.72Q104 39.75 104.79 40.35Q105.58 40.96 106.76 40.96Q108.27 40.96 109.43 40.32Q110.59 39.67 111.23 38.53Q111.87 37.39 111.87 36.03V30.88Q111.87 29.59 110.86 28.73Q109.85 27.86 108.19 27.86Q106.65 27.86 105.45 28.69Q104.26 29.52 103.7 30.88L99.77 28.96Q100.36 27.38 101.62 26.22Q102.89 25.06 104.62 24.4Q106.35 23.74 108.38 23.74Q110.84 23.74 112.72 24.64Q114.6 25.54 115.65 27.14Q116.69 28.74 116.69 30.88V44.2H112.13V40.78L113.16 40.7Q112.39 41.99 111.32 42.86Q110.25 43.72 108.89 44.18Q107.53 44.64 105.88 44.64Z M120.19 44.2V16.34H125.01V44.2Z M137.93 44.64Q134.84 44.64 132.52 43.24Q130.2 41.84 128.91 39.45Q127.62 37.06 127.62 34.15Q127.62 31.14 128.93 28.8Q130.24 26.46 132.5 25.1Q134.76 23.74 137.56 23.74Q139.92 23.74 141.7 24.51Q143.48 25.28 144.74 26.65Q145.99 28.01 146.65 29.76Q147.31 31.5 147.31 33.53Q147.31 34.04 147.26 34.6Q147.2 35.15 147.05 35.55H131.6V31.87H144.33L142.05 33.6Q142.38 31.91 141.88 30.58Q141.39 29.26 140.26 28.49Q139.14 27.71 137.56 27.71Q136.05 27.71 134.87 28.47Q133.7 29.22 133.09 30.68Q132.48 32.13 132.63 34.19Q132.48 36.03 133.13 37.45Q133.77 38.86 135.04 39.64Q136.31 40.41 137.96 40.41Q139.62 40.41 140.78 39.71Q141.94 39.01 142.6 37.83L146.5 39.75Q145.91 41.18 144.66 42.29Q143.41 43.39 141.7 44.02Q139.99 44.64 137.93 44.64Z M150.7 44.2V16.78H156.4V39.23H167.99V44.2Z M169.54 44.2V24.11H175.06V44.2Z M185.95 44.64Q182.64 44.64 180.19 43.08Q177.75 41.51 176.86 38.86L180.91 36.95Q181.68 38.57 183.01 39.49Q184.33 40.41 185.95 40.41Q187.13 40.41 187.76 39.93Q188.38 39.45 188.38 38.61Q188.38 38.16 188.16 37.85Q187.94 37.54 187.5 37.28Q187.06 37.02 186.39 36.84L182.97 35.88Q180.51 35.18 179.18 33.62Q177.86 32.06 177.86 29.92Q177.86 28.04 178.81 26.65Q179.77 25.25 181.5 24.46Q183.23 23.67 185.47 23.67Q188.42 23.67 190.64 25.05Q192.87 26.43 193.79 28.93L189.71 30.84Q189.26 29.59 188.1 28.84Q186.95 28.08 185.47 28.08Q184.41 28.08 183.8 28.52Q183.19 28.96 183.19 29.74Q183.19 30.14 183.41 30.47Q183.63 30.8 184.13 31.06Q184.63 31.32 185.36 31.54L188.56 32.5Q191.07 33.23 192.39 34.72Q193.72 36.21 193.72 38.39Q193.72 40.26 192.74 41.66Q191.77 43.06 190.04 43.85Q188.31 44.64 185.95 44.64Z M205.6 44.42Q201.96 44.42 199.95 42.45Q197.95 40.48 197.95 36.95V28.89H194.56V24.11H194.75Q196.29 24.11 197.12 23.33Q197.95 22.56 197.95 21.02V19.54H203.47V24.11H208.18V28.89H203.47V36.58Q203.47 37.61 203.84 38.29Q204.2 38.97 204.98 39.31Q205.75 39.64 206.89 39.64Q207.15 39.64 207.48 39.6Q207.81 39.56 208.18 39.53V44.2Q207.63 44.27 206.93 44.35Q206.23 44.42 205.6 44.42Z M220.29 44.64Q217.31 44.64 214.86 43.28Q212.41 41.92 210.96 39.54Q209.5 37.17 209.5 34.15Q209.5 31.1 210.96 28.74Q212.41 26.39 214.86 25.03Q217.31 23.67 220.29 23.67Q223.27 23.67 225.7 25.03Q228.12 26.39 229.58 28.74Q231.03 31.1 231.03 34.15Q231.03 37.17 229.58 39.54Q228.12 41.92 225.7 43.28Q223.27 44.64 220.29 44.64ZM220.29 39.67Q221.8 39.67 222.92 38.97Q224.04 38.28 224.68 37.02Q225.33 35.77 225.33 34.15Q225.33 32.53 224.68 31.3Q224.04 30.07 222.92 29.35Q221.8 28.63 220.29 28.63Q218.78 28.63 217.64 29.35Q216.5 30.07 215.85 31.3Q215.21 32.53 215.21 34.15Q215.21 35.77 215.85 37.02Q216.5 38.28 217.64 38.97Q218.78 39.67 220.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="169.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_3_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_3_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_3_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_3_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Vista superior de mesa y vajilla enmarcada por tres esquineros geométricos inspirados en los patrones de lectura QR.</p>
+      </article>
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 04 · Monograma SL</h2>
+            <p class="sub">Entrelazado geométrico SL + tilde rápido</p>
+          </div>
+          <span class="opt-pill">OPCIÓN 04</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_4_logo.svg" alt="Propuesta 04 · Monograma SL sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 64" fill="none">
+  <path d="M20 0H44C55.8 0 64 8.2 64 20V44C64 55.8 55.8 64 44 64H20C8.2 64 0 55.8 0 44V20C0 8.2 8.2 0 20 0Z" fill="#D9412B"/>
+  <path d="M34.8 17.2V41.2L40.0 46.4L51.8 29.2" stroke="#FAF7F2" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31.2 21.8C29.7 18.8 26.5 17.2 22.4 17.2C17.0 17.2 13.4 20.1 13.4 24.2C13.4 28.5 17.0 30.2 23.0 31.5C29.2 32.9 32.8 34.8 32.8 39.5C32.8 44.0 28.9 46.8 22.6 46.8C18.0 46.8 14.6 44.9 13.2 41.5" stroke="#D9412B" stroke-width="10.0" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31.2 21.8C29.7 18.8 26.5 17.2 22.4 17.2C17.0 17.2 13.4 20.1 13.4 24.2C13.4 28.5 17.0 30.2 23.0 31.5C29.2 32.9 32.8 34.8 32.8 39.5C32.8 44.0 28.9 46.8 22.6 46.8C18.0 46.8 14.6 44.9 13.2 41.5" stroke="#FAF7F2" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path class="wordmark-ink" d="M90.44 44.64Q87.83 44.64 85.6 43.68Q83.37 42.73 81.77 41.02Q80.17 39.31 79.44 37.02L83.59 35.22Q84.59 37.58 86.46 38.92Q88.34 40.26 90.7 40.26Q92.02 40.26 93 39.84Q93.97 39.42 94.5 38.68Q95.04 37.94 95.04 36.91Q95.04 35.7 94.32 34.91Q93.6 34.12 92.17 33.68L86.91 31.98Q83.7 30.99 82.08 29Q80.47 27.01 80.47 24.33Q80.47 21.97 81.62 20.17Q82.78 18.37 84.86 17.35Q86.94 16.34 89.63 16.34Q92.09 16.34 94.16 17.21Q96.22 18.07 97.71 19.6Q99.2 21.13 99.93 23.19L95.81 25.03Q95 22.97 93.38 21.84Q91.76 20.72 89.63 20.72Q88.38 20.72 87.42 21.14Q86.46 21.57 85.93 22.32Q85.4 23.08 85.4 24.11Q85.4 25.25 86.13 26.11Q86.87 26.98 88.38 27.46L93.42 29.04Q96.69 30.11 98.33 31.98Q99.97 33.86 99.97 36.62Q99.97 38.97 98.76 40.78Q97.54 42.58 95.41 43.61Q93.27 44.64 90.44 44.64Z M108.88 44.64Q106.78 44.64 105.23 43.94Q103.69 43.24 102.84 41.94Q101.99 40.63 101.99 38.9Q101.99 37.24 102.73 35.94Q103.47 34.63 105.01 33.75Q106.56 32.87 108.91 32.5L115.46 31.43V35.11L109.83 36.07Q108.4 36.32 107.7 36.99Q107 37.65 107 38.72Q107 39.75 107.79 40.35Q108.58 40.96 109.76 40.96Q111.27 40.96 112.43 40.32Q113.59 39.67 114.23 38.53Q114.87 37.39 114.87 36.03V30.88Q114.87 29.59 113.86 28.73Q112.85 27.86 111.19 27.86Q109.65 27.86 108.45 28.69Q107.26 29.52 106.7 30.88L102.77 28.96Q103.36 27.38 104.62 26.22Q105.89 25.06 107.62 24.4Q109.35 23.74 111.38 23.74Q113.84 23.74 115.72 24.64Q117.6 25.54 118.65 27.14Q119.69 28.74 119.69 30.88V44.2H115.13V40.78L116.16 40.7Q115.39 41.99 114.32 42.86Q113.25 43.72 111.89 44.18Q110.53 44.64 108.88 44.64Z M123.19 44.2V16.34H128.01V44.2Z M140.93 44.64Q137.84 44.64 135.52 43.24Q133.2 41.84 131.91 39.45Q130.62 37.06 130.62 34.15Q130.62 31.14 131.93 28.8Q133.24 26.46 135.5 25.1Q137.76 23.74 140.56 23.74Q142.92 23.74 144.7 24.51Q146.48 25.28 147.74 26.65Q148.99 28.01 149.65 29.76Q150.31 31.5 150.31 33.53Q150.31 34.04 150.26 34.6Q150.2 35.15 150.05 35.55H134.6V31.87H147.33L145.05 33.6Q145.38 31.91 144.88 30.58Q144.39 29.26 143.26 28.49Q142.14 27.71 140.56 27.71Q139.05 27.71 137.87 28.47Q136.7 29.22 136.09 30.68Q135.48 32.13 135.63 34.19Q135.48 36.03 136.13 37.45Q136.77 38.86 138.04 39.64Q139.31 40.41 140.96 40.41Q142.62 40.41 143.78 39.71Q144.94 39.01 145.6 37.83L149.5 39.75Q148.91 41.18 147.66 42.29Q146.41 43.39 144.7 44.02Q142.99 44.64 140.93 44.64Z M153.7 44.2V16.78H159.4V39.23H170.99V44.2Z M172.54 44.2V24.11H178.06V44.2Z M188.95 44.64Q185.64 44.64 183.19 43.08Q180.75 41.51 179.86 38.86L183.91 36.95Q184.68 38.57 186.01 39.49Q187.33 40.41 188.95 40.41Q190.13 40.41 190.76 39.93Q191.38 39.45 191.38 38.61Q191.38 38.16 191.16 37.85Q190.94 37.54 190.5 37.28Q190.06 37.02 189.39 36.84L185.97 35.88Q183.51 35.18 182.18 33.62Q180.86 32.06 180.86 29.92Q180.86 28.04 181.81 26.65Q182.77 25.25 184.5 24.46Q186.23 23.67 188.47 23.67Q191.42 23.67 193.64 25.05Q195.87 26.43 196.79 28.93L192.71 30.84Q192.26 29.59 191.1 28.84Q189.95 28.08 188.47 28.08Q187.41 28.08 186.8 28.52Q186.19 28.96 186.19 29.74Q186.19 30.14 186.41 30.47Q186.63 30.8 187.13 31.06Q187.63 31.32 188.36 31.54L191.56 32.5Q194.07 33.23 195.39 34.72Q196.72 36.21 196.72 38.39Q196.72 40.26 195.74 41.66Q194.77 43.06 193.04 43.85Q191.31 44.64 188.95 44.64Z M208.6 44.42Q204.96 44.42 202.95 42.45Q200.95 40.48 200.95 36.95V28.89H197.56V24.11H197.75Q199.29 24.11 200.12 23.33Q200.95 22.56 200.95 21.02V19.54H206.47V24.11H211.18V28.89H206.47V36.58Q206.47 37.61 206.84 38.29Q207.2 38.97 207.98 39.31Q208.75 39.64 209.89 39.64Q210.15 39.64 210.48 39.6Q210.81 39.56 211.18 39.53V44.2Q210.63 44.27 209.93 44.35Q209.23 44.42 208.6 44.42Z M223.29 44.64Q220.31 44.64 217.86 43.28Q215.41 41.92 213.96 39.54Q212.5 37.17 212.5 34.15Q212.5 31.1 213.96 28.74Q215.41 26.39 217.86 25.03Q220.31 23.67 223.29 23.67Q226.27 23.67 228.7 25.03Q231.12 26.39 232.58 28.74Q234.03 31.1 234.03 34.15Q234.03 37.17 232.58 39.54Q231.12 41.92 228.7 43.28Q226.27 44.64 223.29 44.64ZM223.29 39.67Q224.8 39.67 225.92 38.97Q227.04 38.28 227.68 37.02Q228.33 35.77 228.33 34.15Q228.33 32.53 227.68 31.3Q227.04 30.07 225.92 29.35Q224.8 28.63 223.29 28.63Q221.78 28.63 220.64 29.35Q219.5 30.07 218.85 31.3Q218.21 32.53 218.21 34.15Q218.21 35.77 218.85 37.02Q219.5 38.28 220.64 38.97Q221.78 39.67 223.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="172.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_4_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_4_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_4_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_4_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Monograma propietario donde la S se entrelaza con el asta vertical de la L, cuyo pie asciende en ángulo de despacho.</p>
+      </article>
+      <article class="card">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 05 · Pulso de Salón</h2>
+            <p class="sub">Bandeja en línea continua + pulso superior</p>
+          </div>
+          <span class="opt-pill">OPCIÓN 05</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_5_logo.svg" alt="Propuesta 05 · Pulso de Salón sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 64" fill="none">
+  <path d="M6.5 46.5L11.5 50.5H52.5L57.5 46.5M15 43.5C15 33.8 22.6 26.5 32 26.5C35.1 26.5 36.8 24.5 36.8 22.2C36.8 19.9 34.7 18.2 32 18.2C29.3 18.2 27.2 19.9 27.2 22.2C27.2 24.5 28.9 26.5 32 26.5C41.4 26.5 49 33.8 49 43.5H15Z" stroke="#D9412B" stroke-width="4.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44.5 18.5C47.8 18.5 50 20.7 50 24" stroke="#D9412B" stroke-width="4.6" stroke-linecap="round"/>
+  <path d="M45.5 11C52.5 11 57.5 16 57.5 23" stroke="#D9412B" stroke-width="4.6" stroke-linecap="round"/>
+  <path class="wordmark-ink" d="M87.44 44.64Q84.83 44.64 82.6 43.68Q80.37 42.73 78.77 41.02Q77.17 39.31 76.44 37.02L80.59 35.22Q81.59 37.58 83.46 38.92Q85.34 40.26 87.7 40.26Q89.02 40.26 90 39.84Q90.97 39.42 91.5 38.68Q92.04 37.94 92.04 36.91Q92.04 35.7 91.32 34.91Q90.6 34.12 89.17 33.68L83.91 31.98Q80.7 30.99 79.08 29Q77.47 27.01 77.47 24.33Q77.47 21.97 78.62 20.17Q79.78 18.37 81.86 17.35Q83.94 16.34 86.63 16.34Q89.09 16.34 91.16 17.21Q93.22 18.07 94.71 19.6Q96.2 21.13 96.93 23.19L92.81 25.03Q92 22.97 90.38 21.84Q88.76 20.72 86.63 20.72Q85.38 20.72 84.42 21.14Q83.46 21.57 82.93 22.32Q82.4 23.08 82.4 24.11Q82.4 25.25 83.13 26.11Q83.87 26.98 85.38 27.46L90.42 29.04Q93.69 30.11 95.33 31.98Q96.97 33.86 96.97 36.62Q96.97 38.97 95.76 40.78Q94.54 42.58 92.41 43.61Q90.27 44.64 87.44 44.64Z M105.88 44.64Q103.78 44.64 102.23 43.94Q100.69 43.24 99.84 41.94Q98.99 40.63 98.99 38.9Q98.99 37.24 99.73 35.94Q100.47 34.63 102.01 33.75Q103.56 32.87 105.91 32.5L112.46 31.43V35.11L106.83 36.07Q105.4 36.32 104.7 36.99Q104 37.65 104 38.72Q104 39.75 104.79 40.35Q105.58 40.96 106.76 40.96Q108.27 40.96 109.43 40.32Q110.59 39.67 111.23 38.53Q111.87 37.39 111.87 36.03V30.88Q111.87 29.59 110.86 28.73Q109.85 27.86 108.19 27.86Q106.65 27.86 105.45 28.69Q104.26 29.52 103.7 30.88L99.77 28.96Q100.36 27.38 101.62 26.22Q102.89 25.06 104.62 24.4Q106.35 23.74 108.38 23.74Q110.84 23.74 112.72 24.64Q114.6 25.54 115.65 27.14Q116.69 28.74 116.69 30.88V44.2H112.13V40.78L113.16 40.7Q112.39 41.99 111.32 42.86Q110.25 43.72 108.89 44.18Q107.53 44.64 105.88 44.64Z M120.19 44.2V16.34H125.01V44.2Z M137.93 44.64Q134.84 44.64 132.52 43.24Q130.2 41.84 128.91 39.45Q127.62 37.06 127.62 34.15Q127.62 31.14 128.93 28.8Q130.24 26.46 132.5 25.1Q134.76 23.74 137.56 23.74Q139.92 23.74 141.7 24.51Q143.48 25.28 144.74 26.65Q145.99 28.01 146.65 29.76Q147.31 31.5 147.31 33.53Q147.31 34.04 147.26 34.6Q147.2 35.15 147.05 35.55H131.6V31.87H144.33L142.05 33.6Q142.38 31.91 141.88 30.58Q141.39 29.26 140.26 28.49Q139.14 27.71 137.56 27.71Q136.05 27.71 134.87 28.47Q133.7 29.22 133.09 30.68Q132.48 32.13 132.63 34.19Q132.48 36.03 133.13 37.45Q133.77 38.86 135.04 39.64Q136.31 40.41 137.96 40.41Q139.62 40.41 140.78 39.71Q141.94 39.01 142.6 37.83L146.5 39.75Q145.91 41.18 144.66 42.29Q143.41 43.39 141.7 44.02Q139.99 44.64 137.93 44.64Z M150.7 44.2V16.78H156.4V39.23H167.99V44.2Z M169.54 44.2V24.11H175.06V44.2Z M185.95 44.64Q182.64 44.64 180.19 43.08Q177.75 41.51 176.86 38.86L180.91 36.95Q181.68 38.57 183.01 39.49Q184.33 40.41 185.95 40.41Q187.13 40.41 187.76 39.93Q188.38 39.45 188.38 38.61Q188.38 38.16 188.16 37.85Q187.94 37.54 187.5 37.28Q187.06 37.02 186.39 36.84L182.97 35.88Q180.51 35.18 179.18 33.62Q177.86 32.06 177.86 29.92Q177.86 28.04 178.81 26.65Q179.77 25.25 181.5 24.46Q183.23 23.67 185.47 23.67Q188.42 23.67 190.64 25.05Q192.87 26.43 193.79 28.93L189.71 30.84Q189.26 29.59 188.1 28.84Q186.95 28.08 185.47 28.08Q184.41 28.08 183.8 28.52Q183.19 28.96 183.19 29.74Q183.19 30.14 183.41 30.47Q183.63 30.8 184.13 31.06Q184.63 31.32 185.36 31.54L188.56 32.5Q191.07 33.23 192.39 34.72Q193.72 36.21 193.72 38.39Q193.72 40.26 192.74 41.66Q191.77 43.06 190.04 43.85Q188.31 44.64 185.95 44.64Z M205.6 44.42Q201.96 44.42 199.95 42.45Q197.95 40.48 197.95 36.95V28.89H194.56V24.11H194.75Q196.29 24.11 197.12 23.33Q197.95 22.56 197.95 21.02V19.54H203.47V24.11H208.18V28.89H203.47V36.58Q203.47 37.61 203.84 38.29Q204.2 38.97 204.98 39.31Q205.75 39.64 206.89 39.64Q207.15 39.64 207.48 39.6Q207.81 39.56 208.18 39.53V44.2Q207.63 44.27 206.93 44.35Q206.23 44.42 205.6 44.42Z M220.29 44.64Q217.31 44.64 214.86 43.28Q212.41 41.92 210.96 39.54Q209.5 37.17 209.5 34.15Q209.5 31.1 210.96 28.74Q212.41 26.39 214.86 25.03Q217.31 23.67 220.29 23.67Q223.27 23.67 225.7 25.03Q228.12 26.39 229.58 28.74Q231.03 31.1 231.03 34.15Q231.03 37.17 229.58 39.54Q228.12 41.92 225.7 43.28Q223.27 44.64 220.29 44.64ZM220.29 39.67Q221.8 39.67 222.92 38.97Q224.04 38.28 224.68 37.02Q225.33 35.77 225.33 34.15Q225.33 32.53 224.68 31.3Q224.04 30.07 222.92 29.35Q221.8 28.63 220.29 28.63Q218.78 28.63 217.64 29.35Q216.5 30.07 215.85 31.3Q215.21 32.53 215.21 34.15Q215.21 35.77 215.85 37.02Q216.5 38.28 217.64 38.97Q218.78 39.67 220.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="169.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_5_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_5_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_5_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_5_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Trazo continuo de bandeja gastronómica y campana con anillo superior, acompañado por ondas limpias de aviso listo.</p>
+      </article>
+      <article class="card winner">
+        <header class="card-head">
+          <div>
+            <h2>Propuesta 06 · Salón en Orden</h2>
+            <p class="sub">Bloques modulares del salón en check armónico</p>
+          </div>
+          <span class="winner-pill">RECOMENDADA</span>
+        </header>
+
+        <div class="swatch light-swatch">
+          <span class="swatch-tag">Fondo Crema · #FAF7F2</span>
+          <img class="logo-img" src="propuesta_6_logo.svg" alt="Propuesta 06 · Salón en Orden sobre crema" />
+        </div>
+
+        <div class="swatch dark-swatch">
+          <span class="swatch-tag dark-tag">Fondo Oscuro · #1F1B16</span>
+          <div class="logo-dark-inline"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 64" fill="none">
+  <path d="M20 0H44C55.8 0 64 8.2 64 20V44C64 55.8 55.8 64 44 64H20C8.2 64 0 55.8 0 44V20C0 8.2 8.2 0 20 0Z" fill="#D9412B"/>
+  <path d="M14.13 29.17L16.96 26.34C18.25 25.05 20.34 25.05 21.63 26.34L24.46 29.17C25.75 30.46 25.75 32.54 24.46 33.83L21.63 36.66C20.34 37.95 18.25 37.95 16.96 36.66L14.13 33.83C12.84 32.54 12.84 30.46 14.13 29.17Z" fill="#FAF7F2"/>
+  <path d="M23.47 38.5L26.3 35.67C27.58 34.38 29.67 34.38 30.96 35.67L33.79 38.5C35.08 39.79 35.08 41.88 33.79 43.17L30.96 46C29.67 47.28 27.58 47.28 26.3 46L23.47 43.17C22.18 41.88 22.18 39.79 23.47 38.5Z" fill="#FAF7F2"/>
+  <path d="M32.8 29.17L44.4 17.57C45.69 16.28 47.78 16.28 49.06 17.57L51.89 20.4C53.18 21.69 53.18 23.78 51.89 25.07L40.3 36.66C39.01 37.95 36.92 37.95 35.63 36.66L32.8 33.83C31.51 32.54 31.51 30.46 32.8 29.17Z" fill="#FAF7F2"/>
+  <path class="wordmark-ink" d="M90.44 44.64Q87.83 44.64 85.6 43.68Q83.37 42.73 81.77 41.02Q80.17 39.31 79.44 37.02L83.59 35.22Q84.59 37.58 86.46 38.92Q88.34 40.26 90.7 40.26Q92.02 40.26 93 39.84Q93.97 39.42 94.5 38.68Q95.04 37.94 95.04 36.91Q95.04 35.7 94.32 34.91Q93.6 34.12 92.17 33.68L86.91 31.98Q83.7 30.99 82.08 29Q80.47 27.01 80.47 24.33Q80.47 21.97 81.62 20.17Q82.78 18.37 84.86 17.35Q86.94 16.34 89.63 16.34Q92.09 16.34 94.16 17.21Q96.22 18.07 97.71 19.6Q99.2 21.13 99.93 23.19L95.81 25.03Q95 22.97 93.38 21.84Q91.76 20.72 89.63 20.72Q88.38 20.72 87.42 21.14Q86.46 21.57 85.93 22.32Q85.4 23.08 85.4 24.11Q85.4 25.25 86.13 26.11Q86.87 26.98 88.38 27.46L93.42 29.04Q96.69 30.11 98.33 31.98Q99.97 33.86 99.97 36.62Q99.97 38.97 98.76 40.78Q97.54 42.58 95.41 43.61Q93.27 44.64 90.44 44.64Z M108.88 44.64Q106.78 44.64 105.23 43.94Q103.69 43.24 102.84 41.94Q101.99 40.63 101.99 38.9Q101.99 37.24 102.73 35.94Q103.47 34.63 105.01 33.75Q106.56 32.87 108.91 32.5L115.46 31.43V35.11L109.83 36.07Q108.4 36.32 107.7 36.99Q107 37.65 107 38.72Q107 39.75 107.79 40.35Q108.58 40.96 109.76 40.96Q111.27 40.96 112.43 40.32Q113.59 39.67 114.23 38.53Q114.87 37.39 114.87 36.03V30.88Q114.87 29.59 113.86 28.73Q112.85 27.86 111.19 27.86Q109.65 27.86 108.45 28.69Q107.26 29.52 106.7 30.88L102.77 28.96Q103.36 27.38 104.62 26.22Q105.89 25.06 107.62 24.4Q109.35 23.74 111.38 23.74Q113.84 23.74 115.72 24.64Q117.6 25.54 118.65 27.14Q119.69 28.74 119.69 30.88V44.2H115.13V40.78L116.16 40.7Q115.39 41.99 114.32 42.86Q113.25 43.72 111.89 44.18Q110.53 44.64 108.88 44.64Z M123.19 44.2V16.34H128.01V44.2Z M140.93 44.64Q137.84 44.64 135.52 43.24Q133.2 41.84 131.91 39.45Q130.62 37.06 130.62 34.15Q130.62 31.14 131.93 28.8Q133.24 26.46 135.5 25.1Q137.76 23.74 140.56 23.74Q142.92 23.74 144.7 24.51Q146.48 25.28 147.74 26.65Q148.99 28.01 149.65 29.76Q150.31 31.5 150.31 33.53Q150.31 34.04 150.26 34.6Q150.2 35.15 150.05 35.55H134.6V31.87H147.33L145.05 33.6Q145.38 31.91 144.88 30.58Q144.39 29.26 143.26 28.49Q142.14 27.71 140.56 27.71Q139.05 27.71 137.87 28.47Q136.7 29.22 136.09 30.68Q135.48 32.13 135.63 34.19Q135.48 36.03 136.13 37.45Q136.77 38.86 138.04 39.64Q139.31 40.41 140.96 40.41Q142.62 40.41 143.78 39.71Q144.94 39.01 145.6 37.83L149.5 39.75Q148.91 41.18 147.66 42.29Q146.41 43.39 144.7 44.02Q142.99 44.64 140.93 44.64Z M153.7 44.2V16.78H159.4V39.23H170.99V44.2Z M172.54 44.2V24.11H178.06V44.2Z M188.95 44.64Q185.64 44.64 183.19 43.08Q180.75 41.51 179.86 38.86L183.91 36.95Q184.68 38.57 186.01 39.49Q187.33 40.41 188.95 40.41Q190.13 40.41 190.76 39.93Q191.38 39.45 191.38 38.61Q191.38 38.16 191.16 37.85Q190.94 37.54 190.5 37.28Q190.06 37.02 189.39 36.84L185.97 35.88Q183.51 35.18 182.18 33.62Q180.86 32.06 180.86 29.92Q180.86 28.04 181.81 26.65Q182.77 25.25 184.5 24.46Q186.23 23.67 188.47 23.67Q191.42 23.67 193.64 25.05Q195.87 26.43 196.79 28.93L192.71 30.84Q192.26 29.59 191.1 28.84Q189.95 28.08 188.47 28.08Q187.41 28.08 186.8 28.52Q186.19 28.96 186.19 29.74Q186.19 30.14 186.41 30.47Q186.63 30.8 187.13 31.06Q187.63 31.32 188.36 31.54L191.56 32.5Q194.07 33.23 195.39 34.72Q196.72 36.21 196.72 38.39Q196.72 40.26 195.74 41.66Q194.77 43.06 193.04 43.85Q191.31 44.64 188.95 44.64Z M208.6 44.42Q204.96 44.42 202.95 42.45Q200.95 40.48 200.95 36.95V28.89H197.56V24.11H197.75Q199.29 24.11 200.12 23.33Q200.95 22.56 200.95 21.02V19.54H206.47V24.11H211.18V28.89H206.47V36.58Q206.47 37.61 206.84 38.29Q207.2 38.97 207.98 39.31Q208.75 39.64 209.89 39.64Q210.15 39.64 210.48 39.6Q210.81 39.56 211.18 39.53V44.2Q210.63 44.27 209.93 44.35Q209.23 44.42 208.6 44.42Z M223.29 44.64Q220.31 44.64 217.86 43.28Q215.41 41.92 213.96 39.54Q212.5 37.17 212.5 34.15Q212.5 31.1 213.96 28.74Q215.41 26.39 217.86 25.03Q220.31 23.67 223.29 23.67Q226.27 23.67 228.7 25.03Q231.12 26.39 232.58 28.74Q234.03 31.1 234.03 34.15Q234.03 37.17 232.58 39.54Q231.12 41.92 228.7 43.28Q226.27 44.64 223.29 44.64ZM223.29 39.67Q224.8 39.67 225.92 38.97Q227.04 38.28 227.68 37.02Q228.33 35.77 228.33 34.15Q228.33 32.53 227.68 31.3Q227.04 30.07 225.92 29.35Q224.8 28.63 223.29 28.63Q221.78 28.63 220.64 29.35Q219.5 30.07 218.85 31.3Q218.21 32.53 218.21 34.15Q218.21 35.77 218.85 37.02Q219.5 38.28 220.64 38.97Q221.78 39.67 223.29 39.67Z" fill="#1C1917"/>
+  <rect class="wordmark-dot" x="172.47" y="16.53" width="5.67" height="5.67" rx="1.5" fill="#D9412B"/>
+</svg></div>
+        </div>
+
+        <div class="scale-row">
+          <div class="scale-box light-mini">
+            <img src="propuesta_6_mark.svg" width="44" height="44" alt="Mark 44px claro" />
+            <span>Isotipo 44px</span>
+          </div>
+          <div class="scale-box dark-mini">
+            <img src="propuesta_6_mark.svg" width="44" height="44" alt="Mark 44px oscuro" />
+            <span>Oscuro 44px</span>
+          </div>
+          <div class="scale-box fav-light">
+            <div class="fav-tab">
+              <img src="propuesta_6_mark.svg" width="24" height="24" alt="Favicon 24px claro" />
+            </div>
+            <span>Favicon 24px</span>
+          </div>
+          <div class="scale-box fav-dark">
+            <div class="fav-tab dark">
+              <img src="propuesta_6_mark.svg" width="24" height="24" alt="Favicon 24px oscuro" />
+            </div>
+            <span>Fav 24px Dark</span>
+          </div>
+        </div>
+
+        <p class="desc">Tres módulos arquitectónicos (sectores de salón, cocina/barra y despacho al mozo) alineados a 45 grados formando un check.</p>
+      </article>
+  </main>
+</body>
+</html>
