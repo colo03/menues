@@ -12,6 +12,9 @@
   let knownReady = new Set();
   let knownCalls = new Set();
   let knownNotifs = new Set();
+  let wristbandActive = false;
+
+  registerSaleListoSW();
 
   async function showLoginScreen() {
     $('#waiterApp').hidden = true;
@@ -98,6 +101,7 @@
     seedKnownSets(state);
     bindEvents();
     renderAll();
+    syncWristbandState(true);
 
     subscribe((s) => {
       state = s;
@@ -127,6 +131,58 @@
     knownNotifs = new Set(s.notifications.filter((n) => isMineOrOrphan(n.waiterId)).map((n) => n.id));
   }
 
+  async function syncWristbandState(resyncServer = false) {
+    const card = $('#wristCard');
+    const badge = $('#wristStateBadge');
+    const enableBtn = $('#wristEnableBtn');
+    const testBtn = $('#wristTestBtn');
+    const disableBtn = $('#wristDisableBtn');
+    if (!card || !badge) return;
+
+    const sup = getPushSupportStatus();
+    const sub = await getExistingPushSubscription();
+
+    if (sub) {
+      if (resyncServer && myId) {
+        try {
+          await apiPost('api/push/subscribe', {
+            waiterId: myId,
+            subscription: sub.toJSON(),
+            wristbandMode: true,
+          });
+        } catch (_) {}
+      }
+      wristbandActive = true;
+      card.classList.add('active');
+      badge.className = 'wrist-state on';
+      badge.textContent = '🟢 Activa para pantalla bloqueada';
+      enableBtn.hidden = true;
+      testBtn.hidden = false;
+      disableBtn.hidden = false;
+      return;
+    }
+
+    wristbandActive = false;
+    card.classList.remove('active');
+    enableBtn.hidden = false;
+    testBtn.hidden = true;
+    disableBtn.hidden = true;
+
+    if (!sup.secure) {
+      badge.className = 'wrist-state warn';
+      badge.textContent = 'Requiere HTTPS o localhost';
+    } else if (sup.isIOS && !sup.isStandalone) {
+      badge.className = 'wrist-state warn';
+      badge.textContent = 'Agregar a Inicio en iPhone';
+    } else if (sup.permission === 'denied') {
+      badge.className = 'wrist-state warn';
+      badge.textContent = 'Permiso bloqueado';
+    } else {
+      badge.className = 'wrist-state off';
+      badge.textContent = 'Desactivada';
+    }
+  }
+
   function checkLiveAlerts(s) {
     let urgentAlert = false;
     let softAlert = false;
@@ -137,7 +193,14 @@
         const st = o.station === 'barra' ? '🍸 BARRA' : '🍳 COCINA';
         const msg = `¡Retirar en ${st} → Mesa ${o.tableCode}!`;
         toast(msg, 4200);
-        notifyBrowser(msg, o.items.map((i) => `${i.qty}× ${i.name}`).join(', '));
+        if (!wristbandActive) {
+          const shortHdr = o.station === 'barra'
+            ? `🍸 ${o.tableCode} · Retirar Barra`
+            : `🍳 ${o.tableCode} · Retirar Cocina`;
+          notifyBrowser(shortHdr, o.items.map((i) => `${i.qty}x ${i.name}`).join(', '), {
+            tag: `salelisto-ready-${o.id}`,
+          });
+        }
       }
     });
 
@@ -147,7 +210,9 @@
         urgentAlert = true;
         const msg = c.type === 'mozo' ? `🙋 Mesa ${c.tableCode} te llama (${c.reason})` : `💳 Mesa ${c.tableCode} pide la cuenta`;
         toast(msg, 4200);
-        notifyBrowser(msg, c.blockName);
+        if (!wristbandActive) {
+          notifyBrowser(msg, c.blockName, { tag: `salelisto-call-${c.id}` });
+        }
       }
     });
 
@@ -180,6 +245,48 @@
       requestPushPermission();
       ding(1);
       toast('🔊 Sonido y vibración activados');
+    };
+    $('#wristEnableBtn').onclick = async (ev) => {
+      const btn = ev.currentTarget;
+      btn.disabled = true;
+      const orig = btn.textContent;
+      btn.textContent = 'Activando…';
+      unlockAudio();
+      try {
+        await subscribeWaiterPush(myId, true);
+        await syncWristbandState(false);
+        ding(1);
+        toast('⌚ Modo Pulsera activo para pantalla bloqueada');
+      } catch (err) {
+        toast(`⚠️ ${err.message}`);
+        await syncWristbandState(false);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = orig;
+      }
+    };
+    $('#wristTestBtn').onclick = async (ev) => {
+      const btn = ev.currentTarget;
+      btn.disabled = true;
+      try {
+        await sendWaiterPushTest(myId);
+        toast('⌚ Señal enviada: bloqueá el celu para sentir tu Xiaomi Band');
+      } catch (err) {
+        toast(`⚠️ ${err.message}`);
+      } finally {
+        setTimeout(() => { btn.disabled = false; }, 1200);
+      }
+    };
+    $('#wristDisableBtn').onclick = async (ev) => {
+      const btn = ev.currentTarget;
+      btn.disabled = true;
+      try {
+        await unsubscribeWaiterPush();
+        await syncWristbandState(false);
+        toast('Modo Pulsera desactivado en este dispositivo');
+      } finally {
+        btn.disabled = false;
+      }
     };
     $('#logoutBtn').onclick = () => {
       sessionStorage.removeItem('salelisto:waiterId');

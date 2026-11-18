@@ -56,6 +56,20 @@ def clean_text(payload: dict[str, Any], key: str, maxlen: int) -> str:
     return str(payload.get(key) or '').strip()[:maxlen]
 
 
+def clip_compact(text: str, maxlen: int) -> str:
+    norm = ' '.join(str(text or '').split())
+    if len(norm) <= maxlen:
+        return norm
+    return norm[: maxlen - 1].rstrip() + '…'
+
+
+def table_short_tag(code: str) -> str:
+    c = str(code or '?').strip()
+    if c and c[0].isdigit():
+        return f'M{c}'
+    return c
+
+
 def new_qr_token() -> str:
     alphabet = 'abcdefghjkmnpqrstuvwxyz23456789'
     return ''.join(secrets.choice(alphabet) for _ in range(10))
@@ -69,6 +83,8 @@ class Database:
         self.uploads_dir.mkdir(parents=True, exist_ok=True)
         self.lock = threading.RLock()
         self.version = 1
+        self._tx_notifications: list[dict[str, Any]] | None = None
+        self._pending_push_notifications: list[dict[str, Any]] = []
         self._init_schema()
 
     def _connect(self) -> sqlite3.Connection:
@@ -218,11 +234,31 @@ class Database:
                         table_id TEXT,
                         title TEXT NOT NULL,
                         body TEXT NOT NULL DEFAULT '',
+                        short_title TEXT NOT NULL DEFAULT '',
+                        short_body TEXT NOT NULL DEFAULT '',
                         read INTEGER NOT NULL DEFAULT 0,
+                        created_at INTEGER NOT NULL
+                    );
+
+                    CREATE TABLE IF NOT EXISTS push_subscriptions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        waiter_id TEXT NOT NULL REFERENCES waiters(id) ON DELETE CASCADE,
+                        endpoint TEXT NOT NULL UNIQUE,
+                        p256dh TEXT NOT NULL,
+                        auth TEXT NOT NULL,
+                        wristband_mode INTEGER NOT NULL DEFAULT 1,
                         created_at INTEGER NOT NULL
                     );
                     """
                 )
+                notif_cols = {
+                    r['name'] for r in conn.execute('PRAGMA table_info(notifications)').fetchall()
+                }
+                if 'short_title' not in notif_cols:
+                    conn.execute("ALTER TABLE notifications ADD COLUMN short_title TEXT NOT NULL DEFAULT ''")
+                if 'short_body' not in notif_cols:
+                    conn.execute("ALTER TABLE notifications ADD COLUMN short_body TEXT NOT NULL DEFAULT ''")
+
                 row = conn.execute('SELECT id FROM restaurant WHERE id = 1').fetchone()
                 if not row:
                     self._seed_factory(conn)
@@ -248,6 +284,7 @@ class Database:
     def _seed_factory(self, conn: sqlite3.Connection) -> None:
         conn.executescript(
             """
+            DELETE FROM push_subscriptions;
             DELETE FROM notifications;
             DELETE FROM calls;
             DELETE FROM order_items;
@@ -371,11 +408,19 @@ class Database:
         table_id: str | None,
         title: str,
         body: str = '',
-    ) -> None:
+        short_title: str = '',
+        short_body: str = '',
+    ) -> dict[str, Any]:
         nid = self._next_id(conn, 'N')
+        ts = now_ms()
+        s_title = clip_compact(short_title or title, 26)
+        s_body = clip_compact(short_body or body, 48)
         conn.execute(
-            'INSERT INTO notifications (id, waiter_id, kind, table_id, title, body, read, created_at) VALUES (?, ?, ?, ?, ?, ?, 0, ?)',
-            (nid, waiter_id, kind, table_id, title, body, now_ms()),
+            """
+            INSERT INTO notifications (id, waiter_id, kind, table_id, title, body, short_title, short_body, read, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)
+            """,
+            (nid, waiter_id, kind, table_id, title, body, s_title, s_body, ts),
         )
         # Conservar las últimas 150 notificaciones para mantener liviano el estado
         conn.execute(
@@ -384,6 +429,20 @@ class Database:
             WHERE id NOT IN (SELECT id FROM notifications ORDER BY created_at DESC LIMIT 150)
             """
         )
+        rec = {
+            'id': nid,
+            'waiterId': waiter_id,
+            'kind': kind,
+            'tableId': table_id,
+            'title': title,
+            'body': body,
+            'shortTitle': s_title,
+            'shortBody': s_body,
+            'createdAt': ts,
+        }
+        if self._tx_notifications is not None:
+            self._tx_notifications.append(rec)
+        return rec
 
     def _pick_waiter_for_table(
         self,
@@ -516,6 +575,7 @@ class Database:
                 "UPDATE calls SET waiter_id = ? WHERE session_id = ? AND status != 'atendida'",
                 (new_wid, s['id']),
             )
+            tag = table_short_tag(s['table_code'])
             if new_w:
                 self._add_notification(
                     conn,
@@ -524,6 +584,8 @@ class Database:
                     s['table_id'],
                     f"🔄 Mesa {s['table_code']} ({s['block_name']}) ahora está a tu cargo",
                     f"Reasignada automáticamente porque {old_waiter_name} dejó de estar disponible.",
+                    short_title=f"🔄 {tag} · A tu cargo",
+                    short_body=f"Sector {s['block_name']}",
                 )
                 transfers.append({'tableCode': s['table_code'], 'waiterName': new_w['name']})
             else:
@@ -534,6 +596,8 @@ class Database:
                     s['table_id'],
                     f"⚠️ Mesa {s['table_code']} quedó sin mozo asignado",
                     'No quedan mozos disponibles en turno.',
+                    short_title=f"⚠️ {tag} · Sin mozo",
+                    short_body='Sin mozos en turno',
                 )
                 transfers.append({'tableCode': s['table_code'], 'waiterName': 'Sin mozo disponible'})
         return transfers
@@ -552,6 +616,7 @@ class Database:
         for s in orphans:
             new_w = self._pick_waiter_for_table(conn, s['table_id'])
             if new_w:
+                tag = table_short_tag(s['table_code'])
                 conn.execute('UPDATE table_sessions SET waiter_id = ? WHERE id = ?', (new_w['id'], s['id']))
                 conn.execute(
                     "UPDATE calls SET waiter_id = ? WHERE session_id = ? AND status != 'atendida'",
@@ -564,6 +629,8 @@ class Database:
                     s['table_id'],
                     f"🪑 Mesa {s['table_code']} ({s['block_name']}) asignada a vos",
                     'Tenía consumos activos esperando mozo disponible.',
+                    short_title=f"🪑 {tag} · Asignada",
+                    short_body=f"Sector {s['block_name']}",
                 )
 
     def _session_subtotal(self, conn: sqlite3.Connection, session_id: str) -> int:
@@ -625,7 +692,9 @@ class Database:
     # ---------- Acciones Operativas (Pedidos, Llamados, Cierres) ----------
 
     def act_order_create(self, conn: sqlite3.Connection, p: dict[str, Any], is_staff: bool = False) -> dict[str, Any]:
-        if not is_staff and not p.get('qrToken'):
+        demo_row = conn.execute('SELECT demo_mode FROM restaurant WHERE id = 1').fetchone()
+        demo_on = bool(demo_row and demo_row['demo_mode'])
+        if not is_staff and not p.get('qrToken') and not (demo_on and p.get('tableId')):
             raise ActionError('Código QR de mesa requerido')
         tbl = self._resolve_table(conn, p)
         raw_lines = p.get('items') or []
@@ -706,10 +775,14 @@ class Database:
         summary_items = ', '.join(
             f"{ln['qty']}× {ln['name']}" for st in ('barra', 'cocina') for ln in by_station[st]
         )[:90]
+        compact_items = ', '.join(
+            f"{ln['qty']}x {ln['name']}" for st in ('barra', 'cocina') for ln in by_station[st]
+        )
         dest_label = ' + '.join(stations_used)
         if waiter:
             prefix_msg = 'Asignada a vos · ' if newly_assigned else ''
             if source != 'mozo':
+                tag = table_short_tag(tbl['code'])
                 self._add_notification(
                     conn,
                     waiter['id'],
@@ -717,6 +790,8 @@ class Database:
                     tbl['id'],
                     f"🆕 Mesa {tbl['code']} ({tbl['block_name']}) pidió a {dest_label}",
                     f"{prefix_msg}{summary_items}",
+                    short_title=f"🆕 {tag} · Nuevo pedido",
+                    short_body=compact_items,
                 )
 
         return {
@@ -725,8 +800,28 @@ class Database:
             'stations': stations_used,
         }
 
+    def _notify_order_ready(self, conn: sqlite3.Connection, order: sqlite3.Row) -> None:
+        oid = order['id']
+        items = conn.execute('SELECT qty, name FROM order_items WHERE order_id = ?', (oid,)).fetchall()
+        desc = ', '.join(f"{r['qty']}× {r['name']}" for r in items)[:90]
+        compact_desc = ', '.join(f"{r['qty']}x {r['name']}" for r in items)
+        tag = table_short_tag(order['table_code'])
+        is_bar = order['station'] == 'barra'
+        st_title = '🍸 BARRA' if is_bar else '🍳 COCINA'
+        short_hdr = f"🍸 {tag} · Retirar Barra" if is_bar else f"🍳 {tag} · Retirar Cocina"
+        self._add_notification(
+            conn,
+            order['waiter_id'],
+            'order_ready',
+            order['table_id'],
+            f"🔔 Retirar en {st_title} → Mesa {order['table_code']} ({order['block_name']})",
+            desc,
+            short_title=short_hdr,
+            short_body=compact_desc,
+        )
+
     def act_order_advance(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
-        oid = str(p.get('id') or '')
+        oid = str(p.get('id') or p.get('orderId') or '')
         order = conn.execute(
             """
             SELECT o.*, s.waiter_id, t.code AS table_code, b.name AS block_name
@@ -748,22 +843,41 @@ class Database:
             new_status = ORDER_FLOW[idx + 1]
             conn.execute('UPDATE orders SET status = ?, updated_at = ? WHERE id = ?', (new_status, now_ms(), oid))
             if new_status == 'listo':
-                items = conn.execute('SELECT qty, name FROM order_items WHERE order_id = ?', (oid,)).fetchall()
-                desc = ', '.join(f"{r['qty']}× {r['name']}" for r in items)[:90]
-                st_title = '🍸 BARRA' if order['station'] == 'barra' else '🍳 COCINA'
-                self._add_notification(
-                    conn,
-                    order['waiter_id'],
-                    'order_ready',
-                    order['table_id'],
-                    f"🔔 Retirar en {st_title} → Mesa {order['table_code']} ({order['block_name']})",
-                    desc,
-                )
-            return {'status': new_status}
-        return {'status': order['status']}
+                self._notify_order_ready(conn, order)
+            return {'id': oid, 'status': new_status}
+        return {'id': oid, 'status': order['status']}
+
+    def act_order_status(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        oid = str(p.get('orderId') or p.get('id') or '')
+        new_status = str(p.get('status') or '').strip()
+        if new_status == 'cancelado':
+            return self.act_order_cancel(conn, {'id': oid, 'reason': p.get('reason') or ''})
+        if new_status not in ORDER_FLOW:
+            raise ActionError('Estado de pedido inválido')
+        order = conn.execute(
+            """
+            SELECT o.*, s.waiter_id, t.code AS table_code, b.name AS block_name
+            FROM orders o
+            JOIN table_sessions s ON s.id = o.session_id
+            JOIN tables t ON t.id = o.table_id
+            JOIN blocks b ON b.id = t.block_id
+            WHERE o.id = ?
+            """,
+            (oid,),
+        ).fetchone()
+        if not order:
+            raise ActionError('Pedido inexistente')
+        prev_status = order['status']
+        conn.execute(
+            "UPDATE orders SET status = ?, cancel_reason = '', updated_at = ? WHERE id = ?",
+            (new_status, now_ms(), oid),
+        )
+        if prev_status != 'listo' and new_status == 'listo':
+            self._notify_order_ready(conn, order)
+        return {'id': oid, 'status': new_status}
 
     def act_order_revert(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
-        oid = str(p.get('id') or '')
+        oid = str(p.get('id') or p.get('orderId') or '')
         order = conn.execute('SELECT id, status FROM orders WHERE id = ?', (oid,)).fetchone()
         if not order:
             raise ActionError('Pedido inexistente')
@@ -778,7 +892,7 @@ class Database:
         return {'status': order['status']}
 
     def act_order_cancel(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
-        oid = str(p.get('id') or '')
+        oid = str(p.get('id') or p.get('orderId') or '')
         order = conn.execute(
             """
             SELECT o.*, s.waiter_id, t.code AS table_code, b.name AS block_name
@@ -798,6 +912,7 @@ class Database:
             (reason, now_ms(), oid),
         )
         if order['waiter_id']:
+            tag = table_short_tag(order['table_code'])
             self._add_notification(
                 conn,
                 order['waiter_id'],
@@ -805,11 +920,15 @@ class Database:
                 order['table_id'],
                 f"✕ Pedido #{oid[1:]} de Mesa {order['table_code']} anulado",
                 reason,
+                short_title=f"✕ {tag} · Anulado #{oid[1:]}",
+                short_body=reason,
             )
-        return {'id': oid}
+        return {'id': oid, 'status': 'cancelado'}
 
     def act_call_create(self, conn: sqlite3.Connection, p: dict[str, Any], is_staff: bool = False) -> dict[str, Any]:
-        if not is_staff and not p.get('qrToken'):
+        demo_row = conn.execute('SELECT demo_mode FROM restaurant WHERE id = 1').fetchone()
+        demo_on = bool(demo_row and demo_row['demo_mode'])
+        if not is_staff and not p.get('qrToken') and not (demo_on and p.get('tableId')):
             raise ActionError('Código QR de mesa requerido')
         tbl = self._resolve_table(conn, p)
         kind = str(p.get('type') or '')
@@ -817,6 +936,7 @@ class Database:
             raise ActionError('Tipo de solicitud inválido')
 
         session, waiter, _ = self._ensure_open_session(conn, tbl['id'])
+        tag = table_short_tag(tbl['code'])
 
         if kind == 'mozo':
             reason = clean_text(p, 'reason', 40) or 'Consulta'
@@ -843,6 +963,8 @@ class Database:
                 tbl['id'],
                 f"🙋 Mesa {tbl['code']} ({tbl['block_name']}) llama al mozo",
                 f"Motivo: {reason}",
+                short_title=f"🙋 {tag} · Llama",
+                short_body=reason,
             )
             return {'id': cid, 'waiterName': waiter['name'] if waiter else None}
 
@@ -879,18 +1001,21 @@ class Database:
             )
 
         total_est = round(sub * (1 + tip_pct / 100))
+        total_fmt = f"${total_est:,}".replace(',', '.')
         self._add_notification(
             conn,
             session['waiter_id'],
             'call_cuenta',
             tbl['id'],
             f"💳 Mesa {tbl['code']} ({tbl['block_name']}) pide la cuenta",
-            f"{payment} · Propina {tip_pct}% · Total ${total_est:,}".replace(',', '.'),
+            f"{payment} · Propina {tip_pct}% · Total {total_fmt}",
+            short_title=f"💳 {tag} · {payment}",
+            short_body=f"{total_fmt} (Propina {tip_pct}%)",
         )
         return {'id': cid}
 
     def act_call_status(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
-        cid = str(p.get('id') or '')
+        cid = str(p.get('id') or p.get('callId') or '')
         new_st = str(p.get('status') or 'atendida')
         if new_st not in ('en_camino', 'atendida'):
             raise ActionError('Estado inválido')
@@ -900,6 +1025,11 @@ class Database:
         att_at = now_ms() if new_st == 'atendida' else None
         conn.execute('UPDATE calls SET status = ?, attended_at = COALESCE(?, attended_at) WHERE id = ?', (new_st, att_at, cid))
         return {'id': cid, 'status': new_st}
+
+    def act_call_attend(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        cid = str(p.get('callId') or p.get('id') or '')
+        new_st = str(p.get('status') or 'atendida')
+        return self.act_call_status(conn, {'id': cid, 'status': new_st})
 
     def act_table_close(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         tbl = self._resolve_table(conn, p, allow_inactive=True)
@@ -975,6 +1105,7 @@ class Database:
         ).fetchone()
         if not sess:
             raise ActionError('La mesa está libre; se asignará al abrirse')
+        tag = table_short_tag(tbl['code'])
         conn.execute('UPDATE table_sessions SET waiter_id = ? WHERE id = ?', (wid, sess['id']))
         conn.execute("UPDATE calls SET waiter_id = ? WHERE session_id = ? AND status != 'atendida'", (wid, sess['id']))
         self._add_notification(
@@ -984,6 +1115,8 @@ class Database:
             tbl['id'],
             f"🪑 Se te asignó manualmente la Mesa {tbl['code']} ({tbl['block_name']})",
             'Asignación realizada desde el panel.',
+            short_title=f"🪑 {tag} · A tu cargo",
+            short_body=f"Sector {tbl['block_name']}",
         )
         return {'waiterName': w['name']}
 
@@ -1424,16 +1557,156 @@ class Database:
             finally:
                 conn.close()
 
+    # ---------- Suscripciones Web Push (Modo Pulsera Xiaomi Band) ----------
+
+    def save_push_subscription(
+        self,
+        waiter_id: str,
+        endpoint: str,
+        p256dh: str,
+        auth: str,
+        wristband_mode: bool = True,
+    ) -> dict[str, Any]:
+        wid = str(waiter_id or '').strip()
+        ep = str(endpoint or '').strip()
+        k_pub = str(p256dh or '').strip()
+        k_auth = str(auth or '').strip()
+        if not wid:
+            raise ActionError('Mozo requerido para vincular pulsera')
+        if not ep.startswith(('https://', 'http://')) or len(ep) > 2048:
+            raise ActionError('Endpoint Web Push inválido')
+        if not k_pub or not k_auth:
+            raise ActionError('Claves criptográficas de suscripción incompletas')
+
+        wb = 1 if wristband_mode else 0
+        ts = now_ms()
+        with self.lock:
+            conn = self._connect()
+            try:
+                w = conn.execute('SELECT id, name FROM waiters WHERE id = ?', (wid,)).fetchone()
+                if not w:
+                    raise ActionError('Mozo inexistente')
+                conn.execute(
+                    """
+                    INSERT INTO push_subscriptions (waiter_id, endpoint, p256dh, auth, wristband_mode, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(endpoint) DO UPDATE SET
+                        waiter_id = excluded.waiter_id,
+                        p256dh = excluded.p256dh,
+                        auth = excluded.auth,
+                        wristband_mode = excluded.wristband_mode,
+                        created_at = excluded.created_at
+                    """,
+                    (wid, ep, k_pub, k_auth, wb, ts),
+                )
+                conn.commit()
+                self.version += 1
+                return {'waiterId': wid, 'waiterName': w['name'], 'wristbandMode': bool(wb)}
+            finally:
+                conn.close()
+
+    def delete_push_subscription(self, endpoint: str) -> bool:
+        ep = str(endpoint or '').strip()
+        if not ep:
+            return False
+        with self.lock:
+            conn = self._connect()
+            try:
+                cur = conn.execute('DELETE FROM push_subscriptions WHERE endpoint = ?', (ep,))
+                conn.commit()
+                if cur.rowcount > 0:
+                    self.version += 1
+                    return True
+                return False
+            finally:
+                conn.close()
+
+    def get_waiter_push_subscriptions(self, waiter_id: str, endpoint: str = '') -> list[dict[str, Any]]:
+        wid = str(waiter_id or '').strip()
+        ep = str(endpoint or '').strip()
+        with self.lock:
+            conn = self._connect()
+            try:
+                if ep:
+                    rows = conn.execute(
+                        'SELECT waiter_id, endpoint, p256dh, auth, wristband_mode FROM push_subscriptions WHERE endpoint = ?',
+                        (ep,),
+                    ).fetchall()
+                    if rows:
+                        return [dict(r) for r in rows]
+                if not wid:
+                    return []
+                rows = conn.execute(
+                    'SELECT waiter_id, endpoint, p256dh, auth, wristband_mode FROM push_subscriptions WHERE waiter_id = ?',
+                    (wid,),
+                ).fetchall()
+                return [dict(r) for r in rows]
+            finally:
+                conn.close()
+
+    def drain_push_deliveries(self) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+        """Extrae las notificaciones recién creadas y las cruza con suscripciones activas."""
+        with self.lock:
+            if not self._pending_push_notifications:
+                return []
+            queued = list(self._pending_push_notifications)
+            self._pending_push_notifications.clear()
+
+            conn = self._connect()
+            try:
+                deliveries: list[tuple[dict[str, Any], dict[str, Any]]] = []
+                for n in queued:
+                    wid = n.get('waiterId')
+                    if wid:
+                        subs = conn.execute(
+                            'SELECT waiter_id, endpoint, p256dh, auth, wristband_mode FROM push_subscriptions WHERE waiter_id = ?',
+                            (wid,),
+                        ).fetchall()
+                    else:
+                        subs = conn.execute(
+                            """
+                            SELECT ps.waiter_id, ps.endpoint, ps.p256dh, ps.auth, ps.wristband_mode
+                            FROM push_subscriptions ps
+                            JOIN waiters w ON w.id = ps.waiter_id
+                            WHERE w.available = 1
+                            """
+                        ).fetchall()
+
+                    for s in subs:
+                        sub_d = dict(s)
+                        wb_mode = bool(sub_d.get('wristband_mode', 1))
+                        payload = {
+                            'id': n['id'],
+                            'kind': n['kind'],
+                            'waiterId': sub_d['waiter_id'],
+                            'tableId': n.get('tableId'),
+                            'title': n['shortTitle'] if wb_mode else n['title'],
+                            'body': n['shortBody'] if wb_mode else n['body'],
+                            'shortTitle': n['shortTitle'],
+                            'shortBody': n['shortBody'],
+                            'fullTitle': n['title'],
+                            'fullBody': n['body'],
+                            'urgent': n['kind'] in ('order_ready', 'call_mozo', 'call_cuenta', 'table_transferred'),
+                            'tag': f"salelisto-{n['kind']}-{n.get('tableId') or n['id']}",
+                            'url': f"/mozo.html?waiter={sub_d['waiter_id']}",
+                            'ts': n['createdAt'],
+                        }
+                        deliveries.append((sub_d, payload))
+                return deliveries
+            finally:
+                conn.close()
+
     # ---------- Ejecución Transaccional de Acciones ----------
 
     def execute(self, action_type: str, payload: dict[str, Any], role: str = 'client') -> Any:
         is_staff = role in ('admin', 'waiter', 'kitchen')
         is_admin = role == 'admin'
+        demo_active = self.is_demo_mode()
 
         client_allowed = {'order.create', 'call.create'}
         staff_allowed = client_allowed | {
-            'order.advance', 'order.revert', 'order.cancel',
-            'call.status', 'table.close', 'notifications.read',
+            'order.advance', 'order.status', 'order.revert', 'order.cancel',
+            'call.status', 'call.attend', 'table.close', 'notifications.read',
             'waiter.toggle', 'session.reassign',
         }
         admin_only = {
@@ -1448,16 +1721,18 @@ class Database:
 
         if action_type in admin_only and not is_admin:
             raise ActionError('Se requiere acceso de encargado (PIN)')
-        if action_type in staff_allowed and action_type not in client_allowed and not is_staff:
+        if action_type in staff_allowed and action_type not in client_allowed and not (is_staff or demo_active):
             raise ActionError('Acción reservada al personal del restaurante')
 
         dispatch_map = {
             'order.create': lambda c, p: self.act_order_create(c, p, is_staff=is_staff),
             'order.advance': self.act_order_advance,
+            'order.status': self.act_order_status,
             'order.revert': self.act_order_revert,
             'order.cancel': self.act_order_cancel,
             'call.create': lambda c, p: self.act_call_create(c, p, is_staff=is_staff),
             'call.status': self.act_call_status,
+            'call.attend': self.act_call_attend,
             'table.close': self.act_table_close,
             'session.reassign': self.act_session_reassign,
             'restaurant.save': self.act_restaurant_save,
@@ -1488,15 +1763,19 @@ class Database:
 
         with self.lock:
             conn = self._connect()
+            self._tx_notifications = []
             try:
                 result = fn(conn, payload or {})
                 conn.commit()
                 self.version += 1
+                if self._tx_notifications:
+                    self._pending_push_notifications.extend(self._tx_notifications)
                 return result
             except Exception:
                 conn.rollback()
                 raise
             finally:
+                self._tx_notifications = None
                 conn.close()
 
     # ---------- Construcción de Snapshots (Staff vs Cliente Scoped) ----------
@@ -1560,10 +1839,18 @@ class Database:
                         st['tips'] += cs['tip_amount']
                         st['tables'] += 1
 
+                push_counts = {
+                    r['waiter_id']: r['cnt']
+                    for r in conn.execute(
+                        'SELECT waiter_id, COUNT(*) AS cnt FROM push_subscriptions GROUP BY waiter_id'
+                    ).fetchall()
+                }
+
                 waiters = []
                 waiter_map: dict[str, dict[str, Any]] = {}
                 for r in conn.execute('SELECT * FROM waiters ORDER BY created_at ASC').fetchall():
                     ws = waiter_sales_today.get(r['id'], {'sales': 0, 'tips': 0, 'tables': 0})
+                    pcnt = int(push_counts.get(r['id'], 0))
                     w_obj = {
                         'id': r['id'],
                         'name': r['name'],
@@ -1574,6 +1861,8 @@ class Database:
                         'todaySales': ws['sales'],
                         'todayTips': ws['tips'],
                         'todayClosedTables': ws['tables'],
+                        'pushCount': pcnt,
+                        'wristbandActive': pcnt > 0,
                     }
                     waiters.append(w_obj)
                     waiter_map[r['id']] = w_obj
@@ -1663,6 +1952,7 @@ class Database:
                         'sessionId': c['session_id'],
                         'tableId': c['table_id'],
                         'tableCode': t_info.get('code', '?'),
+                        'blockId': t_info.get('block_id', ''),
                         'blockName': b_info.get('name', ''),
                         'waiterId': c['waiter_id'],
                         'waiterName': w_info['name'] if w_info else None,
@@ -1687,6 +1977,7 @@ class Database:
                     t_calls = calls_by_table.get(r['id'], [])
                     wid = sess['waiter_id'] if sess else None
                     w_info = waiter_map.get(wid) if wid else None
+                    b_info = block_map.get(r['block_id'], {})
                     sub = open_subtotals.get(sess['id'], 0) if sess else 0
                     if not r['active']:
                         st = 'inactiva'
@@ -1702,6 +1993,8 @@ class Database:
                         {
                             'id': r['id'],
                             'blockId': r['block_id'],
+                            'blockName': b_info.get('name', ''),
+                            'blockIcon': b_info.get('icon', ''),
                             'code': r['code'],
                             'seats': r['seats'],
                             'qrToken': r['qr_token'],
@@ -1754,6 +2047,8 @@ class Database:
                         'tableId': r['table_id'],
                         'title': r['title'],
                         'body': r['body'],
+                        'shortTitle': r['short_title'] or clip_compact(r['title'], 26),
+                        'shortBody': r['short_body'] or clip_compact(r['body'], 48),
                         'read': bool(r['read']),
                         'createdAt': r['created_at'],
                     }

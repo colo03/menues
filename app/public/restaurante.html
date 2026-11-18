@@ -40,9 +40,11 @@
 
       <div class="side-foot">
         <button class="audio-pill off" id="adminAudioBtn" style="width:100%;justify-content:center">🔇 <span class="lbl">Activar sonido</span></button>
+        <a class="btn btn-ghost btn-sm" href="pase.html" target="_blank">🛎️<span class="lbl"> Estación Mozos</span></a>
         <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳<span class="lbl"> Cocina / Barra</span></a>
-        <a class="btn btn-ghost btn-sm" href="mozo.html" target="_blank">📱<span class="lbl"> App Mozo</span></a>
-        <a class="btn btn-ghost btn-sm" href="demo.html" target="_top">▶<span class="lbl"> Demo 4 vistas</span></a>
+        <a class="btn btn-ghost btn-sm" href="qr.html" target="_blank">🖨️<span class="lbl"> QRs fijos</span></a>
+        <a class="btn btn-ghost btn-sm" href="mozo.html" target="_blank">⌚<span class="lbl"> App / Pulsera</span></a>
+        <a class="btn btn-ghost btn-sm" href="demo.html" target="_top">▶<span class="lbl"> Demo en vivo</span></a>
       </div>
     </aside>
 
@@ -57,10 +59,15 @@
               <h1>Comandas en tiempo real</h1>
               <p class="muted">Los pedidos entran directo y separados a Cocina y Barra asignando mozo en simultáneo.</p>
             </div>
-            <div class="pill-group" id="boardStationFilter">
-              <button class="pill active" data-bst="todas">Todas</button>
-              <button class="pill" data-bst="cocina">🍳 Cocina</button>
-              <button class="pill" data-bst="barra">🍸 Barra</button>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <a class="btn btn-ghost btn-sm" href="pase.html" target="_blank">🛎️ Estación de Mozos</a>
+              <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳 Cocina / Barra</a>
+              <a class="btn btn-ghost btn-sm" href="qr.html" target="_blank">🖨️ QRs</a>
+              <div class="pill-group" id="boardStationFilter">
+                <button class="pill active" data-bst="todas">Todas</button>
+                <button class="pill" data-bst="cocina">🍳 Cocina</button>
+                <button class="pill" data-bst="barra">🍸 Barra</button>
+              </div>
             </div>
           </div>
           <div class="board" id="board"></div>
@@ -75,6 +82,7 @@
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <button class="btn btn-ghost" id="toggleDesignBtn">🛠️ Diseñar bloques y mesas</button>
+              <a class="btn btn-ghost" href="pase.html" target="_blank">🛎️ Estación de Mozos</a>
               <a class="btn btn-ghost" href="qr.html" target="_blank">🖨️ QRs fijos</a>
             </div>
           </div>
@@ -95,7 +103,10 @@
               <h1>Mozos en turno y Asignación</h1>
               <p class="muted">Agregá, pausá o eliminá mozos en el momento. Si uno sale de turno, sus mesas se reasignan solas.</p>
             </div>
-            <button class="btn btn-primary" id="newWaiterBtn">+ Agregar mozo</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <a class="btn btn-ghost" href="pase.html" target="_blank">🛎️ Abrir Estación de Mozos</a>
+              <button class="btn btn-primary" id="newWaiterBtn">+ Agregar mozo</button>
+            </div>
           </div>
           <div class="assign-banner" id="assignBanner"></div>
           <div class="waiters-grid" id="waitersGrid"></div>

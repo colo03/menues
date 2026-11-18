@@ -1,7 +1,7 @@
-﻿"""Plan maestro del spot v4 (diagramas vectoriales simples, max. 5 palabras por pantalla).
-- Lee la toma continua aprobada (v2/audio/vo/vo_fast.wav + vo_words.json, ATEMPO 1.07, entrada 0.12 s).
+﻿"""Plan maestro del spot v5 (diagramas vectoriales simples, max. 5 palabras por pantalla).
+- Lee la toma continua v5 (v2/audio/vo/vo_fast.wav + vo_words.json, ATEMPO 1.07, entrada 0.12 s).
 - 6 escenas respiradas (E01..E06) ancladas al inicio de la frase de la locucion (sin snap a beat, sin cortes rapidos).
-- Calcula las marcas de la unica accion de cada escena y los 5 acentos SFX suaves del guion v3.
+- Calcula las marcas de la unica accion de cada escena (E05: estacion del pase + pulsera) y los acentos SFX suaves.
 - Ajusta la musica (empalme al remate real del tema) al largo de la voz.
 - Extrae frames del B-roll por escena (grading calido uniforme) a build/frames_src/.
 Uso: python plan.py [--no-extract]
@@ -51,9 +51,9 @@ SCENES = [
     ("E01", None,                "bar_busy_4043.mp4",         1.5, 0.50, "Menos |corridas|",               ""),
     ("E02", ("con", 1, 0),       "phone_hands_4915.mp4",      2.0, 0.50, "Escaneá con |4G|",               ""),
     ("E03", ("pide", 1, -1),     "kitchen_plating_13261.mp4", 4.5, 0.50, "Se divide |sola|",               ""),
-    ("E04", ("salón", 1, 0),     "resto_customers_4385.mp4",  2.5, 0.66, "Salón |parejo|",                 ""),
-    ("E05", ("celu", 1, -1),     "waiter_drinks_43984.mp4",   1.2, 0.50, "Vibra al |salir|",               ""),
-    ("E06", ("cero", 2, -1),     "friends_cafe_43248.mp4",    1.0, 0.52, "",                              ""),
+    ("E04", ("salón", 1, -2),    "resto_customers_4385.mp4",  2.5, 0.66, "Salón |parejo|",                 ""),
+    ("E05", ("sin", 2, 0),       "waiter_drinks_43984.mp4",   1.2, 0.50, "Sin |celulares|",                ""),
+    ("E06", ("vida", 1, -1),     "friends_cafe_43248.mp4",    1.0, 0.52, "",                              ""),
 ]
 
 
@@ -138,7 +138,7 @@ def main():
                        "title": title, "pill": pill, "xfade": XFADE_END if sid == "E06" else XFADE})
     S = {s["id"]: s for s in scenes}
     e6 = S["E06"]["start"]
-    logo = e6 + 0.10
+    logo = e6 + XFADE_END / 2 + 0.08   # el logo entra recien cuando el lienzo de E05 ya se fue (sin cuadro fantasma)
     M = {
         "e1_in": 0.18,                                   # entrada de la Tarjeta Maestra
         "e1_ok": find("bajales")["t0"],                  # filas a verde + pildora "Salon en orden"
@@ -151,11 +151,12 @@ def main():
         "split": find("separa")["t0"],                   # division Cocina / Barra
         "tags": find("bloques")["t0"],                   # mozos asignados a cada bloque
         "even": find("equipo")["t0"],                    # barra "Carga pareja en vivo"
-        "vibra": find("vibra")["t0"],                    # aviso al mozo
-        "listo": find("listo", 1, 0, after=find("vibra")["t0"])["t0"],
-        "simpl": find("simplificales")["t0"],            # resumen humano al pie
+        "pase": find("estación")["t0"],                  # 3 columnas de la estacion del pase se encienden
+        "vibra": find("vibra")["t0"],                    # ondas de vibracion de la pulsera
+        "salir": find("salir")["t0"],                    # tilde verde en la capsula
+        "simpl": find("simplificales")["t0"],            # entra la placa final
         "logo": logo,
-        "badge": max(find("cero", 2)["t0"] - 0.04, logo + 0.40),
+        "badge": max(find("cero", 1)["t0"] - 0.04, logo + 0.40),
         "contact": find("escribinos")["t0"] - 0.05,
         "stab1": stab1, "stab2": stab2,
     }
@@ -164,7 +165,7 @@ def main():
         ("pop", M["e1_ok"], -16),
         ("scan", M["qr"] - 0.02, -14),
         ("pop", M["split"], -15),
-        ("vibrate", M["vibra"] - 0.05, -10), ("ding", M["listo"], -13),
+        ("vibrate", M["vibra"] - 0.05, -10), ("ding", M["salir"], -13),
         ("success", M["badge"], -14),
     ]
     regions = []

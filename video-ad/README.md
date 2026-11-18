@@ -8,9 +8,9 @@ Pieza audiovisual vertical (`9:16`, `1080x1920`, `60 fps`) diseñada para Instag
 
 | Archivo | Descripción |
 | :--- | :--- |
-| [`SaleListo_Ad.mp4`](./SaleListo_Ad.mp4) | Spot comercial definitivo renderizado en `1080x1920` a `60 fps` (`29.11s`, H.264 High + AAC `48 kHz` estéreo normalizado a `-14 LUFS` / `-1.5 dBTP`, `11.6 MB`). Versión v4 "casi sin texto": máximo 5 palabras por pantalla en las escenas 1 a 5. |
-| [`locucion_argentina.mp3`](./locucion_argentina.mp3) | Locución comercial en español rioplatense generada en una sola toma continua con ElevenLabs (`eleven_v4`, voz `Gabi`). |
-| [`guion.md`](./guion.md) | Guion técnico v4: un diagrama vectorial grande por escena con titular de 2 o 3 palabras, escaleta de 6 escenas (`E01` a `E06`) sobre la toma única de locución. |
+| [`SaleListo_Ad.mp4`](./SaleListo_Ad.mp4) | Spot comercial definitivo renderizado en `1080x1920` a `60 fps` (`30.19s`, H.264 High + AAC `48 kHz` estéreo normalizado a `-14 LUFS` / `-1.5 dBTP`, `11.57 MB`). Versión v5 "sin celulares en el salón": la Escena 5 (**Sin `celulares`**) muestra la estación del **Pase** con 3 columnas por mozo y la **Pulsera** vibradora que marca el tilde al salir; máximo 5 palabras por pantalla en las escenas 1 a 5. Placa final con WhatsApp `(+54)1138436571` y `ventas@salelisto.com`. |
+| [`locucion_argentina.mp3`](./locucion_argentina.mp3) | Locución comercial v5 en español rioplatense generada en una sola toma continua con ElevenLabs (`eleven_v4`, voz `Gabi`): *"Sin celulares en el salón: miran la estación del pase, o les vibra la pulsera al salir."* |
+| [`guion.md`](./guion.md) | Guion técnico v5: un diagrama vectorial grande por escena con titular de 2 o 3 palabras, escaleta de 6 escenas (`E01` a `E06`) sobre la toma única de locución. |
 | [`referencias_ads.md`](./referencias_ads.md) | Análisis de referencias publicitarias Gastro-Tech y Motion SaaS aplicadas al ritmo visual, uso de B-roll y tipografía cinética. |
 
 ---
@@ -63,4 +63,4 @@ Para mantener el repositorio liviano y ágil de clonar (`< 30 MB` en total), los
 
 - **Música:** *"Gimme that Groove!"* de Michael Ramir C. (Mixkit Stock Music Free License).
 - **B-roll:** Mixkit Stock Video Free License.
-- **Contacto directo:** WhatsApp `(+54)1138436571` | `simonguerenu@gmail.com`
+- **Contacto en la placa final del spot:** WhatsApp `(+54)1138436571` | `ventas@salelisto.com`

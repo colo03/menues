@@ -1,6 +1,6 @@
 # Modelo de Negocios Integral: SaleListo
 
-**Plataforma en la nube de pedidos autogestionados en mesa, ruteo inteligente a Cocina y Barra, y coordinación móvil de mozos en tiempo real para gastronomía en Argentina y América Latina.**
+**Plataforma en la nube de pedidos autogestionados en mesa, ruteo inteligente a Cocina y Barra, y coordinación de salón sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulseras Vibradoras Xiaomi Band) para gastronomía en Argentina y América Latina.**
 
 ---
 
@@ -8,15 +8,17 @@
 
 **SaleListo** es una plataforma web operativa en la nube diseñada para resolver el principal lucro cesante de restaurantes, bares, cervecerías, cafeterías y polos gastronómicos: **el tiempo muerto en la mesa y la fricción operativa entre el comensal, el mozo, la cocina y la barra**.
 
-A diferencia de los menús digitales estáticos en PDF (que obligan a hacer zoom, quedan desactualizados ante la inflación y no permiten comprar) y a diferencia de los pesados sistemas de facturación heredados (pensados para el cajero y no para la dinámica viva del salón), SaleListo digitaliza de punta a punta la experiencia en la mesa sin exigir descargas de aplicaciones ni claves de Wi-Fi:
+A diferencia de los menús digitales estáticos en PDF (que obligan a hacer zoom, quedan desactualizados ante la inflación y no permiten comprar) y a diferencia de los pesados sistemas de facturación heredados (pensados para el cajero y no para la dinámica viva del salón), SaleListo digitaliza de punta a punta la experiencia en la mesa sin exigir descargas de aplicaciones ni claves de Wi-Fi, y **sin obligar a los mozos a caminar mirando un celular frente a los clientes**:
 
 1. **Acceso instantáneo por 4G/5G con QR de token fijo seguro**: Cada mesa cuenta con un código QR único e inalterable. El cliente escanea con la cámara de su celular usando sus propios datos móviles, visualiza la carta actualizada al segundo con fotos reales, personaliza su pedido con aclaraciones y confirma en dos toques.
 2. **Diseño modular del salón y gestión anti-inflación**: El local arma su plano operativo con bloques pre-configurados (*Interior, Terraza, Exterior/Vereda, Barra, Sector 1, Sector 2, Patio y Salón VIP*), administra disponibilidad de platos en vivo y aplica **ajustes masivos porcentuales de precios por inflación** en cuestión de segundos sin reimprimir un solo código QR.
 3. **Separación automática hacia Cocina y Barra en simultáneo**: Apenas el cliente envía su pedido, el sistema divide y rutea automáticamente los platos hacia el monitor de **Cocina** y las bebidas hacia **Barra**, eliminando comandas de papel extraviadas y cuellos de botella.
 4. **Orquestación inteligente y potenciación del mozo**: En el mismo instante en que entra un pedido, SaleListo asigna un mozo responsable mediante esquema híbrido (pre-asignado por sector/bloque o balanceado automáticamente hacia el mozo disponible con menor carga activa). Si un mozo finaliza su turno o se da de baja en plena hora pico, **sus mesas activas se reasignan de forma automática** entre el plantel disponible para que ninguna mesa quede desatendida.
-5. **Vista móvil con alertas sonoras y hápticas para el salón**: Cada mozo recibe en su propio celular avisos con sonido y vibración ante cuatro eventos clave: nuevo pedido ingresado en sus mesas, plato o bebida marcada como **"Listo"** en Cocina o Barra para retirar y servir caliente/fría al instante, llamado directo de asistencia en mesa, y solicitud de cuenta indicando medio de pago (*Efectivo, Tarjeta, QR o Transferencia*) y porcentaje de propina elegido (*0%, 5%, 10% o 15%*).
+5. **Coordinación 100% sin celulares en el salón (Estación de Mozos fija de serie + Kit opcional de Pulseras Vibradoras)**:
+   * **Incluida de serie desde el Plan Base (`Estación de Mozos fija /pase.html`)**: una única tablet o pantalla horizontal ubicada en el mostrador del pase o la barra, dividida en columnas en vivo por cada mozo activo y legible a 3 o 4 metros. Muestra al instante qué platos retirar en Cocina, qué tragos retirar en Barra, qué mesas llaman y qué cuentas cobrar (indicando medio de pago *Efectivo, Tarjeta, QR o Transferencia* y propina *0%, 5%, 10% o 15%*). Resuelve de raíz la objeción de imagen (*"no quiero mozos mirando el celular en el salón"*) con **costo de hardware USD 0** para SaleListo.
+   * **Adicional pago para locales extensos (`Kit Pulseras Vibradoras Xiaomi Smart Band`)**: ideal para patios cerveceros, terrazas, veredas amplias o plantas altas. El teléfono queda bloqueado en el bolsillo o en un locker cercano y el mozo siente la vibración en su muñeca leyendo en medio segundo avisos ultracompactos como `🍸 T2 · Retirar Barra` o `💳 M8 · Tarjeta $34.200` (con 10 a 14 días de batería real, resistencia al agua y apenas 15 g de peso).
 
-El modelo comercial se basa en una **suscripción SaaS B2B mensual escalonada sin comisiones sobre la venta del salón**, complementada por un ingreso inicial (*upfront*) de implementación llave en mano con entrega de kits físicos de códigos QR en acrílico o PVC de alta resistencia, y una hoja de ruta de expansión (*upsell*) hacia cobros integrados en mesa y analítica gastronómica avanzada.
+El modelo comercial se basa en una **suscripción SaaS B2B mensual escalonada sin comisiones sobre la venta del salón**, complementada por ingresos iniciales (*upfront*) con margen positivo y cero capital propio inmovilizado (implementación llave en mano con kits físicos de códigos QR en acrílico/PVC y **Kits de Pulseras Vibradoras SaleListo configuradas**), junto a una hoja de ruta de expansión (*upsell*) hacia cobros integrados en mesa y analítica gastronómica avanzada.
 
 ---
 
@@ -41,7 +43,7 @@ En el servicio tradicional de salón existen tres tiempos muertos improductivos 
 
 El mayor ingreso perdido de una cervecería, bar o restaurante ocurre después del plato principal: el cliente termina su primera bebida, mira alrededor para pedir otra pinta, una copa de vino, un postre o un café, no logra cruzar mirada con el mozo porque el salón está desbordado y desiste.
 
-* **Segundas y terceras rondas sin fricción (+20% a +30% en despacho de Barra)**: Con el QR en la mesa funcionando sobre 4G/5G, pedir una segunda ronda toma 10 segundos y entra directo a Barra. El mozo recibe la vibración en su celular recién cuando la bebida ya está servida en el mostrador lista para llevar a la mesa.
+* **Segundas y terceras rondas sin fricción (+20% a +30% en despacho de Barra)**: Con el QR en la mesa funcionando sobre 4G/5G, pedir una segunda ronda toma 10 segundos y entra directo a Barra. El aviso se enciende al instante en la columna del mozo en la **Estación del Pase** (o le vibra en la muñeca con su **pulsera Xiaomi Band**) recién cuando la bebida ya está servida en el mostrador lista para llevar a la mesa, sin ningún camarero mirando un teléfono en medio del salón.
 * **Venta visual con fotografías reales y destacados (+15% a +25% en entradas y postres)**: A diferencia de una lista de texto impresa, ver la fotografía real de unas rabas, un volcán de chocolate o un cóctel de autor etiquetado como *"Popular"* dispara la compra impulsiva antes y después del plato fuerte.
 
 ### 1.3. Reducción Drástica de Errores de Comanda y Mermas (-85% a -95%)
@@ -51,13 +53,15 @@ En la operación tradicional, el pedido atraviesa una cadena de "teléfono desco
 * En gastronomía promedio, los platos devueltos por errores de punto de cocción, ingredientes omitidos (*"pedí sin cebolla"*, *"era sin TACC"*, *"bebida sin hielo"*) o ítems cargados a la mesa equivocada representan entre el **1,5% y el 3,0% de la facturación bruta mensual** en mercadería desperdiciada e invitaciones de cortesía para calmar al cliente.
 * Con SaleListo, **el propio comensal selecciona sus ítems y redacta sus aclaraciones exactas**, el servidor valida precios del lado seguro sin posibilidad de manipulación, y cada estación (Cocina por un lado, Barra por otro) visualiza únicamente lo que debe preparar. Además, si un plato se agota en mitad del servicio, el encargado lo desactiva en un clic y desaparece al instante de todos los celulares del salón, evitando frustraciones y viajes de disculpa del mozo.
 
-### 1.4. Optimización del Personal en Horas Pico y Sectores Difíciles (+30% a +40% de productividad por mozo)
+### 1.4. Optimización del Personal en Horas Pico y Cero Celulares en el Salón (+30% a +40% de productividad por mozo)
 
-Los sectores alejados de la caja y la cocina (*Terraza, Patio, Vereda/Exterior o Salón VIP en planta alta*) suelen sufrir mala atención o exigir contratar personal eventual extra los fines de semana:
+Los sectores alejados de la caja y la cocina (*Terraza, Patio, Vereda/Exterior o Salón VIP en planta alta*) suelen sufrir mala atención o exigir contratar personal eventual extra los fines de semana, mientras que en restaurantes de estética cuidada los dueños rechazan de plano ver a sus camareros caminando con el teléfono en la mano:
 
 * Sin SaleListo, el mozo gasta cerca del **60% de su energía física en traslados mecánicos improductivos**: ir a llevar cartas, volver a preguntar si ya eligieron, caminar hasta cocina a preguntar *"¿ya sale la mesa T3?"*, ir a mesa a preguntar cómo pagan y volver a caja a buscar el posnet.
-* Con SaleListo, el balanceador híbrido reparte equitativamente las mesas o respeta los sectores asignados, y el celular le avisa al mozo con vibración **únicamente cuando hay valor real que aportar** (retirar un plato recién terminado en Cocina/Barra, acudir a un llamado puntual o llevar el medio de cobro exacto que el cliente ya eligió).
-* Resultado: un equipo de 4 mozos absorbe con fluidez y buen trato un volumen de despacho que antes requería 5 o 6 personas corriendo estresadas, y si un mozo falta o se retira al terminar su turno pico, el sistema **reasigna automáticamente sus mesas abiertas** sin generar baches de atención.
+* Con SaleListo, el balanceador híbrido reparte equitativamente las mesas o respeta los sectores asignados y elimina por completo las pantallas personales en el salón mediante dos modalidades complementarias:
+  1. **Estación de Mozos fija en el pase (`/pase.html`), incluida de serie en todos los planes**: una única tablet o pantalla horizontal en el mostrador de despacho o barra organiza columnas en vivo por cada mozo activo (legibles a 3 o 4 metros de distancia, con alerta sonora suave y botones táctiles grandes). Cada vez que el camarero pasa por el mostrador visualiza de un vistazo qué retirar en Cocina, qué retirar en Barra, qué mesa solicitó ayuda o qué cuenta llevar ya con medio de pago y propina definidos, e incluso puede cargar un pedido tomado en mesa en 5 segundos sin sacar jamás un celular.
+  2. **Kit Pulseras Vibradoras (Xiaomi Smart Band), adicional opcional para grandes superficies**: en patios cerveceros, veredas extensas o terrazas en altura, el teléfono queda guardado y bloqueado en el bolsillo o en un locker cercano y el mozo recibe el pulso háptico directo en su muñeca (`🍸 T2 · Retirar Barra`, `💳 M8 · Tarjeta $34.200`) **únicamente cuando hay valor real que aportar**, manteniendo ambas manos libres para bandejas y la mirada puesta en la hospitalidad.
+* Resultado: un equipo de 4 mozos absorbe con fluidez, presencia impecable y buen trato un volumen de despacho que antes requería 5 o 6 personas corriendo estresadas, y si un mozo falta o se retira al terminar su turno pico, el sistema **reasigna automáticamente sus mesas abiertas** sin generar baches de atención.
 
 ### 1.5. Caso Numérico de Retorno sobre la Inversión (ROI) para un Restaurante Tipo
 
@@ -87,9 +91,9 @@ El empresario gastronómico argentino y latinoamericano arrastra un fuerte desga
 
 ### 2.2. Matriz de Planes SaaS Mensuales
 
-| Característica | Plan Barra / Café *(Inicial)* | Plan Salón / Bistró *(Más elegido)* | Plan Gran Salón / Multisede *(Pro)* |
+| Característica | Plan Barra / Café *(Base)* | Plan Salón / Bistró *(Más elegido)* | Plan Gran Salón / Multisede *(Pro)* |
 | :--- | :---: | :---: | :---: |
-| **Perfil ideal de cliente** | Cafeterías de especialidad, bares chicos, heladerías, locales al paso | Restaurantes, cervecerías, pizzerías y bistrós con salón + vereda/terraza | Grandes patios cerveceros, rooftops, parrilladas (+30 mesas) y cadenas |
+| **Perfil ideal de cliente** | Cafeterías de especialidad, bares chicos, heladerías, locales al paso | Restaurantes, bistrós, pizzerías y cervecerías con salón + vereda/terraza | Grandes patios cerveceros, rooftops, parrilladas (+30 mesas) y cadenas |
 | **Precio mensual (USD ref.)** | **USD 35 / mes** | **USD 65 / mes** | **USD 110 / mes** *(por sucursal)* |
 | **Precio mensual ref. Argentina** | **ARS 55.125 / mes** | **ARS 102.375 / mes** | **ARS 173.250 / mes** |
 | **Precio anual (2 meses bonificados)** | USD 350 / año *(USD 29,1/mes)* | USD 650 / año *(USD 54,1/mes)* | USD 1.100 / año *(USD 91,6/mes)* |
@@ -98,23 +102,34 @@ El empresario gastronómico argentino y latinoamericano arrastra un fuerte desga
 | **Carta con fotos y platos agotados** | Ilimitada en tiempo real | Ilimitada en tiempo real | Ilimitada + sincronización entre sedes |
 | **Ajuste masivo % por inflación** | Incluido (por categoría o total) | Incluido (por categoría o total) | Incluido + programación de listas horarias *(Happy Hour / Menú Ejecutivo)* |
 | **Ruteo separado Cocina y Barra** | Incluido | Incluido (múltiples pantallas simultáneas) | Incluido (estaciones múltiples personalizadas) |
-| **Mozos activos y vista móvil** | Hasta **3 mozos** en turno | **Mozos ilimitados** + asignación híbrida y reasignación automática | **Mozos ilimitados** + métricas de tiempos y propinas por mozo |
+| **Estación de Mozos fija (`/pase.html`)** | **Incluida de serie** *(1 pantalla en pase/barra, cero celulares en salón)* | **Incluida de serie** *(pantallas ilimitadas en pase/barra + modo oscuro/claro)* | **Incluida de serie** *(múltiples estaciones de pase por planta o sector)* |
+| **Mozos activos y coordinación** | Hasta **3 mozos** en turno *(Estación de Pase + PWA móvil)* | **Mozos ilimitados** + asignación híbrida, reasignación automática y **Modo Pulsera Web Push** | **Mozos ilimitados** + métricas de tiempos/propinas y **Modo Pulsera Web Push** multi-sector |
+| **Kit Pulseras Vibradoras (Xiaomi Band)** | Adicional opcional *(pago único upfront)* | Adicional opcional *(Pack 3: USD 145 / Pack 5: USD 230)* | Adicional opcional *(Packs 3 o 5 + individuales a USD 48)* |
 | **Cierre de sesiones y arqueo diario** | Resumen diario básico | Arqueo completo por turno, medio de pago y propinas | Reportes históricos exportables y auditoría de cancelaciones |
 | **Nivel de soporte** | Lun a Sáb horario comercial (WhatsApp) | **Soporte prioritario gastronómico** (incluye vie/sáb hasta las 00:00 hs) | Ejecutivo de cuenta dedicado + capacitación continua a personal nuevo |
 
+* **Ventaja estratégica del Plan Base sin celulares en salón**: Todos los planes incluyen de serie la **Estación de Mozos fija (`/pase.html`)**, diseñada para correr en cualquier tablet, monitor secundario o equipo all-in-one que el local ya posea sobre el mostrador del pase o la barra. Esto neutraliza de raíz la principal objeción de estética gastronómica (*"no quiero que mis camareros anden mirando el celular en el salón"*) con **costo de hardware USD 0 para SaleListo**.
 * **Descuento corporativo multisede**: A partir de la 3.ª sucursal de un mismo grupo gastronómico o franquicia, se aplica un **15% de bonificación recurrente** sobre el Plan Gran Salón (**USD 93,50 / mes por local**, equivalente a **ARS 147.263 / mes**).
 
-### 2.3. Fee de Implementación, Onboarding y Kits Físicos de QRs (Ingresos Upfront)
+### 2.3. Fee de Implementación, Onboarding y Kits Iniciales Llave en Mano (Ingresos Upfront)
 
-En el rubro gastronómico, el mayor enemigo de la activación es esperar que el dueño cargue 80 platos en su tiempo libre y busque una imprenta por su cuenta. Convertimos esa fricción en un **servicio llave en mano en 48 horas** que deja al restaurante facturando desde el primer día y financia parte de nuestro Costo de Adquisición (CAC):
+En el rubro gastronómico, el mayor enemigo de la activación es esperar que el dueño cargue 80 platos en su tiempo libre, busque una imprenta o configure dispositivos por su cuenta. Convertimos esa fricción en un **servicio llave en mano en 48 horas** que deja al restaurante facturando desde el primer día y financia nuestro Costo de Adquisición (CAC) sin inmovilizar capital:
 
 1. **Onboarding Digital Express**: **USD 40 pago único** *(ARS 63.000)*.
-   * Carga completa inicial del menú provisto por el local (categorías, descripciones, precios, ruteo Cocina/Barra y optimización de fotos existentes), configuración del plano de bloques/mesas, entrega de archivos QR vectoriales de alta definición (SVG listos para gráfica) y sesión de puesta en marcha de 30 minutos con el encargado.
+   * Carga completa inicial del menú provisto por el local (categorías, descripciones, precios, ruteo Cocina/Barra y optimización de fotos existentes), configuración del plano de bloques/mesas, puesta a punto de la **Estación de Mozos fija (`/pase.html`)** en el mostrador/barra, entrega de archivos QR vectoriales de alta definición (SVG listos para gráfica) y sesión de puesta en marcha de 30 minutos con el encargado.
    * *Palanca comercial*: Bonificable al 50% o 100% para destrabar cierres en el acto cuando el local adhiere a débito automático en Plan Salón o Plan Gran Salón.
-2. **Kit Físico Llave en Mano ("Listo para Operar en Salón y Vereda")**: **USD 95 a USD 160 pago único** *(ARS 149.625 a ARS 252.000 según cantidad de mesas: pack 15 mesas USD 95 / pack 30 mesas USD 135 / pack 50 mesas USD 160)*.
+2. **Kit Físico QR Llave en Mano ("Listo para Operar en Salón y Vereda")**: **USD 95 a USD 160 pago único** *(ARS 149.625 a ARS 252.000 según cantidad de mesas: pack 15 mesas USD 95 / pack 30 mesas USD 135 / pack 50 mesas USD 160)*.
    * Incluye todo el Onboarding Digital Express **más** la fabricación y entrega en el local de **portamenús acrílicos tipo tent-card o placas rígidas de PVC bicapa / aluminio anodizado con protección UV y adhesivo industrial 3M** (resistentes al sol directo en vereda, lluvia, derrames de cerveza y limpieza diaria con alcohol).
    * Cada pieza lleva impreso el logo del restaurante, el código identificatorio de la mesa (*ej. Terraza T4*), el QR de token fijo seguro y una instrucción clara de conversión (*"Escaneá con tu cámara: mirá fotos, pedí directo y llamá al mozo sin pedir Wi-Fi"*), junto con una capacitación práctica de 45 minutos al plantel de mozos y cocina antes de abrir el turno.
-   * **Economía del Kit Físico**: Costo directo de producción gráfica/acrílica y envío estimado en USD 50 a USD 85 por kit, generando un **margen bruto inmediato de USD 45 a USD 75** que reduce drásticamente el tiempo de recupero del CAC.
+   * **Economía del Kit Físico QR**: Costo directo de producción gráfica/acrílica y envío estimado en USD 50 a USD 85 por kit, generando un **margen bruto inmediato de USD 45 a USD 75** que reduce drásticamente el tiempo de recupero del CAC.
+3. **Kit Pulseras Vibradoras SaleListo (Xiaomi Smart Band configuradas)**:
+   * Pensado para locales grandes, patios cerveceros, jardines, veredas amplias o plantas altas donde los camareros recorren distancias largas lejos del mostrador del pase.
+   * El teléfono queda **bloqueado en el bolsillo o en un locker cercano** recibiendo alertas Web Push nativas en segundo plano, y el mozo siente la vibración directa en su muñeca leyendo en medio segundo avisos ultracompactos como `🍸 T2 · Retirar Barra` o `💳 M8 · Tarjeta $34.200`, sin sacar el celular en ningún momento frente al comensal.
+   * **Hardware probado para ritmo gastronómico**: batería real de **10 a 14 días** de autonomía continua (cero recargas a mitad del servicio), resistentes al agua y salpicaduras de barra (5 ATM) y ultralivianas (**15 g** de peso).
+   * **Precios upfront con margen comercial positivo y cero capital propio inmovilizado** (se adquieren y entregan configuradas contra el cobro inicial al activar el kit, incluyendo vinculación lista en Modo Pulsera y test de vibración en vivo):
+     - **Pack 3 Pulseras Configuradas**: **USD 145 pago único** *(ARS 228.375; costo directo estimado USD 95, **margen bruto USD 50**)*.
+     - **Pack 5 Pulseras Configuradas**: **USD 230 pago único** *(ARS 362.250; costo directo estimado USD 155, **margen bruto USD 75**)*.
+     - **Pulsera adicional individual**: **USD 48 pago único** *(ARS 75.600)*.
 
 ### 2.4. Evaluación Estratégica: ¿Suscripción Fija vs. Comisión Opcional?
 
@@ -136,7 +151,7 @@ La arquitectura multi-moneda comercial permite adaptar la lista de precios al po
 
 ## 3. Estructura de Costos y Unit Economics
 
-Una ventaja estructural decisiva de SaleListo frente a competidores sobrecargados de microservicios costosos es su **ingeniería liviana de altísima eficiencia**: motor transaccional ligero sobre SQLite en modo WAL (*Write-Ahead Logging*), sincronización instantánea mediante *Server-Sent Events (SSE)* filtrados por rol (sin *polling* constante que desperdicie ancho de banda ni cobros por mensaje de terceros) y generación autónoma de códigos QR en formato SVG sin depender de APIs externas pagas.
+Una ventaja estructural decisiva de SaleListo frente a competidores sobrecargados de microservicios costosos es su **ingeniería liviana de altísima eficiencia**: motor transaccional ligero sobre SQLite en modo WAL (*Write-Ahead Logging*), sincronización instantánea mediante *Server-Sent Events (SSE)* filtrados por rol, despacho propio de notificaciones **Web Push cifradas en segundo plano (RFC 8291 / VAPID RFC 8292 en Python puro, USD 0 en pasarelas de terceros)** y generación autónoma de códigos QR en formato SVG sin depender de APIs externas pagas.
 
 ### 3.1. Costo Cloud y de Servicio por Restaurante Activo (COGS Mensual)
 
@@ -165,7 +180,7 @@ Calculamos los indicadores unitarios sobre el mix esperado de cartera comercial 
 | **Margen Bruto Mensual en dólares / pesos** | **USD 56,25 / mes** | **ARS 88.594 / mes** | Contribución neta mensual por cada local activo |
 | **Margen Bruto Porcentual (% Gross Margin)** | **90,4%** | **90,4%** | Nivel de excelencia SaaS (benchmark industria: 75%-82%) |
 | **CAC Bruto (Costo de Adquisición de Cliente)** | **USD 150,00** | **ARS 236.250** | Mix: comisión closer comercial (USD 65) + prospección/ads/viáticos (USD 50) + horas de onboarding inicial (USD 35) |
-| **Margen neto upfront Kit Físico / Onboarding** | **+ USD 35,00** | **+ ARS 55.125** | Promedio ponderado entre kits físicos vendidos y onboardings bonificados |
+| **Margen neto upfront Kits / Onboarding** | **+ USD 35,00** | **+ ARS 55.125** | Base conservadora (kits QR + onboardings); suma **+USD 50 a +USD 75 extra** al incluir Kit Pulseras Xiaomi Band |
 | **CAC Neto Efectivo (descontando margen upfront)** | **USD 115,00** | **ARS 181.125** | Capital neto real a recuperar con el abono mensual |
 | **Churn mensual estimado (Tasa de baja)** | **3,5% mensual** | **3,5% mensual** | ~2,3% mortalidad natural de locales gastronómicos + ~1,2% rotación voluntaria |
 | **Vida media esperada del cliente (1 / Churn)** | **28,6 meses** | **28,6 meses** | ~2,4 años de permanencia promedio por alto arraigo operativo |
@@ -220,8 +235,8 @@ Venderle a dueños gastronómicos exige entender su ritmo diario: nunca atender�
 En vez de vender a locales aislados en distintas provincias desde el primer día, la captura inicial concentra el 100% de la energía comercial en **corredores gastronómicos de alta densidad peatonal** (por ejemplo: circuitos de 15 cuadras en Palermo, Chacarita, Villa Crespo, Colegiales, Belgrano, Las Lomitas o San Isidro; luego Güemes en Córdoba, Pichincha en Rosario y calle Arístides en Mendoza).
 
 * **Por qué funciona**:
-  1. Un vendedor camina y visita 12 locales calificados en una sola tarde con costo logístico casi nulo y lleva en la mano **un display acrílico real con un QR activo conectado a la nube**.
-  2. El dueño escanea con su propio celular usando su 4G, hace un pedido de prueba y ve sonar al instante el teléfono del vendedor actuando como mozo y una tablet/celular actuando como Cocina y Barra. **La demostración física en 90 segundos vence cualquier presentación teórica.**
+  1. Un vendedor camina y visita 12 locales calificados en una sola tarde con costo logístico casi nulo y lleva en la mano **un display acrílico real con un QR activo conectado a la nube** y **una Xiaomi Smart Band de muestra en la muñeca**.
+  2. El dueño escanea con su propio celular usando su 4G, hace un pedido de prueba y ve en vivo cómo impacta separado entre Cocina y Barra, se enciende la columna del camarero en la **Estación de Mozos fija (`/pase.html`)** y vibra al instante la **pulsera inteligente** con el teléfono bloqueado en el bolsillo. **La demostración física en 90 segundos vence cualquier presentación teórica.**
   3. Cuando 3 o 4 cervecerías o bistrós de la misma zona adoptan SaleListo, se activa la prueba social inmediata: los dueños vecinos, encargados y mozos que rotan entre locales preguntan por el sistema.
 
 ### 4.2. Oferta de Entrada sin Fricción: "Piloto Sectorizado de 21 Días"
@@ -250,7 +265,7 @@ Multiplicamos la distribución apalancando actores que ya tienen la confianza de
 2. **Gráficas, talleres de corte láser acrílico e imprentas gastronómicas**:
    * Cada vez que un local va a una gráfica cansado de gastar dinero en reimprimir cartas por inflación, la imprenta le ofrece fabricar por única vez los **displays acrílicos o grabados en madera/PVC con los códigos QR fijos de SaleListo**, cobrando su trabajo físico con excelente margen y ganando una comisión por derivarnos el alta del software.
 3. **Instaladores de redes, soporte técnico gastronómico y sistemas de facturación fiscal**:
-   * Técnicos independientes que mantienen comanderas térmicas, balanzas y puntos de venta visitan decenas de locales por mes. Se convierten en canal revendedor certificado con comisión por alta instalada. Con sistemas de facturación contable/AFIP regionales, impulsamos alianzas de complementariedad: ellos resuelven impuestos, sueldos y proveedores; SaleListo resuelve la experiencia viva en la mesa, Cocina, Barra y celular del mozo.
+   * Técnicos independientes que mantienen comanderas térmicas, balanzas y puntos de venta visitan decenas de locales por mes. Se convierten en canal revendedor certificado con comisión por alta instalada. Con sistemas de facturación contable/AFIP regionales, impulsamos alianzas de complementariedad: ellos resuelven impuestos, sueldos y proveedores; SaleListo resuelve la experiencia viva en la mesa, Cocina, Barra, Estación de Pase y pulseras de los mozos.
 
 ### 4.5. Hoja de Ruta de Upsells Futuros (Expansión del ARPU y Retención)
 
@@ -258,14 +273,14 @@ Una vez instalado SaleListo como el sistema nervioso del salón y dueño del pun
 
 ```mermaid
 flowchart LR
-    A["Fase 1: Core SaaS QR 4G/5G + Cocina/Barra + Mozos (ARPU ~USD 62/mes)"] --> B["Fase 2: Pagos en Mesa Mercado Pago / QR (+USD 25 a 45/mes)"]
+    A["Fase 1: Core SaaS QR 4G/5G + Cocina/Barra + Pase/Pulseras (ARPU ~USD 62/mes)"] --> B["Fase 2: Pagos en Mesa Mercado Pago / QR (+USD 25 a 45/mes)"]
     B --> C["Fase 3: Analítica e Ingeniería de Menú (+USD 18/mes)"]
     C --> D["Fase 4: Fidelización y Fila Virtual (+USD 20/mes)"]
 ```
 
 1. **Upsell 1: Cobro Integrado en Mesa y División de Cuenta ("Escaneá, Dividí y Pagá")**:
    * Integración nativa con **Mercado Pago, MODO, links de pago con tarjeta de crédito/débito y QR interoperable** (más equivalentes regionales en LATAM).
-   * El grupo de amigos elige si paga el total, divide en partes iguales o **cada comensal tilda exactamente lo que consumió**, suma la propina digital para su mozo asignado y paga en 10 segundos sin esperar el posnet. La sesión en SaleListo impacta como *"Pagada y verificada"* en tiempo real en Caja y en el celular del mozo, acelerando otros 8 minutos la rotación de mesa y generando un **ingreso fintech adicional sin fricción**.
+   * El grupo de amigos elige si paga el total, divide en partes iguales o **cada comensal tilda exactamente lo que consumió**, suma la propina digital para su mozo asignado y paga en 10 segundos sin esperar el posnet. La sesión en SaleListo impacta como *"Pagada y verificada"* en tiempo real en Caja, en la Estación de Mozos y en la pulsera del camarero, acelerando otros 8 minutos la rotación de mesa y generando un **ingreso fintech adicional sin fricción**.
 2. **Upsell 2: Módulo de Ingeniería de Menú y Analítica Inteligente (+USD 18 / mes)**:
    * Cruce de visualizaciones de carta vs. pedidos efectivos, cálculo de margen por plato (cargando receta o costo estimado), detección de platos "Estrella" (alta ganancia y alta rotación) vs. platos "Clavo", tiempos reales de demora de Cocina y Barra por franja horaria, y tablero comparativo de desempeño, velocidad de respuesta y propinas logradas por cada mozo.
 3. **Upsell 3: Lista de Espera con QR en Puerta y Fidelización Automática (+USD 20 / mes)**:
@@ -282,39 +297,49 @@ El fracaso de muchas propuestas digitales en gastronomía nació de un error con
 **Nuestro posicionamiento es exactamente el opuesto**:
 > *"SaleListo no reemplaza al mozo; le quita de encima las tareas mecánicas y frustrantes de caminar en vano, tomar dictado apurado y perseguir un posnet, para devolverle tiempo de hospitalidad real, permitirle atender más mesas sin correr y hacerle ganar más propina en cada turno."*
 
-A continuación se detalla el manual práctico de respuesta frente a las **7 objeciones reales de salón**, estructurado para reuniones con dueños, encargados y jefes de piso.
+A continuación se detalla el manual práctico de respuesta frente a las **8 objeciones reales de salón**, estructurado para reuniones con dueños, encargados y jefes de piso.
 
 ---
 
-### Objeción 1: *"Mis clientes prefieren la atención humana; acá vienen a que los atiendan y asesoren, no a mirar una pantalla."*
+### Objeción 1: *"¿Mis mozos tienen que estar con el celular en la mano? No quiero que los clientes sientan que están mirando WhatsApp en el salón."*
+
+* **Por qué la dice el dueño**: En bistrós, restaurantes modernos y salones de categoría, la presencia visual del personal es sagrada; ver a un camarero mirando un teléfono da imagen de distracción.
+* **Respuesta contundente (nuestro diferencial clave)**:
+  > *"Coincido al 100%, y por eso SaleListo está diseñado para operar con **cero celulares en el salón** bajo dos modalidades según el tamaño de tu local:*
+  > *1. **Estación de Mozos fija (`/pase.html`), incluida sin costo adicional desde el Plan Base**: colocás una única pantalla o tablet horizontal en el mostrador del pase o la barra, dividida en columnas por cada mozo activo y legible a 3 o 4 metros. Ningún camarero lleva teléfono encima: cada vez que pasa por el pase ve en grande qué plato o trago retirar, qué mesa pidió asistencia o qué cuenta cobrar ya con medio de pago y propina elegidos, e incluso puede cargar un pedido tradicional ahí mismo en 5 segundos.*
+  > *2. **Kit Pulseras Vibradoras SaleListo (Xiaomi Smart Band), opcional para patios, terrazas o salones grandes**: si tenés terraza por escalera o patio profundo, el teléfono queda bloqueado en un locker cercano o guardado en el bolsillo y el mozo siente una vibración suave en su muñeca leyendo en medio segundo `🍸 T2 · Retirar Barra` o `💳 M8 · Tarjeta $34.200`. Cero pantallas en la mano, 15 gramos de peso y batería para 10 a 14 días."*
+
+---
+
+### Objeción 2: *"Mis clientes prefieren la atención humana; acá vienen a que los atiendan y asesoren, no a mirar una pantalla."*
 
 * **Por qué la dice el dueño**: Teme enfriar la identidad cálida de su restaurante y parecer un local de comida rápida impersonal.
 * **Respuesta empática y concreta**:
-  > *"Coincido al 100%: nadie sale a cenar para hablar con un robot, y justamente por eso diseñamos SaleListo para potenciar a tus mozos. En un viernes lleno, lo menos humano que existe es que el cliente levante la mano durante 12 minutos intentando pedir otra copa de vino o la cuenta y nadie lo mire porque los chicos están tapados. Con SaleListo mantenés toda tu hospitalidad: el mozo recibe a la mesa con una sonrisa, cuenta la sugerencia del chef y lleva cada plato y bebida en mano. La diferencia es que cuando el cliente ya sabe qué quiere o desea pedir una segunda ronda rápido, lo manda en dos toques sin esperar, y a tu mozo asignado le vibra el celular al instante sabiendo exactamente qué pidió su mesa. Además, si una mesa prefiere pedirle hablando al mozo, el mozo mismo carga o acompaña sin ningún problema. Sumás velocidad sin quitar ni un gramo de calidez."*
+  > *"Nadie sale a cenar para hablar con un robot, y justamente por eso diseñamos SaleListo para potenciar a tus mozos. En un viernes lleno, lo menos humano que existe es que el cliente levante la mano durante 12 minutos intentando pedir otra copa de vino o la cuenta y nadie lo mire porque los chicos están tapados. Con SaleListo mantenés toda tu hospitalidad: el mozo recibe a la mesa con una sonrisa, cuenta la sugerencia del chef y lleva cada plato y bebida en mano. La diferencia es que cuando el cliente ya sabe qué quiere o desea pedir una segunda ronda rápido, lo manda en dos toques sin esperar, y el aviso aparece al instante en la columna de tu mozo en el pase (o le vibra en la pulsera). Además, si una mesa prefiere pedir hablando con el mozo, él lo carga en el mostrador sin ningún problema. Sumás velocidad sin quitar ni un gramo de calidez."*
 
 ---
 
-### Objeción 2: *"Mis mozos se van a resistir, van a sentir que los queremos controlar o que van a perder propinas."*
+### Objeción 3: *"Mis mozos se van a resistir, van a sentir que los queremos controlar o que van a perder propinas."*
 
 * **Por qué la dice el dueño/encargado**: Sabe que si el plantel de salón boicotea una herramienta (tapando los QRs o diciendo *"no anda, pedime a mí"*), cualquier implementación fracasa.
 * **Respuesta y cómo enamorar al mozo desde el día uno**:
-  > *"Cuando le mostramos a los mozos cómo funciona su vista móvil en SaleListo, pasan de la desconfianza a pedirlo ellos mismos por cuatro motivos directos para su bolsillo y sus piernas:*
-  > *1. **Sus mesas siguen siendo suyas**: El sistema asigna cada mesa al mozo de ese sector o balancea parejo, mostrando su nombre. Nadie le pisa sus mesas, y si un compañero se va antes, el sistema reasigna prolijo.*
+  > *"Cuando le mostramos a los mozos cómo funciona su columna en la Estación del Pase o la pulsera vibradora, pasan de la desconfianza a pedirlo ellos mismos por cuatro motivos directos para su bolsillo y sus piernas:*
+  > *1. **Sus mesas siguen siendo suyas**: El sistema asigna cada mesa al mozo de ese sector o balancea parejo, mostrando su nombre y color. Nadie le pisa sus mesas, y si un compañero se va antes, el sistema reasigna prolijo.*
   > *2. **Ganan entre un 20% y un 30% más de propina por noche**: La propina es un porcentaje del ticket y de la cantidad de mesas cerradas. Al entrar más segundas rondas de bebida y postres, y al rotar más rápido las mesas en hora pico, la recaudación base sobre la que reciben propina sube fuerte. Además, cuando el cliente pide la cuenta en SaleListo, **la pantalla le sugiere explícitamente dejar 10% o 15% de propina**, empujando hacia arriba el promedio frente al 'dejá el cambio'.*
-  > *3. **Caminan la mitad de viajes vacíos**: Ya no tienen que asomarse cinco veces a la ventana de cocina a preguntar si salió la milanesa de la mesa 6; el celular les vibra con sonido justo cuando Cocina o Barra toca 'Listo' para que vayan directo a retirarla caliente.*
+  > *3. **Caminan la mitad de viajes vacíos**: Ya no tienen que asomarse cinco veces a la ventana de cocina a preguntar si salió la milanesa de la mesa 6; la Estación del Pase o la pulsera les avisa justo cuando Cocina o Barra toca 'Listo' para que vayan directo a retirarla caliente.*
   > *4. **Cero culpas por faltantes o errores**: Si se acabó el salmón, se apaga en el panel y ningún cliente se enoja con el mozo; y si el cliente pidió 'sin cebolla' desde su teléfono, queda escrito en Cocina sin discusiones."*
 
 ---
 
-### Objeción 3: *"Ya pago un sistema gastronómico de caja / facturación y no quiero cambiar todo ni pagar dos veces."*
+### Objeción 4: *"Ya pago un sistema gastronómico de caja / facturación y no quiero cambiar todo ni pagar dos veces."*
 
 * **Por qué la dice el dueño**: Tiene miedo a frenar su facturación fiscal, perder su control de stock actual o reentrenar al cajero desde cero.
 * **Respuesta comercial**:
-  > *"Excelente que ya tengas resuelta la caja fiscal: no tenés que darla de baja ni tocar tu facturación contable. Los sistemas tradicionales nacieron de la caja hacia adentro (para facturar e imprimir tickets), pero fallan de la caja hacia el salón: no te dan pedidos por 4G sin Wi-Fi, no dividen en vivo Cocina y Barra desde la mesa ni coordinan el celular de los mozos con reasignación automática, o te quieren cobrar fortunas en licencias y terminales adicionales. SaleListo funciona como tu **acelerador de salón**: coordina todas las rondas, llamados y avisos de platos listos, y cuando la mesa pide la cuenta, tu cajero ve en SaleListo el desglose exacto conciliado (subtotal, propina y medio de pago elegido) y emite el comprobante fiscal en tu caja habitual en diez segundos. Lo que SaleListo te genera en solo dos noches de viernes en segundas rondas multiplica por diez su abono mensual."*
+  > *"Excelente que ya tengas resuelta la caja fiscal: no tenés que darla de baja ni tocar tu facturación contable. Los sistemas tradicionales nacieron de la caja hacia adentro (para facturar e imprimir tickets), pero fallan de la caja hacia el salón: no te dan pedidos por 4G sin Wi-Fi, no dividen en vivo Cocina y Barra desde la mesa ni coordinan a los mozos por columnas en el pase o pulseras vibradoras con reasignación automática, o te quieren cobrar fortunas en licencias y terminales adicionales. SaleListo funciona como tu **acelerador de salón**: coordina todas las rondas, llamados y avisos de platos listos, y cuando la mesa pide la cuenta, tu cajero ve en SaleListo el desglose exacto conciliado (subtotal, propina y medio de pago elegido) y emite el comprobante fiscal en tu caja habitual en diez segundos. Lo que SaleListo te genera en solo dos noches de viernes en segundas rondas multiplica por diez su abono mensual."*
 
 ---
 
-### Objeción 4: *"Ya tenemos códigos QR en las mesas con el menú en PDF / Canva / Google Drive y es gratis."*
+### Objeción 5: *"Ya tenemos códigos QR en las mesas con el menú en PDF / Canva / Google Drive y es gratis."*
 
 * **Por qué la dice el dueño**: Cree que "tener QR" es sinónimo de tener digitalizado el salón, sin notar el costo oculto del PDF estático.
 * **Respuesta comercial**:
@@ -322,34 +347,35 @@ A continuación se detalla el manual práctico de respuesta frente a las **7 obj
 
 ---
 
-### Objeción 5: *"En mi salón el Wi-Fi se colapsa cuando se llena y en las mesas de la vereda casi ni llega señal."*
+### Objeción 6: *"En mi salón el Wi-Fi se colapsa cuando se llena y en las mesas de la vereda casi ni llega señal."*
 
 * **Por qué la dice el dueño**: Sufrió experiencias previas con sistemas pesados o redes locales mal configuradas donde el cliente se quejaba de que no abría la carta.
 * **Respuesta técnica traducida a beneficio**:
-  > *"Justamente por eso SaleListo corre en la nube con una interfaz ultraliviana: **tus clientes no necesitan pedirte clave de Wi-Fi ni conectarse a tu red**. Escanean el QR y abre en menos de un segundo usando sus propios datos móviles 4G o 5G, pesando menos que abrir una foto de WhatsApp. Eso te resuelve dos problemas de un plumazo: la vereda y la terraza funcionan exactamente igual de rápido que adentro, y liberás el Wi-Fi interno de tu local exclusivamente para tu caja, tus pantallas de Cocina y Barra y la música del salón."*
+  > *"Justamente por eso SaleListo corre en la nube con una interfaz ultraliviana: **tus clientes no necesitan pedirte clave de Wi-Fi ni conectarse a tu red**. Escanean el QR y abre en menos de un segundo usando sus propios datos móviles 4G o 5G, pesando menos que abrir una foto de WhatsApp. Eso te resuelve dos problemas de un plumazo: la vereda y la terraza funcionan exactamente igual de rápido que adentro, y liberás el Wi-Fi interno de tu local exclusivamente para tu caja, tus pantallas de Cocina, Barra y Pase, y la música del salón."*
 
 ---
 
-### Objeción 6: *"Al mediodía o los domingos viene gente mayor o familias tradicionales que no usan QR."*
+### Objeción 7: *"Al mediodía o los domingos viene gente mayor o familias tradicionales que no usan QR."*
 
 * **Por qué la dice el dueño**: Piensa en términos de "todo o nada" y teme excluir al segmento +65 años.
 * **Respuesta comercial**:
-  > *"No es obligatorio que el 100% de las mesas escanee el QR para que sea un éxito rotundo. En la práctica pasa algo buenísimo: el 75% u 80% del salón (parejas jóvenes, grupos de amigos, ejecutivos apurados al mediodía, mesas en la vereda) usa el QR encantado porque valora la inmediatez. Como esas 15 o 20 mesas ya se autogestionan solas las bebidas, aclaraciones y pedidos de cuenta, **tus mozos quedan muchísimo más liberados y tranquilos para dedicarle atención presencial tradicional y paciente a las 4 o 5 mesas de personas mayores**, cargando ellos mismos el pedido en el sistema para que igual entre ordenado a Cocina y Barra. Ganás en los dos mundos."*
+  > *"No es obligatorio que el 100% de las mesas escanee el QR para que sea un éxito rotundo. En la práctica pasa algo buenísimo: el 75% u 80% del salón (parejas jóvenes, grupos de amigos, ejecutivos apurados al mediodía, mesas en la vereda) usa el QR encantado porque valora la inmediatez. Como esas 15 o 20 mesas ya se autogestionan solas las bebidas, aclaraciones y pedidos de cuenta, **tus mozos quedan muchísimo más liberados y tranquilos para dedicarle atención presencial tradicional y paciente a las 4 o 5 mesas de personas mayores**, cargando el pedido en 5 segundos desde el botón `+ Pedido en mostrador` de la Estación del Pase para que igual entre ordenado a Cocina y Barra. Ganás en los dos mundos."*
 
 ---
 
-### Objeción 7: *"Suena muy bien, pero vivo apagando incendios en el local; no tengo tiempo de armar planos, sacar fotos ni configurar sistemas."*
+### Objeción 8: *"Suena muy bien, pero vivo apagando incendios en el local; no tengo tiempo de armar planos, sacar fotos ni configurar sistemas."*
 
 * **Por qué la dice el dueño**: Falta crónica de tiempo operativo del gastronómico.
 * **Respuesta de cierre inmediato**:
-  > *"No tenés que cargar absolutamente nada vos. Me pasás por WhatsApp una foto o archivo de tu carta actual y me contás cuántas mesas tenés en cada sector (por ejemplo: 12 adentro, 6 en terraza y 6 en vereda). En 48 horas te entregamos el sistema 100% configurado con tus precios, separación de Cocina y Barra lista, y los códigos QR fijos listos en acrílico para apoyar en las mesas. Venimos un día a las 18:30 hs antes de que abras, en 20 minutos tus mozos ya están recibiendo alertas en sus celulares, y si querés arrancamos probándolo 21 días solo en tu vereda o terraza para que los números hablen solos."*
+  > *"No tenés que cargar absolutamente nada vos. Me pasás por WhatsApp una foto o archivo de tu carta actual y me contás cuántas mesas tenés en cada sector (por ejemplo: 12 adentro, 6 en terraza y 6 en vereda). En 48 horas te entregamos el sistema 100% configurado con tus precios, separación de Cocina y Barra lista, la Estación de Mozos lista para abrir en la pantalla del pase y los códigos QR fijos en acrílico para apoyar en las mesas. Venimos un día a las 18:30 hs antes de que abras, en 20 minutos tu equipo ya está operando sin celulares en el salón (o con el Kit de Pulseras configurado si tenés terraza grande), y si querés arrancamos probándolo 21 días solo en tu vereda o terraza para que los números hablen solos."*
 
 ### Tabla Resumen de Bolsillo para el Equipo Comercial
 
 | Objeción rápida en salón | Frase puente de desbloqueo | Prueba inmediata en la demo |
 | :--- | :--- | :--- |
-| *"Prefieren trato humano"* | *"Quitamos la espera muda, no la hospitalidad del mozo."* | Mostrar botón **"Llamar al mozo"** y nombre del mozo asignado. |
-| *"Los mozos se van a oponer"* | *"Caminan la mitad en vano y suman +25% de propina sugerida."* | Mostrar alerta de **"Plato listo"** y selector de **propina 10%/15%**. |
+| *"No quiero mozos con el celular"* | *"Operás 100% sin celulares: pantalla fija en el pase de serie o pulsera vibradora en muñeca."* | Abrir **`/pase.html`** en columnas y hacer vibrar la **Xiaomi Band** de muestra. |
+| *"Prefieren trato humano"* | *"Quitamos la espera muda, no la hospitalidad del mozo."* | Mostrar botón **"Llamar al mozo"** y carga manual en mostrador. |
+| *"Los mozos se van a oponer"* | *"Caminan la mitad en vano y suman +25% de propina sugerida."* | Mostrar alerta de **"Plato listo"** en su columna y selector de **propina 10%/15%**. |
 | *"Ya tengo sistema de caja"* | *"Tu caja factura; SaleListo te llena la cocina y la barra de segundas rondas."* | Mostrar cierre de sesión listo en 5 seg para copiar al fiscal. |
 | *"Ya tengo QR en PDF"* | *"Un PDF muestra precios viejos; SaleListo toma pedidos y actualiza por inflación."* | Ejecutar en vivo un **ajuste masivo +8%** y apagar un plato agotado. |
 | *"Mal Wi-Fi en vereda"* | *"Funciona con el 4G/5G del cliente sin pedir clave de Wi-Fi."* | Apagar el Wi-Fi del celular y escanear el QR de muestra en 1 segundo. |

@@ -16,12 +16,25 @@ import secrets
 import socket
 import sys
 import threading
+import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from db import ActionError, Database
 from qrgen import qr_svg
+from webpush import (
+    b64url_decode,
+    decode_p256_public,
+    dispatch_webpush_async,
+    ensure_vapid_keys,
+)
+
+mimetypes.add_type('application/javascript; charset=utf-8', '.js')
+mimetypes.add_type('application/manifest+json; charset=utf-8', '.webmanifest')
+mimetypes.add_type('application/json; charset=utf-8', '.json')
+mimetypes.add_type('image/svg+xml', '.svg')
+mimetypes.add_type('text/css; charset=utf-8', '.css')
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
@@ -32,6 +45,7 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('PORT') or 
 
 SERVER_SECRET = secrets.token_bytes(32)
 db = Database(DB_PATH, UPLOADS_DIR)
+VAPID_KEYS = ensure_vapid_keys(DATA_DIR)
 
 # Sesiones ligeras en memoria para mozos y cocina
 staff_tokens: dict[str, str] = {}
@@ -90,6 +104,17 @@ subscribers: set[Subscriber] = set()
 subs_lock = threading.Lock()
 
 
+def _on_push_expired(endpoint: str) -> None:
+    if db.delete_push_subscription(endpoint):
+        broadcast_updates()
+
+
+def flush_pending_webpush() -> None:
+    deliveries = db.drain_push_deliveries()
+    if deliveries:
+        dispatch_webpush_async(deliveries, VAPID_KEYS, on_expired=_on_push_expired)
+
+
 def broadcast_updates() -> None:
     with subs_lock:
         current_subs = list(subscribers)
@@ -119,6 +144,8 @@ class Handler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(PUBLIC), **kwargs)
 
     def end_headers(self) -> None:
+        if self.path.split('?', 1)[0] == '/sw.js':
+            self.send_header('Service-Worker-Allowed', '/')
         if not self.path.startswith('/uploads/'):
             self.send_header('Cache-Control', 'no-store')
         super().end_headers()
@@ -269,6 +296,9 @@ class Handler(SimpleHTTPRequestHandler):
                 },
             )
 
+        if path == '/api/push/vapid-public-key':
+            return self.send_json(200, {'ok': True, 'publicKey': VAPID_KEYS['publicKey']})
+
         if path == '/api/events':
             scope = (qs.get('scope') or ['client'])[0]
             if scope == 'staff':
@@ -319,18 +349,96 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(401, {'ok': False, 'error': 'Ingresá el PIN del local para abrir Cocina/Barra'})
             return self.send_json(200, {'ok': True, 'token': create_staff_token('kitchen')})
 
-        if path != '/api/action':
-            return self.send_json(404, {'ok': False, 'error': 'Ruta no encontrada'})
-
         auth_header = self.headers.get('X-Auth-Token') or ''
         role = resolve_role(auth_header)
 
+        if path == '/api/push/subscribe':
+            if role not in ('admin', 'waiter', 'kitchen') and not db.is_demo_mode():
+                return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
+            try:
+                waiter_id = str(body.get('waiterId') or '').strip()
+                sub = body.get('subscription') or {}
+                if not isinstance(sub, dict):
+                    raise ActionError('Suscripción Web Push inválida')
+                endpoint = str(sub.get('endpoint') or '').strip()
+                keys = sub.get('keys') if isinstance(sub.get('keys'), dict) else {}
+                p256dh = str(keys.get('p256dh') or sub.get('p256dh') or '').strip()
+                auth_sec = str(keys.get('auth') or sub.get('auth') or '').strip()
+                if not p256dh or not auth_sec:
+                    raise ActionError('Faltan claves p256dh/auth en la suscripción')
+                try:
+                    decode_p256_public(b64url_decode(p256dh))
+                    if len(b64url_decode(auth_sec)) < 12:
+                        raise ValueError('auth corto')
+                except Exception:
+                    raise ActionError('Claves criptográficas Web Push inválidas')
+                wristband_mode = bool(body.get('wristbandMode', True))
+                saved = db.save_push_subscription(waiter_id, endpoint, p256dh, auth_sec, wristband_mode)
+                broadcast_updates()
+                return self.send_json(200, {'ok': True, **saved})
+            except ActionError as e:
+                return self.send_json(400, {'ok': False, 'error': str(e)})
+
+        if path == '/api/push/unsubscribe':
+            sub = body.get('subscription') if isinstance(body.get('subscription'), dict) else {}
+            endpoint = str(body.get('endpoint') or sub.get('endpoint') or '').strip()
+            removed = db.delete_push_subscription(endpoint)
+            if removed:
+                broadcast_updates()
+            return self.send_json(200, {'ok': True, 'removed': removed})
+
+        if path == '/api/push/test':
+            if role not in ('admin', 'waiter', 'kitchen') and not db.is_demo_mode():
+                return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
+            waiter_id = str(body.get('waiterId') or '').strip()
+            endpoint = str(body.get('endpoint') or '').strip()
+            subs = db.get_waiter_push_subscriptions(waiter_id, endpoint)
+            if not subs:
+                return self.send_json(
+                    400,
+                    {'ok': False, 'error': 'Activá primero el Modo Pulsera en este dispositivo'},
+                )
+            ts = int(time.time() * 1000)
+            title = '⌚ Pulsera SaleListo OK'
+            text_body = 'Vibración activa con pantalla bloqueada'
+            deliveries = [
+                (
+                    s,
+                    {
+                        'id': f'test-{ts}',
+                        'kind': 'push_test',
+                        'waiterId': s['waiter_id'],
+                        'title': title,
+                        'body': text_body,
+                        'shortTitle': title,
+                        'shortBody': text_body,
+                        'urgent': True,
+                        'tag': f'salelisto-test-{ts}',
+                        'url': f"/mozo.html?waiter={s['waiter_id']}",
+                        'ts': ts,
+                    },
+                )
+                for s in subs
+            ]
+            dispatch_webpush_async(deliveries, VAPID_KEYS, on_expired=_on_push_expired)
+            return self.send_json(200, {'ok': True, 'sent': len(subs), 'title': title, 'body': text_body})
+
+        if path != '/api/action':
+            return self.send_json(404, {'ok': False, 'error': 'Ruta no encontrada'})
+
         try:
-            action_type = str(body.get('type') or '')
-            payload = body.get('payload') or {}
+            action_type = str(body.get('type') or body.get('action') or '')
+            raw_payload = body.get('payload')
+            if isinstance(raw_payload, dict):
+                payload = raw_payload
+            else:
+                payload = {k: v for k, v in body.items() if k not in ('type', 'action')}
             result = db.execute(action_type, payload, role=role)
+            flush_pending_webpush()
             broadcast_updates()
-            if role in ('admin', 'waiter', 'kitchen'):
+            if role in ('admin', 'waiter', 'kitchen') or (
+                db.is_demo_mode() and action_type not in ('order.create', 'call.create')
+            ):
                 state_out = db.get_staff_state()
             else:
                 state_out = db.get_client_state(
@@ -387,6 +495,7 @@ def main() -> None:
     print(f'  Inicio / Portada:       {base}/')
     print(f'  Demo 4 pantallas:       {base}/demo.html')
     print(f'  Panel Encargado (PIN):  {base}/restaurante.html   (PIN inicial: 1234)')
+    print(f'  Estación de Mozos:      {base}/pase.html')
     print(f'  Celular del Mozo:       {base}/mozo.html')
     print(f'  Pantalla Cocina/Barra:  {base}/cocina.html')
     print(f'  QRs fijos imprimibles:  {base}/qr.html')

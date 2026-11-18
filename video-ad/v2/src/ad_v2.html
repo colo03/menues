@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>SaleListo Ad v4 · Diagramas simples</title>
+<title>SaleListo Ad v5 · Sin celulares en el salón</title>
 <style>
 @font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-700.ttf'); font-weight: 700; }
 @font-face { font-family: 'PJS'; src: url('../assets/fonts/PJS-800.ttf'); font-weight: 800; }
@@ -60,7 +60,7 @@ body { font-family: 'PJS', sans-serif; -webkit-font-smoothing: antialiased; colo
       <div class="abs" style="left:44px;top:129px;width:692px;height:2px;background:#e6dfd3"></div>
       <div class="row" style="top:140px">
         <div class="ic" style="background:#fceae6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d9412b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></div>
-        <div class="v" style="font-size:42px">simonguerenu@gmail.com</div>
+        <div class="v">ventas@salelisto.com</div>
       </div>
     </div>
   </div>
@@ -223,19 +223,39 @@ function build() {
   });
   COLS.forEach((c, k) => { s4 += `<g id="e4m${k}"><circle r="40" fill="${c[2]}"/>${ICON.person}</g>`; });
 
-  // ---------- E05: celular vibra -> Listo
-  let s5 = `<g transform="translate(${C} 372)">
+  // ---------- E05: sin celulares en el salon -> estacion del Pase + Pulsera vibradora
+  const PX = 180, BX = 540, CY = 318;
+  const WCOL = [ACC, OK, BAR];
+  let s5 = `<path id="e5div" d="M${C} 130 V610" stroke="#ece6dc" stroke-width="3" stroke-linecap="round" fill="none"/>`;
+  // mitad izquierda: pantalla horizontal fija del pase con 3 columnas (una por mozo)
+  s5 += `<g id="e5pase" transform="translate(${PX} ${CY})">
+      <path d="M0 95 V130 M-54 134 H54" ${ST} stroke="${INK}"/>
+      <rect x="-140" y="-95" width="280" height="190" rx="22" fill="#ffffff" stroke="${INK}" stroke-width="4"/>
+      <rect x="-124" y="-79" width="248" height="158" rx="12" fill="#faf7f2"/>
+      ${WCOL.map((c, k) => { const x = -112 + k * 78; return `<g>
+        <rect id="e5col${k}" x="${x}" y="-67" width="68" height="134" rx="12" fill="#ede7dd"/>
+        <circle id="e5av${k}" cx="${x + 34}" cy="-40" r="13" fill="#ffffff"/>
+        <rect id="e5tk${k}0" x="${x + 12}" y="-12" width="44" height="16" rx="6" fill="#ffffff"/>
+        <rect id="e5tk${k}1" x="${x + 12}" y="14" width="44" height="16" rx="6" fill="#ffffff"/></g>`; }).join('')}
+    </g>
+    <text id="e5lp" x="${PX}" y="590" text-anchor="middle" font-size="38" font-weight="800" fill="${INK}">Pase</text>`;
+  // mitad derecha: pulsera inteligente de frente (malla + capsula), ondas laterales y tilde al salir
+  s5 += `<g transform="translate(${BX} ${CY})">
       <g id="e5waves">
-        ${[0, 1].map(k => [1, -1].map(sd => `<path class="e5w${k}" d="M${sd * (160 + k * 40)} ${-70 - k * 30} Q${sd * (190 + k * 50)} 0 ${sd * (160 + k * 40)} ${70 + k * 30}" fill="none" stroke="${OK}" stroke-width="4" stroke-linecap="round"/>`).join('')).join('')}
+        ${[0, 1].map(k => [1, -1].map(sd => `<path class="e5w${k}" d="M${sd * (88 + k * 30)} ${-48 - k * 22} Q${sd * (110 + k * 36)} 0 ${sd * (88 + k * 30)} ${48 + k * 22}" fill="none" stroke="${OK}" stroke-width="4" stroke-linecap="round"/>`).join('')).join('')}
       </g>
-      <rect x="-124" y="-226" width="248" height="452" rx="44" fill="#ffffff" stroke="${INK}" stroke-width="4"/>
-      <rect id="e5scr" x="-106" y="-194" width="212" height="392" rx="26" fill="#faf7f2"/>
-      <rect x="-30" y="-212" width="60" height="9" rx="4.5" fill="${INK}"/>
-      <circle id="e5wait" cx="0" cy="-36" r="62" fill="none" stroke="${MUTE}" stroke-width="4" stroke-dasharray="2 13" stroke-linecap="round"/>
-      <g id="e5okc" transform="translate(0 -36)"><circle r="66" fill="${OK}"/></g>
-      <path id="e5chk" d="M-30 -36 L-8 -14 L32 -58" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
-      <text id="e5lbl" x="0" y="104" text-anchor="middle" font-size="46" font-weight="800" fill="${OK}">¡Listo!</text>
-    </g>`;
+      <g id="e5band">
+        <path d="M-38 -90 L-33 -186 Q-32 -194 -24 -194 H24 Q32 -194 33 -186 L38 -90 Z" fill="#ece6dc" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M-38 90 L-33 186 Q-32 194 -24 194 H24 Q32 194 33 186 L38 90 Z" fill="#ece6dc" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M-24 -116 H24 M-23 -138 H23 M-22 -160 H22" stroke="${MUTE}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        ${[118, 142, 166].map(y => `<circle cx="0" cy="${y}" r="5" fill="${MUTE}"/>`).join('')}
+        <rect x="-62" y="-98" width="124" height="196" rx="62" fill="${INK}"/>
+        <rect id="e5scr" x="-47" y="-80" width="94" height="160" rx="47" fill="#2b2623"/>
+        <g id="e5dots">${[-18, 0, 18].map(x => `<circle cx="${x}" cy="0" r="6" fill="#6b625b"/>`).join('')}</g>
+        <path id="e5chk" d="M-23 2 L-7 18 L24 -16" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+    <text id="e5lb" x="${BX}" y="590" text-anchor="middle" font-size="38" font-weight="800" fill="${INK}">Pulsera</text>`;
 
   $('stage').innerHTML = g(s1, 'id="gE01"') + g(s2, 'id="gE02"') + g(s3, 'id="gE03"') + g(s4, 'id="gE04"') + g(s5, 'id="gE05"');
 
@@ -405,27 +425,43 @@ window.renderFrame = async function (f) {
     });
   }
 
-  // ================= E05: el celu vibra con calma -> ¡Listo!
+  // ================= E05: sin celulares -> el pase se enciende, la pulsera vibra y marca el tilde
   {
-    const vb = M.vibra, ls = M.listo;
+    const s0 = S.E05.start, ps = M.pase, vb = M.vibra, sl = M.salir;
+    const pdv = A(t, s0 + 0.05, 0.60);
+    $('e5div').style.strokeDasharray = '480 480'; $('e5div').style.strokeDashoffset = (480 * (1 - pdv)).toFixed(2);
+    const pl = A(t, s0 + 0.12, IN_D), pr = A(t, s0 + 0.30, IN_D);
+    op($('e5pase'), pl); $('e5pase').setAttribute('transform', `translate(180 ${(318 + (1 - pl) * 12).toFixed(2)})`);
+    op($('e5lp'), pl); $('e5lp').setAttribute('transform', `translate(0 ${((1 - pl) * 12).toFixed(2)})`);
+    op($('e5lb'), pr); $('e5lb').setAttribute('transform', `translate(0 ${((1 - pr) * 12).toFixed(2)})`);
+    // columnas del pase en los colores de los mozos
+    const WC = [ACC, OK, BAR];
+    WC.forEach((c, k) => {
+      const lt = A(t, ps + 0.16 * k, 0.50);
+      $('e5col' + k).setAttribute('fill', mix('#ede7dd', c, lt));
+      op($('e5av' + k), 0.55 + 0.45 * lt);
+      [0, 1].forEach(j => { const pt = A(t, ps + 0.16 * k + 0.18 + 0.12 * j, 0.40); op($(`e5tk${k}${j}`), pt); });
+    });
+    // pulsera: entra, vibra con ondas laterales verdes suaves
+    let shake = 0;
     [0, 1].forEach(k => {
       let o = 0, dx = 0;
-      for (let c = 0; c < 3; c++) {
-        const u = lin(t, vb + c * 0.62 + k * 0.16, vb + c * 0.62 + k * 0.16 + 0.95);
-        if (u > 0 && u < 1) { o = Math.max(o, 0.9 * Math.sin(Math.PI * u)); dx = 16 * ease(u); }
+      for (let c = 0; c < 2; c++) {
+        const u = lin(t, vb + c * 0.55 + k * 0.16, vb + c * 0.55 + k * 0.16 + 0.85);
+        if (u > 0 && u < 1) { o = Math.max(o, 0.9 * Math.sin(Math.PI * u)); dx = 12 * ease(u); }
       }
       document.querySelectorAll('.e5w' + k).forEach((w, j) => { w.style.opacity = o.toFixed(3); w.setAttribute('transform', `translate(${(j ? -dx : dx).toFixed(2)} 0)`); });
     });
-    const pg = A(t, ls - 0.10, 0.55);
-    $('e5scr').setAttribute('fill', mix('#faf7f2', '#e3f3ea', pg));
-    op($('e5wait'), 1 - A(t, ls - 0.10, 0.30));
-    $('e5wait').style.strokeDashoffset = (-t * 20).toFixed(2);
-    const pc = A(t, ls - 0.05, 0.50);
-    $('e5okc').setAttribute('transform', `translate(0 -36) scale(${(0.7 + 0.3 * pc).toFixed(4)})`); op($('e5okc'), pc);
-    const pk = A(t, ls + 0.15, 0.50);
+    const vz = lin(t, vb, vb + 1.0);
+    if (vz > 0 && vz < 1) shake = 2.2 * Math.sin(vz * Math.PI * 2 * 9) * Math.sin(Math.PI * vz);
+    $('e5band').setAttribute('transform', `translate(${shake.toFixed(2)} ${((1 - pr) * 12).toFixed(2)})`);
+    op($('e5band'), pr);
+    // al salir: capsula verde + tilde blanco
+    const pg = A(t, sl - 0.10, 0.45);
+    $('e5scr').setAttribute('fill', mix('#2b2623', OK, pg));
+    op($('e5dots'), 1 - A(t, sl - 0.10, 0.25));
+    const pk = A(t, sl + 0.10, 0.45);
     R.chk.style.strokeDashoffset = (R.chkL * (1 - pk)).toFixed(2); op(R.chk, pk > 0 ? 1 : 0);
-    const pl = A(t, ls + 0.35, IN_D);
-    op($('e5lbl'), pl); $('e5lbl').setAttribute('transform', `translate(0 ${((1 - pl) * 12).toFixed(2)})`);
   }
 
   // ================= E06: cierre institucional

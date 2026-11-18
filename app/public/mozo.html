@@ -3,8 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#D9412B">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SaleListo">
   <title>SaleListo · App del Mozo</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="apple-touch-icon" href="mark.svg">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/mozo.css">
 </head>
@@ -29,6 +36,20 @@
 
     <!-- Pestaña 1: Avisos prioritarios -->
     <main class="m-view" id="mview-alerts">
+      <section class="wrist-card" id="wristCard">
+        <div class="wrist-head">
+          <strong>⌚ Modo Pulsera (Xiaomi Band)</strong>
+          <span class="wrist-state off" id="wristStateBadge">Inactiva</span>
+        </div>
+        <p class="wrist-guide">
+          Vinculá tu Xiaomi Band en <strong>Mi Fitness -&gt; Notificaciones de apps -&gt; Chrome/SaleListo</strong> y guardá el celu bloqueado en el bolsillo.
+        </p>
+        <div class="wrist-actions">
+          <button class="btn btn-primary btn-sm" id="wristEnableBtn" type="button">Activar con pantalla bloqueada</button>
+          <button class="btn btn-ok btn-sm" id="wristTestBtn" type="button" hidden>Probar vibración</button>
+          <button class="btn btn-ghost btn-sm" id="wristDisableBtn" type="button" hidden>Desactivar</button>
+        </div>
+      </section>
       <div id="alertsContent"></div>
       <div class="m-spacer"></div>
     </main>

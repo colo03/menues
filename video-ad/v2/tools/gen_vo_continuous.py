@@ -30,7 +30,7 @@ STAB = sys.argv[3] if len(sys.argv) > 3 else "0.4"
 TEXT = ("¿Tus mozos corren a mil queriendo estar en todos lados? Bajales esa exigencia. "
         "Con SaleListo, el cliente escanea el QR con 4G, sin esperar carta ni wifi, y pide tranquilo. "
         "La comanda se separa sola entre cocina y barra, y el salón reparte bloques equilibrando al equipo en vivo. "
-        "Cero viajes en vano: el celu les vibra recién cuando está listo para llevar. "
+        "Sin celulares en el salón: miran la estación del pase, o les vibra la pulsera al salir. "
         "Simplificales la vida a ellos y al restaurante, con cero comisión. Escribinos por WhatsApp, y probalo.")
 
 

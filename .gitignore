@@ -11,6 +11,7 @@ env/
 # SaleListo runtime data (SQLite & uploaded dish photos)
 app/data/*.db*
 app/data/uploads/*
+app/data/vapid_keys.json
 !app/data/.gitkeep
 
 # Node.js

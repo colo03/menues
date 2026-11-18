@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · Demo en Vivo 4 Pantallas</title>
+  <title>SaleListo · Demo Interactiva en Tiempo Real</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="stylesheet" href="css/base.css">
   <style>
@@ -25,11 +25,11 @@
     .bar a:hover { background: rgba(250, 247, 242, 0.08); }
 
     .stage {
-      flex: 1; display: grid; grid-template-columns: 350px 350px 1fr; gap: 16px;
+      flex: 1; display: grid; grid-template-columns: 340px 340px 1fr; gap: 16px;
       padding: 12px 18px 18px; min-height: 0;
     }
     .col-wrap { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; }
-    .col-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .col-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
     .label { font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(250, 247, 242, 0.62); }
 
     .phone {
@@ -43,7 +43,7 @@
     }
     .panel iframe { width: 100%; height: 100%; border: 0; background: var(--bg); }
 
-    .r-tabs { display: flex; gap: 4px; background: var(--dark-surface); padding: 3px; border-radius: var(--radius-control); border: 1px solid var(--dark-line); }
+    .r-tabs { display: flex; gap: 4px; background: var(--dark-surface); padding: 3px; border-radius: var(--radius-control); border: 1px solid var(--dark-line); flex-wrap: wrap; }
     .r-tab { padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: rgba(250, 247, 242, 0.7); transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
     .r-tab.active { background: var(--accent); color: #ffffff; }
 
@@ -68,7 +68,8 @@
     </div>
     <span class="grow"></span>
     <label>📱 Mesa Cliente: <select id="clientTableSel"></select></label>
-    <label>🏃 Celular Mozo: <select id="waiterSel"></select></label>
+    <label>⌚ Mozo / Pulsera: <select id="waiterSel"></select></label>
+    <a href="pase.html" target="_blank">🛎️ Abrir Pase ↗</a>
     <a href="index.html">Portada</a>
   </header>
 
@@ -79,20 +80,21 @@
     </div>
 
     <div class="col-wrap">
-      <div class="col-head"><span class="label">2 · Celular del Mozo en Salón</span></div>
+      <div class="col-head"><span class="label">2 · Mozo / Pulsera Vibradora (Opcional)</span></div>
       <div class="phone"><iframe id="waiterFrame" title="Vista Mozo"></iframe></div>
     </div>
 
     <div class="col-wrap wide">
       <div class="col-head">
-        <span class="label">3 · Restaurante (Encargado / Cocina / Barra)</span>
+        <span class="label">3 · Pantallas Fijas del Local</span>
         <div class="r-tabs" id="rightTabs">
-          <button class="r-tab active" data-src="restaurante.html?demo=1">🖥️ Panel Encargado</button>
-          <button class="r-tab" data-src="cocina.html?estacion=cocina">🍳 Pantalla Cocina</button>
-          <button class="r-tab" data-src="cocina.html?estacion=barra">🍸 Pantalla Barra</button>
+          <button class="r-tab active" data-src="pase.html">🛎️ Estación de Mozos</button>
+          <button class="r-tab" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
+          <button class="r-tab" data-src="cocina.html?estacion=barra">🍸 Barra</button>
+          <button class="r-tab" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
         </div>
       </div>
-      <div class="panel"><iframe id="rightFrame" src="restaurante.html?demo=1" title="Panel Restaurante"></iframe></div>
+      <div class="panel"><iframe id="rightFrame" src="pase.html" title="Pantallas Fijas del Local"></iframe></div>
     </div>
   </main>
 
@@ -131,6 +133,19 @@
       wSel.onchange = syncWaiter;
       syncClient();
       syncWaiter();
+
+      const viewMap = {
+        pase: 'pase.html',
+        cocina: 'cocina.html?estacion=cocina',
+        barra: 'cocina.html?estacion=barra',
+        encargado: 'restaurante.html?demo=1',
+      };
+      const initVista = new URLSearchParams(location.search).get('vista');
+      if (initVista && viewMap[initVista]) {
+        const targetSrc = viewMap[initVista];
+        document.querySelectorAll('.r-tab').forEach((x) => x.classList.toggle('active', x.dataset.src === targetSrc));
+        rFrame.src = targetSrc;
+      }
 
       document.getElementById('rightTabs').onclick = (e) => {
         const b = e.target.closest('[data-src]');

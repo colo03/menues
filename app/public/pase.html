@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · Estación de Mozos (Pase)</title>
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pase.css">
+</head>
+<body data-theme="dark">
+  <!-- Ingreso por PIN del local (solo cuando demoMode está desactivado) -->
+  <div class="p-pin-gate" id="pPinGate" hidden>
+    <form class="p-pin-box" id="pPinForm">
+      <img src="logo.svg" alt="SaleListo" class="p-pin-logo">
+      <h1>Estación de Mozos</h1>
+      <p>Ingresá el PIN del local para habilitar la pantalla fija del pase o la barra.</p>
+      <input
+        class="input p-pin-input"
+        type="password"
+        id="pPinInput"
+        inputmode="numeric"
+        placeholder="PIN del local"
+        required
+        autocomplete="off"
+      >
+      <button class="btn btn-primary p-pin-submit" type="submit">Abrir Estación de Mozos</button>
+    </form>
+  </div>
+
+  <!-- Pantalla principal fija horizontal -->
+  <div class="p-shell" id="pApp">
+    <header class="p-bar">
+      <div class="p-brand">
+        <img src="mark.svg" alt="SaleListo" class="p-mark">
+        <div class="p-brand-copy">
+          <div class="p-brand-row">
+            <strong id="pRestName">SaleListo</strong>
+            <span class="p-role-pill">ESTACIÓN DE MOZOS</span>
+          </div>
+          <small id="pSummary">Cargando estado del salón en vivo…</small>
+        </div>
+      </div>
+
+      <div class="p-bar-actions">
+        <button class="btn btn-primary p-counter-btn" id="pNewOrderBtn" type="button">
+          + Pedido en mostrador
+        </button>
+
+        <div class="p-clock" id="pClock" title="Hora actual">--:--</div>
+
+        <button class="audio-pill off" id="pAudioBtn" type="button" title="Campana sonora ante nuevos retiros o llamados">
+          🔇 Activar sonido
+        </button>
+
+        <button class="p-ctrl-btn" id="pThemeBtn" type="button" title="Cambiar entre Modo Pase Oscuro y Modo Claro">
+          ☀️ Modo Claro
+        </button>
+
+        <button class="p-ctrl-btn" id="pFsBtn" type="button" title="Alternar pantalla completa">
+          ⛶ Pantalla completa
+        </button>
+
+        <a class="p-ctrl-btn p-nav-link" href="cocina.html" title="Abrir comandera de Cocina y Barra">
+          🍳 Cocina
+        </a>
+        <a class="p-ctrl-btn p-nav-link" href="restaurante.html" title="Abrir Panel del Encargado">
+          Panel
+        </a>
+      </div>
+    </header>
+
+    <main class="p-board" id="pBoard" aria-live="polite"></main>
+  </div>
+
+  <!-- Modal ágil para Pedido en mostrador y detalle rápido de mesa -->
+  <div class="p-modal-backdrop" id="pModalBackdrop" hidden>
+    <div class="p-modal" id="pModal" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/pase.js"></script>
+</body>
+</html>

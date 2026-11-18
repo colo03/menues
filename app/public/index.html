@@ -7,10 +7,24 @@
   <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 52px 16px; }
-    h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; max-width: 780px; }
-    .lead { font-size: 18px; color: var(--ink-2); max-width: 720px; margin: 14px 0 34px; line-height: 1.5; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 15px; }
+    .wrap { max-width: 1060px; margin: 0 auto; padding: 52px 16px; }
+    h1 { font-size: clamp(30px, 5vw, 46px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; max-width: 800px; }
+    .lead { font-size: 18px; color: var(--ink-2); max-width: 760px; margin: 14px 0 22px; line-height: 1.5; }
+    .modes {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px;
+      margin-bottom: 30px;
+    }
+    .mode-pill {
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-card);
+      padding: 14px 16px; display: flex; align-items: flex-start; gap: 11px;
+    }
+    .mode-pill .m-ico {
+      width: 38px; height: 38px; border-radius: var(--radius-control); background: var(--surface);
+      border: 1px solid var(--line); display: grid; place-items: center; font-size: 20px; flex: none;
+    }
+    .mode-pill strong { display: block; font-size: 14px; font-weight: 800; margin-bottom: 2px; }
+    .mode-pill span { display: block; font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; }
     .card {
       background: var(--surface); border-radius: var(--radius-card); padding: 22px; box-shadow: var(--shadow-card);
       display: flex; flex-direction: column; gap: 10px; text-decoration: none; color: inherit;
@@ -18,13 +32,19 @@
       transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
     }
     .card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-float); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .card .ico { font-size: 30px; line-height: 1; }
+    .card .tag {
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 3px 9px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent);
+    }
     .card h2 { font-size: 18px; font-weight: 800; }
     .card p { color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
     .card .go { margin-top: auto; font-weight: 700; color: var(--accent); font-size: 14px; }
     .card.hl { background: var(--ink); border-color: var(--ink); color: var(--dark-ink); }
     .card.hl:hover { border-color: var(--accent); }
     .card.hl p { color: rgba(250, 247, 242, 0.72); }
+    .card.pase-hl { border-color: var(--line-strong); background: linear-gradient(180deg, #ffffff 0%, #fcfaf6 100%); }
     .flow { margin-top: 44px; display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
     .step { padding: 16px; border-radius: var(--radius-card); background: var(--surface-2); border: 1px solid var(--line); }
     .step b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 4px; }
@@ -36,35 +56,61 @@
   <div class="wrap">
     <img src="logo.svg" alt="SaleListo" style="height:50px;margin-bottom:22px;display:block">
     <h1>Pedidos desde la mesa sin Wi-Fi, conectados con Cocina, Barra y Mozos.</h1>
-    <p class="lead">El restaurante arma su salón por bloques, carga su menú con precios y gestiona sus mozos en vivo. El cliente escanea el QR fijo de su mesa con 4G/5G, el pedido viaja separado a Cocina y Barra, y el sistema asigna y avisa al mozo correspondiente.</p>
+    <p class="lead">El cliente escanea el QR fijo de su mesa con datos 4G/5G y el pedido viaja separado a Cocina y Barra. El <strong>Plan Base opera 100% sin celulares en el salón</strong> desde la Estación de Mozos fija en el pase, con opción de sumar <strong>Pulsera Vibradora</strong> para salones grandes o terrazas.</p>
+
+    <div class="modes">
+      <div class="mode-pill">
+        <span class="m-ico">🛎️</span>
+        <div>
+          <strong>Plan Base · 100% sin celulares en el salón</strong>
+          <span>Estación de Mozos fija en el mostrador del pase o la barra con columnas en vivo por mozo legible a 3 o 4 metros.</span>
+        </div>
+      </div>
+      <div class="mode-pill">
+        <span class="m-ico">⌚</span>
+        <div>
+          <strong>Adicional · Kit Pulsera Vibradora</strong>
+          <span>Notificación corta en la muñeca (Xiaomi Band) con el teléfono bloqueado y guardado en bolsillo o locker.</span>
+        </div>
+      </div>
+    </div>
 
     <div class="cards">
       <a class="card hl" href="demo.html">
-        <span class="ico">▶</span>
+        <div class="card-top"><span class="ico">▶</span></div>
         <h2>Demo Circuito Completo</h2>
-        <p>Celular del cliente, celular del mozo y pantallas de Encargado / Cocina / Barra al mismo tiempo.</p>
+        <p>Probá en tiempo real el celular del cliente, la Estación de Mozos del pase, Cocina, Barra, Panel y Modo Pulsera.</p>
         <span class="go">Abrir demo interactiva →</span>
       </a>
+      <a class="card pase-hl" href="pase.html">
+        <div class="card-top">
+          <span class="ico">🛎️</span>
+          <span class="tag">Plan Base · Sin celulares</span>
+        </div>
+        <h2>Estación de Mozos (Pase)</h2>
+        <p>Pantalla fija horizontal por columnas de mozo con retiros en Cocina y Barra, cuentas exactas, llamados y carga en mostrador.</p>
+        <span class="go">Abrir estación de mozos →</span>
+      </a>
+      <a class="card" href="cocina.html">
+        <div class="card-top"><span class="ico">🍳</span></div>
+        <h2>Pantalla Cocina y Barra</h2>
+        <p>Comandera digital de alto contraste con filtro separado para Cocina, Barra o ambas estaciones.</p>
+        <span class="go">Abrir comandera →</span>
+      </a>
       <a class="card" href="restaurante.html">
-        <span class="ico">🖥️</span>
+        <div class="card-top"><span class="ico">🖥️</span></div>
         <h2>Panel del Restaurante</h2>
-        <p>Constructor por bloques (Interior, Terraza, Barra…), mozos en vivo, menú con fotos y arqueo de caja.</p>
+        <p>Constructor por bloques (Interior, Terraza, Barra…), mozos en turno, menú con fotos y arqueo de caja.</p>
         <span class="go">Abrir panel (PIN: 1234) →</span>
       </a>
       <a class="card" href="mozo.html">
-        <span class="ico">🏃</span>
-        <h2>App Móvil del Mozo</h2>
-        <p>Alertas con sonido/vibración de retiros en Barra y Cocina, llamados de sus mesas y toma manual.</p>
+        <div class="card-top"><span class="ico">⌚</span></div>
+        <h2>App Mozo + Pulsera Vibradora</h2>
+        <p>Alertas Web Push con pantalla apagada para pulsera vibradora, retiros listos, llamados y toma manual.</p>
         <span class="go">Abrir app del mozo →</span>
       </a>
-      <a class="card" href="cocina.html">
-        <span class="ico">🍳</span>
-        <h2>Pantalla Cocina y Barra</h2>
-        <p>Comandera digital de alto contraste con filtro separado para Cocina, Barra o ambos.</p>
-        <span class="go">Abrir comandera →</span>
-      </a>
       <a class="card" href="qr.html">
-        <span class="ico">🖨️</span>
+        <div class="card-top"><span class="ico">🖨️</span></div>
         <h2>QRs con Token Fijo</h2>
         <p>Tarjetas listas para imprimir agrupadas por bloque con código único anti-bromas por mesa.</p>
         <span class="go">Ver e imprimir QRs →</span>
@@ -74,10 +120,10 @@
     <h3>Flujo punta a punta</h3>
     <div class="flow">
       <div class="step"><b>1 · Diseño por Bloques</b><span>Armás Interior, Terraza, Exterior, Barra o Sectores con QRs fijos.</span></div>
-      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente escanea y pide sin pedir clave de Wi-Fi.</span></div>
+      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente escanea y pide sin esperar carta ni clave de Wi-Fi.</span></div>
       <div class="step"><b>3 · Cocina + Barra</b><span>Las bebidas entran directo a Barra y los platos a Cocina.</span></div>
       <div class="step"><b>4 · Asignación de Mozo</b><span>Por bloque pre-asignado o automático según carga en vivo.</span></div>
-      <div class="step"><b>5 · Aviso y Cierre</b><span>El celular del mozo avisa qué llevar, llamados y cuenta exacta.</span></div>
+      <div class="step"><b>5 · Pase o Pulsera</b><span>Miran la Estación de Mozos fija sin celulares o reciben vibración en pulsera.</span></div>
     </div>
   </div>
 </body>
