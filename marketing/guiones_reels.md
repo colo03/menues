@@ -1,10 +1,10 @@
 # SaleListo · Guiones de Reels
 
-Documento maestro de los **3 Reels verticales renderizados** (Instagram Reels, TikTok, YouTube Shorts y estados de WhatsApp B2B) y de **5 guiones listos para grabar con cámara en mano** en restaurantes reales.
+Documento maestro de los **5 Reels verticales renderizados** (Instagram Reels, TikTok, YouTube Shorts y estados de WhatsApp B2B) y de **5 guiones listos para grabar con cámara en mano** en restaurantes reales.
 
 - Archivos finales: [`reels/`](reels/) · código reproducible en [`reels/src/`](reels/src/) (ver [`reels/src/README.md`](reels/src/README.md)).
 - Línea gráfica: Propuesta 01 `Pase Limpio`, `Plus Jakarta Sans`, lienzo blanco redondeado de 720x720 sobre B-roll cálido con deriva lineal del 3 %, curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote, crossfades de 0.48 s y **máximo 5 palabras en pantalla por escena**.
-- Locución: ElevenLabs `eleven_v4`, voz argentina **Gabi** (`8jv0VaaN6d7mWZAeGj79`), una toma continua por Reel con alineación por palabra (`convert_with_timestamps`), `atempo 1.05`. Verificada con Scribe: transcripción idéntica al guion.
+- Locución: ElevenLabs `eleven_v4`, voz argentina **Gabi** (`8jv0VaaN6d7mWZAeGj79`), una toma continua por Reel con alineación por palabra (`convert_with_timestamps`), `atempo 1.05` / `1.07`. Verificada con Scribe: transcripción idéntica al guion.
 - Contacto en todos los cierres: **(+54)1138436571** · **ventas@salelisto.com**.
 
 | Reel | Duración | Peso | Audio |
@@ -12,6 +12,8 @@ Documento maestro de los **3 Reels verticales renderizados** (Instagram Reels, T
 | Reel 01 · Sin celulares en el salón | 18.94 s | 6.25 MB | -14.0 LUFS · -1.5 dBTP |
 | Reel 02 · Segundas rondas en la terraza | 20.01 s | 6.18 MB | -14.0 LUFS · -1.5 dBTP |
 | Reel 03 · Cero comisión y precios al día | 18.40 s | 6.96 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 04 · Cobrar en un solo viaje | 20.01 s | 7.51 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 05 · Piloto 14 días en un sector | 19.47 s | 6.23 MB | -14.0 LUFS · -1.5 dBTP |
 
 Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movflags +faststart`.
 
@@ -95,6 +97,57 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 ---
 
+## Reel 04 · Cobrar en un solo viaje
+
+**Archivo:** [`Reel_04_Cobrar_En_Un_Viaje.mp4`](reels/Reel_04_Cobrar_En_Un_Viaje.mp4) · **Ángulo:** rotación de mesas y cierre de cuenta en hora pico.
+
+**Locución (47 palabras):**
+> ¿Perdés quince minutos por mesa solo para cobrar, cuando tenés gente esperando afuera? Con SaleListo, el cliente pide la cuenta en el QR, eligiendo tarjeta y propina. Tu mozo ve el monto exacto y resuelve todo en un solo viaje. Más rotación, cero comisión. Escribinos y probalo.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 5.04 s | **Cobrar: `4 viajes`** | Serpiente roja de 4 idas y vueltas numeradas entre Caja y Mesa + píldora `-15 min` (0.56 s) que se contrae al centro (3.69 s) | Salón y barra en hora pico |
+| 5.04 a 10.04 s | **Pide en `QR`** | Escaneo del QR (7.35 s), tarjeta que se ilumina en verde (8.47 s), `+10%` de propina con tilde (9.15 s) y total exacto `$30.000 → $33.000` | Manos con celular en mesa |
+| 10.04 a 14.12 s | **`1 solo` viaje** | Tres curvas punteadas que desaparecen mientras se traza 1 flecha recta verde (11.83 s) entre el posnet con monto exacto y la mesa con tilde (13.28 s) | Clientes conversando en mesa |
+| 14.12 a 20.01 s | **Más `rotación`** + logo, `0% comisión`, contacto | Cierre crema: logo (14.47 s), bajada (14.65 s), insignia `0% comisión` (15.18 s), tarjeta de contacto (16.21 s) | Salón desenfocado |
+
+**SFX:** pop en `-15 min`, pop al contraer los 4 viajes, escaneo del QR, pop en Tarjeta, pop en `+10%`, pop en la flecha única, ding al confirmar cobro en mesa, acento de éxito en el cierre.
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> Cobrar una mesa de forma tradicional le lleva 4 viajes al mozo: pedir la cuenta, imprimir el ticket, buscar con qué paga y volver con el posnet. En viernes o sábado a la noche, eso te traba 15 o 20 minutos cada recambio. Con SaleListo el cliente pide la cuenta en el QR eligiendo medio de pago y propina, y tu mozo resuelve todo en 1 solo viaje. 0% comisión por pedido.
+> Escribinos al (+54)1138436571 o a ventas@salelisto.com.
+> #rotaciondemesas #gastronomia #restaurantes #mozos #horapico #SaleListo
+
+**Estado de WhatsApp B2B:** "Pasá de 4 viajes para cobrar una mesa a 1 solo viaje con el monto exacto. ¿Lo vemos? (+54)1138436571"
+
+---
+
+## Reel 05 · Piloto de 14 días en un sector
+
+**Archivo:** [`Reel_05_Piloto_14_Dias_Un_Sector.mp4`](reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4) · **Ángulo:** cierre comercial sin fricción (piloto acotado).
+
+**Locución (45 palabras):**
+> No hace falta cambiar todo tu restaurante de golpe. Probá SaleListo catorce días solo en tu vereda, patio o terraza. En cuarenta y ocho horas cargamos tu carta, activamos los QR fijos, y medís cuántas rondas más vendés. Cero comisión. Pedí tu piloto por WhatsApp.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 3.19 s | **Sin cambiar `todo`** | Plano de 3 sectores del local: un marco general aparece brevemente y se disipa dejando los bloques interiores intactos | Barra y salón cálido |
+| 3.19 a 7.72 s | **1 solo `sector`** | Solo el bloque `Terraza` se ilumina en verde (3.42 s), sus 4 mesas se activan en secuencia (5.70 s) y marca tilde (6.81 s) | Mismo plano |
+| 7.72 a 11.79 s | **Listo en `48 h`** | Reloj veloz que completa el giro con tilde y píldora `48 h` (8.61 s) conectado al acrílico QR fijo con `mark.svg` y tilde (10.82 s) | Servicio en barra |
+| 11.79 a 14.04 s | **Piloto `14 días`** | Calendario `14d` con los 2 fines de semana iluminados en verde y curva ascendente de ventas | Canilla sirviendo cerveza |
+| 14.04 a 19.47 s | **Piloto `sin riesgo`** + logo, `0% comisión`, contacto | Cierre crema: logo (14.40 s), bajada (14.58 s), insignia `0% comisión` (14.80 s), tarjeta de contacto (15.26 s) | Mesa desenfocada |
+
+**SFX:** pop al encender las mesas del sector, ding al confirmar `Terraza`, pop del reloj `48 h`, activación del QR fijo, pop en la curva de rondas, acento de éxito en el cierre.
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> No tenés que frenar ni cambiar la operación de todo tu local para probar SaleListo. Activamos un piloto de 14 días (2 fines de semana reales) únicamente en tu vereda, patio o terraza: en 48 horas dejamos tu carta cargada y los QR listos para medir cuántas rondas extra vendés y cuánto aire gana tu equipo. 0% comisión.
+> Pedí tu piloto por WhatsApp al (+54)1138436571 o escribinos a ventas@salelisto.com.
+> #duenosgastronomicos #restaurantes #terraza #vereda #pilotogastronomico #SaleListo
+
+**Estado de WhatsApp B2B:** "Probá SaleListo 14 días solo en tu vereda o terraza, listo en 48 h y 0% comisión. Pedí tu piloto: (+54)1138436571"
+
+---
+
 ## 5 guiones para grabar con cámara en mano en restaurantes reales
 
 **Criterios comunes:** celular en vertical `4K 60 fps` (o `1080p 60 fps`), lente principal, exposición y foco bloqueados por plano, luz cálida del local (sin flash), audio ambiente real del salón y locución o voz en off grabada aparte en un lugar silencioso. Texto en pantalla de **máximo 5 palabras** por plano, en `Plus Jakarta Sans` blanca con la palabra clave sobre bermellón `#d9412b`. Duración objetivo: 15 a 25 s. Antes de grabar, pedir consentimiento a clientes y equipo que aparezcan en cámara, y no mostrar pantallas con datos reales de clientes.
@@ -158,5 +211,5 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 - Subir los MP4 tal cual (sin recomprimir en editores externos) y elegir como portada el cuadro 0, que ya muestra titular y diagrama.
 - Instagram y TikTok: activar subtítulos automáticos y revisar que digan "SaleListo" y "4G" correctamente.
-- YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día").
+- YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día", "Cobrar una mesa en 1 solo viaje", "Piloto de 14 días en tu terraza").
 - WhatsApp Business: compartir como estado y en listas de difusión B2B con el texto sugerido de cada Reel.

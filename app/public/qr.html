@@ -3,76 +3,684 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · QRs Fijos de Mesas</title>
+  <title>SaleListo · Estudio de Impresión QR</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    .wrap { max-width: 1040px; margin: 0 auto; padding: 32px 16px; }
-    .head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-    .head h1 { font-size: 28px; font-weight: 800; }
-    .head p { color: var(--ink-2); margin-top: 4px; max-width: 680px; }
-    .block-sec { margin-bottom: 28px; }
-    .block-sec h2 { font-size: 19px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(205px, 1fr)); gap: 16px; }
-    .card {
-      background: var(--surface); border-radius: var(--radius-card); padding: 18px; text-align: center;
-      box-shadow: var(--shadow-card); break-inside: avoid; border: 1px solid var(--line);
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 18px 64px; }
+
+    /* Cabecera del estudio */
+    .top-head {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+      flex-wrap: wrap; margin-bottom: 20px;
     }
-    .card .blk { display: block; font-size: 11.5px; font-weight: 700; color: var(--ink-2); text-transform: uppercase; margin-top: 8px; letter-spacing: 0.03em; }
-    .card h3 { font-size: 23px; font-weight: 800; margin: 2px 0 10px; }
-    .card .qr svg { width: 100%; max-width: 165px; height: auto; display: block; margin: 0 auto; }
-    .card p { font-size: 13px; font-weight: 700; margin-top: 8px; }
-    .card a { font-size: 10.5px; color: var(--ink-3); word-break: break-all; text-decoration: none; }
-    .info-box {
-      background: var(--surface-2); color: var(--ink); border: 1px solid var(--line); padding: 12px 16px;
-      border-radius: var(--radius-control); margin-bottom: 20px; font-size: 13.5px; font-weight: 600;
+    .top-brand { display: flex; flex-direction: column; gap: 6px; max-width: 700px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 7px; width: fit-content;
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 4px 10px; border-radius: var(--radius-pill);
+      background: var(--accent-soft); color: var(--accent);
     }
+    .top-head h1 { font-size: clamp(24px, 3.2vw, 32px); font-weight: 800; letter-spacing: -0.025em; }
+    .top-head p { color: var(--ink-2); font-size: 14.5px; line-height: 1.5; }
+    .top-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    /* Panel de configuración en vivo */
+    .studio-panel {
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card); padding: 20px; margin-bottom: 18px;
+      display: grid; gap: 18px;
+    }
+    .studio-row {
+      display: grid; grid-template-columns: 1.35fr 1fr; gap: 18px; align-items: start;
+    }
+    .ctrl-group { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .ctrl-label {
+      font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink-3); display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+
+    /* Tarjetas selectoras de formato */
+    .fmt-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+    }
+    .fmt-btn {
+      text-align: left; padding: 11px 12px; border-radius: var(--radius-control);
+      border: 1.5px solid var(--line); background: var(--bg);
+      display: flex; flex-direction: column; gap: 3px;
+      transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+    }
+    .fmt-btn:hover { border-color: var(--line-strong); }
+    .fmt-btn.active {
+      border-color: var(--accent); background: var(--accent-soft);
+      box-shadow: 0 0 0 2px rgba(217, 65, 43, 0.1);
+    }
+    .fmt-btn strong { font-size: 13.5px; font-weight: 800; color: var(--ink); line-height: 1.25; }
+    .fmt-btn.active strong { color: var(--accent); }
+    .fmt-btn small { font-size: 11.5px; color: var(--ink-2); font-weight: 600; line-height: 1.3; }
+
+    .sub-pills { display: inline-flex; gap: 4px; background: var(--surface-2); padding: 3px; border-radius: var(--radius-pill); width: fit-content; }
+    .sub-pill {
+      padding: 4px 10px; border-radius: var(--radius-pill); font-size: 12px; font-weight: 700; color: var(--ink-2);
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .sub-pill.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-xs); }
+
+    /* Selector de estilo de marca */
+    .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .theme-btn {
+      display: flex; align-items: center; gap: 10px; padding: 11px 12px;
+      border-radius: var(--radius-control); border: 1.5px solid var(--line); background: var(--bg);
+      text-align: left; transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+    }
+    .theme-btn:hover { border-color: var(--line-strong); }
+    .theme-btn.active { border-color: var(--accent); background: var(--accent-soft); }
+    .swatch {
+      width: 30px; height: 30px; border-radius: 8px; flex: none; position: relative;
+      border: 1px solid rgba(28, 25, 23, 0.16); display: grid; place-items: center;
+    }
+    .swatch::after {
+      content: ''; width: 10px; height: 10px; border-radius: 3px; background: var(--accent);
+    }
+    .swatch.cream { background: #FAF7F2; }
+    .swatch.dark { background: #1C1917; border-color: #38322E; }
+    .theme-btn strong { display: block; font-size: 13.5px; font-weight: 800; line-height: 1.2; }
+    .theme-btn small { display: block; font-size: 11.5px; color: var(--ink-2); font-weight: 600; margin-top: 2px; }
+
+    /* Filtros por sector y leyenda */
+    .sector-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sec-pill {
+      padding: 6px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700;
+      border: 1px solid var(--line); background: var(--bg); color: var(--ink-2);
+      transition: all var(--dur-fast) var(--ease-out);
+    }
+    .sec-pill:hover { border-color: var(--line-strong); color: var(--ink); }
+    .sec-pill.active { background: var(--ink); border-color: var(--ink); color: #ffffff; }
+
+    .legend-presets { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+    .preset-chip {
+      font-size: 11.5px; font-weight: 700; color: var(--ink-2); background: var(--surface-2);
+      padding: 4px 9px; border-radius: var(--radius-pill); border: 1px solid transparent;
+    }
+    .preset-chip:hover { border-color: var(--line-strong); color: var(--ink); }
+
+    .toggles-row {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+      flex-wrap: wrap; padding-top: 14px; border-top: 1px solid var(--line);
+    }
+    .chk-group { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .chk {
+      display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600;
+      color: var(--ink-2); cursor: pointer; user-select: none;
+    }
+    .chk input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
+
+    .info-bar {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+      background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-control);
+      padding: 11px 15px; margin-bottom: 22px; font-size: 13px; font-weight: 600; color: var(--ink-2);
+    }
+    .info-bar strong { color: var(--ink); }
+    .status-ok { color: var(--ok); font-weight: 800; }
+
+    /* Grilla de vista previa por formato */
+    .sheets-grid {
+      display: grid; gap: 20px; align-items: start;
+      grid-template-columns: repeat(auto-fill, minmax(256px, 1fr));
+    }
+    .sheets-grid[data-fmt="sticker"] {
+      grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+    }
+    .sheets-grid[data-fmt="compact"] {
+      grid-template-columns: repeat(auto-fill, minmax(198px, 1fr));
+    }
+
+    .qr-item { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+
+    /* Pieza física imprimible */
+    .qr-card {
+      position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+      text-align: center; background: #FAF7F2; color: #1C1917;
+      border-radius: 18px; border: 1px solid #E6DFD3; padding: 20px 18px 16px;
+      box-shadow: var(--shadow-card); break-inside: avoid; page-break-inside: avoid;
+      -webkit-print-color-adjust: exact; print-color-adjust: exact;
+    }
+    .qr-card.theme-dark {
+      background: #1C1917; color: #FAF7F2; border-color: #38322E;
+    }
+    .qr-card.cut-guides {
+      outline: 1.5px dashed #B9AFA0; outline-offset: 4px;
+    }
+
+    /* Proporciones reales por formato */
+    .sheets-grid[data-fmt="tent"] .qr-card { aspect-ratio: 2 / 3; }
+    .sheets-grid[data-fmt="sticker"] .qr-card {
+      aspect-ratio: 1 / 1; padding: 14px 14px 12px; border-radius: 14px;
+    }
+    .sheets-grid[data-fmt="compact"] .qr-card {
+      aspect-ratio: 62 / 88; padding: 14px 12px 12px; border-radius: 14px;
+    }
+
+    .qc-top { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; }
+    .qc-logo svg { height: 26px; width: auto; display: block; }
+    .sheets-grid[data-fmt="sticker"] .qc-logo svg,
+    .sheets-grid[data-fmt="compact"] .qc-logo svg { height: 20px; }
+
+    .qc-sector {
+      font-size: 10.5px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #57534E; padding: 2px 9px; border-radius: 999px; background: rgba(28, 25, 23, 0.06);
+      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .qr-card.theme-dark .qc-sector {
+      color: rgba(250, 247, 242, 0.78); background: rgba(250, 247, 242, 0.1);
+    }
+    .sheets-grid[data-fmt="sticker"] .qc-sector { display: none; }
+
+    .qc-mesa {
+      font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.05; margin-top: 1px;
+    }
+    .sheets-grid[data-fmt="sticker"] .qc-mesa { font-size: 19px; }
+    .sheets-grid[data-fmt="compact"] .qc-mesa { font-size: 20px; }
+
+    .qc-qr-box {
+      background: #FFFFFF; padding: 10px; border-radius: 14px;
+      border: 1px solid rgba(28, 25, 23, 0.1);
+      width: 66%; max-width: 178px; aspect-ratio: 1 / 1;
+      display: grid; place-items: center; margin: 4px auto;
+      box-shadow: 0 2px 8px rgba(28, 25, 23, 0.05);
+    }
+    .qr-card.theme-dark .qc-qr-box {
+      border-color: rgba(250, 247, 242, 0.16);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    }
+    .sheets-grid[data-fmt="sticker"] .qc-qr-box { width: 54%; padding: 7px; border-radius: 10px; margin: 2px auto; }
+    .sheets-grid[data-fmt="compact"] .qc-qr-box { width: 64%; padding: 7px; border-radius: 10px; margin: 2px auto; }
+    .qc-qr-box svg { width: 100%; height: 100%; display: block; }
+
+    .qc-foot { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
+    .qc-4g {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 999px;
+      font-size: 10.5px; font-weight: 800; letter-spacing: 0.02em;
+      background: #FCEAE6; color: #D9412B; white-space: nowrap;
+    }
+    .qr-card.theme-dark .qc-4g {
+      background: rgba(217, 65, 43, 0.22); color: #FF9B8A; border: 1px solid rgba(217, 65, 43, 0.42);
+    }
+    .sheets-grid[data-fmt="sticker"] .qc-4g { font-size: 9.5px; padding: 2px 8px; }
+    .sheets-grid[data-fmt="compact"] .qc-4g { font-size: 9.5px; padding: 2px 8px; }
+
+    .qc-4g-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+
+    .qc-legend {
+      font-size: 11.5px; font-weight: 700; line-height: 1.3; color: #57534E;
+      max-width: 22ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .qr-card.theme-dark .qc-legend { color: rgba(250, 247, 242, 0.8); }
+    .sheets-grid[data-fmt="sticker"] .qc-legend { font-size: 10px; -webkit-line-clamp: 1; max-width: 24ch; }
+    .sheets-grid[data-fmt="compact"] .qc-legend { font-size: 10px; }
+
+    .qc-url {
+      font-size: 9.5px; color: #8A837C; word-break: break-all; line-height: 1.2; max-width: 95%;
+    }
+    .qr-card.theme-dark .qc-url { color: rgba(250, 247, 242, 0.48); }
+
+    /* Acciones por tarjeta (no salen en papel) */
+    .card-tools {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      padding: 0 2px;
+    }
+    .card-tools .btn-xs { flex: 1; }
+
+    @media (max-width: 900px) {
+      .studio-row { grid-template-columns: 1fr; }
+      .fmt-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .theme-grid { grid-template-columns: 1fr; }
+      .top-actions { width: 100%; }
+      .top-actions .btn { flex: 1; }
+      .top-actions #printBtn { flex: 1 1 100%; }
+    }
+
+    /* Maquetación exacta para hoja A4 en impresión / Guardar como PDF */
+    @page { size: A4 portrait; margin: 8mm; }
     @media print {
-      body { background: #ffffff; }
-      .head .btn, .info-box { display: none; }
-      .card { box-shadow: none; border: 1px solid #cccccc; }
+      html, body {
+        background: #FFFFFF !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .wrap { max-width: none; margin: 0; padding: 0; }
+      .no-print, .card-tools, .toast-wrap, .offline-banner { display: none !important; }
+
+      .sheets-grid { justify-content: center; }
+
+      /* Tent-Card 10x15 cm: 2 por hoja A4 (tamaño real portamenú 100x148 mm) */
+      .sheets-grid[data-fmt="tent"][data-density="2"] {
+        grid-template-columns: repeat(2, 94mm);
+        gap: 6mm;
+        padding-top: 20mm;
+      }
+      .sheets-grid[data-fmt="tent"][data-density="2"] .qr-item:nth-child(2n) {
+        break-after: page; page-break-after: always;
+      }
+      .sheets-grid[data-fmt="tent"][data-density="2"] .qr-card {
+        width: 94mm; height: 141mm; aspect-ratio: auto; box-shadow: none;
+      }
+
+      /* Tent-Card 4 por hoja A4 (2x2 compacto en una carilla) */
+      .sheets-grid[data-fmt="tent"][data-density="4"] {
+        grid-template-columns: repeat(2, 90mm);
+        gap: 5mm;
+      }
+      .sheets-grid[data-fmt="tent"][data-density="4"] .qr-card {
+        width: 90mm; height: 134mm; aspect-ratio: auto; padding: 14px 14px 12px; box-shadow: none;
+      }
+
+      /* Sticker de Mesa 8x8 cm (2x3 = 6 stickers exactos de 80x80 mm por A4) */
+      .sheets-grid[data-fmt="sticker"] {
+        grid-template-columns: repeat(2, 80mm);
+        gap: 7mm;
+      }
+      .sheets-grid[data-fmt="sticker"] .qr-card {
+        width: 80mm; height: 80mm; aspect-ratio: auto; box-shadow: none; border-radius: 10px;
+      }
+
+      /* Tarjeta Compacta (3x3 = 9 por hoja A4) */
+      .sheets-grid[data-fmt="compact"] {
+        grid-template-columns: repeat(3, 58mm);
+        gap: 4.5mm;
+      }
+      .sheets-grid[data-fmt="compact"] .qr-card {
+        width: 58mm; height: 86mm; aspect-ratio: auto; box-shadow: none;
+      }
+
+      .qr-card:not(.theme-dark) { border: 1px solid #CFC6B8; }
+      .qr-card.cut-guides { outline: 0.35mm dashed #9C9386; outline-offset: 1.5mm; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="head">
-      <div>
-        <img src="logo.svg" alt="SaleListo" style="height:36px;margin-bottom:10px;display:block">
-        <h1 id="title">QRs con Token Fijo por Mesa</h1>
-        <p>Cada QR tiene un código secreto permanente propio de esa mesa. Generados internamente sin depender de librerías externas. Cuando publiques el sistema en internet, funcionan directo con los datos 4G/5G del cliente sin pedir Wi-Fi.</p>
+    <header class="top-head no-print">
+      <div class="top-brand">
+        <span class="eyebrow">🖨️ Kit Físico · Acrílicos UV y Stickers</span>
+        <h1 id="title">Estudio de Impresión QR</h1>
+        <p>Elegí formato físico, estilo de marca y sector antes de imprimir en A4 o descargar el arte vectorial <code>.svg</code> individual listo para imprenta gráfica.</p>
       </div>
-      <div style="display:flex;gap:8px">
-        <a class="btn btn-ghost" href="restaurante.html">← Volver al panel</a>
-        <button class="btn btn-primary" onclick="print()">🖨️ Imprimir tarjetas QR</button>
+      <div class="top-actions">
+        <a class="btn btn-ghost" href="operacion.html">Tablero</a>
+        <a class="btn btn-ghost" href="restaurante.html">← Panel</a>
+        <button class="btn btn-primary" type="button" id="printBtn">🖨️ Imprimir / Guardar PDF A4</button>
       </div>
-    </div>
-    <div id="banner"></div>
-    <div id="blocksOut"></div>
+    </header>
+
+    <section class="studio-panel no-print" aria-label="Configuración de impresión QR">
+      <div class="studio-row">
+        <div class="ctrl-group">
+          <div class="ctrl-label">
+            <span>1 · Formato físico</span>
+            <div class="sub-pills" id="tentDensityWrap" title="Cantidad de Tent-Cards por hoja A4">
+              <button type="button" class="sub-pill active" data-density="4">4 por A4</button>
+              <button type="button" class="sub-pill" data-density="2">2 por A4 (10×15 real)</button>
+            </div>
+          </div>
+          <div class="fmt-grid" id="fmtGrid">
+            <button type="button" class="fmt-btn active" data-fmt="tent">
+              <strong>Tent-Card Acrílico 10×15 cm</strong>
+              <small>Portamenú vertical de mesa (2 o 4 por A4)</small>
+            </button>
+            <button type="button" class="fmt-btn" data-fmt="sticker">
+              <strong>Sticker de Mesa 8×8 cm</strong>
+              <small>Vinilo adhesivo con guías de corte (6 por A4)</small>
+            </button>
+            <button type="button" class="fmt-btn" data-fmt="compact">
+              <strong>Tarjeta Compacta</strong>
+              <small>Ideal para barra o posavasos (9 por A4)</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="ctrl-group">
+          <span class="ctrl-label">2 · Estilo de marca (Propuesta 01)</span>
+          <div class="theme-grid" id="themeGrid">
+            <button type="button" class="theme-btn active" data-theme="cream">
+              <span class="swatch cream" aria-hidden="true"></span>
+              <span>
+                <strong>Crema Cálido</strong>
+                <small>Fondo #FAF7F2 · Editorial luminoso</small>
+              </span>
+            </button>
+            <button type="button" class="theme-btn" data-theme="dark">
+              <span class="swatch dark" aria-hidden="true"></span>
+              <span>
+                <strong>Carbón Premium</strong>
+                <small>Fondo #1C1917 · Bares y noche</small>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="studio-row">
+        <div class="ctrl-group">
+          <span class="ctrl-label">3 · Filtrar por bloque / sector (ej. piloto en 1 sector)</span>
+          <div class="sector-pills" id="sectorPills"></div>
+        </div>
+
+        <div class="ctrl-group">
+          <label class="ctrl-label" for="legendInput">4 · Leyenda al pie editable en vivo</label>
+          <input
+            class="input"
+            id="legendInput"
+            type="text"
+            maxlength="68"
+            value="Escaneá con tu cámara para ver la carta y pedir"
+            placeholder="Ej: Escaneá para pedir sin esperar al mozo"
+          >
+          <div class="legend-presets" id="legendPresets">
+            <button type="button" class="preset-chip" data-preset="Escaneá con tu cámara para ver la carta y pedir">Carta y pedidos</button>
+            <button type="button" class="preset-chip" data-preset="Pedí tu ronda y la cuenta desde acá · Cero espera">Rondas + cuenta</button>
+            <button type="button" class="preset-chip" data-preset="Menú interactivo · Sin TACC, Veggie y pago ágil">Filtros + pago</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toggles-row">
+        <div class="chk-group">
+          <label class="chk">
+            <input type="checkbox" id="cutGuidesChk">
+            <span>Mostrar guías de corte punteadas</span>
+          </label>
+          <label class="chk">
+            <input type="checkbox" id="showUrlChk">
+            <span>Mostrar link corto debajo de la leyenda</span>
+          </label>
+        </div>
+        <span id="sheetStats" style="font-size:13px;font-weight:700;color:var(--ink-2)">Cargando mesas…</span>
+      </div>
+    </section>
+
+    <div class="info-bar no-print" id="banner"></div>
+
+    <main id="cardsOut" class="sheets-grid" data-fmt="tent" data-density="4" aria-live="polite"></main>
   </div>
 
   <script src="js/store.js"></script>
+  <script src="js/ui.js"></script>
   <script>
     (async () => {
-      const data = await fetch('api/qrs').then((r) => r.json());
-      document.getElementById('title').textContent = `QRs de Mesas · ${data.restaurantName}`;
-      document.getElementById('banner').innerHTML = `<div class="info-box">🔗 Dirección actual codificada en los QRs: <strong>${escapeHtml(data.baseUrl)}</strong> ${data.baseUrl.startsWith('https://') ? '· ✅ Lista para 4G/5G sin Wi-Fi' : '· (Modo prueba local; al subir a internet usará automáticamente tu dominio HTTPS)'}</div>`;
+      // Curvas vectoriales oficiales de Propuesta 01 (logo.svg) para nitidez absoluta en pantalla, PDF e imprenta
+      const LOGO_PATHS = {
+        squircle: 'M20 0H44C55.8 0 64 8.2 64 20V44C64 55.8 55.8 64 44 64H20C8.2 64 0 55.8 0 44V20C0 8.2 8.2 0 20 0Z',
+        handle: 'M28.9 13H35.1A2.1 2.1 0 0 1 35.1 17.2H28.9A2.1 2.1 0 0 1 28.9 13Z',
+        cloche: 'M49.7 41.6H14.3A1.5 1.5 0 0 1 12.8 40.09A19.2 19.2 0 0 1 39.14 22.38L29.2 32.31L25.14 28.26A2.75 2.75 0 0 0 21.26 32.14L27.26 38.14A2.75 2.75 0 0 0 31.14 38.14L44.04 25.25A19.2 19.2 0 0 1 51.2 40.09A1.5 1.5 0 0 1 49.7 41.6Z',
+        base: 'M13.8 45.4H50.2A2.6 2.6 0 0 1 50.2 50.6H13.8A2.6 2.6 0 0 1 13.8 45.4Z',
+        wordmark: 'M90.44 44.64Q87.83 44.64 85.6 43.68Q83.37 42.73 81.77 41.02Q80.17 39.31 79.44 37.02L83.59 35.22Q84.59 37.58 86.46 38.92Q88.34 40.26 90.7 40.26Q92.02 40.26 93 39.84Q93.97 39.42 94.5 38.68Q95.04 37.94 95.04 36.91Q95.04 35.7 94.32 34.91Q93.6 34.12 92.17 33.68L86.91 31.98Q83.7 30.99 82.08 29Q80.47 27.01 80.47 24.33Q80.47 21.97 81.62 20.17Q82.78 18.37 84.86 17.35Q86.94 16.34 89.63 16.34Q92.09 16.34 94.16 17.21Q96.22 18.07 97.71 19.6Q99.2 21.13 99.93 23.19L95.81 25.03Q95 22.97 93.38 21.84Q91.76 20.72 89.63 20.72Q88.38 20.72 87.42 21.14Q86.46 21.57 85.93 22.32Q85.4 23.08 85.4 24.11Q85.4 25.25 86.13 26.11Q86.87 26.98 88.38 27.46L93.42 29.04Q96.69 30.11 98.33 31.98Q99.97 33.86 99.97 36.62Q99.97 38.97 98.76 40.78Q97.54 42.58 95.41 43.61Q93.27 44.64 90.44 44.64Z M108.88 44.64Q106.78 44.64 105.23 43.94Q103.69 43.24 102.84 41.94Q101.99 40.63 101.99 38.9Q101.99 37.24 102.73 35.94Q103.47 34.63 105.01 33.75Q106.56 32.87 108.91 32.5L115.46 31.43V35.11L109.83 36.07Q108.4 36.32 107.7 36.99Q107 37.65 107 38.72Q107 39.75 107.79 40.35Q108.58 40.96 109.76 40.96Q111.27 40.96 112.43 40.32Q113.59 39.67 114.23 38.53Q114.87 37.39 114.87 36.03V30.88Q114.87 29.59 113.86 28.73Q112.85 27.86 111.19 27.86Q109.65 27.86 108.45 28.69Q107.26 29.52 106.7 30.88L102.77 28.96Q103.36 27.38 104.62 26.22Q105.89 25.06 107.62 24.4Q109.35 23.74 111.38 23.74Q113.84 23.74 115.72 24.64Q117.6 25.54 118.65 27.14Q119.69 28.74 119.69 30.88V44.2H115.13V40.78L116.16 40.7Q115.39 41.99 114.32 42.86Q113.25 43.72 111.89 44.18Q110.53 44.64 108.88 44.64Z M123.19 44.2V16.34H128.01V44.2Z M140.93 44.64Q137.84 44.64 135.52 43.24Q133.2 41.84 131.91 39.45Q130.62 37.06 130.62 34.15Q130.62 31.14 131.93 28.8Q133.24 26.46 135.5 25.1Q137.76 23.74 140.56 23.74Q142.92 23.74 144.7 24.51Q146.48 25.28 147.74 26.65Q148.99 28.01 149.65 29.76Q150.31 31.5 150.31 33.53Q150.31 34.04 150.26 34.6Q150.2 35.15 150.05 35.55H134.6V31.87H147.33L145.05 33.6Q145.38 31.91 144.88 30.58Q144.39 29.26 143.26 28.49Q142.14 27.71 140.56 27.71Q139.05 27.71 137.87 28.47Q136.7 29.22 136.09 30.68Q135.48 32.13 135.63 34.19Q135.48 36.03 136.13 37.45Q136.77 38.86 138.04 39.64Q139.31 40.41 140.96 40.41Q142.62 40.41 143.78 39.71Q144.94 39.01 145.6 37.83L149.5 39.75Q148.91 41.18 147.66 42.29Q146.41 43.39 144.7 44.02Q142.99 44.64 140.93 44.64Z M153.7 44.2V16.78H159.4V39.23H170.99V44.2Z M172.54 44.2V24.11H178.06V44.2Z M188.95 44.64Q185.64 44.64 183.19 43.08Q180.75 41.51 179.86 38.86L183.91 36.95Q184.68 38.57 186.01 39.49Q187.33 40.41 188.95 40.41Q190.13 40.41 190.76 39.93Q191.38 39.45 191.38 38.61Q191.38 38.16 191.16 37.85Q190.94 37.54 190.5 37.28Q190.06 37.02 189.39 36.84L185.97 35.88Q183.51 35.18 182.18 33.62Q180.86 32.06 180.86 29.92Q180.86 28.04 181.81 26.65Q182.77 25.25 184.5 24.46Q186.23 23.67 188.47 23.67Q191.42 23.67 193.64 25.05Q195.87 26.43 196.79 28.93L192.71 30.84Q192.26 29.59 191.1 28.84Q189.95 28.08 188.47 28.08Q187.41 28.08 186.8 28.52Q186.19 28.96 186.19 29.74Q186.19 30.14 186.41 30.47Q186.63 30.8 187.13 31.06Q187.63 31.32 188.36 31.54L191.56 32.5Q194.07 33.23 195.39 34.72Q196.72 36.21 196.72 38.39Q196.72 40.26 195.74 41.66Q194.77 43.06 193.04 43.85Q191.31 44.64 188.95 44.64Z M208.6 44.42Q204.96 44.42 202.95 42.45Q200.95 40.48 200.95 36.95V28.89H197.56V24.11H197.75Q199.29 24.11 200.12 23.33Q200.95 22.56 200.95 21.02V19.54H206.47V24.11H211.18V28.89H206.47V36.58Q206.47 37.61 206.84 38.29Q207.2 38.97 207.98 39.31Q208.75 39.64 209.89 39.64Q210.15 39.64 210.48 39.6Q210.81 39.56 211.18 39.53V44.2Q210.63 44.27 209.93 44.35Q209.23 44.42 208.6 44.42Z M223.29 44.64Q220.31 44.64 217.86 43.28Q215.41 41.92 213.96 39.54Q212.5 37.17 212.5 34.15Q212.5 31.1 213.96 28.74Q215.41 26.39 217.86 25.03Q220.31 23.67 223.29 23.67Q226.27 23.67 228.7 25.03Q231.12 26.39 232.58 28.74Q234.03 31.1 234.03 34.15Q234.03 37.17 232.58 39.54Q231.12 41.92 228.7 43.28Q226.27 44.64 223.29 44.64ZM223.29 39.67Q224.8 39.67 225.92 38.97Q227.04 38.28 227.68 37.02Q228.33 35.77 228.33 34.15Q228.33 32.53 227.68 31.3Q227.04 30.07 225.92 29.35Q224.8 28.63 223.29 28.63Q221.78 28.63 220.64 29.35Q219.5 30.07 218.85 31.3Q218.21 32.53 218.21 34.15Q218.21 35.77 218.85 37.02Q219.5 38.28 220.64 38.97Q221.78 39.67 223.29 39.67Z',
+        dot: 'M173.97 16.53H176.64A1.5 1.5 0 0 1 178.14 18.03V20.7A1.5 1.5 0 0 1 176.64 22.2H173.97A1.5 1.5 0 0 1 172.47 20.7V18.03A1.5 1.5 0 0 1 173.97 16.53Z',
+      };
 
-      document.getElementById('blocksOut').innerHTML = data.blocks.map((b) => `
-        <section class="block-sec">
-          <h2>${b.icon} ${escapeHtml(b.name)}</h2>
-          <div class="grid">
-            ${b.tables.map((t) => `
-              <div class="card">
-                <img src="mark.svg" alt="SaleListo" style="width:32px;height:32px;display:inline-block">
-                <span class="blk">${escapeHtml(b.name)}</span>
-                <h3>Mesa ${escapeHtml(t.code)}</h3>
-                <div class="qr">${t.svg}</div>
-                <p>Escaneá para pedir</p>
-                <a href="${escapeHtml(t.url)}" target="_blank">${escapeHtml(t.url)}</a>
-              </div>`).join('') || '<p style="color:var(--ink-3)">Sin mesas activas en este bloque.</p>'}
-          </div>
-        </section>`).join('');
+      function inlineBrandLogo(wordmarkFill) {
+        return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 239 64" fill="none" aria-label="SaleListo">`
+          + `<path d="${LOGO_PATHS.squircle}" fill="#D9412B"/>`
+          + `<path d="${LOGO_PATHS.handle}" fill="#FAF7F2"/>`
+          + `<path d="${LOGO_PATHS.cloche}" fill="#FAF7F2"/>`
+          + `<path d="${LOGO_PATHS.base}" fill="#FAF7F2"/>`
+          + `<path d="${LOGO_PATHS.wordmark}" fill="${wordmarkFill}"/>`
+          + `<path d="${LOGO_PATHS.dot}" fill="#D9412B"/>`
+          + `</svg>`;
+      }
+
+      const data = await fetch('api/qrs').then((r) => r.json());
+      const $ = (sel) => document.querySelector(sel);
+
+      // Estado interactivo del estudio
+      let fmt = 'tent';           // 'tent' | 'sticker' | 'compact'
+      let density = '4';          // '4' | '2' (solo aplica a tent)
+      let theme = 'cream';        // 'cream' | 'dark'
+      let sectorFilter = 'all';   // 'all' | block.id
+      let legendText = $('#legendInput').value.trim();
+      let cutGuides = false;
+      let showUrl = false;
+
+      $('#title').textContent = `Estudio de Impresión QR · ${data.restaurantName}`;
+      $('#banner').innerHTML = `
+        <div>
+          🔗 Dirección codificada en cada QR: <strong>${escapeHtml(data.baseUrl)}</strong>
+          ${data.baseUrl.startsWith('https://')
+            ? '<span class="status-ok">· ✔ Lista para datos 4G/5G sin Wi-Fi</span>'
+            : '· <span>(Modo red local; al publicar con HTTPS codificará automáticamente tu dominio público)</span>'}
+        </div>
+        <a class="btn btn-xs btn-ghost" href="restaurante.html#caja">Configurar dominio público →</a>`;
+
+      // Construir píldoras de filtro por sector
+      const totalActive = data.blocks.reduce((acc, b) => acc + b.tables.length, 0);
+      $('#sectorPills').innerHTML = [
+        `<button type="button" class="sec-pill active" data-sec="all">Todos los sectores (${totalActive})</button>`,
+        ...data.blocks.map((b) => `<button type="button" class="sec-pill" data-sec="${escapeHtml(b.id)}">${b.icon || ''} ${escapeHtml(b.name)} (${b.tables.length})</button>`),
+      ].join('');
+
+      function filteredEntries() {
+        const list = [];
+        data.blocks.forEach((b) => {
+          if (sectorFilter !== 'all' && b.id !== sectorFilter) return;
+          b.tables.forEach((t) => list.push({ block: b, table: t }));
+        });
+        return list;
+      }
+
+      function perSheetCount() {
+        if (fmt === 'sticker') return 6;
+        if (fmt === 'compact') return 9;
+        return density === '2' ? 2 : 4;
+      }
+
+      function formatName() {
+        if (fmt === 'sticker') return 'Sticker 8×8 cm';
+        if (fmt === 'compact') return 'Tarjeta Compacta';
+        return density === '2' ? 'Tent-Card 10×15 cm (2/A4)' : 'Tent-Card Acrílico (4/A4)';
+      }
+
+      function wrapLegendLines(text, maxChars) {
+        const words = String(text || '').trim().split(/\s+/).filter(Boolean);
+        if (!words.length) return [];
+        const lines = [];
+        let cur = '';
+        for (const w of words) {
+          const next = cur ? `${cur} ${w}` : w;
+          if (next.length <= maxChars || !cur) {
+            cur = next;
+          } else {
+            lines.push(cur);
+            cur = w;
+          }
+        }
+        if (cur) lines.push(cur);
+        return lines.slice(0, 2);
+      }
+
+      // Genera un archivo .svg vectorial autónomo (en milímetros exactos) listo para imprenta / corte UV
+      function buildPrintShopSvg(entry) {
+        const { block, table } = entry;
+        const isDark = theme === 'dark';
+        const bg = isDark ? '#1C1917' : '#FAF7F2';
+        const border = isDark ? '#38322E' : '#E6DFD3';
+        const ink = isDark ? '#FAF7F2' : '#1C1917';
+        const muted = isDark ? '#C8C1B8' : '#57534E';
+        const pillBg = isDark ? '#2A2521' : '#EFE9DE';
+        const badgeBg = isDark ? '#3B201B' : '#FCEAE6';
+        const badgeInk = isDark ? '#FF9B8A' : '#D9412B';
+
+        const vbMatch = table.svg.match(/viewBox="0 0 (\d+) (\d+)"/);
+        const qrSize = vbMatch ? Number(vbMatch[1]) : 33;
+        const pathMatch = table.svg.match(/<path[^>]*d="([^"]+)"/);
+        const qrPath = pathMatch ? pathMatch[1] : '';
+
+        const spec = fmt === 'sticker'
+          ? { wMm: 80, hMm: 80, w: 800, h: 800, rx: 42, logoW: 210, logoY: 46, showSec: false, mesaY: 162, mesaFs: 68, qrBox: 400, qrY: 192, bY: 632, legY: 716, legFs: 27, maxCh: 34 }
+          : fmt === 'compact'
+          ? { wMm: 62, hMm: 88, w: 620, h: 880, rx: 38, logoW: 196, logoY: 46, showSec: true, secY: 122, mesaY: 196, mesaFs: 64, qrBox: 380, qrY: 226, bY: 648, legY: 734, legFs: 25, maxCh: 30 }
+          : { wMm: 100, hMm: 150, w: 1000, h: 1500, rx: 56, logoW: 310, logoY: 82, showSec: true, secY: 196, mesaY: 316, mesaFs: 108, qrBox: 640, qrY: 372, bY: 1068, legY: 1196, legFs: 38, maxCh: 34 };
+
+        const logoScale = (spec.logoW / 239).toFixed(4);
+        const logoX = ((spec.w - spec.logoW) / 2).toFixed(1);
+        const qrX = ((spec.w - spec.qrBox) / 2).toFixed(1);
+        const qrPad = Math.round(spec.qrBox * 0.065);
+        const innerQr = spec.qrBox - qrPad * 2;
+        const lines = wrapLegendLines(legendText || 'Escaneá para ver la carta y pedir', spec.maxCh);
+        const secText = escapeHtml(`${block.name} · ${data.restaurantName}`).toUpperCase();
+        const badgeW = fmt === 'tent' ? 420 : 320;
+        const badgeH = fmt === 'tent' ? 62 : 46;
+        const badgeFs = fmt === 'tent' ? 29 : 22;
+
+        return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${spec.wMm}mm" height="${spec.hMm}mm" viewBox="0 0 ${spec.w} ${spec.h}" fill="none">
+  <rect x="6" y="6" width="${spec.w - 12}" height="${spec.h - 12}" rx="${spec.rx}" fill="${bg}" stroke="${border}" stroke-width="12"/>
+  <g transform="translate(${logoX} ${spec.logoY}) scale(${logoScale})">
+    <path d="${LOGO_PATHS.squircle}" fill="#D9412B"/>
+    <path d="${LOGO_PATHS.handle}" fill="#FAF7F2"/>
+    <path d="${LOGO_PATHS.cloche}" fill="#FAF7F2"/>
+    <path d="${LOGO_PATHS.base}" fill="#FAF7F2"/>
+    <path d="${LOGO_PATHS.wordmark}" fill="${ink}"/>
+    <path d="${LOGO_PATHS.dot}" fill="#D9412B"/>
+  </g>
+  ${spec.showSec ? `
+  <rect x="${(spec.w - Math.min(spec.w - 120, Math.max(240, secText.length * 16 + 56))) / 2}" y="${spec.secY}" width="${Math.min(spec.w - 120, Math.max(240, secText.length * 16 + 56))}" height="44" rx="22" fill="${pillBg}"/>
+  <text x="${spec.w / 2}" y="${spec.secY + 29}" text-anchor="middle" fill="${muted}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="1.8">${secText}</text>` : ''}
+  <text x="${spec.w / 2}" y="${spec.mesaY}" text-anchor="middle" fill="${ink}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="${spec.mesaFs}" font-weight="800" letter-spacing="-2">MESA ${escapeHtml(table.code)}</text>
+  <rect x="${qrX}" y="${spec.qrY}" width="${spec.qrBox}" height="${spec.qrBox}" rx="34" fill="#FFFFFF" stroke="${border}" stroke-width="6"/>
+  <svg x="${Number(qrX) + qrPad}" y="${spec.qrY + qrPad}" width="${innerQr}" height="${innerQr}" viewBox="0 0 ${qrSize} ${qrSize}" shape-rendering="crispEdges">
+    <rect width="${qrSize}" height="${qrSize}" fill="#FFFFFF"/>
+    <path fill="#1C1917" d="${qrPath}"/>
+  </svg>
+  <rect x="${(spec.w - badgeW) / 2}" y="${spec.bY}" width="${badgeW}" height="${badgeH}" rx="${badgeH / 2}" fill="${badgeBg}"/>
+  <text x="${spec.w / 2}" y="${spec.bY + Math.round(badgeH * 0.66)}" text-anchor="middle" fill="${badgeInk}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="${badgeFs}" font-weight="800">4G · Sin pedir Wi-Fi</text>
+  ${lines.map((ln, idx) => `<text x="${spec.w / 2}" y="${spec.legY + idx * Math.round(spec.legFs * 1.32)}" text-anchor="middle" fill="${muted}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="${spec.legFs}" font-weight="700">${escapeHtml(ln)}</text>`).join('\n  ')}
+</svg>`;
+      }
+
+      function render() {
+        const out = $('#cardsOut');
+        out.dataset.fmt = fmt;
+        out.dataset.density = density;
+        $('#tentDensityWrap').hidden = fmt !== 'tent';
+
+        const entries = filteredEntries();
+        const perSheet = perSheetCount();
+        const sheets = Math.max(1, Math.ceil(entries.length / perSheet));
+        $('#sheetStats').textContent = entries.length
+          ? `📄 ${entries.length} tarjeta${entries.length === 1 ? '' : 's'} · ~${sheets} hoja${sheets === 1 ? '' : 's'} A4 · ${formatName()}`
+          : 'Sin mesas activas en el filtro elegido';
+
+        if (!entries.length) {
+          out.innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="big">🪑</span>No hay mesas activas en este sector.</div>';
+          return;
+        }
+
+        const logoSvg = inlineBrandLogo(theme === 'dark' ? '#FAF7F2' : '#1C1917');
+        const safeLegend = escapeHtml(legendText || 'Escaneá con tu cámara para ver la carta y pedir');
+
+        out.innerHTML = entries.map(({ block, table }) => `
+          <div class="qr-item">
+            <article class="qr-card ${theme === 'dark' ? 'theme-dark' : ''} ${cutGuides ? 'cut-guides' : ''}">
+              <div class="qc-top">
+                <div class="qc-logo">${logoSvg}</div>
+                <span class="qc-sector">${escapeHtml(block.name)}</span>
+                <div class="qc-mesa">MESA ${escapeHtml(table.code)}</div>
+              </div>
+              <div class="qc-qr-box">${table.svg}</div>
+              <div class="qc-foot">
+                <span class="qc-4g"><span class="qc-4g-dot"></span>4G · Sin pedir Wi-Fi</span>
+                <p class="qc-legend">${safeLegend}</p>
+                ${showUrl ? `<span class="qc-url">${escapeHtml(table.url)}</span>` : ''}
+              </div>
+            </article>
+            <div class="card-tools">
+              <button type="button" class="btn btn-xs btn-ghost" data-dl-svg="${escapeHtml(table.id)}">⬇ Descargar .svg</button>
+              <a class="btn btn-xs btn-ghost" href="${escapeHtml(table.url)}" target="_blank" rel="noopener">Probar QR ↗</a>
+            </div>
+          </div>`).join('');
+      }
+
+      // Interacciones de controles
+      $('#fmtGrid').onclick = (e) => {
+        const b = e.target.closest('[data-fmt]');
+        if (!b) return;
+        fmt = b.dataset.fmt;
+        document.querySelectorAll('[data-fmt]').forEach((x) => {
+          if (x.classList.contains('fmt-btn')) x.classList.toggle('active', x === b);
+        });
+        if (fmt === 'sticker' && !cutGuides) {
+          cutGuides = true;
+          $('#cutGuidesChk').checked = true;
+        }
+        render();
+      };
+
+      $('#tentDensityWrap').onclick = (e) => {
+        const b = e.target.closest('[data-density]');
+        if (!b) return;
+        density = b.dataset.density;
+        document.querySelectorAll('.sub-pill[data-density]').forEach((x) => x.classList.toggle('active', x === b));
+        render();
+      };
+
+      $('#themeGrid').onclick = (e) => {
+        const b = e.target.closest('[data-theme]');
+        if (!b) return;
+        theme = b.dataset.theme;
+        document.querySelectorAll('[data-theme]').forEach((x) => x.classList.toggle('active', x === b));
+        render();
+      };
+
+      $('#sectorPills').onclick = (e) => {
+        const b = e.target.closest('[data-sec]');
+        if (!b) return;
+        sectorFilter = b.dataset.sec;
+        document.querySelectorAll('[data-sec]').forEach((x) => x.classList.toggle('active', x === b));
+        render();
+      };
+
+      $('#legendInput').oninput = (e) => {
+        legendText = e.target.value.trim();
+        render();
+      };
+
+      $('#legendPresets').onclick = (e) => {
+        const b = e.target.closest('[data-preset]');
+        if (!b) return;
+        $('#legendInput').value = b.dataset.preset;
+        legendText = b.dataset.preset;
+        render();
+      };
+
+      $('#cutGuidesChk').onchange = (e) => { cutGuides = e.target.checked; render(); };
+      $('#showUrlChk').onchange = (e) => { showUrl = e.target.checked; render(); };
+      $('#printBtn').onclick = () => window.print();
+
+      $('#cardsOut').onclick = (e) => {
+        const dl = e.target.closest('[data-dl-svg]');
+        if (!dl) return;
+        const entry = filteredEntries().find((x) => x.table.id === dl.dataset.dlSvg);
+        if (!entry) return;
+        const svgContent = buildPrintShopSvg(entry);
+        const slug = `${entry.block.name}_Mesa-${entry.table.code}`.replace(/[^a-zA-Z0-9_-]+/g, '-');
+        const fmtSlug = fmt === 'sticker' ? '8x8cm' : fmt === 'compact' ? 'compacta' : '10x15cm';
+        const fname = `SaleListo_QR_${slug}_${fmtSlug}_${theme === 'dark' ? 'carbon' : 'crema'}.svg`;
+        const blob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fname;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+        toast(`⬇ Arte vectorial descargado: ${fname}`);
+      };
+
+      render();
     })();
   </script>
 </body>

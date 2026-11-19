@@ -1,8 +1,8 @@
-"""Plan de los 3 Reels: escenas ancladas a la locucion, marcas de animacion, acentos SFX, musica y extraccion de B-roll.
+"""Plan de los 5 Reels: escenas ancladas a la locucion, marcas de animacion, acentos SFX, musica y extraccion de B-roll.
 - Lee vo/rNN_words.json (toma continua ElevenLabs) y aplica ATEMPO + VO_OFFSET.
 - Escribe <WORK>/rNN/timeline.json y extrae frames con gradacion calida uniforme en <WORK>/rNN/frames_src/<escena>/.
 WORK = $SL_REELS_WORK o %TEMP%/sl_reels_work (nunca dentro del repositorio).
-Uso: python plan_reels.py [r01 r02 r03] [--no-extract]
+Uso: python plan_reels.py [r01 r02 r03 r04 r05] [--no-extract]
 """
 import json, math, os, re, shutil, subprocess, sys
 from concurrent.futures import ThreadPoolExecutor
@@ -120,6 +120,61 @@ REELS = {
                 ("pop", "actualizas", 0.15, -20), ("pop", "actualizas", 0.35, -20), ("pop", "actualizas", 0.55, -20),
                 ("pop", "reimprimir", 0.40, -16), ("ding", "qr", 0.10, -14), ("success", "badge", 0.0, -14)],
     },
+    "r04": {
+        "music_in": 0.93 + 8 * BEAT,
+        "atempo": 1.07,
+        "tail_pad": 0.80,
+        "kicker": "Más |rotación|",
+        "veil": {"D1": 0.50},
+        "scenes": [
+            ("D1", None, "bar_busy_4043.mp4", 1.5, 0.50, 0.5),
+            ("D2", ("con", 1, 0), "phone_hands_4915.mp4", 1.6, 0.50, 1.0),
+            ("D3", ("tu", 1, 0), "friends_cafe_43248.mp4", 1.0, 0.45, 1.0),
+            ("END", ("más", 1, 0), "resto_customers_4385.mp4", 1.5, 0.55, 1.0),
+        ],
+        "titles": [
+            ("Cobrar: |4 viajes|", None),
+            ("Pide en |QR|", "D2"),
+            ("|1 solo| viaje", "D3"),
+        ],
+        "marks": {
+            "quince": ("quince", 1, 0), "cobrar": ("cobrar", 1, 0), "esperando": ("esperando", 1, -0.05),
+            "cuenta": ("cuenta", 1, 0), "qr": ("qr", 1, -0.05), "tarjeta": ("tarjeta", 1, -0.05), "propina": ("propina", 1, -0.05),
+            "monto": ("monto", 1, 0), "resuelve": ("resuelve", 1, -0.10), "viaje": ("viaje", 1, -0.10),
+            "badge": ("cero", 1, -0.04), "contact": ("escribinos", 1, -0.05),
+        },
+        "sfx": [("pop", "quince", 0.10, -17), ("pop", "esperando", 0.05, -16),
+                ("scan", "qr", -0.02, -14), ("pop", "tarjeta", 0.05, -15), ("pop", "propina", 0.05, -15),
+                ("pop", "resuelve", 0.10, -16), ("ding", "viaje", 0.0, -13), ("success", "badge", 0.0, -14)],
+    },
+    "r05": {
+        "music_in": 0.93 + 24 * BEAT,
+        "atempo": 1.05,
+        "tail_pad": 1.30,
+        "kicker": "Piloto |sin riesgo|",
+        "veil": {"P1": 0.48},
+        "scenes": [
+            ("P1", None, "waiter_drinks_43984.mp4", 0.8, 0.50, 1.0),
+            ("P2", ("cuarenta", 1, -1), "bar_serve_43962.mp4", 0.2, 0.50, 1.0),
+            ("P3", ("medís", 1, -1), "bar_beer_tap_8709.mp4", 3.5, 0.35, 1.0),
+            ("END", ("cero", 1, 0), "friends_cafe_43248.mp4", 1.0, 0.50, 1.0),
+        ],
+        "titles": [
+            ("Sin cambiar |todo|", None),
+            ("1 solo |sector|", ("probá", 1, -0.08)),
+            ("Listo en |48 h|", "P2"),
+            ("Piloto |14 días|", "P3"),
+        ],
+        "marks": {
+            "proba": ("probá", 1, 0), "catorce": ("catorce", 1, 0), "vereda": ("vereda", 1, -0.05), "terraza": ("terraza", 1, -0.05),
+            "horas": ("horas", 1, -0.10), "carta": ("carta", 1, -0.05), "activamos": ("activamos", 1, 0), "qr": ("qr", 1, 0),
+            "medis": ("medís", 1, 0), "rondas": ("rondas", 1, 0), "vendes": ("vendés", 1, 0),
+            "badge": ("cero", 1, -0.04), "contact": ("pedí", 1, -0.05),
+        },
+        "sfx": [("pop", "vereda", 0.05, -16), ("ding", "terraza", 0.05, -14),
+                ("pop", "horas", 0.0, -15), ("scan", "qr", 0.0, -14),
+                ("pop", "rondas", 0.0, -16), ("success", "badge", 0.0, -14)],
+    },
 }
 
 
@@ -161,8 +216,10 @@ def extract(out_dir, src, t_in, dur, focus, W, H, speed=1.0):
 
 def plan(key, do_extract=True):
     cfg = REELS[key]
+    atempo = cfg.get("atempo", ATEMPO)
+    tail_pad = cfg.get("tail_pad", 1.8)
     vw = json.load(open(os.path.join(HERE, "vo", f"{key}_words.json"), encoding="utf-8"))
-    words = [{"w": w["w"], "n": norm(w["w"]), "t0": VO_OFFSET + w["t0"] / ATEMPO, "t1": VO_OFFSET + w["t1"] / ATEMPO} for w in vw["words"]]
+    words = [{"w": w["w"], "n": norm(w["w"]), "t0": VO_OFFSET + w["t0"] / atempo, "t1": VO_OFFSET + w["t1"] / atempo} for w in vw["words"]]
     vo_end = words[-1]["t1"]
 
     def find(word, occ=1, shift=0):
@@ -175,9 +232,9 @@ def plan(key, do_extract=True):
         raise SystemExit(f"{key}: ancla no encontrada: {word}")
 
     starts = [0.0 if a is None else round(find(*a)["t0"] - 0.05, 3) for _, a, *_ in cfg["scenes"]]
-    # musica: remate real del tema >= 1.8 s despues de la ultima palabra (cierre legible)
+    # musica: remate real del tema despues de la ultima palabra (cierre legible)
     music_in = cfg["music_in"]
-    k = math.ceil((vo_end + 1.8 - 2 * BEAT - G0) / BEAT)
+    k = math.ceil((vo_end + tail_pad - 2 * BEAT - G0) / BEAT)
     splice = G0 + k * BEAT
     total = round(splice + 2.20, 3)
     scenes = []
@@ -219,7 +276,7 @@ def plan(key, do_extract=True):
         "reel": key, "kicker": cfg.get("kicker", ""), "fps": FPS, "srcFps": SRC_FPS, "total": total, "pre": PRE, "frames": int(round(total * FPS)),
         "frameBase": "file:///" + fr.replace("\\", "/"),
         "scenes": scenes, "titles": titles, "marks": M,
-        "vo": {"file": f"marketing/reels/src/vo/{key}.mp3", "start": VO_OFFSET, "atempo": ATEMPO,
+        "vo": {"file": f"marketing/reels/src/vo/{key}.mp3", "start": VO_OFFSET, "atempo": atempo,
                "regions": [[round(a, 3), round(b, 3)] for a, b in regions], "voice": vw["voice"], "model": vw["model"]},
         "sfx": sfx,
         "music": {"file": MUSIC, "in": round(music_in, 4), "splice": round(splice, 4), "end_in": round(END_IN, 4)},

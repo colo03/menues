@@ -1,6 +1,6 @@
-# SaleListo · Mejoras de producto y UX (Oleada 1)
+# SaleListo · Mejoras de producto y UX (Oleadas 1 a 3)
 
-Documento de trabajo del equipo de producto. Resume el diagnóstico operativo y de experiencia de uso realizado sobre la app, lo que se implementó en esta iteración y las propuestas concretas para las próximas.
+Documento de trabajo del equipo de producto. Resume el diagnóstico operativo y de experiencia de uso realizado sobre la app, las mejoras implementadas en las Oleadas 1 y 3, la suite permanente de regresión E2E y las propuestas concretas de evolución.
 
 ---
 
@@ -95,6 +95,34 @@ Se recorrieron las seis pantallas del circuito (cliente QR, Estación de Mozos, 
 
 - **Bug crítico corregido**: al recargar el Panel en pleno servicio con la sesión guardada (o al abrir `?demo=1`) y con comandas abiertas, el arranque fallaba por una constante usada antes de inicializarse (`NEXT_FLOW`) y el encargado caía a la pantalla de PIN. Ahora el arranque se ejecuta cuando todo el módulo está listo.
 - El formulario de Configuración **ya no se borra** mientras se edita: muestra "Cambios sin guardar" y un botón "Descartar cambios"; el resumen de caja sigue actualizándose en vivo.
+
+### 2.8 Estudio de Impresión Profesional QR (`/qr.html` · Oleada 3)
+
+- Evolución de la hoja básica de QRs a un estudio interactivo pensado tanto para imprimir en el local (`Ctrl+P` / Guardar como PDF A4) como para enviar artes finales a una gráfica láser UV:
+  - **Tres formatos físicos calibrados en milímetros para hoja A4**:
+    1. **Tent-Card Acrílico 10×15 cm** con selector `4 por A4` (compacto) o `2 por A4` (tamaño real de portamenú vertical).
+    2. **Sticker de Mesa 8×8 cm** (6 vinilos cuadrados exactos de `80×80 mm` por carilla A4 con activación automática de guías de corte punteadas).
+    3. **Tarjeta Compacta** (9 piezas por A4 para barra o posavasos).
+  - **Dos estilos oficiales de marca (Propuesta 01)**: **Crema Cálido (`#FAF7F2`)** editorial luminoso y **Carbón Premium (`#1C1917`)** ideal para bares nocturnos, con curvas vectoriales nativas de `logo.svg`, marco blanco de alto contraste alrededor del QR y píldora `4G · Sin pedir Wi-Fi`.
+  - **Filtro en vivo por bloque/sector** (ej. imprimir únicamente las 4 mesas de *Terraza* para un piloto de 14 días), **leyenda al pie editable en tiempo real** con presets rápidos y cálculo automático de cantidad de hojas A4.
+  - **Descarga vectorial `.svg` individual por mesa** (`⬇ Descargar .svg`): genera al vuelo un archivo `.svg` autónomo en milímetros reales (`100×150 mm`, `80×80 mm` o `62×88 mm`), sin dependencias externas y con logo en curvas, listo para abrir en Illustrator o CorelDRAW.
+
+### 2.9 Simulador de Hora Pico en 1 Clic (`/demo.html` · Oleada 3)
+
+- Incorporación en la barra superior de **`⚡ Simular Hora Pico`** junto a **`↺ Limpiar turno demo`**, más una franja narradora paso a paso (`1 · Pedido mixto QR` -> `2 · Cocina + Barra listos` -> `3 · Llamado en salón` -> `4 · Cuenta Tarjeta + 10%`).
+- En menos de 4 segundos ejecuta transacciones reales sobre la API y las transmite por SSE sin recargar iframes: pedido mixto en Terraza que se separa entre Cocina y Barra, comandas que pasan a `listo` encendiendo las columnas del Pase y las alertas del mozo, llamado de atención en otra mesa y solicitud de cuenta con `Tarjeta + 10% propina` lista para cobrar en un solo viaje.
+- Escalado proporcional de viewports en escritorio para que los dos celulares rendericen a ancho móvil real (`~390 px`) sin solapamientos y el panel derecho muestre las **3 columnas horizontales completas** de la Estación de Mozos y de Cocina en pantallas `1440×900`.
+
+### 2.10 Suite permanente de pruebas E2E sin dependencias (`app/tests_e2e.py` · Oleada 3)
+
+- Script autónomo ejecutable con `python app/tests_e2e.py` (100% biblioteca estándar de Python) que aísla `DATA_DIR` en un `TemporaryDirectory` antes de importar el servidor (nunca toca `app/data/` ni deja `app/__pycache__`), levanta `ThreadingHTTPServer` en un puerto efímero (`0`) y valida 7 bloques críticos:
+  1. Vectores criptográficos NIST AES-128-GCM, ECDH/ES256 P-256, firma VAPID JWT y round-trip RFC 8291 (`webpush.self_test()`) + endpoint `/api/push/vapid-public-key`.
+  2. Tokens QR válidos vs rechazo de tokens falsos, bloqueo de `?mesa=` cuando `demoMode=False` y **anti-spoofing de precios** (ignora precios adulterados enviados por el cliente y cobra siempre el valor de SQLite).
+  3. Separación automática de un pedido mixto en 2 órdenes simultáneas (`cocina` + `barra`) bajo un mismo `batchId` conservando notas.
+  4. Balanceo de carga entre mozos en sectores pre-asignados/automáticos y **reasignación automática** de sesiones y llamados abiertos cuando un mozo pasa a `available=False`.
+  5. Cálculo exacto de subtotal + propina, bloqueo de cierre con pedidos pendientes, KPIs de caja y descarga de `GET /api/export/sessions.csv` con BOM UTF-8 (`EF BB BF`) y separador `;`.
+  6. Alta pública, validaciones `400`, permisos `401` fuera de modo demo, cambio de estado `lead.status` y limitador antispam `429` de `POST /api/leads`.
+  7. Streaming `HTTP 206 Partial Content`, `ETag`/`304`, rangos por sufijo, `416` y bloqueo de path traversal (`404`) sobre `/media/hero-salon-loop.mp4`.
 
 ---
 

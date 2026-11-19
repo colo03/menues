@@ -1,18 +1,31 @@
-# Pipeline completo de los 3 Reels SaleListo (1080x1920, 60 fps, H.264 High CRF 20 + AAC 48 kHz, faststart).
+# Pipeline completo de los 5 Reels SaleListo (1080x1920, 60 fps, H.264 High CRF 20 + AAC 48 kHz, faststart).
 # Todo lo temporal (puppeteer-core, frames JPEG, mezclas WAV) vive en $env:SL_REELS_WORK o $env:TEMP\sl_reels_work.
 # Uso (desde cualquier carpeta):
-#   powershell -ExecutionPolicy Bypass -File marketing\reels\src\build_reels.ps1 [-Reels r01,r02,r03] [-Clean]
+#   powershell -ExecutionPolicy Bypass -File marketing\reels\src\build_reels.ps1 [-Reels r01,r02,r03,r04,r05] [-Clean]
 #   -Clean: borra la carpeta de trabajo temporal al terminar.
 # La locucion ya generada vive en src\vo\ (rNN.mp3 + rNN_words.json); para regenerarla: python gen_vo_reels.py rNN
-param([string[]]$Reels = @("r01", "r02", "r03"), [switch]$Clean)
+param([string[]]$Reels = @("r01", "r02", "r03", "r04", "r05"), [switch]$Clean)
+$Reels = @($Reels | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 $ErrorActionPreference = "Stop"
 $SRC = $PSScriptRoot
 $OUTDIR = Split-Path -Parent $SRC
 $WORK = if ($env:SL_REELS_WORK) { $env:SL_REELS_WORK } else { Join-Path $env:TEMP "sl_reels_work" }
 $env:SL_REELS_WORK = $WORK
 $FF = if ($env:FFMPEG_BIN) { $env:FFMPEG_BIN } elseif (Get-Command ffmpeg -ErrorAction SilentlyContinue) { (Get-Command ffmpeg).Source } else { (python -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())").Trim() }
-$NAMES = @{ r01 = "Reel_01_Sin_Celulares_En_Salon"; r02 = "Reel_02_Segundas_Rondas_Terraza"; r03 = "Reel_03_Cero_Comision_Precios_Al_Dia" }
-$TITLES = @{ r01 = "SaleListo Reel 01: Sin celulares en el salon"; r02 = "SaleListo Reel 02: Segundas rondas en terraza"; r03 = "SaleListo Reel 03: Cero comision y precios al dia" }
+$NAMES = @{
+  r01 = "Reel_01_Sin_Celulares_En_Salon"
+  r02 = "Reel_02_Segundas_Rondas_Terraza"
+  r03 = "Reel_03_Cero_Comision_Precios_Al_Dia"
+  r04 = "Reel_04_Cobrar_En_Un_Viaje"
+  r05 = "Reel_05_Piloto_14_Dias_Un_Sector"
+}
+$TITLES = @{
+  r01 = "SaleListo Reel 01: Sin celulares en el salon"
+  r02 = "SaleListo Reel 02: Segundas rondas en terraza"
+  r03 = "SaleListo Reel 03: Cero comision y precios al dia"
+  r04 = "SaleListo Reel 04: Cobrar en un solo viaje"
+  r05 = "SaleListo Reel 05: Piloto de 14 dias en un sector"
+}
 
 New-Item -ItemType Directory -Force $WORK | Out-Null
 if (-not (Test-Path (Join-Path $WORK "node_modules\puppeteer-core"))) {

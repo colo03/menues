@@ -8,23 +8,27 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
 | **R1** | Reel Sin celulares en el salón | [`reels/Reel_01_Sin_Celulares_En_Salon.mp4`](reels/Reel_01_Sin_Celulares_En_Salon.mp4) | `1080x1920` vertical |
 | **R2** | Reel Segundas rondas en terraza | [`reels/Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4) | `1080x1920` vertical |
 | **R3** | Reel Cero comisión y precios al día | [`reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4`](reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4) | `1080x1920` vertical |
+| **R4** | Reel Cobrar en un solo viaje | [`reels/Reel_04_Cobrar_En_Un_Viaje.mp4`](reels/Reel_04_Cobrar_En_Un_Viaje.mp4) | `1080x1920` vertical |
+| **R5** | Reel Piloto 14 días en un sector | [`reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4`](reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4) | `1080x1920` vertical |
 | **C1** | Carrusel 4 viajes muertos (5 slides) | [`posts/carrusel_01_viajes_muertos/`](posts/carrusel_01_viajes_muertos/) | `1080x1350` |
 | **C2** | Carrusel Cero celulares (5 slides) | [`posts/carrusel_02_cero_celulares/`](posts/carrusel_02_cero_celulares/) | `1080x1350` |
+| **C3** | Carrusel Cocina y Barra sin comandas perdidas (5 slides) | [`posts/carrusel_03_cocina_y_barra/`](posts/carrusel_03_cocina_y_barra/) | `1080x1350` |
 | **P1** | Post 0% comisión y ROI | [`posts/post_01_cero_comision_roi.png`](posts/post_01_cero_comision_roi.png) | `1080x1350` |
 | **P2** | Post División Cocina y Barra | [`posts/post_02_division_cocina_barra.png`](posts/post_02_division_cocina_barra.png) | `1080x1350` |
 | **P3** | Post QR 4G en veredas y patios | [`posts/post_03_qr_4g_patios_veredas.png`](posts/post_03_qr_4g_patios_veredas.png) | `1080x1350` |
 | **P4** | Post Precios anti inflación | [`posts/post_04_precios_anti_inflacion.png`](posts/post_04_precios_anti_inflacion.png) | `1080x1350` |
 | **LI** | Post LinkedIn ROI 37x | [`banners/linkedin_post_1200x627.png`](banners/linkedin_post_1200x627.png) | `1200x627` |
 | **ST / WA** | Historia piloto y catálogo de planes | [`banners/meta_ad_story_1080x1920.png`](banners/meta_ad_story_1080x1920.png) · [`banners/whatsapp_catalogo_1080x1080.png`](banners/whatsapp_catalogo_1080x1080.png) | `1080x1920` · `1080x1080` |
+| **PDF** | Dossier Comercial Ejecutivo B2B (2 páginas A4) | [`../comercial/SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf) | A4 (`< 200 KB`, WhatsApp) |
 
 > [!NOTE]
-> El desglose escena por escena de los Reels `R1`, `R2` y `R3` (locución, tiempos y textos en pantalla) y los 5 guiones adicionales para grabar en salón están en [`guiones_reels.md`](guiones_reels.md).
+> El desglose escena por escena de los 5 Reels (`R1` a `R5`: locución, tiempos y textos en pantalla) y los 5 guiones adicionales para grabar en salón están en [`guiones_reels.md`](guiones_reels.md).
 
 ---
 
 ## 1. Criterios del plan
 
-- **Ritmo:** 4 publicaciones por semana (lunes, martes, jueves y sábado) durante 4 semanas = **16 publicaciones** + días 29 y 30 de análisis y ajuste.
+- **Ritmo:** 5 publicaciones por semana (lunes, martes, miércoles, jueves y sábado) durante 4 semanas = **20 publicaciones** + días 29 y 30 de análisis y ajuste.
 - **Horarios:** el dueño gastronómico mira el celular en los valles del servicio. Publicar **entre 10:30 y 12:00** o **entre 16:30 y 18:30**; nunca viernes o sábado de 20:00 a 00:30.
 - **Arco narrativo:**
   1. **Semana 1 · Dolor operativo:** viajes muertos, caos de comandas, mozos quemados.
@@ -41,20 +45,24 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
 | :---: | :--- | :--- | :--- | :--- | :--- | :---: |
 | **1** | Lunes 10:30 | **SPOT** | Instagram Reels | TikTok | Presentar la marca | [#01](#copy-01) |
 | **2** | Martes 17:00 | **C1** | Instagram feed | Facebook | Educar sobre el dolor | [#02](#copy-02) |
+| **3** | Miércoles 11:00 | **R4** | Instagram Reels | TikTok | Cobro en 1 viaje y rotación | [#17](#copy-17) |
 | **4** | Jueves 11:00 | **R1** | Instagram Reels | TikTok | Alcance con objeción | [#03](#copy-03) |
 | **6** | Sábado 11:00 | **P2** | Instagram feed | Historias | Mostrar el producto | [#04](#copy-04) |
 | **8** | Lunes 10:30 | **LI** | LinkedIn | | Autoridad B2B | [#05](#copy-05) |
 | **9** | Martes 17:00 | **C2** | Instagram feed | Facebook | Romper la objeción de imagen | [#06](#copy-06) |
+| **10** | Miércoles 11:00 | **C3** | Instagram feed | Facebook | Ordenar Cocina y Barra + SLA | [#18](#copy-18) |
 | **11** | Jueves 11:00 | **R2** | Instagram Reels | TikTok | Cervecerías y terrazas | [#07](#copy-07) |
 | **13** | Sábado 11:00 | **P3** | Instagram feed | Historias | 4G sin Wi-Fi en vereda | [#08](#copy-08) |
 | **15** | Lunes 10:30 | **P1** | Instagram feed | LinkedIn | 0% comisión y ROI | [#09](#copy-09) |
 | **16** | Martes 17:00 | **R3** | Instagram Reels | TikTok | Rentabilidad del dueño | [#10](#copy-10) |
+| **17** | Miércoles 11:00 | **C3** (PDF) | LinkedIn documento | | Operaciones y mermas B2B | [#19](#copy-19) |
 | **18** | Jueves 11:00 | **C1** (PDF) | LinkedIn documento | | Autoridad B2B | [#11](#copy-11) |
 | **20** | Sábado 11:00 | **P4** | Instagram feed | Facebook | Anti inflación | [#12](#copy-12) |
 | **22** | Lunes 10:30 | **C2** (PDF) | LinkedIn documento | | Objeción de imagen B2B | [#13](#copy-13) |
 | **23** | Martes 17:00 | **SPOT** | TikTok | Instagram Reels | Recordación | [#14](#copy-14) |
+| **24** | Miércoles 11:00 | **R5** | Instagram Reels | TikTok · LinkedIn | Cierre: Piloto de 14 días | [#20](#copy-20) |
 | **25** | Jueves 11:00 | **R1** | LinkedIn video nativo | | Conversación B2B | [#15](#copy-15) |
-| **27** | Sábado 11:00 | **ST + WA** | Historias de Instagram | Estados de WhatsApp | Captar pilotos | [#16](#copy-16) |
+| **27** | Sábado 11:00 | **ST + WA** | Historias de Instagram | Estados de WhatsApp | Captar pilotos + envío PDF | [#16](#copy-16) |
 | **29 y 30** | | | | | Medir, responder y ajustar pauta | |
 
 **Historias de apoyo (sin copy largo):** el mismo día de cada publicación de feed, compartir la pieza en Historias con sticker de encuesta (*"¿Tus mozos hacen 4 viajes para cobrar?" Sí / Más*) o sticker de pregunta (*"¿Cuál es el sector más difícil de atender en tu local?"*).
@@ -63,7 +71,7 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
 
 ---
 
-## 3. Los 16 copys listos para copiar y pegar
+## 3. Los 20 copys listos para copiar y pegar
 
 <a id="copy-01"></a>
 ### Copy #01 · Día 1 · SPOT · Instagram Reels + TikTok
@@ -385,6 +393,83 @@ Precios de referencia, facturados en pesos. Incluyen QR con 4G, ruteo a Cocina y
 Respondé este estado y coordinamos tu piloto.
 ```
 
+<a id="copy-17"></a>
+### Copy #17 · Día 3 · Reel R4 · Instagram Reels + TikTok
+
+**Gancho en pantalla:** `¿15 minutos solo para cobrar una mesa?`
+
+```text
+Viernes 22:30. Hay fila esperando afuera y adentro tenés tres mesas listas para irse que no logran pagar.
+
+En el servicio tradicional, cobrar lleva 4 viajes del mozo y entre 10 y 15 minutos perdidos por mesa.
+
+Con SaleListo la mesa pide la cuenta en el QR eligiendo medio de pago (efectivo, tarjeta, QR o transferencia) y propina. Tu mozo ve el monto exacto en el pase y resuelve todo en 1 solo viaje, con el posnet en la mano.
+
+Más rotación cuando más vale cada silla. 0% de comisión sobre tus ventas.
+
+Escribinos por WhatsApp al (+54)1138436571 y te enviamos el dossier completo o coordinamos una demo de 10 minutos.
+
+#restaurantes #gastronomia #bares #rotaciondemesas #cervecerias
+```
+
+<a id="copy-18"></a>
+### Copy #18 · Día 10 · Carrusel C3 · Instagram feed + Facebook
+
+```text
+Eliminá las comandas perdidas entre Salón, Cocina y Barra. 👇
+
+El papel manchado y las "cantadas" en pleno despacho salen caros: entre el 1,5% y el 3% de la venta mensual se va en platos devueltos, errores de punto o bebidas trabadas atrás de una tanda de cocina.
+
+Con SaleListo cada pedido se ordena solo:
+🔸 El cliente elige en el QR con su 4G y deja sus aclaraciones exactas ("Sin TACC", "jugoso", "poco hielo").
+🔸 En 0 segundos los platos entran a Cocina y los tragos a Barra por separado.
+🔸 Semáforo SLA automático en vivo: En tiempo, Atención o Demorado.
+🔸 Si se acaba un barril o un postre, lo pausás en 1 toque y desaparece de todos los QR del salón.
+
+Deslizá para ver el circuito completo y probalo 14 días en un solo sector de tu local.
+
+📲 WhatsApp (+54)1138436571 · ventas@salelisto.com
+```
+
+<a id="copy-19"></a>
+### Copy #19 · Día 17 · Carrusel C3 en PDF · LinkedIn documento
+
+```text
+Entre el 1,5% y el 3% de la facturación de un restaurante promedio se pierde en errores de comanda, platos devueltos e invitaciones para salvar un mal momento.
+
+Casi nunca es falta de voluntad del equipo: es el teléfono descompuesto entre un salón ruidoso, un papel escrito a las corridas y una misma comanda que frena dos pintas de barra atrás de cuatro platos de cocina.
+
+En este documento resumimos cómo lo resuelve SaleListo en tiempo real:
+▸ El propio comensal confirma sus ítems y aclaraciones (Sin TACC, punto de cocción, sin hielo) desde el QR fijo de su mesa usando su 4G.
+▸ Separación instantánea entre monitores de Cocina y Barra.
+▸ Semáforo SLA automático (verde < 8 min, ámbar 8 a 14 min, coral 15+ min) en Cocina, Barra y Estación de Pase.
+▸ Baja de platos o barriles agotados en un clic para ahorrar viajes de disculpa.
+
+Si gestionás un restaurante, bistró o cervecería en CABA o GBA, escribime y te comparto nuestro Dossier Comercial Ejecutivo en PDF o agendamos una prueba de 14 días en un sector: ventas@salelisto.com · WhatsApp (+54)1138436571.
+
+#Gastronomía #OperacionesGastronómicas #Cocina #Restaurantes #Hospitalidad
+```
+
+<a id="copy-20"></a>
+### Copy #20 · Día 24 · Reel R5 · Instagram Reels + TikTok + LinkedIn
+
+**Gancho en pantalla:** `No cambies todo tu salón de golpe.`
+
+```text
+La forma más segura de evaluar SaleListo no es en una presentación: es un viernes real en el sector más difícil de tu local.
+
+Por eso armamos el Piloto Quirúrgico de 14 días:
+1. Elegís un solo sector: vereda, patio o terraza. Tu salón principal sigue igual.
+2. En 48 horas cargamos tu carta real, configuramos Cocina y Barra y colocamos los QR fijos.
+3. Medimos juntos 2 fines de semana cuántas segundas rondas más vendés y cuánto baja el tiempo de cobro.
+
+0% de comisión sobre tus ventas y cero celulares en la mano de tus mozos.
+
+Pedí tu piloto por WhatsApp al (+54)1138436571 o escribinos a ventas@salelisto.com y te mandamos el Dossier Ejecutivo en el acto.
+
+#dueñosderestaurantes #gastronomiaargentina #bares #cervecerias #hospitalidad
+```
+
 ---
 
 ## 4. Estructura recomendada de campañas Meta Ads (CABA y GBA)
@@ -395,9 +480,9 @@ Inversión de referencia del modelo de negocios: **USD 320 por mes** en etapa in
 
 | Campaña | Objetivo Meta | % del presupuesto | Creativos | Duración |
 | :--- | :--- | :---: | :--- | :--- |
-| **A · Descubrimiento** | Reconocimiento (ThruPlay) | 30% | SPOT, R1, R2, R3 | Continua |
-| **B · Conversación** | Interacción: mensajes a WhatsApp | 50% | `meta_ad_feed_1080x1080`, `meta_ad_story_1080x1920`, C1, C2 | Continua |
-| **C · Piloto** | Clientes potenciales (formulario instantáneo) | 20% | P1, P3, `whatsapp_catalogo_1080x1080` | Ráfagas de 10 días |
+| **A · Descubrimiento** | Reconocimiento (ThruPlay) | 30% | SPOT, R1, R2, R3, R4, R5 | Continua |
+| **B · Conversación** | Interacción: mensajes a WhatsApp | 50% | `meta_ad_feed_1080x1080`, `meta_ad_story_1080x1920`, C1, C2, C3 | Continua |
+| **C · Piloto** | Clientes potenciales (formulario instantáneo) | 20% | R5, P1, P3, `whatsapp_catalogo_1080x1080` | Ráfagas de 10 días |
 
 ### 4.2. Segmentación
 
@@ -410,7 +495,7 @@ Inversión de referencia del modelo de negocios: **USD 320 por mes** en etapa in
   - *Rol:* administradores de páginas de empresas, propietarios de pequeñas empresas, cargos de "Dueño", "Gerente de restaurante", "Encargado de salón", "Jefe de cocina", "Bartender".
   - *Rubro:* restaurantes, gestión de restaurantes, hostelería, servicio de comida, cerveza artesanal, bares, cafeterías de especialidad.
 - **Audiencias personalizadas (campañas B y C):**
-  - Personas que vieron el 50% o más de SPOT, R1, R2 o R3 en los últimos 30 días.
+  - Personas que vieron el 50% o más de SPOT o de cualquiera de los 5 Reels (`R1` a `R5`) en los últimos 30 días.
   - Personas que interactuaron con la cuenta de Instagram en los últimos 60 días.
   - Lista de prospectos de [`prospectos_restaurantes.csv`](../comercial/prospectos_restaurantes.csv) cargada como audiencia personalizada (respetando consentimiento), más una audiencia similar del 1% en Argentina limitada a las zonas de arriba.
 - **Exclusiones:** clientes activos y personas que ya enviaron mensaje en los últimos 14 días.
@@ -425,6 +510,7 @@ Inversión de referencia del modelo de negocios: **USD 320 por mes** en etapa in
 
 - **Botón:** "Enviar mensaje" con destino WhatsApp al número `(+54)1138436571`.
 - **Mensaje precargado sugerido:** *"Hola, vi el anuncio de SaleListo y quiero ver una demo en mi local."*
+- **Respuesta inmediata en WhatsApp:** adjuntar en el primer contacto el Dossier Ejecutivo A4 de 2 páginas [`SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf) (`137 KB`) y proponer día/hora en valle de servicio (martes a jueves 10:30 a 12:00 o 16:30 a 18:30).
 - **Formulario instantáneo (campaña C):** nombre, nombre del local, barrio, cantidad de mesas y pregunta abierta *"¿Qué sector te cuesta más atender: vereda, patio, terraza o salón?"*.
 
 ### 4.5. Nomenclatura y métricas

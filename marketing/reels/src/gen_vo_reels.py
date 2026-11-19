@@ -1,6 +1,6 @@
-"""Locuciones continuas de los 3 Reels (ElevenLabs CLI, eleven_v4, voz es-AR "Gabi").
+"""Locuciones continuas de los 5 Reels (ElevenLabs CLI, eleven_v4, voz es-AR "Gabi").
 Salida por reel en marketing/reels/src/vo/: rNN.mp3 (toma original) + rNN_words.json (palabras con t0/t1 en segundos).
-Uso: python gen_vo_reels.py [r01 r02 r03]   (sin argumentos genera los 3; cada toma consume ~250 caracteres de cuota)
+Uso: python gen_vo_reels.py [r01 r02 r03 r04 r05]   (sin argumentos genera todos; pasar claves puntuales para no gastar cuota)
 """
 import base64, json, os, subprocess, sys
 
@@ -23,6 +23,14 @@ TEXTS = {
             "Con SaleListo pagás cero comisión por pedido. "
             "¿Subieron los costos? Tocás un botón y actualizás toda la carta al instante, "
             "sin reimprimir un solo QR. Escribinos y probalo."),
+    "r04": ("¿Perdés quince minutos por mesa solo para cobrar, cuando tenés gente esperando afuera? "
+            "Con SaleListo, el cliente pide la cuenta en el QR, eligiendo tarjeta y propina. "
+            "Tu mozo ve el monto exacto y resuelve todo en un solo viaje. "
+            "Más rotación, cero comisión. Escribinos y probalo."),
+    "r05": ("No hace falta cambiar todo tu restaurante de golpe. "
+            "Probá SaleListo catorce días solo en tu vereda, patio o terraza. "
+            "En cuarenta y ocho horas cargamos tu carta, activamos los QR fijos, "
+            "y medís cuántas rondas más vendés. Cero comisión. Pedí tu piloto por WhatsApp."),
 }
 
 

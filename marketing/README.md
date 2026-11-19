@@ -9,19 +9,22 @@ Pack de comunicación para redes sociales, pauta y canales comerciales de **Sale
 ```text
 marketing/
 ├── README.md                      Este documento
-├── calendario_redes_30dias.md     Plan editorial, 16 copys y estructura Meta Ads
-├── posts/                         Carruseles y posts 1080x1350 (Instagram / LinkedIn)
+├── calendario_redes_30dias.md     Plan editorial (20 publicaciones, 20 copys y Meta Ads)
+├── posts/                         3 carruseles (15 slides) y 4 posts 1080x1350
 │   ├── carrusel_01_viajes_muertos/slide_01.png ... slide_05.png
 │   ├── carrusel_02_cero_celulares/slide_01.png ... slide_05.png
+│   ├── carrusel_03_cocina_y_barra/slide_01.png ... slide_05.png
 │   ├── post_01_cero_comision_roi.png
 │   ├── post_02_division_cocina_barra.png
 │   ├── post_03_qr_4g_patios_veredas.png
 │   └── post_04_precios_anti_inflacion.png
-├── banners/                       Banners multicanal al píxel exacto
+├── banners/                       8 banners multicanal al píxel exacto
 ├── src_grafica/                   Plantillas editables HTML/CSS/JS y exportador PNG
-├── reels/                         Reels verticales 1080x1920 (equipo de Reels)
-└── guiones_reels.md               Guiones de los Reels (equipo de Reels)
+├── reels/                         5 Reels verticales 1080x1920 60 fps (R01 a R05)
+└── guiones_reels.md               Guiones de los 5 Reels + 5 guiones de rodaje real
 ```
+
+> **Activo comercial complementario para cierre por WhatsApp:** [`comercial/SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf) (`2 páginas A4`, `~137 KB`, generado desde [`comercial/brochure_b2b.html`](../comercial/brochure_b2b.html)).
 
 ### 1.1. Carruseles (`1080x1350`, 5 slides cada uno)
 
@@ -29,6 +32,7 @@ marketing/
 | :--- | :--- | :--- |
 | [`carrusel_01_viajes_muertos`](posts/carrusel_01_viajes_muertos/) | `01` Portada: *"Cobrar una mesa hoy lleva 4 viajes. Con SaleListo lleva 1."* · `02` Los 4 viajes que queman al mozo · `03` La mesa pide la cuenta desde el QR con medio de pago y propina (fondo `#1C1917`) · `04` Impacto: **+18 a 25 min** recuperados por mesa · `05` Planes con **0% comisión** y contacto | Dolor operativo del cobro y tiempo muerto en hora pico |
 | [`carrusel_02_cero_celulares`](posts/carrusel_02_cero_celulares/) | `01` Portada sobre `#1C1917`: *"Un salón ágil sin mozos mirando el celular."* · `02` La objeción real de imagen · `03` **Plan Base con Estación de Mozos fija** en el pase · `04` **Kit Pulsera Vibradora Xiaomi Band** con hasta 14 días de batería (fondo `#1C1917`) · `05` CTA Piloto sin riesgo de 14 días en 1 sector | Objeción de estética del salón |
+| [`carrusel_03_cocina_y_barra`](posts/carrusel_03_cocina_y_barra/) | `01` Portada: *"Eliminá las comandas perdidas entre Salón, Cocina y Barra."* · `02` El costo del papel manchado y las cantadas (1,5% a 3% en mermas) · `03` Separación en **0 segundos** a Cocina (`#D97706`) y Barra (`#6D28D9`) con aclaraciones (*Sin TACC*, *poco hielo*) · `04` **Semáforo SLA** (*En tiempo*, *Atención*, *Demorado*) + baja de agotados en 1 clic · `05` CTA Piloto de 14 días en 1 sector | Ruteo Cocina/Barra, SLA y control de mermas |
 
 Todas las slides llevan numeración `01/05`, barra de progreso y el indicador `Deslizá →` (la última reemplaza el indicador por *"Guardalo y compartilo con tu encargado"*).
 
@@ -54,6 +58,15 @@ Todas las slides llevan numeración `01/05`, barra de progreso y el indicador `D
 | [`meta_ad_story_1080x1920.png`](banners/meta_ad_story_1080x1920.png) | `1080x1920` | Historias y Reels: Piloto sin riesgo por 14 días (zona segura: 260 px arriba y 300 px abajo libres) |
 | [`whatsapp_catalogo_1080x1080.png`](banners/whatsapp_catalogo_1080x1080.png) | `1080x1080` | Catálogo de WhatsApp Business y Estados con los 3 planes |
 
+### 1.4. Reels verticales (`1080x1920`, `60 fps`, locución rioplatense)
+
+Documentados en [`guiones_reels.md`](guiones_reels.md) e integrados en el calendario de 30 días:
+1. [`reels/Reel_01_Sin_Celulares_En_Salon.mp4`](reels/Reel_01_Sin_Celulares_En_Salon.mp4): estética del salón (Estación de Pase + Pulsera vibradora).
+2. [`reels/Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4): segundas rondas en patios, veredas y terrazas con 4G.
+3. [`reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4`](reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4): 0% comisión y ajuste masivo de precios sin reimprimir QR.
+4. [`reels/Reel_04_Cobrar_En_Un_Viaje.mp4`](reels/Reel_04_Cobrar_En_Un_Viaje.mp4): cierre de cuenta con pago y propina elegidos en 1 solo viaje.
+5. [`reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4`](reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4): piloto sin riesgo de 14 días en 1 sector listo en 48 horas.
+
 > [!NOTE]
 > Los códigos QR que aparecen dentro de las piezas son **ilustrativos** (patrón decorativo no escaneable). Para material impreso en mesas se usan los QR vectoriales reales que entrega el Onboarding de cada local.
 
@@ -71,14 +84,14 @@ Todas las slides llevan numeración `01/05`, barra de progreso y el indicador `D
 
 ## 3. Calendario editorial y copys
 
-El plan completo está en [`calendario_redes_30dias.md`](calendario_redes_30dias.md): 4 semanas x 4 publicaciones, **16 copys listos para copiar y pegar** (Instagram, LinkedIn, TikTok, Historias y Estados de WhatsApp) y la estructura de campañas Meta Ads para CABA y GBA. Resumen:
+El plan completo está en [`calendario_redes_30dias.md`](calendario_redes_30dias.md): 4 semanas x 5 publicaciones, **20 copys listos para copiar y pegar** (Instagram, LinkedIn, TikTok, Historias y Estados de WhatsApp), envío del Dossier PDF en el primer contacto y la estructura de campañas Meta Ads para CABA y GBA. Resumen:
 
-| Semana | Eje | Lunes | Martes | Jueves | Sábado |
-| :---: | :--- | :--- | :--- | :--- | :--- |
-| **1** | Dolor operativo | Spot (IG Reels + TikTok) | Carrusel 01 (IG) | Reel 01 (IG + TikTok) | Post 02 (IG) |
-| **2** | Objeción de imagen | Post LinkedIn ROI | Carrusel 02 (IG) | Reel 02 (IG + TikTok) | Post 03 (IG + Historias) |
-| **3** | Rentabilidad | Post 01 (IG + LinkedIn) | Reel 03 (IG + TikTok) | Carrusel 01 PDF (LinkedIn) | Post 04 (IG) |
-| **4** | Conversión | Carrusel 02 PDF (LinkedIn) | Spot (TikTok) | Reel 01 (LinkedIn) | Historia piloto + catálogo WhatsApp |
+| Semana | Eje | Lunes | Martes | Miércoles | Jueves | Sábado |
+| :---: | :--- | :--- | :--- | :--- | :--- | :--- |
+| **1** | Dolor operativo | Spot (IG + TikTok) | Carrusel 01 (IG) | Reel 04 (IG + TikTok) | Reel 01 (IG + TikTok) | Post 02 (IG) |
+| **2** | Objeción de imagen | Post LinkedIn ROI | Carrusel 02 (IG) | Carrusel 03 (IG) | Reel 02 (IG + TikTok) | Post 03 (IG + Historias) |
+| **3** | Rentabilidad | Post 01 (IG + LinkedIn) | Reel 03 (IG + TikTok) | Carrusel 03 PDF (LinkedIn) | Carrusel 01 PDF (LinkedIn) | Post 04 (IG) |
+| **4** | Conversión | Carrusel 02 PDF (LinkedIn) | Spot (TikTok) | Reel 05 (IG + TikTok + LI) | Reel 01 (LinkedIn) | Historia piloto + catálogo WA |
 
 **Meta Ads en una línea:** 3 campañas (Descubrimiento con video 30%, Conversación a WhatsApp 50%, Formulario de Piloto 20%), radios hiperlocales en Palermo, Chacarita, Villa Crespo, Colegiales, Belgrano, San Telmo, Vicente López, Olivos y San Isidro, segmentación por dueños y encargados gastronómicos, y franjas horarias de martes a jueves 10:00 a 12:30 y 16:00 a 19:00.
 
@@ -97,7 +110,7 @@ Las plantillas viven en [`src_grafica/`](src_grafica/) y no requieren dependenci
 | [`export.js`](src_grafica/export.js) | Exporta todas las piezas a PNG con Chrome Headless al píxel exacto |
 | `assets/` | Fuentes Plus Jakarta Sans y logos oficiales |
 
-**Ids de piezas:** `c1s1` a `c1s5`, `c2s1` a `c2s5`, `p1` a `p4`, `web`, `d728`, `d300`, `lic`, `lip`, `mfeed`, `mstory`, `wa`.
+**Ids de piezas (27 PNG):** `c1s1` a `c1s5`, `c2s1` a `c2s5`, `c3s1` a `c3s5`, `p1` a `p4`, `web`, `d728`, `d300`, `lic`, `lip`, `mfeed`, `mstory`, `wa`.
 
 **Exportar (PowerShell), instalando `puppeteer-core` fuera del repositorio:**
 
@@ -118,7 +131,7 @@ El exportador usa Chrome o Edge instalados (o la ruta indicada en `CHROME_PATH`)
 
 ## 5. Control de calidad realizado
 
-- Las 22 imágenes se exportaron en su medida exacta y se revisaron una por una: sin textos pisados, desbordados ni cortados en los bordes.
+- Las **27 imágenes PNG** (3 carruseles x 5 slides + 4 posts + 8 banners) y el **Dossier Ejecutivo A4 de 2 páginas** ([`SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf)) se exportaron en su medida exacta y se revisaron visualmente una por una: sin textos pisados, desbordados ni cortados en los bordes.
 - Contraste verificado del logo claro sobre crema y del wordmark crema sobre `#1C1917`.
 - Sin rayas largas (U+2014) en imágenes, HTML, CSS, JS ni Markdown.
 - Contacto único en todas las piezas: WhatsApp **`(+54)1138436571`** y correo comercial **`ventas@salelisto.com`**. Sin URLs, dominios web ni perfiles sociales inventados.

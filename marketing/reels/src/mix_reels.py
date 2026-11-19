@@ -138,5 +138,5 @@ def mix(key):
 
 
 if __name__ == "__main__":
-    for k in (sys.argv[1:] or ["r01", "r02", "r03"]):
+    for k in (sys.argv[1:] or ["r01", "r02", "r03", "r04", "r05"]):
         mix(k)

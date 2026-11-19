@@ -583,4 +583,127 @@ P.wa = { w: 1080, h: 1080, out: 'banners/whatsapp_catalogo_1080x1080.png', html:
     </div>
   </div>` };
 
+/* ---------------- CARRUSEL 03 · Cocina y Barra sin comandas perdidas ---------------- */
+P.c3s1 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_01.png', html: () => slide({ n: 1, body: `
+  <div style="margin-top:96px">
+    <div class="kicker">${ic('route', 28)}Cocina y Barra en sintonía</div>
+    <h1 class="h1" style="font-size:88px;margin-top:36px">Eliminá las <span class="acc">comandas perdidas</span> entre Salón, Cocina y Barra.</h1>
+    <div class="card" style="margin-top:64px;padding:40px 44px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="width:64px;height:64px;border-radius:18px;background:#fceae6;display:flex;align-items:center;justify-content:center;position:relative">${ic('receipt', 34, '#D9412B', 2.2)}</div>
+          <div><div style="font-size:28px;font-weight:800;color:#8a837c;text-decoration:line-through;text-decoration-color:#D9412B;text-decoration-thickness:3px">Papelitos y cantadas</div><div style="font-size:22px;font-weight:600;color:#8a837c;margin-top:2px">Cuello de botella en hora pico</div></div>
+        </div>
+        <span class="chip ok" style="font-size:24px;padding:10px 20px">${ic('check', 24, '#2F8A57', 3)}Ruteo en 0 seg</span>
+      </div>
+      <div style="height:1px;background:#e6dfd3;margin:30px 0"></div>
+      <div style="display:flex;align-items:center;gap:22px">
+        <div style="background:#faf7f2;border:1.5px solid #e6dfd3;border-radius:18px;padding:20px 24px;display:flex;align-items:center;gap:14px;flex:none">
+          ${mark(44)}
+          <div><div style="font-size:28px;font-weight:800;line-height:1.1">Mesa T6</div><div style="font-size:21px;font-weight:700;color:#57534e;margin-top:4px">QR · 4G</div></div>
+        </div>
+        <svg width="96" height="128" viewBox="0 0 96 128" style="flex:none"><path d="M4 64 C48 64 44 26 92 26" stroke="#D97706" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M4 64 C48 64 44 102 92 102" stroke="#6D28D9" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="6" cy="64" r="6" fill="#D9412B"/></svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:14px">
+          <div style="background:#fef1dc;border-left:6px solid #D97706;border-radius:14px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between"><span style="display:flex;align-items:center;gap:12px;font-size:27px;font-weight:800">${ic('cloche', 30, '#D97706', 2.4)}Cocina</span><span style="font-size:22px;font-weight:700;color:#57534e">Platos + notas</span></div>
+          <div style="background:#efeafe;border-left:6px solid #6D28D9;border-radius:14px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between"><span style="display:flex;align-items:center;gap:12px;font-size:27px;font-weight:800">${ic('glass', 30, '#6D28D9', 2.4)}Barra</span><span style="font-size:22px;font-weight:700;color:#57534e">Tragos + pintas</span></div>
+        </div>
+      </div>
+    </div>
+  </div>` }) };
+
+const painRow = (n, t, s) => `<div class="card-s" style="display:grid;grid-template-columns:68px 1fr 42px;gap:26px;align-items:center;padding:24px 30px">
+  <div style="width:68px;height:68px;border-radius:50%;background:#fceae6;color:#D9412B;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800">${pad(n)}</div>
+  <div><div style="font-size:32px;font-weight:800;letter-spacing:-0.01em;line-height:1.2">${t}</div><div style="font-size:25px;font-weight:500;color:#57534e;margin-top:6px;line-height:1.3">${s}</div></div>
+  ${ic('x', 34, '#D9412B', 2.6)}</div>`;
+
+P.c3s2 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_02.png', html: () => slide({ n: 2, body: `
+  <div style="margin-top:68px">
+    <h2 class="h2">El papel manchado y las<br><span class="acc">“cantadas” salen caros.</span></h2>
+    <p class="lead" style="margin-top:20px">Lo que frena el despacho cada viernes a la noche:</p>
+    <div style="display:flex;flex-direction:column;gap:16px;margin-top:36px">
+      ${painRow(1, 'Letra apurada en salón ruidoso', '“Era sin cebolla” o “punto jugoso” que nadie leyó.')}
+      ${painRow(2, 'Bebidas trabadas atrás de los platos', 'Dos pintas esperan 15 min por una misma comanda.')}
+      ${painRow(3, 'Viajes al pase a preguntar “¿ya sale?”', 'El mozo camina en vano y descuida su sector.')}
+      ${painRow(4, 'Platos devueltos e invitaciones', 'Desperdicio directo de mercadería y mal momento.')}
+    </div>
+    <div class="ink-card" style="margin-top:26px;padding:28px 36px;display:flex;align-items:center;gap:22px">
+      ${ic('receipt', 44, '#D9412B', 2.2)}
+      <div style="font-size:29px;font-weight:600;color:rgba(250,247,242,.82);line-height:1.3"><b style="color:#faf7f2;font-weight:800;font-size:36px">1,5% a 3%</b> de tu venta mensual se va<br>en mermas y cortesías evitables.</div>
+    </div>
+  </div>` }) };
+
+const noteItem = (q, name, note, noteBg, noteFg) => `<div style="display:flex;flex-direction:column;gap:6px;padding:10px 0;border-bottom:1px solid #f3eee6">
+  <div style="display:flex;gap:12px;font-size:26px;font-weight:700;color:#1c1917"><b style="color:#8a837c;width:32px">${q}x</b>${name}</div>
+  ${note ? `<div><span style="display:inline-block;margin-left:44px;font-size:20px;font-weight:700;padding:4px 12px;border-radius:999px;background:${noteBg};color:${noteFg}">${note}</span></div>` : ''}
+</div>`;
+
+P.c3s3 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_03.png', html: () => slide({ theme: 'dark', n: 3, body: `
+  <div style="margin-top:64px">
+    <h2 class="h2">Se separa sola en<br><span class="hl">0 segundos.</span></h2>
+    <p class="lead" style="margin-top:20px">El cliente elige y escribe sus aclaraciones en el QR. Cada estación ve únicamente lo que prepara.</p>
+    <div style="margin:36px auto 0;width:720px;background:#fff;border-radius:22px;padding:22px 28px;color:#1c1917;box-shadow:0 24px 50px -16px rgba(0,0,0,.6)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #e6dfd3;margin-bottom:12px">
+        <span style="display:flex;align-items:center;gap:12px;font-size:27px;font-weight:800">${mark(34)}Mesa T6 · Confirmado</span>
+        <span class="chip ok" style="font-size:20px;padding:6px 14px">${ic('signal', 20, '#2F8A57', 2.6)}4G directo</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;font-size:24px;font-weight:700">
+        <div>1x Ojo de bife <span style="color:#D97706">(Sin TACC)</span></div>
+        <div>2x Gin tonic <span style="color:#6D28D9">(Poco hielo)</span></div>
+        <div>1x Papas rústicas</div>
+        <div>1x Limonada menta</div>
+      </div>
+    </div>
+    <svg width="912" height="84" viewBox="0 0 912 84" style="display:block"><path d="M456 0 C456 44 228 36 228 84" stroke="#D97706" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M456 0 C456 44 684 36 684 84" stroke="#8B5CF6" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="456" cy="6" r="9" fill="#D9412B"/></svg>
+    <div style="display:flex;gap:28px">
+      ${stationCard('Cocina', '#D97706', '#fef1dc', 'cloche', noteItem(1, 'Ojo de bife', 'Sin TACC · Jugoso', '#fef1dc', '#b45309') + noteItem(1, 'Papas rústicas', '', '', ''))}
+      ${stationCard('Barra', '#6D28D9', '#efeafe', 'glass', noteItem(2, 'Gin tonic', 'Poco hielo · Limón', '#efeafe', '#6D28D9') + noteItem(1, 'Limonada menta', '', '', ''))}
+    </div>
+  </div>` }) };
+
+const slaRow = (dotColor, bgSoft, badge, desc) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 24px;border-radius:18px;background:${bgSoft};border:1px solid rgba(28,25,23,.06)">
+  <div style="display:flex;align-items:center;gap:14px;white-space:nowrap">
+    <span style="width:18px;height:18px;border-radius:50%;background:${dotColor};flex:none"></span>
+    <span style="font-size:28px;font-weight:800;color:#1c1917">${badge}</span>
+  </div>
+  <span style="font-size:23px;font-weight:600;color:#57534e;white-space:nowrap">${desc}</span>
+</div>`;
+
+P.c3s4 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_04.png', html: () => slide({ n: 4, body: `
+  <div style="margin-top:66px">
+    <div class="kicker">${ic('clock', 28)}Control en vivo del despacho</div>
+    <h2 class="h2" style="margin-top:30px">Semáforo SLA y<br><span class="acc">agotados en 1 clic.</span></h2>
+    <div class="card" style="margin-top:38px;padding:32px 36px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:27px;font-weight:800">Tiempo desde que pidió la mesa</span>
+        <span class="chip" style="font-size:20px;padding:6px 14px">Cocina · Barra · Pase</span>
+      </div>
+      ${slaRow('#2F8A57', '#e3f3ea', 'En tiempo · 4 min', 'Menos de 8 min')}
+      ${slaRow('#D97706', '#fef1dc', 'Atención · 11 min', 'De 8 a 14 min · Contorno ámbar')}
+      ${slaRow('#D9412B', '#fceae6', 'Demorado · 16 min', '15 min o más · Aviso sonoro')}
+    </div>
+    <div class="ink-card" style="margin-top:26px;padding:30px 36px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div>
+        <div style="font-size:29px;font-weight:800;color:#faf7f2">¿Se acabó un barril o un postre?</div>
+        <div style="font-size:24px;font-weight:500;color:rgba(250,247,242,.76);margin-top:6px;line-height:1.35">Lo pausás en 1 toque y desaparece al segundo de todos los QR del salón.</div>
+      </div>
+      <div style="background:#26221f;border:1.5px solid #38322e;border-radius:16px;padding:14px 20px;display:flex;flex-direction:column;align-items:center;gap:8px;flex:none">
+        <span style="font-size:21px;font-weight:800;color:#fff;background:#D9412B;padding:6px 16px;border-radius:999px;white-space:nowrap">Agotado</span>
+        <span style="font-size:19px;font-weight:600;color:rgba(250,247,242,.65);white-space:nowrap">0 viajes de disculpa</span>
+      </div>
+    </div>
+  </div>` }) };
+
+P.c3s5 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_05.png', html: () => slide({ n: 5, last: true, body: `
+  <div style="margin-top:68px">
+    <div class="kicker">${ic('shield', 28)}Piloto sin riesgo · 0% comisión</div>
+    <h2 class="h2" style="margin-top:34px">Ordená Cocina y Barra<br><span class="acc">en 14 días de prueba.</span></h2>
+    <p class="lead" style="margin-top:22px">Arrancamos por tu vereda, patio o terraza sin frenar el salón principal.</p>
+    <div style="display:flex;gap:18px;margin-top:44px">
+      ${pilotStep('48 h', 'Carta y estaciones configuradas')}
+      ${pilotStep('0%', 'Comisión sobre tus ventas')}
+      ${pilotStep('2 findes', 'Medimos tiempos y rondas')}
+    </div>
+    <div style="margin-top:40px">${ctaCard('Pedí tu piloto de 14 días<br>por WhatsApp o correo.')}</div>
+  </div>` }) };
+
 window.PIECES = P;

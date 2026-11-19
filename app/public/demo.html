@@ -9,23 +9,68 @@
   <style>
     body { background: var(--dark-bg); color: var(--dark-ink); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .bar {
-      display: flex; align-items: center; gap: 12px; padding: 10px 18px; min-height: 54px;
+      display: flex; align-items: center; gap: 10px; padding: 9px 18px; min-height: 54px;
       background: var(--dark-surface); border-bottom: 1px solid var(--dark-line); flex-wrap: wrap;
     }
     .bar-brand { display: inline-flex; align-items: center; gap: 10px; }
     .bar-sep { color: rgba(250, 247, 242, 0.28); font-weight: 700; }
-    .bar strong { font-size: 14.5px; font-weight: 700; color: rgba(250, 247, 242, 0.9); }
-    .bar .grow { flex: 1; }
+    .bar strong { font-size: 14px; font-weight: 700; color: rgba(250, 247, 242, 0.9); }
+    .bar .grow { flex: 1; min-width: 8px; }
     .bar select {
       background: var(--dark-bg); border: 1px solid var(--dark-line); color: var(--dark-ink);
-      padding: 6px 10px; border-radius: var(--radius-control); font-size: 13px; font-weight: 600;
+      padding: 6px 10px; border-radius: var(--radius-control); font-size: 12.5px; font-weight: 600;
     }
-    .bar label { font-size: 12.5px; color: rgba(250, 247, 242, 0.75); display: inline-flex; align-items: center; gap: 6px; }
-    .bar a { color: rgba(250, 247, 242, 0.85); font-size: 13px; text-decoration: none; font-weight: 600; padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--dark-line); transition: background var(--dur-fast) var(--ease-out); }
-    .bar a:hover { background: rgba(250, 247, 242, 0.08); }
+    .bar label { font-size: 12px; color: rgba(250, 247, 242, 0.75); display: inline-flex; align-items: center; gap: 6px; }
+    .bar a, .bar .bar-ghost {
+      color: rgba(250, 247, 242, 0.86); font-size: 12.5px; text-decoration: none; font-weight: 600;
+      padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--dark-line);
+      background: transparent; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+      white-space: nowrap;
+    }
+    .bar a:hover, .bar .bar-ghost:hover { background: rgba(250, 247, 242, 0.08); border-color: rgba(250, 247, 242, 0.28); }
+
+    .sim-btn {
+      display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
+      border-radius: var(--radius-pill); font-size: 13px; font-weight: 800;
+      background: linear-gradient(135deg, #D9412B 0%, #E85A3C 100%); color: #ffffff;
+      box-shadow: 0 4px 16px rgba(217, 65, 43, 0.38);
+      transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
+      white-space: nowrap;
+    }
+    .sim-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217, 65, 43, 0.5); }
+    .sim-btn:active { transform: scale(0.98); }
+    .sim-btn[disabled] { opacity: 0.68; pointer-events: none; }
+
+    /* Barra narradora paso a paso del Simulador de Hora Pico */
+    .sim-strip {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 8px 18px; background: #231E1B; border-bottom: 1px solid var(--dark-line);
+      font-size: 12.5px; animation: fade-strip var(--dur-fast) var(--ease-out);
+    }
+    @keyframes fade-strip { from { opacity: 0; transform: translateY(-4px); } }
+    .sim-steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .sim-step {
+      display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
+      border-radius: var(--radius-pill); font-size: 11.5px; font-weight: 700;
+      background: rgba(250, 247, 242, 0.06); color: rgba(250, 247, 242, 0.46);
+      border: 1px solid transparent; transition: all var(--dur-fast) var(--ease-out);
+    }
+    .sim-step.current {
+      background: rgba(217, 65, 43, 0.22); color: #FFB4A6; border-color: rgba(217, 65, 43, 0.55);
+    }
+    .sim-step.done {
+      background: rgba(47, 138, 87, 0.22); color: #8CE0B1; border-color: rgba(47, 138, 87, 0.45);
+    }
+    .sim-msg { flex: 1; min-width: 220px; font-weight: 600; color: var(--dark-ink); }
+    .sim-msg strong { color: #FFB4A6; }
+    .sim-close {
+      width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+      color: rgba(250, 247, 242, 0.6); font-size: 13px;
+    }
+    .sim-close:hover { background: rgba(250, 247, 242, 0.1); color: #ffffff; }
 
     .stage {
-      flex: 1; display: grid; grid-template-columns: 340px 340px 1fr; gap: 16px;
+      flex: 1; display: grid; grid-template-columns: 304px 304px 1fr; gap: 14px;
       padding: 12px 18px 18px; min-height: 0;
     }
     .col-wrap { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; }
@@ -33,15 +78,26 @@
     .label { font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(250, 247, 242, 0.62); }
 
     .phone {
-      flex: 1; border-radius: 38px; padding: 10px; background: #12100e;
+      flex: 1; border-radius: 36px; padding: 9px; background: #12100e;
       box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42); min-height: 0;
+      display: flex; overflow: hidden;
     }
-    .phone iframe { width: 100%; height: 100%; border: 0; border-radius: 28px; background: var(--bg); }
+    .phone-screen {
+      position: relative; flex: 1; border-radius: 27px; overflow: hidden; background: var(--bg); min-height: 0;
+    }
+    .phone-screen iframe {
+      position: absolute; top: 0; left: 0; border: 0; background: var(--bg);
+      width: 136%; height: 136%; transform: scale(0.735294); transform-origin: 0 0;
+    }
 
     .panel {
-      flex: 1; border-radius: var(--radius-card); overflow: hidden; box-shadow: 0 0 0 1px var(--dark-line); min-height: 0;
+      position: relative; flex: 1; border-radius: var(--radius-card); overflow: hidden;
+      box-shadow: 0 0 0 1px var(--dark-line); min-height: 0; background: var(--bg);
     }
-    .panel iframe { width: 100%; height: 100%; border: 0; background: var(--bg); }
+    .panel iframe {
+      position: absolute; top: 0; left: 0; border: 0; background: var(--bg);
+      width: 140%; height: 140%; transform: scale(0.7142857); transform-origin: 0 0;
+    }
 
     .r-tabs { display: flex; gap: 4px; background: var(--dark-surface); padding: 3px; border-radius: var(--radius-control); border: 1px solid var(--dark-line); flex-wrap: wrap; }
     .r-tab { padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: rgba(250, 247, 242, 0.7); transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
@@ -51,7 +107,9 @@
       body { height: auto; overflow: auto; }
       .stage { grid-template-columns: 1fr 1fr; height: auto; }
       .phone { height: 740px; }
+      .phone-screen iframe { width: 100%; height: 100%; transform: none; }
       .panel { height: 820px; }
+      .panel iframe { width: 100%; height: 100%; transform: none; }
       .col-wrap.wide { grid-column: 1 / -1; }
     }
     @media (max-width: 780px) {
@@ -62,26 +120,46 @@
 <body>
   <header class="bar">
     <div class="bar-brand">
-      <img src="logo-dark.svg" alt="SaleListo" style="height:36px;display:block;flex:none">
+      <img src="logo-dark.svg" alt="SaleListo" style="height:34px;display:block;flex:none">
       <span class="bar-sep">·</span>
-      <strong>Circuito Completo en Tiempo Real</strong>
+      <strong>Circuito en Vivo</strong>
     </div>
+
+    <button type="button" class="sim-btn" id="simPeakBtn" title="Dispara una secuencia automática en vivo en las 3 pantallas">
+      ⚡ Simular Hora Pico
+    </button>
+    <button type="button" class="bar-ghost" id="clearDemoBtn" title="Limpia pedidos y llamados de prueba manteniendo carta y salón">
+      ↺ Limpiar turno demo
+    </button>
+
     <span class="grow"></span>
-    <label>📱 Mesa Cliente: <select id="clientTableSel"></select></label>
-    <label>⌚ Mozo / Pulsera: <select id="waiterSel"></select></label>
-    <a href="pase.html" target="_blank">🛎️ Abrir Pase ↗</a>
-    <a href="index.html">Portada</a>
+    <label>📱 Mesa: <select id="clientTableSel"></select></label>
+    <label>⌚ Mozo: <select id="waiterSel"></select></label>
+    <a href="pase.html" target="_blank">🛎️ Pase ↗</a>
+    <a href="operacion.html">Tablero</a>
+    <a href="/">Portada</a>
   </header>
+
+  <div class="sim-strip" id="simStrip" hidden aria-live="polite">
+    <div class="sim-steps" id="simSteps">
+      <span class="sim-step" data-step="1">1 · Pedido mixto QR</span>
+      <span class="sim-step" data-step="2">2 · Cocina + Barra listos</span>
+      <span class="sim-step" data-step="3">3 · Llamado en salón</span>
+      <span class="sim-step" data-step="4">4 · Cuenta Tarjeta + 10%</span>
+    </div>
+    <div class="sim-msg" id="simMsg">Listo para simular hora pico en tiempo real.</div>
+    <button type="button" class="sim-close" id="simCloseBtn" aria-label="Ocultar barra de simulación">✕</button>
+  </div>
 
   <main class="stage">
     <div class="col-wrap">
       <div class="col-head"><span class="label">1 · Celular del Cliente (4G / QR fijo)</span></div>
-      <div class="phone"><iframe id="clientFrame" title="Vista Cliente"></iframe></div>
+      <div class="phone"><div class="phone-screen"><iframe id="clientFrame" title="Vista Cliente"></iframe></div></div>
     </div>
 
     <div class="col-wrap">
       <div class="col-head"><span class="label">2 · Mozo / Pulsera Vibradora (Opcional)</span></div>
-      <div class="phone"><iframe id="waiterFrame" title="Vista Mozo"></iframe></div>
+      <div class="phone"><div class="phone-screen"><iframe id="waiterFrame" title="Vista Mozo"></iframe></div></div>
     </div>
 
     <div class="col-wrap wide">
@@ -110,17 +188,30 @@
       const cFrame = document.getElementById('clientFrame');
       const wFrame = document.getElementById('waiterFrame');
       const rFrame = document.getElementById('rightFrame');
+      const simBtn = document.getElementById('simPeakBtn');
+      const clearBtn = document.getElementById('clearDemoBtn');
+      const simStrip = document.getElementById('simStrip');
+      const simMsg = document.getElementById('simMsg');
 
+      const allTables = [];
       qrs.blocks.forEach((b) => {
         b.tables.forEach((t) => {
+          allTables.push({ ...t, blockId: b.id, blockName: b.name });
           tSel.add(new Option(`${b.name} · Mesa ${t.code}`, t.qrToken));
         });
       });
-      if (tSel.options.length > 3) tSel.selectedIndex = 3;
+
+      // Preseleccionar una mesa de Terraza (ideal para la historia comercial) si existe
+      const terrazaIdx = allTables.findIndex((t) => /terraza|exterior|patio/i.test(t.blockName));
+      if (terrazaIdx >= 0) tSel.selectedIndex = terrazaIdx;
+      else if (tSel.options.length > 3) tSel.selectedIndex = 3;
 
       wpub.waiters.forEach((w) => {
         wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera)'}`, w.id));
       });
+      // Alinear por defecto con Sofía (Terraza) si está disponible
+      const sofiaIdx = wpub.waiters.findIndex((w) => w.available && /sof/i.test(w.name));
+      if (sofiaIdx >= 0) wSel.selectedIndex = sofiaIdx;
 
       const syncClient = () => {
         if (tSel.value) cFrame.src = `cliente.html?t=${encodeURIComponent(tSel.value)}`;
@@ -152,6 +243,196 @@
         if (!b) return;
         document.querySelectorAll('.r-tab').forEach((x) => x.classList.toggle('active', x === b));
         rFrame.src = b.dataset.src;
+      };
+
+      // ---------- Motor del Simulador de Hora Pico ----------
+      let adminToken = sessionStorage.getItem('salelisto:adminToken') || '';
+      let simRunId = 0;
+
+      async function ensureAdminToken() {
+        if (adminToken) return adminToken;
+        try {
+          const r = await fetch('api/auth/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ demo: true }),
+          }).then((x) => x.json());
+          if (r && r.ok && r.token) {
+            adminToken = r.token;
+            sessionStorage.setItem('salelisto:adminToken', adminToken);
+            return adminToken;
+          }
+        } catch (_) {}
+        const pin = prompt('Modo producción activo. Ingresá el PIN del encargado para ejecutar acciones de demo:') || '';
+        if (!pin) throw new Error('PIN requerido');
+        const r2 = await fetch('api/auth/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin }),
+        }).then((x) => x.json());
+        if (!r2.ok) throw new Error(r2.error || 'PIN incorrecto');
+        adminToken = r2.token;
+        sessionStorage.setItem('salelisto:adminToken', adminToken);
+        return adminToken;
+      }
+
+      async function apiAct(type, payload = {}) {
+        const tok = await ensureAdminToken();
+        const res = await fetch('api/action', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(tok ? { 'X-Auth-Token': tok } : {}),
+          },
+          body: JSON.stringify({ type, payload }),
+        }).then((r) => r.json());
+        if (!res.ok) throw new Error(res.error || 'Error en acción');
+        return res;
+      }
+
+      function setStepUI(currentStep, htmlMsg, finished = false) {
+        simStrip.hidden = false;
+        document.querySelectorAll('.sim-step').forEach((el) => {
+          const n = Number(el.dataset.step);
+          el.classList.toggle('done', finished ? true : n < currentStep);
+          el.classList.toggle('current', !finished && n === currentStep);
+        });
+        simMsg.innerHTML = htmlMsg;
+      }
+
+      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+      document.getElementById('simCloseBtn').onclick = () => {
+        simStrip.hidden = true;
+      };
+
+      simBtn.onclick = async () => {
+        const myRun = ++simRunId;
+        simBtn.disabled = true;
+        simBtn.textContent = '⚡ Simulando en vivo…';
+
+        try {
+          const tok = await ensureAdminToken();
+          const st = await fetch('api/staff-state', {
+            headers: tok ? { 'X-Auth-Token': tok } : {},
+          }).then((r) => r.json());
+
+          const availItems = (st.items || []).filter((i) => i.available);
+          const kitchenItems = availItems.filter((i) => i.effectiveStation !== 'barra');
+          const barItems = availItems.filter((i) => i.effectiveStation === 'barra');
+          if (!kitchenItems.length || !barItems.length) {
+            throw new Error('Se necesita al menos 1 plato de cocina y 1 bebida de barra disponibles');
+          }
+
+          // Elegir la mesa actualmente visible en el teléfono del cliente para que reaccione por SSE sin recargar
+          const activeTables = (st.tables || []).filter((t) => t.active);
+          const primaryTable = activeTables.find((t) => t.qrToken === tSel.value) || activeTables[0];
+          const secondaryTable = activeTables.find((t) => t.id !== primaryTable.id && t.blockId !== primaryTable.blockId)
+            || activeTables.find((t) => t.id !== primaryTable.id)
+            || primaryTable;
+          const callTable = activeTables.find((t) => t.id !== primaryTable.id && t.id !== secondaryTable.id) || secondaryTable;
+
+          const dish1 = kitchenItems.find((i) => /ramen/i.test(i.name)) || kitchenItems[0];
+          const dish2 = kitchenItems.find((i) => i.id !== dish1.id) || dish1;
+          const drink1 = barItems.find((i) => /gin|yuzu/i.test(i.name)) || barItems[0];
+          const drink2 = barItems.find((i) => i.id !== drink1.id) || drink1;
+
+          // Paso 1: Pedido mixto en la mesa del cliente (se separa en Cocina + Barra) + pedido en otro sector
+          setStepUI(1, `<strong>Paso 1/4:</strong> Mesa ${primaryTable.code} (${primaryTable.blockName}) pide platos y tragos por QR → se separan solos entre Cocina y Barra.`);
+          const r1 = await apiAct('order.create', {
+            qrToken: primaryTable.qrToken,
+            items: [
+              { itemId: dish1.id, qty: 2, note: '1 sin verdeo' },
+              { itemId: drink1.id, qty: 2, note: 'Poco hielo' },
+            ],
+          });
+          const r2 = secondaryTable.id !== primaryTable.id
+            ? await apiAct('order.create', {
+                qrToken: secondaryTable.qrToken,
+                items: [
+                  { itemId: dish2.id, qty: 1, note: '' },
+                  { itemId: drink2.id, qty: 2, note: '' },
+                ],
+              })
+            : null;
+
+          // Alinear el celular del mozo con quien tomó la mesa principal si corresponde
+          const updatedTbl = (r1.state?.tables || []).find((t) => t.id === primaryTable.id);
+          const assignedWid = updatedTbl?.waiterId;
+          if (assignedWid && wSel.value !== assignedWid) {
+            wSel.value = assignedWid;
+            syncWaiter();
+          }
+
+          await wait(950);
+          if (myRun !== simRunId) return;
+
+          // Paso 2: Barra y Cocina marcan listos los retiros -> se encienden Estación de Pase y Pulsera
+          setStepUI(2, `<strong>Paso 2/4:</strong> Cocina y Barra marcan "¡Listo!" → se encienden los retiros por columna en la Estación de Mozos y vibra la pulsera.`);
+          const createdPrimary = r1.result?.orderIds || [];
+          for (const oid of createdPrimary) {
+            await apiAct('order.status', { orderId: oid, status: 'listo' });
+          }
+          const createdSecondary = r2?.result?.orderIds || [];
+          if (createdSecondary[0]) {
+            await apiAct('order.status', { orderId: createdSecondary[0], status: 'listo' });
+          }
+          if (createdSecondary[1]) {
+            await apiAct('order.status', { orderId: createdSecondary[1], status: 'cocina' });
+          }
+
+          await wait(950);
+          if (myRun !== simRunId) return;
+
+          // Paso 3: Llamado de atención en otra mesa del salón
+          setStepUI(3, `<strong>Paso 3/4:</strong> Mesa ${callTable.code} toca "Llamar al mozo" (Agua / Hielo) → alerta inmediata en la columna de su mozo.`);
+          await apiAct('call.create', {
+            qrToken: callTable.qrToken,
+            type: 'mozo',
+            reason: 'Agua / Hielo',
+          });
+
+          await wait(950);
+          if (myRun !== simRunId) return;
+
+          // Paso 4: La mesa principal solicita la cuenta con Tarjeta + 10% propina (cobro en 1 viaje)
+          setStepUI(4, `<strong>Paso 4/4:</strong> Mesa ${primaryTable.code} pide la cuenta desde su QR con Tarjeta + 10% propina → importe exacto listo para cobrar en 1 solo viaje.`);
+          await apiAct('call.create', {
+            qrToken: primaryTable.qrToken,
+            type: 'cuenta',
+            payment: 'Tarjeta',
+            tip: 10,
+          });
+
+          await wait(450);
+          if (myRun !== simRunId) return;
+          setStepUI(4, `<strong>✔ Hora pico activa en tiempo real:</strong> revisá el celular del cliente (Mesa ${primaryTable.code}), la app del mozo y las pestañas Pase / Cocina / Barra / Encargado.`, true);
+        } catch (err) {
+          setStepUI(1, `⚠️ ${err.message || 'No se pudo completar la simulación'}`);
+        } finally {
+          if (myRun === simRunId) {
+            simBtn.disabled = false;
+            simBtn.textContent = '⚡ Simular Hora Pico';
+          }
+        }
+      };
+
+      clearBtn.onclick = async () => {
+        simRunId++;
+        clearBtn.disabled = true;
+        simBtn.disabled = false;
+        simBtn.textContent = '⚡ Simular Hora Pico';
+        try {
+          await apiAct('data.clear_orders', {});
+          simStrip.hidden = false;
+          document.querySelectorAll('.sim-step').forEach((el) => el.classList.remove('done', 'current'));
+          simMsg.innerHTML = '↺ <strong>Turno demo reiniciado:</strong> todas las mesas, comandas y llamados quedaron limpios.';
+        } catch (err) {
+          simStrip.hidden = false;
+          simMsg.textContent = `⚠️ ${err.message}`;
+        } finally {
+          clearBtn.disabled = false;
+        }
       };
     })();
   </script>
