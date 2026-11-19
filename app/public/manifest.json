@@ -2,7 +2,7 @@
   "id": "/mozo.html",
   "name": "SaleListo · App del Mozo y Pulsera",
   "short_name": "SaleListo",
-  "description": "Avisos en vivo de cocina, barra y llamados de salón con soporte Modo Pulsera Xiaomi Smart Band.",
+  "description": "Avisos en vivo de cocina, barra, mostrador y llamados de salón con soporte Modo Pulsera Xiaomi Smart Band.",
   "lang": "es-AR",
   "start_url": "/mozo.html",
   "scope": "/",
@@ -12,16 +12,28 @@
   "theme_color": "#D9412B",
   "icons": [
     {
+      "src": "/icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
       "src": "/mark.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
-    },
-    {
-      "src": "/mark.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
     }
   ]
 }

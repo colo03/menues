@@ -13,9 +13,11 @@ from __future__ import annotations
 import base64
 import hashlib
 import hmac
+import ipaddress
 import json
 import os
 import secrets
+import socket
 import struct
 import sys
 import threading
@@ -23,12 +25,14 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any, Callable
 
 
 DEFAULT_VAPID_SUBJECT = os.environ.get('VAPID_SUBJECT') or 'mailto:simonguerenu@gmail.com'
 _vapid_lock = threading.Lock()
+_PUSH_EXECUTOR = ThreadPoolExecutor(max_workers=4, thread_name_prefix='salelisto-webpush')
 
 
 # ---------- Base64url (RFC 7515 / RFC 8291 / RFC 8292) ----------
@@ -553,28 +557,49 @@ def decrypt_webpush_aes128gcm(
     return padded[:idx]
 
 
-# ---------- Claves VAPID Persistentes y Cabeceras RFC 8292 ----------
+# ---------- Claves VAPID Persistentes, Proteccion Anti-SSRF y Cabeceras RFC 8292 ----------
+
+def _parse_vapid_pair(priv_b64: str, pub_b64: str) -> dict[str, str] | None:
+    priv_bytes = b64url_decode(str(priv_b64 or ''))
+    pub_bytes = b64url_decode(str(pub_b64 or ''))
+    if len(priv_bytes) != 32:
+        return None
+    priv_int = int.from_bytes(priv_bytes, 'big')
+    if not (1 <= priv_int < P256_N):
+        return None
+    pub_pt = decode_p256_public(pub_bytes)
+    derived_pub = p256_scalar_mult(priv_int, P256_G)
+    if derived_pub is None or derived_pub != pub_pt:
+        return None
+    return {
+        'privateKey': b64url_encode(priv_bytes),
+        'publicKey': b64url_encode(encode_p256_public(pub_pt)),
+    }
+
 
 def ensure_vapid_keys(data_dir: Path) -> dict[str, str]:
-    """Carga o genera y persiste el par VAPID P-256 del local en DATA_DIR/vapid_keys.json."""
+    """Carga VAPID desde variables de entorno o persiste en DATA_DIR/vapid_keys.json."""
     with _vapid_lock:
+        env_priv = (os.environ.get('VAPID_PRIVATE_KEY') or '').strip()
+        env_pub = (os.environ.get('VAPID_PUBLIC_KEY') or '').strip()
+        if env_priv and env_pub:
+            try:
+                env_pair = _parse_vapid_pair(env_priv, env_pub)
+                if env_pair is not None:
+                    return env_pair
+            except Exception as err:
+                sys.stderr.write(f'[webpush] VAPID_PUBLIC_KEY/VAPID_PRIVATE_KEY invalidas: {err}\n')
+
         data_dir.mkdir(parents=True, exist_ok=True)
         key_file = data_dir / 'vapid_keys.json'
         if key_file.is_file():
             try:
                 saved = json.loads(key_file.read_text(encoding='utf-8'))
-                priv_bytes = b64url_decode(str(saved.get('privateKey') or ''))
-                pub_bytes = b64url_decode(str(saved.get('publicKey') or ''))
-                if len(priv_bytes) == 32 and len(pub_bytes) == 65 and pub_bytes[0] == 0x04:
-                    priv_int = int.from_bytes(priv_bytes, 'big')
-                    derived_pub = p256_scalar_mult(priv_int, P256_G)
-                    if derived_pub is not None and encode_p256_public(derived_pub) == pub_bytes:
-                        return {
-                            'privateKey': b64url_encode(priv_bytes),
-                            'publicKey': b64url_encode(pub_bytes),
-                        }
-            except Exception:
-                pass
+                file_pair = _parse_vapid_pair(str(saved.get('privateKey') or ''), str(saved.get('publicKey') or ''))
+                if file_pair is not None:
+                    return file_pair
+            except Exception as err:
+                sys.stderr.write(f'[webpush] No se pudo leer vapid_keys.json, regenerando: {err}\n')
 
         priv_int, pub_pt = generate_p256_keypair()
         vapid = {
@@ -584,7 +609,82 @@ def ensure_vapid_keys(data_dir: Path) -> dict[str, str]:
         tmp_file = data_dir / f'vapid_keys.{secrets.token_hex(4)}.tmp'
         tmp_file.write_text(json.dumps(vapid, indent=2) + '\n', encoding='utf-8')
         tmp_file.replace(key_file)
+        try:
+            os.chmod(key_file, 0o600)
+        except OSError:
+            pass
         return vapid
+
+
+def _is_public_ip(ip: ipaddress.IPv4Address | ipaddress.IPv6Address) -> bool:
+    if isinstance(ip, ipaddress.IPv6Address) and ip.ipv4_mapped is not None:
+        ip = ip.ipv4_mapped
+    return bool(
+        ip.is_global
+        and not ip.is_private
+        and not ip.is_loopback
+        and not ip.is_link_local
+        and not ip.is_multicast
+        and not ip.is_reserved
+        and not ip.is_unspecified
+    )
+
+
+def validate_push_endpoint(endpoint: str, *, resolve_dns: bool = True) -> None:
+    """Valida que el endpoint Web Push sea HTTPS publico (bloquea Blind SSRF)."""
+    raw = str(endpoint or '').strip()
+    if not raw or len(raw) > 2048:
+        raise ValueError('Endpoint Web Push invalido')
+    parsed = urllib.parse.urlparse(raw)
+    allow_local = os.environ.get('WEBPUSH_ALLOW_LOCAL_TEST') == '1'
+
+    if allow_local:
+        if parsed.scheme not in ('https', 'http') or not parsed.hostname:
+            raise ValueError('Endpoint Web Push invalido')
+        return
+
+    if parsed.scheme != 'https':
+        raise ValueError('El endpoint Web Push debe usar https://')
+    if parsed.username or parsed.password:
+        raise ValueError('El endpoint Web Push no puede incluir credenciales')
+
+    host = (parsed.hostname or '').strip().lower().rstrip('.')
+    if not host or host == 'localhost' or host.endswith(('.localhost', '.local', '.internal', '.arpa')):
+        raise ValueError('Host de endpoint Web Push no permitido')
+
+    try:
+        ip_lit = ipaddress.ip_address(host)
+    except ValueError:
+        ip_lit = None
+
+    if ip_lit is not None:
+        if not _is_public_ip(ip_lit):
+            raise ValueError('IP privada o interna bloqueada en endpoint Web Push')
+        return
+
+    if resolve_dns:
+        port = parsed.port or 443
+        try:
+            infos = socket.getaddrinfo(host, port, type=socket.SOCK_STREAM)
+        except OSError as err:
+            raise ValueError(f'No se pudo resolver el host Web Push ({host}): {err}') from err
+        if not infos:
+            raise ValueError('Host Web Push sin registros DNS')
+        for info in infos:
+            addr_str = str(info[4][0]).split('%', 1)[0]
+            ip_obj = ipaddress.ip_address(addr_str)
+            if not _is_public_ip(ip_obj):
+                raise ValueError('El host Web Push resuelve a una IP no publica (SSRF bloqueado)')
+
+
+class _NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    """Bloquea redirecciones HTTP 3xx para impedir salto SSRF hacia redes internas."""
+
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise urllib.error.HTTPError(req.full_url, code, f'Redireccion Web Push bloqueada ({code})', headers, fp)
+
+
+_PUSH_OPENER = urllib.request.build_opener(_NoRedirectHandler())
 
 
 def build_vapid_jwt(
@@ -628,6 +728,12 @@ def send_webpush(
     if not endpoint or not p256dh or not auth:
         return 0, 'Suscripcion incompleta'
 
+    try:
+        validate_push_endpoint(endpoint, resolve_dns=True)
+    except ValueError as err:
+        sys.stderr.write(f'[webpush] Endpoint rechazado ({endpoint[:80]}): {err}\n')
+        return 0, str(err)
+
     if isinstance(payload, dict):
         raw_payload = json.dumps(payload, ensure_ascii=False).encode('utf-8')
     elif isinstance(payload, str):
@@ -650,7 +756,7 @@ def send_webpush(
 
     req = urllib.request.Request(endpoint, data=encrypted_body, headers=headers, method='POST')
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with _PUSH_OPENER.open(req, timeout=timeout) as resp:
             status = getattr(resp, 'status', 201)
             return int(status), 'OK'
     except urllib.error.HTTPError as err:
@@ -658,8 +764,10 @@ def send_webpush(
             detail = err.read(300).decode('utf-8', errors='replace')
         except Exception:
             detail = str(err)
+        sys.stderr.write(f'[webpush] HTTP {err.code} desde {endpoint[:80]}: {detail[:120]}\n')
         return int(err.code), detail
     except Exception as err:
+        sys.stderr.write(f'[webpush] Error de red hacia {endpoint[:80]}: {err}\n')
         return 0, str(err)
 
 
@@ -669,21 +777,24 @@ def dispatch_webpush_async(
     on_expired: Callable[[str], None] | None = None,
     subject: str = DEFAULT_VAPID_SUBJECT,
 ) -> None:
-    """Despacha multiples entregas (subscription, payload) en un hilo daemon sin bloquear."""
+    """Despacha entregas Web Push en un ThreadPoolExecutor acotado (max_workers=4)."""
     if not deliveries:
         return
 
-    def _worker() -> None:
-        for sub, payload in deliveries:
-            endpoint = str(sub.get('endpoint') or '')
-            try:
-                status, _ = send_webpush(sub, payload, vapid_keys, subject=subject)
-                if status in (404, 410) and endpoint and on_expired is not None:
-                    on_expired(endpoint)
-            except Exception:
-                pass
+    def _send_one(sub: dict[str, Any], payload: dict[str, Any]) -> None:
+        endpoint = str(sub.get('endpoint') or '')
+        try:
+            status, _ = send_webpush(sub, payload, vapid_keys, subject=subject)
+            if status in (404, 410) and endpoint and on_expired is not None:
+                on_expired(endpoint)
+        except Exception as err:
+            sys.stderr.write(f'[webpush] Fallo inesperado despachando push ({endpoint[:80]}): {err}\n')
 
-    threading.Thread(target=_worker, name='salelisto-webpush', daemon=True).start()
+    for sub, payload in deliveries:
+        try:
+            _PUSH_EXECUTOR.submit(_send_one, sub, payload)
+        except RuntimeError as err:
+            sys.stderr.write(f'[webpush] Executor cerrado al encolar push: {err}\n')
 
 
 # ---------- Auto-Test Criptografico Oficial (NIST + P-256 + RFC 8291) ----------
@@ -805,7 +916,29 @@ def self_test() -> None:
     decrypted = decrypt_webpush_aes128gcm(encrypted, ua_priv, ua_pub_bytes, ua_auth)
     assert decrypted == push_payload, 'Fallo round-trip RFC 8291 aes128gcm'
 
-    print('OK self_test webpush.py: NIST AES-128-GCM + P-256 ECDH/ES256 + VAPID + RFC 8291 verificados.')
+    # 5. Proteccion anti-Blind-SSRF en endpoints Web Push
+    prev_allow = os.environ.pop('WEBPUSH_ALLOW_LOCAL_TEST', None)
+    try:
+        for blocked_ep in (
+            'http://fcm.googleapis.com/fcm/send/token',
+            'https://localhost/push/123',
+            'https://127.0.0.1:8443/push',
+            'https://10.0.0.5/push',
+            'https://192.168.1.20/push',
+            'https://169.254.169.254/latest/meta-data',
+            'https://[::1]/push',
+        ):
+            try:
+                validate_push_endpoint(blocked_ep, resolve_dns=False)
+                raise AssertionError(f'Debio bloquearse endpoint SSRF: {blocked_ep}')
+            except ValueError:
+                pass
+        validate_push_endpoint('https://8.8.8.8/fcm/send/demo', resolve_dns=False)
+    finally:
+        if prev_allow is not None:
+            os.environ['WEBPUSH_ALLOW_LOCAL_TEST'] = prev_allow
+
+    print('OK self_test webpush.py: NIST AES-128-GCM + P-256 ECDH/ES256 + VAPID + RFC 8291 + Anti-SSRF verificados.')
 
 
 if __name__ == '__main__':

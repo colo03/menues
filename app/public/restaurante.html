@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Panel del Restaurante</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/restaurante.css">
 </head>
@@ -22,25 +24,29 @@
 
   <div class="layout" id="adminLayout" hidden>
     <aside class="side">
-      <div class="brand">
-        <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;display:block;flex:none">
-        <div class="lbl">
-          <strong>SaleListo</strong>
-          <small id="restName">Kaiten Bar</small>
+      <div class="brand-row">
+        <div class="brand">
+          <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;display:block;flex:none">
+          <div class="lbl">
+            <strong>SaleListo</strong>
+            <small id="restName">Kaiten Bar</small>
+          </div>
         </div>
+        <button class="audio-pill off mob-audio-btn" id="adminAudioBtnMob" type="button" title="Silenciar o reactivar campana">🔇 Sonido</button>
       </div>
 
       <nav class="nav">
-        <button class="nav-item active" data-view="pedidos">🧾 <span class="lbl">Comandas</span> <span class="count" id="navNew" hidden></span></button>
-        <button class="nav-item" data-view="mesas">🏗️ <span class="lbl">Salón y Bloques</span></button>
-        <button class="nav-item" data-view="mozos">🏃 <span class="lbl">Mozos</span> <span class="count soft" id="navWaiters"></span></button>
-        <button class="nav-item" data-view="menu">📖 <span class="lbl">Menú y Precios</span></button>
-        <button class="nav-item" data-view="caja">💰 <span class="lbl">Caja y Ajustes</span></button>
-        <button class="nav-item" data-view="leads">📨 <span class="lbl">Consultas</span> <span class="count" id="navLeads" hidden></span></button>
+        <button class="nav-item active" type="button" data-view="pedidos">🧾 <span class="lbl">Comandas</span> <span class="count" id="navNew" hidden></span></button>
+        <button class="nav-item nav-mob-calls" type="button" data-view="solicitudes">🔔 <span class="lbl">Solicitudes</span> <span class="count" id="navCallsMob" hidden></span></button>
+        <button class="nav-item" type="button" data-view="mesas">🏗️ <span class="lbl">Salón y Bloques</span></button>
+        <button class="nav-item" type="button" data-view="mozos">🏃 <span class="lbl">Mozos</span> <span class="count soft" id="navWaiters"></span></button>
+        <button class="nav-item" type="button" data-view="menu">📖 <span class="lbl">Menú y Precios</span></button>
+        <button class="nav-item" type="button" data-view="caja">💰 <span class="lbl">Caja y Ajustes</span></button>
+        <button class="nav-item" type="button" data-view="leads">📨 <span class="lbl">Consultas</span> <span class="count" id="navLeads" hidden></span></button>
       </nav>
 
       <div class="side-foot">
-        <button class="audio-pill off" id="adminAudioBtn" style="width:100%;justify-content:center">🔇 <span class="lbl">Activar sonido</span></button>
+        <button class="audio-pill off" id="adminAudioBtn" type="button" style="width:100%;justify-content:center">🔇 <span class="lbl">Activar sonido</span></button>
         <a class="btn btn-ghost btn-sm" href="pase.html" target="_blank">🛎️<span class="lbl"> Estación Mozos</span></a>
         <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳<span class="lbl"> Cocina / Barra</span></a>
         <a class="btn btn-ghost btn-sm" href="qr.html" target="_blank">🖨️<span class="lbl"> QRs fijos</span></a>
@@ -58,20 +64,30 @@
           <div class="view-head row">
             <div>
               <h1>Comandas en tiempo real</h1>
-              <p class="muted">Los pedidos entran directo y separados a Cocina y Barra asignando mozo en simultáneo.</p>
+              <p class="muted">Los pedidos entran directo y separados a Cocina, Barra y Mostrador asignando mozo en simultáneo.</p>
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <a class="btn btn-ghost btn-sm" href="pase.html" target="_blank">🛎️ Estación de Mozos</a>
-              <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳 Cocina / Barra</a>
+              <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳 Comandera</a>
               <a class="btn btn-ghost btn-sm" href="qr.html" target="_blank">🖨️ QRs</a>
               <div class="pill-group" id="boardStationFilter">
-                <button class="pill active" data-bst="todas">Todas</button>
-                <button class="pill" data-bst="cocina">🍳 Cocina</button>
-                <button class="pill" data-bst="barra">🍸 Barra</button>
+                <button class="pill active" type="button" data-bst="todas">Todas</button>
+                <button class="pill" type="button" data-bst="cocina">🍳 Cocina</button>
+                <button class="pill" type="button" data-bst="barra">🍸 Barra</button>
+                <button class="pill" type="button" data-bst="mostrador">🍣 Mostrador</button>
               </div>
             </div>
           </div>
           <div class="board" id="board"></div>
+        </section>
+
+        <!-- Vista móvil dedicada: Solicitudes en vivo (visible en <= 820px) -->
+        <section class="view" id="view-solicitudes" hidden>
+          <div class="view-head">
+            <h1>Solicitudes en vivo</h1>
+            <p class="muted">Llamados de atención al mozo y pedidos de cuenta desde los QRs del salón.</p>
+          </div>
+          <div id="callsMobile"></div>
         </section>
 
         <!-- 2. Salón y Bloques -->
@@ -82,7 +98,7 @@
               <p class="muted">Armá tu restaurante con bloques pre-armados, asigná sectores o dejalo en automático.</p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-ghost" id="toggleDesignBtn">🛠️ Diseñar bloques y mesas</button>
+              <button class="btn btn-ghost" type="button" id="toggleDesignBtn">🛠️ Diseñar bloques y mesas</button>
               <a class="btn btn-ghost" href="pase.html" target="_blank">🛎️ Estación de Mozos</a>
               <a class="btn btn-ghost" href="qr.html" target="_blank">🖨️ QRs fijos</a>
             </div>
@@ -92,7 +108,7 @@
               <strong>🛠️ Modo Diseño del Salón activo</strong>
               <p class="muted">Agregá bloques pre-armados (Interior, Terraza, Exterior, Barra, Sector 1/2…), configurá mesas y elegí mozos por bloque.</p>
             </div>
-            <button class="btn btn-primary" id="addBlockBtn">+ Agregar Bloque Pre-armado</button>
+            <button class="btn btn-primary" type="button" id="addBlockBtn">+ Agregar Bloque Pre-armado</button>
           </div>
           <div id="blocksContainer"></div>
         </section>
@@ -106,7 +122,7 @@
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
               <a class="btn btn-ghost" href="pase.html" target="_blank">🛎️ Abrir Estación de Mozos</a>
-              <button class="btn btn-primary" id="newWaiterBtn">+ Agregar mozo</button>
+              <button class="btn btn-primary" type="button" id="newWaiterBtn">+ Agregar mozo</button>
             </div>
           </div>
           <div class="assign-banner" id="assignBanner"></div>
@@ -118,12 +134,13 @@
           <div class="view-head row">
             <div>
               <h1>Menú, Categorías y Precios</h1>
-              <p class="muted">Cada categoría define si sus productos entran directo a Cocina o a Barra.</p>
+              <p class="muted">Cada categoría define si sus productos entran directo a Cocina, Barra o Mostrador (Sushi / Parrilla / Cafetería).</p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-ghost" id="bulkPriceBtn">📈 Ajuste % precios</button>
-              <button class="btn btn-ghost" id="newCatBtn">+ Categoría</button>
-              <button class="btn btn-primary" id="newItemBtn">+ Nuevo plato / bebida</button>
+              <button class="btn btn-ghost" type="button" id="undoPriceHeaderBtn" hidden>↩ Deshacer último ajuste</button>
+              <button class="btn btn-ghost" type="button" id="bulkPriceBtn">📈 Ajuste % precios</button>
+              <button class="btn btn-ghost" type="button" id="newCatBtn">+ Categoría</button>
+              <button class="btn btn-primary" type="button" id="newItemBtn">+ Nuevo plato / bebida</button>
             </div>
           </div>
           <div id="menuAdmin"></div>
@@ -152,12 +169,12 @@
               <p class="muted">Pedidos de demo y piloto que llegan desde la portada comercial, en tiempo real.</p>
             </div>
             <div class="pill-group" id="leadFilter">
-              <button class="pill active" data-lf="activas">Activas</button>
-              <button class="pill" data-lf="nuevo">Nuevas</button>
-              <button class="pill" data-lf="contactado">Contactadas</button>
-              <button class="pill" data-lf="piloto">En piloto</button>
-              <button class="pill" data-lf="descartado">Descartadas</button>
-              <button class="pill" data-lf="todas">Todas</button>
+              <button class="pill active" type="button" data-lf="activas">Activas</button>
+              <button class="pill" type="button" data-lf="nuevo">Nuevas</button>
+              <button class="pill" type="button" data-lf="contactado">Contactadas</button>
+              <button class="pill" type="button" data-lf="piloto">En piloto</button>
+              <button class="pill" type="button" data-lf="descartado">Descartadas</button>
+              <button class="pill" type="button" data-lf="todas">Todas</button>
             </div>
           </div>
           <div id="leadsAdmin"></div>

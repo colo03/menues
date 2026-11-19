@@ -108,6 +108,16 @@ h3 { font-weight: 800; letter-spacing: -0.015em; line-height: 1.2; }
 .pill-muted { background: var(--surface-3); color: var(--ink-2); }
 .pill-dark { background: rgba(28, 25, 23, 0.82); color: var(--dark-ink); backdrop-filter: blur(6px); }
 .pill-accent-dark { background: rgba(217, 65, 43, 0.18); color: #ffb4a6; }
+.pill-soon {
+  display: inline-block; padding: 1px 7px; margin-left: 4px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 800; background: var(--surface-2); color: var(--ink-3); vertical-align: middle;
+}
+.roi-top-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.currency-dark { margin-top: 0; background: var(--dark-surface); border-color: var(--dark-line); padding: 3px; }
+.currency-dark .cur-btn { padding: 5px 11px; font-size: 12px; color: var(--dark-ink-2); }
+.currency-dark .cur-btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.roi-cta-stack { margin-top: auto; display: grid; gap: 10px; }
+.roi-copy-btn { font-size: 13.5px; }
 .sl-brand-inline { display: inline-flex; align-items: center; gap: 8px; font-weight: 800; letter-spacing: -0.01em; }
 .kbd {
   display: inline-block; padding: 2px 8px; border-radius: 7px; font-size: 12.5px; font-weight: 700;

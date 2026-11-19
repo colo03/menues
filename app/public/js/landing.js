@@ -1,6 +1,6 @@
 /* SaleListo · Landing Page Comercial
    Interacciones: navbar, aparición al scroll, videos, spot, pestañas,
-   balanceo, calculadora ROI, moneda, acordeón y captura de leads. */
+   balanceo, calculadora ROI con deep-links y moneda sincronizada, acordeón y captura de leads. */
 (function () {
   'use strict';
 
@@ -13,6 +13,7 @@
     { max: Infinity, name: 'Gran Salón / Multisede', ars: 173250, usd: 110 }
   ];
 
+  var currentCur = 'ars';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasIO = 'IntersectionObserver' in window;
 
@@ -20,6 +21,10 @@
   function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
   function fmtNum(n) { return Math.round(n).toLocaleString('es-AR'); }
   function fmtARS(n) { return 'ARS ' + fmtNum(n); }
+  function fmtUSD(n) { return 'USD ' + fmtNum(n); }
+  function fmtMoney(arsVal) {
+    return currentCur === 'usd' ? fmtUSD(arsVal / USD_ARS) : fmtARS(arsVal);
+  }
 
   /* ---------- 1. Navbar ---------- */
   var nav = $('#nav');
@@ -71,7 +76,6 @@
 
   /* ---------- 2. Aparición al scroll ---------- */
   var reveals = $all('.reveal');
-  // Escalonado suave entre hermanos
   reveals.forEach(function (el) {
     var sibs = el.parentElement ? $all(':scope > .reveal', el.parentElement) : [];
     var i = sibs.indexOf(el);
@@ -129,7 +133,6 @@
       });
     }, { rootMargin: '200px 0px', threshold: 0.1 });
     lazyVideos.forEach(function (v) { vo.observe(v); });
-    // Pausa el video del hero fuera de pantalla
     if (hero && !reduceMotion) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (en) { if (en.isIntersecting) safePlay(hero); else hero.pause(); });
@@ -139,7 +142,7 @@
     lazyVideos.forEach(function (v) { loadVideo(v); if (!reduceMotion) safePlay(v); });
   }
 
-  /* ---------- 4. Spot vertical con sonido ---------- */
+  /* ---------- 4. Spot vertical con sonido (preload metadata + sin reiniciar al desmutear) ---------- */
   var spot = $('#spot-video');
   var spotSound = $('#spot-sound');
   var spotPlay = $('#spot-play');
@@ -166,8 +169,11 @@
       var label = $('.spot-sound-label', spotSound);
       var ico = $('.spot-sound-ico', spotSound);
       if (spot.muted) {
+        var wasRunning = !spot.paused && spot.currentTime > 0 && !spot.ended;
         spot.muted = false;
-        spot.currentTime = 0;
+        if (!wasRunning && spot.ended) {
+          spot.currentTime = 0;
+        }
         safePlay(spot);
         spotSound.setAttribute('aria-pressed', 'true');
         label.textContent = 'Silenciar';
@@ -183,10 +189,20 @@
     if (hasIO) {
       new IntersectionObserver(function (entries) {
         entries.forEach(function (en) {
-          if (!en.isIntersecting && !spot.paused) { spot.pause(); spot.dataset.autoPaused = '1'; }
-          else if (en.isIntersecting && spot.dataset.autoPaused && !reduceMotion) { delete spot.dataset.autoPaused; safePlay(spot); }
+          if (en.isIntersecting) {
+            if (!reduceMotion && (spot.dataset.autoPaused || !spot.dataset.started)) {
+              delete spot.dataset.autoPaused;
+              spot.dataset.started = '1';
+              safePlay(spot);
+            }
+          } else if (!spot.paused) {
+            spot.pause();
+            spot.dataset.autoPaused = '1';
+          }
         });
       }, { threshold: 0.2 }).observe(spot);
+    } else if (!reduceMotion) {
+      safePlay(spot);
     }
   }
 
@@ -258,11 +274,22 @@
     });
   }
 
-  /* ---------- 7. Calculadora ROI ---------- */
+  /* ---------- 7. Calculadora ROI (sincronizada con ARS/USD + deep-links B2B) ---------- */
   var rTables = $('#roi-tables');
   var rTicket = $('#roi-ticket');
   var rShifts = $('#roi-shifts');
+  var roiCopyBtn = $('#roi-copy-link');
   var roiState = null;
+
+  function clampRange(input, rawVal) {
+    var n = Number(rawVal);
+    if (!isFinite(n)) return null;
+    var min = +input.min;
+    var max = +input.max;
+    var step = +input.step || 1;
+    var clamped = Math.max(min, Math.min(max, n));
+    return Math.round(clamped / step) * step;
+  }
 
   function setFill(input) {
     var min = +input.min, max = +input.max, val = +input.value;
@@ -273,16 +300,46 @@
     return PLAN_COST[PLAN_COST.length - 1];
   }
 
+  function applyRoiUrlParams() {
+    if (!rTables || !rTicket || !rShifts || !('URLSearchParams' in window)) return;
+    var qs = new URLSearchParams(location.search);
+    var qMesas = qs.get('mesas');
+    var qTicket = qs.get('ticket');
+    var qTurnos = qs.get('turnos');
+    var qMoneda = (qs.get('moneda') || '').toLowerCase();
+
+    if (qMesas !== null) {
+      var mVal = clampRange(rTables, qMesas);
+      if (mVal !== null) {
+        rTables.value = String(mVal);
+        var lfTbl = $('#lf-tables');
+        if (lfTbl && !lfTbl.value) lfTbl.value = String(mVal);
+      }
+    }
+    if (qTicket !== null) {
+      var tVal = clampRange(rTicket, qTicket);
+      if (tVal !== null) rTicket.value = String(tVal);
+    }
+    if (qTurnos !== null) {
+      var sVal = clampRange(rShifts, qTurnos);
+      if (sVal !== null) rShifts.value = String(sVal);
+    }
+    if (qMoneda === 'usd' || qMoneda === 'ars') {
+      currentCur = qMoneda;
+    }
+  }
+
   function calcROI() {
+    if (!rTables || !rTicket || !rShifts) return;
     var M = +rTables.value;
     var T = +rTicket.value;
     var S = +rShifts.value;
     var WEEKS = 4.3;
-    var ROTATIONS = 2.6;      // rotaciones por mesa en un turno fuerte
-    var OCCUPANCY = 0.85;     // ocupación promedio en turnos fuertes
-    var ROT_UPLIFT = 0.10;    // mesas extra por minutos recuperados
-    var ROUND_UPLIFT = 0.06;  // suba de ticket por segundas rondas y postres
-    var MARGIN = 0.67;        // contribución neta tras CMV 33%
+    var ROTATIONS = 2.6;
+    var OCCUPANCY = 0.85;
+    var ROT_UPLIFT = 0.10;
+    var ROUND_UPLIFT = 0.06;
+    var MARGIN = 0.67;
 
     var sessionsPerShift = M * ROTATIONS * OCCUPANCY;
     var shiftsMonth = S * WEEKS;
@@ -291,57 +348,129 @@
     var roundsNet = sessionsPerShift * shiftsMonth * T * ROUND_UPLIFT * MARGIN;
     var plan = planFor(M);
     var gross = rotNet + roundsNet;
-    var net = gross - plan.ars;
+    var netArs = gross - plan.ars;
     var mult = gross / plan.ars;
 
+    var isUsd = currentCur === 'usd';
+    var rotDisplay = isUsd ? fmtUSD(Math.round(rotNet / USD_ARS)) : fmtARS(rotNet);
+    var roundsDisplay = isUsd ? fmtUSD(Math.round(roundsNet / USD_ARS)) : fmtARS(roundsNet);
+    var costDisplay = isUsd ? fmtUSD(plan.usd) : fmtARS(plan.ars);
+    var netVal = isUsd
+      ? (Math.round(rotNet / USD_ARS) + Math.round(roundsNet / USD_ARS) - plan.usd)
+      : netArs;
+    var netDisplay = (netVal >= 0 ? '+ ' : '- ') + (isUsd ? fmtUSD(Math.abs(netVal)) : fmtARS(Math.abs(netVal)));
+
     $('#roi-tables-out').textContent = M + ' mesas';
-    $('#roi-ticket-out').textContent = fmtARS(T);
+    $('#roi-ticket-out').textContent = isUsd ? (fmtUSD(T / USD_ARS) + ' (' + fmtARS(T) + ')') : fmtARS(T);
     $('#roi-shifts-out').textContent = S + (S === 1 ? ' turno' : ' turnos');
-    $('#roi-net').textContent = (net >= 0 ? '+ ' : '- ') + fmtARS(Math.abs(net));
+
+    var scaleMin = $('#roi-ticket-min');
+    var scaleMax = $('#roi-ticket-max');
+    if (scaleMin) scaleMin.textContent = isUsd ? fmtUSD(15000 / USD_ARS) : 'ARS 15.000';
+    if (scaleMax) scaleMax.textContent = isUsd ? fmtUSD(150000 / USD_ARS) : 'ARS 150.000';
+
+    $('#roi-net').textContent = netDisplay;
     $('#roi-mult').textContent = (mult >= 10 ? Math.round(mult) : mult.toFixed(1).replace('.', ',')) + 'x';
-    $('#roi-rot').textContent = '+ ' + fmtARS(rotNet);
-    $('#roi-rounds').textContent = '+ ' + fmtARS(roundsNet);
+    $('#roi-rot').textContent = '+ ' + rotDisplay;
+    $('#roi-rounds').textContent = '+ ' + roundsDisplay;
     $('#roi-rot-note').textContent = fmtNum(extraTables) + ' mesas más atendidas por mes, contribución neta';
     $('#roi-plan').textContent = plan.name;
-    $('#roi-cost').textContent = '- ' + fmtARS(plan.ars);
+    $('#roi-cost').textContent = '- ' + costDisplay;
     var maxPart = Math.max(rotNet, roundsNet) || 1;
     $('#roi-rot-bar').style.width = (rotNet / maxPart * 100) + '%';
     $('#roi-rounds-bar').style.width = (roundsNet / maxPart * 100) + '%';
     [rTables, rTicket, rShifts].forEach(setFill);
 
-    roiState = { tables: M, ticket: T, shifts: S, net: net, mult: mult, plan: plan.name };
+    roiState = { tables: M, ticket: T, shifts: S, netArs: netArs, netDisplay: netDisplay, mult: mult, plan: plan.name };
   }
-  if (rTables && rTicket && rShifts) {
-    [rTables, rTicket, rShifts].forEach(function (inp) { inp.addEventListener('input', calcROI); });
+
+  function buildRoiShareUrl() {
+    var base = location.origin && location.origin !== 'null'
+      ? (location.origin + location.pathname)
+      : location.href.split('?')[0].split('#')[0];
+    var qs = '?mesas=' + encodeURIComponent(rTables.value)
+      + '&ticket=' + encodeURIComponent(rTicket.value)
+      + '&turnos=' + encodeURIComponent(rShifts.value)
+      + (currentCur === 'usd' ? '&moneda=usd' : '');
+    return base + qs + '#roi';
+  }
+
+  function copyTextSafe(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        resolve();
+      } catch (e) {
+        reject(e);
+      }
+    });
+  }
+
+  /* ---------- 8. Moneda sincronizada entre Planes y Calculadora ROI ---------- */
+  var curBtns = $all('.cur-btn');
+  function setCurrency(cur) {
+    currentCur = cur === 'usd' ? 'usd' : 'ars';
+    curBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.cur === currentCur)); });
+    $all('.price[data-usd]').forEach(function (el) {
+      el.textContent = currentCur === 'usd' ? fmtUSD(+el.dataset.usd) : fmtARS(+el.dataset.ars);
+    });
+    $all('.plan-alt[data-usd-alt]').forEach(function (el) {
+      var usd = +el.dataset.usdAlt;
+      var suffix = el.textContent.indexOf('sucursal') > -1 ? ', por sucursal' : '';
+      el.textContent = currentCur === 'usd'
+        ? 'ARS ' + fmtNum(usd * USD_ARS) + '/mes en pesos' + suffix
+        : 'USD ' + usd + '/mes de referencia' + suffix;
+    });
     calcROI();
+  }
+  curBtns.forEach(function (b) { b.addEventListener('click', function () { setCurrency(b.dataset.cur); }); });
+
+  if (rTables && rTicket && rShifts) {
+    applyRoiUrlParams();
+    [rTables, rTicket, rShifts].forEach(function (inp) { inp.addEventListener('input', calcROI); });
+    setCurrency(currentCur);
+
     var roiCta = $('#roi-cta');
     if (roiCta) roiCta.addEventListener('click', function () {
       if (!roiState) return;
       prefillLead({
         plan: roiState.plan,
         tables: roiState.tables,
-        message: 'Calculé con la calculadora ROI: ' + roiState.tables + ' mesas, ticket ' + fmtARS(roiState.ticket) +
-          ', ' + roiState.shifts + ' turnos fuertes por semana. Ganancia neta estimada ' + fmtARS(roiState.net) + '/mes.'
+        message: 'Calculé con la calculadora ROI: ' + roiState.tables + ' mesas, ticket ' + fmtMoney(roiState.ticket) +
+          ', ' + roiState.shifts + ' turnos fuertes por semana. Ganancia neta estimada ' + roiState.netDisplay + '/mes.'
       });
     });
-  }
 
-  /* ---------- 8. Moneda de planes ---------- */
-  var curBtns = $all('.cur-btn');
-  function setCurrency(cur) {
-    curBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.cur === cur)); });
-    $all('.price[data-usd]').forEach(function (el) {
-      el.textContent = cur === 'usd' ? 'USD ' + fmtNum(+el.dataset.usd) : fmtARS(+el.dataset.ars);
-    });
-    $all('.plan-alt[data-usd-alt]').forEach(function (el) {
-      var usd = +el.dataset.usdAlt;
-      var suffix = el.textContent.indexOf('sucursal') > -1 ? ', por sucursal' : '';
-      el.textContent = cur === 'usd'
-        ? 'ARS ' + fmtNum(usd * USD_ARS) + '/mes en pesos' + suffix
-        : 'USD ' + usd + '/mes de referencia' + suffix;
-    });
+    if (roiCopyBtn) {
+      roiCopyBtn.addEventListener('click', function () {
+        var shareUrl = buildRoiShareUrl();
+        try {
+          var rel = '?mesas=' + encodeURIComponent(rTables.value)
+            + '&ticket=' + encodeURIComponent(rTicket.value)
+            + '&turnos=' + encodeURIComponent(rShifts.value)
+            + (currentCur === 'usd' ? '&moneda=usd' : '') + '#roi';
+          history.replaceState(null, '', location.pathname + rel);
+        } catch (err) { /* sin acción */ }
+        copyTextSafe(shareUrl).then(function () {
+          var prev = roiCopyBtn.textContent;
+          roiCopyBtn.textContent = '✔ Enlace copiado al portapapeles';
+          setTimeout(function () { roiCopyBtn.textContent = prev; }, 2600);
+        }).catch(function () {
+          window.prompt('Copiá este enlace personalizado:', shareUrl);
+        });
+      });
+    }
   }
-  curBtns.forEach(function (b) { b.addEventListener('click', function () { setCurrency(b.dataset.cur); }); });
 
   /* ---------- 9. Acordeón FAQ ---------- */
   $all('.acc-btn').forEach(function (btn) {
@@ -422,15 +551,18 @@
     return { ok: true };
   }
 
+  // Sin window.open asíncrono (evita bloqueo silencioso de popups en mobile Safari/Chrome)
   function showDone(lead, savedOnServer) {
     var text = leadSummaryText(lead);
     var wa = waLink(text);
-    $('#done-wa').href = wa;
+    var doneWa = $('#done-wa');
+    doneWa.href = wa;
+    doneWa.textContent = '💬 Abrir WhatsApp ahora mismo';
     $('#done-mail').href = mailLink(lead, text);
     $('#done-title').textContent = savedOnServer ? '¡Listo! Recibimos tu solicitud.' : 'Tu solicitud está lista para enviar.';
     $('#done-text').textContent = savedOnServer
-      ? 'Te escribimos en menos de 24 horas hábiles para coordinar el piloto. Si querés acelerar, seguí ahora mismo por WhatsApp con tu resumen ya cargado.'
-      : 'Abrimos WhatsApp con tu resumen precargado. Si no se abrió, tocá el botón verde o envianos el detalle por correo.';
+      ? 'Tu consulta quedó registrada. Tocá abajo si querés abrir WhatsApp ahora mismo.'
+      : 'Tocá el botón verde de abajo para enviarnos tu resumen precargado ahora mismo por WhatsApp.';
     var sum = $('#done-summary');
     sum.innerHTML = '';
     [['Local', lead.restaurantName], ['Zona', lead.zone], ['Mesas', lead.tablesCount], ['Contacto', lead.contact], ['Plan', lead.planInterest]]
@@ -468,8 +600,6 @@
       var original = submitBtn.textContent;
       submitBtn.textContent = 'Enviando...';
 
-      // Sin backend (archivo local o API caída) se degrada abriendo WhatsApp con el resumen;
-      // si el navegador bloquea la ventana, el panel de confirmación ofrece el botón directo.
       var isFile = location.protocol === 'file:';
       var payload = {
         name: lead.name.slice(0, 80),
@@ -484,11 +614,7 @@
       var finish = function (saved) {
         submitBtn.disabled = false;
         submitBtn.textContent = original;
-        var wa = showDone(lead, saved);
-        if (!saved) {
-          var w = window.open(wa, '_blank', 'noopener');
-          if (w) { try { w.opener = null; } catch (err) { /* sin acción */ } }
-        }
+        showDone(lead, saved);
       };
 
       if (isFile || !window.fetch) { finish(false); return; }
@@ -503,15 +629,16 @@
       }).then(function (res) {
         clearTimeout(timer);
         return res.json().catch(function () { return {}; }).then(function (data) {
-          // 400: dato inválido según el servidor, se muestra el motivo sin salir del formulario.
-          if (res.status === 400 && data && data.error) {
+          // 400 (validación) o 429 (límite antispam): mostrar mensaje claro en el formulario
+          if (res.status === 400 || res.status === 429) {
             submitBtn.disabled = false;
             submitBtn.textContent = original;
-            errBox.textContent = String(data.error);
+            errBox.textContent = String((data && data.error) || (res.status === 429
+              ? 'Recibimos varias consultas seguidas. Probá de nuevo en unos minutos o escribinos directo por WhatsApp.'
+              : 'Revisá los datos ingresados e intentá nuevamente.'));
             errBox.hidden = false;
             return;
           }
-          // 429 (límite antispam), 5xx u otras respuestas: se continúa por WhatsApp con el resumen.
           finish(!!(res.ok && data && data.ok));
         });
       }).catch(function () {

@@ -3,34 +3,84 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · Pantalla Cocina y Barra</title>
+  <title>SaleListo · Pantalla Cocina, Barra y Mostrador</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/cocina.css">
 </head>
 <body>
-  <header class="k-bar">
-    <div class="k-brand">
-      <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;display:block;flex:none">
+  <!-- Ingreso por PIN propio (sin window.prompt) -->
+  <div class="k-pin-gate" id="kPinGate" hidden>
+    <form class="k-pin-box" id="kPinForm">
+      <img src="logo.svg" alt="SaleListo" class="k-pin-logo">
+      <h1>Comandera en Vivo</h1>
+      <p>Ingresá el PIN del local para habilitar la pantalla de Cocina, Barra o Mostrador.</p>
+      <input
+        class="input k-pin-input"
+        type="password"
+        id="kPinInput"
+        inputmode="numeric"
+        placeholder="PIN del local"
+        required
+        autocomplete="off"
+      >
+      <button class="btn btn-primary k-pin-submit" type="submit">Abrir Comandera</button>
+    </form>
+  </div>
+
+  <div id="kApp">
+    <header class="k-bar">
+      <div class="k-brand">
+        <img src="mark.svg" alt="SaleListo" style="width:38px;height:38px;display:block;flex:none">
+        <div>
+          <strong id="kRestName">Kaiten Bar</strong>
+          <small>SaleListo · Comandera en tiempo real</small>
+        </div>
+      </div>
+
+      <div class="k-stations" id="stationTabs" role="tablist" aria-label="Filtrar por estación">
+        <button class="k-st active" data-st="todas" type="button">🔥 Todo</button>
+        <button class="k-st" data-st="cocina" type="button">🍳 Cocina</button>
+        <button class="k-st" data-st="barra" type="button">🍸 Barra</button>
+        <button class="k-st" data-st="mostrador" type="button">🍣 Mostrador</button>
+      </div>
+
+      <div class="k-right">
+        <button class="btn btn-ghost k-ctrl-btn" id="kStockBtn" type="button" title="Pausar o reactivar platos agotados en 1 toque">
+          🚫 Agotados <span class="k-86-badge" id="k86Badge" hidden>0</span>
+        </button>
+        <button class="audio-pill off k-audio-btn" id="kAudioBtn" type="button">🔇 Activar sonido</button>
+        <a class="btn btn-ghost k-ctrl-btn" href="pase.html" title="Abrir Estación de Mozos">🛎️ Pase</a>
+        <a class="btn btn-ghost k-ctrl-btn" href="restaurante.html">Panel</a>
+      </div>
+    </header>
+
+    <main class="k-board" id="kBoard"></main>
+  </div>
+
+  <!-- Cajón rápido 🚫 Agotados (86 en 1 toque desde Cocina/Barra/Mostrador) -->
+  <div class="k-drawer-backdrop" id="kStockBackdrop" hidden></div>
+  <aside class="k-drawer" id="kStockDrawer" aria-label="Gestión rápida de platos agotados" hidden>
+    <div class="kd-head">
       <div>
-        <strong id="kRestName">Kaiten Bar</strong>
-        <small>SaleListo · Comandera en tiempo real</small>
+        <h2>🚫 Platos y bebidas agotados</h2>
+        <small>Tocá cualquier producto para pausarlo o reactivarlo al instante en los QRs</small>
+      </div>
+      <button class="kd-close" id="kStockClose" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="kd-tools">
+      <input class="input" id="kStockSearch" type="search" placeholder="🔍 Buscar plato o bebida…" autocomplete="off">
+      <div class="kd-filters" id="kStockStations">
+        <button type="button" class="kd-pill active" data-kst="todas">Todo</button>
+        <button type="button" class="kd-pill" data-kst="cocina">🍳 Cocina</button>
+        <button type="button" class="kd-pill" data-kst="barra">🍸 Barra</button>
+        <button type="button" class="kd-pill" data-kst="mostrador">🍣 Mostrador</button>
       </div>
     </div>
-
-    <div class="k-stations" id="stationTabs">
-      <button class="k-st active" data-st="todas">🔥 Todo</button>
-      <button class="k-st" data-st="cocina">🍳 Solo Cocina</button>
-      <button class="k-st" data-st="barra">🍸 Solo Barra</button>
-    </div>
-
-    <div class="k-right">
-      <button class="audio-pill off" id="kAudioBtn">🔇 Activar sonido</button>
-      <a class="btn btn-sm btn-ghost" href="restaurante.html" style="color:var(--dark-ink);border-color:rgba(250,247,242,0.2)">Panel</a>
-    </div>
-  </header>
-
-  <main class="k-board" id="kBoard"></main>
+    <div class="kd-list" id="kStockList"></div>
+  </aside>
 
   <script src="js/store.js"></script>
   <script src="js/ui.js"></script>

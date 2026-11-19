@@ -1,4 +1,5 @@
-// Utilidades compartidas de interfaz, sonido desbloqueable, vibración y compresión de fotos.
+// Utilidades compartidas de interfaz, sonido desbloqueable con silencio real,
+// vibración, Screen Wake Lock, Web Push con validación VAPID y compresión de fotos.
 
 function toast(msg, ms = 3200) {
   let wrap = document.querySelector('.toast-wrap');
@@ -25,27 +26,91 @@ function connectionBanner(online) {
   el.hidden = online;
 }
 
+// ---------- Audio desbloqueable + estado global Silenciar / Activar ----------
+
+const MUTE_STORAGE_KEY = 'salelisto:soundMuted';
 let audioCtx = null;
 let audioUnlocked = false;
+let soundMuted = false;
 const audioListeners = new Set();
+
+try {
+  soundMuted = localStorage.getItem(MUTE_STORAGE_KEY) === '1'
+    || localStorage.getItem('salelisto:paseMuted') === '1';
+  if (soundMuted) {
+    localStorage.setItem(MUTE_STORAGE_KEY, '1');
+    localStorage.removeItem('salelisto:paseMuted');
+  }
+} catch (_) {}
+
+function isSoundMuted() {
+  return Boolean(soundMuted);
+}
+
+function notifyAudioListeners() {
+  const effectiveOn = Boolean(audioUnlocked && !soundMuted);
+  const detail = { unlocked: audioUnlocked, muted: soundMuted, active: effectiveOn };
+  audioListeners.forEach((fn) => {
+    try { fn(effectiveOn, detail); } catch (_) {}
+  });
+}
+
+function setSoundMuted(nextMuted) {
+  soundMuted = Boolean(nextMuted);
+  try {
+    if (soundMuted) localStorage.setItem(MUTE_STORAGE_KEY, '1');
+    else localStorage.removeItem(MUTE_STORAGE_KEY);
+    localStorage.removeItem('salelisto:paseMuted');
+  } catch (_) {}
+  notifyAudioListeners();
+  return soundMuted;
+}
 
 function unlockAudio() {
   try {
     const Ctx = window.AudioContext || window.webkitAudioContext;
-    if (!Ctx) return false;
-    audioCtx = audioCtx || new Ctx();
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
+    if (!Ctx) return Promise.resolve(false);
+    if (!audioCtx) {
+      audioCtx = new Ctx();
+      audioCtx.onstatechange = () => {
+        audioUnlocked = audioCtx.state === 'running';
+        notifyAudioListeners();
+      };
+    }
+    if (audioCtx.state === 'running') {
+      if (!audioUnlocked) {
+        audioUnlocked = true;
+        notifyAudioListeners();
+      }
+      return Promise.resolve(true);
+    }
+    if (audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function') {
+      return audioCtx.resume().then(() => {
+        audioUnlocked = audioCtx.state === 'running';
+        notifyAudioListeners();
+        return audioUnlocked;
+      }).catch(() => false);
     }
     audioUnlocked = audioCtx.state === 'running';
-    audioListeners.forEach((fn) => fn(audioUnlocked));
-    return audioUnlocked;
+    notifyAudioListeners();
+    return Promise.resolve(audioUnlocked);
   } catch (_) {
-    return false;
+    return Promise.resolve(false);
   }
 }
 
-// Desbloquear audio automáticamente ante el primer toque/clic en la pantalla
+async function toggleSoundMute() {
+  if (!audioUnlocked || soundMuted) {
+    setSoundMuted(false);
+    const ok = await unlockAudio();
+    if (ok) ding(1, false);
+    return false; // false = sonido activo (no silenciado)
+  }
+  setSoundMuted(true);
+  return true; // true = silenciado
+}
+
+// Desbloquear audio automáticamente ante el primer toque/clic en la pantalla (respetando silencio si el usuario muteó)
 ['click', 'touchstart', 'keydown'].forEach((ev) => {
   window.addEventListener(ev, () => {
     if (!audioUnlocked) unlockAudio();
@@ -54,28 +119,35 @@ function unlockAudio() {
 
 function onAudioState(fn) {
   audioListeners.add(fn);
-  fn(audioUnlocked);
+  fn(Boolean(audioUnlocked && !soundMuted), {
+    unlocked: audioUnlocked,
+    muted: soundMuted,
+    active: Boolean(audioUnlocked && !soundMuted),
+  });
+  return () => audioListeners.delete(fn);
 }
 
 function ding(times = 1, urgent = false) {
-  try {
-    unlockAudio();
-    if (!audioCtx) return;
-    for (let i = 0; i < times; i++) {
-      const t = audioCtx.currentTime + i * 0.24;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = urgent ? 'triangle' : 'sine';
-      osc.frequency.setValueAtTime(urgent ? 988 : 880, t);
-      osc.frequency.exponentialRampToValueAtTime(urgent ? 1480 : 1320, t + 0.09);
-      gain.gain.setValueAtTime(0.0001, t);
-      gain.gain.exponentialRampToValueAtTime(0.28, t + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
-      osc.connect(gain).connect(audioCtx.destination);
-      osc.start(t);
-      osc.stop(t + 0.42);
-    }
-  } catch (_) {}
+  if (soundMuted) return;
+  Promise.resolve(unlockAudio()).then((ok) => {
+    if (!ok || !audioCtx || soundMuted) return;
+    try {
+      for (let i = 0; i < times; i++) {
+        const t = audioCtx.currentTime + i * 0.24;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = urgent ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(urgent ? 988 : 880, t);
+        osc.frequency.exponentialRampToValueAtTime(urgent ? 1480 : 1320, t + 0.09);
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.28, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.38);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + 0.42);
+      }
+    } catch (_) {}
+  });
   try {
     if (navigator.vibrate) {
       navigator.vibrate(urgent ? [220, 90, 220, 90, 300] : [180, 80, 180]);
@@ -83,13 +155,42 @@ function ding(times = 1, urgent = false) {
   } catch (_) {}
 }
 
+// ---------- Screen Wake Lock para pantallas fijas (Pase y Cocina/Barra) ----------
+
+let wakeLockSentinel = null;
+let wakeLockBound = false;
+
+async function enableScreenWakeLock() {
+  if (!('wakeLock' in navigator) || !navigator.wakeLock) return false;
+  const acquire = async () => {
+    if (document.visibilityState !== 'visible' || wakeLockSentinel) return;
+    try {
+      const sentinel = await navigator.wakeLock.request('screen');
+      wakeLockSentinel = sentinel;
+      sentinel.addEventListener('release', () => {
+        if (wakeLockSentinel === sentinel) wakeLockSentinel = null;
+      });
+    } catch (_) {}
+  };
+  if (!wakeLockBound) {
+    wakeLockBound = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') acquire();
+    });
+  }
+  await acquire();
+  return Boolean(wakeLockSentinel);
+}
+
+// ---------- Notificaciones de navegador y Web Push (Modo Pulsera Xiaomi Band) ----------
+
 function notifyBrowser(title, body, opts = {}) {
   try {
     if (!('Notification' in window) || Notification.permission !== 'granted' || !document.hidden) return;
     const notifOpts = {
       body: body || '',
-      icon: '/mark.svg',
-      badge: '/mark.svg',
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
       vibrate: [220, 90, 220, 90, 320],
       renotify: true,
       requireInteraction: false,
@@ -101,13 +202,13 @@ function notifyBrowser(title, body, opts = {}) {
           return reg.showNotification(title, notifOpts);
         }
         try {
-          new Notification(title, { body: body || '', icon: '/mark.svg', tag: notifOpts.tag });
+          new Notification(title, { body: body || '', icon: '/icon-192.png', tag: notifOpts.tag });
         } catch (_) {}
         return null;
       }).catch(() => {});
       return;
     }
-    new Notification(title, { body: body || '', icon: '/mark.svg', tag: notifOpts.tag });
+    new Notification(title, { body: body || '', icon: '/icon-192.png', tag: notifOpts.tag });
   } catch (_) {}
 }
 
@@ -122,8 +223,6 @@ function requestPushPermission() {
   } catch (_) {}
   return Promise.resolve('unsupported');
 }
-
-// ---------- Helpers de Service Worker y Web Push (Modo Pulsera Xiaomi Band) ----------
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -164,13 +263,52 @@ async function registerSaleListoSW() {
   }
 }
 
-async function getExistingPushSubscription() {
+async function getExistingPushSubscription(opts = {}) {
   const status = getPushSupportStatus();
   if (!status.supported) return null;
   try {
     const reg = (await navigator.serviceWorker.getRegistration('/')) || (await registerSaleListoSW());
     if (!reg || !reg.pushManager) return null;
-    return await reg.pushManager.getSubscription();
+    let sub = await reg.pushManager.getSubscription();
+    if (!sub) return null;
+
+    // Validar que applicationServerKey coincida con la clave VAPID vigente del servidor
+    try {
+      const keyRes = await fetch('api/push/vapid-public-key').then((r) => (r.ok ? r.json() : null));
+      if (keyRes && keyRes.publicKey && sub.options && sub.options.applicationServerKey) {
+        const expectedKey = urlBase64ToUint8Array(keyRes.publicKey);
+        const curKey = new Uint8Array(sub.options.applicationServerKey);
+        const sameKey = curKey.length === expectedKey.length && curKey.every((v, idx) => v === expectedKey[idx]);
+        if (!sameKey) {
+          const oldEndpoint = sub.endpoint;
+          try { await apiPost('api/push/unsubscribe', { endpoint: oldEndpoint }); } catch (_) {}
+          try { await sub.unsubscribe(); } catch (_) {}
+          sub = null;
+
+          if (opts.reSubscribe !== false && Notification.permission === 'granted') {
+            sub = await reg.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: expectedKey,
+            });
+            const wid = opts.waiterId || (() => {
+              try { return localStorage.getItem('salelisto:wristbandWaiter') || ''; } catch (_) { return ''; }
+            })();
+            if (wid && sub) {
+              try {
+                await apiPost('api/push/subscribe', {
+                  waiterId: wid,
+                  subscription: sub.toJSON(),
+                  wristbandMode: true,
+                });
+              } catch (_) {}
+            }
+          }
+        }
+      }
+    } catch (_) {
+      // Sin red momentánea: conservar la suscripción local actual
+    }
+    return sub;
   } catch (_) {
     return null;
   }
@@ -233,7 +371,7 @@ async function subscribeWaiterPush(waiterId, wristbandMode = true) {
 }
 
 async function unsubscribeWaiterPush() {
-  const sub = await getExistingPushSubscription();
+  const sub = await getExistingPushSubscription({ reSubscribe: false });
   if (sub) {
     try { await apiPost('api/push/unsubscribe', { endpoint: sub.endpoint }); } catch (_) {}
     try { await sub.unsubscribe(); } catch (_) {}
@@ -243,7 +381,7 @@ async function unsubscribeWaiterPush() {
 }
 
 async function sendWaiterPushTest(waiterId) {
-  const sub = await getExistingPushSubscription();
+  const sub = await getExistingPushSubscription({ waiterId });
   return apiPost('api/push/test', {
     waiterId,
     endpoint: sub ? sub.endpoint : '',

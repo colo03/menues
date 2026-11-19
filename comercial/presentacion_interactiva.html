@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SaleListo · Presentación comercial interactiva</title>
+<meta name="description" content="Deck comercial de SaleListo para reuniones presenciales, tablet o Zoom: 10 láminas, simulador de retorno en vivo y propuesta de piloto de 14 días.">
+<meta name="theme-color" content="#1c1917">
+<link rel="icon" type="image/svg+xml" href="../branding/mark.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf7f2; --surface: #ffffff; --surface-2: #f3eee6; --surface-3: #e8e0d4;
+  --line: #e6dfd3; --line-strong: #d6cdc0;
+  --ink: #1c1917; --ink-2: #57534e; --ink-3: #8a837c;
+  --accent: #d9412b; --accent-hover: #bf3520; --accent-soft: #fceae6;
+  --ok: #2f8a57; --ok-soft: #e3f3ea;
+  --bar: #6d28d9; --bar-soft: #efeafe;
+  --kitchen: #d97706; --kitchen-soft: #fef1dc;
+  --late: #c2321f; --late-soft: #fde4df;
+  --dark-bg: #1c1917; --dark-surface: #26221f; --dark-line: #38322e;
+  --dark-ink: #faf7f2; --dark-ink-2: rgba(250, 247, 242, 0.68);
+  --font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --radius-card: 16px; --radius-control: 10px; --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.06);
+  --shadow-float: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 48px -8px rgba(28, 25, 23, 0.14);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-scene: 500ms;
+  --s: 1;
+  --notes-h: 0px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  background: #13110f;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+button, input { font-family: inherit; }
+a { color: inherit; }
+
+/* ---------- Chrome de la app ---------- */
+.app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+.topbar {
+  height: 52px; flex: 0 0 52px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 18px; color: var(--dark-ink-2); font-size: 13px; gap: 16px;
+  transition: opacity 300ms var(--ease-out);
+}
+.topbar .brand { display: flex; align-items: center; gap: 10px; color: var(--dark-ink); font-weight: 700; }
+.topbar .brand img { height: 26px; width: 26px; }
+.topbar .title-now { flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar .counter { font-variant-numeric: tabular-nums; color: var(--dark-ink); font-weight: 600; }
+.progress { position: absolute; left: 0; top: 0; height: 3px; background: var(--accent); width: 10%; transition: width var(--dur-scene) var(--ease-out); z-index: 5; }
+
+.viewport { position: relative; flex: 1 1 auto; overflow: hidden; }
+.stage {
+  position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px;
+  transform: translate(-50%, -50%) scale(var(--s)); transform-origin: center center;
+}
+
+.controls {
+  height: 60px; flex: 0 0 60px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 0 16px; transition: opacity 300ms var(--ease-out);
+}
+.ctl {
+  appearance: none; border: 1px solid var(--dark-line); background: var(--dark-surface); color: var(--dark-ink);
+  height: 40px; min-width: 40px; padding: 0 14px; border-radius: var(--radius-control); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: background 180ms, border-color 180ms;
+}
+.ctl:hover { background: #312b27; border-color: #4a423c; }
+.ctl:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ctl.primary { background: var(--accent); border-color: var(--accent); }
+.ctl.primary:hover { background: var(--accent-hover); }
+.ctl[aria-pressed="true"] { border-color: var(--accent); color: #fff; background: #3a221d; }
+.ctl kbd { font-family: inherit; font-size: 11px; padding: 1px 6px; border-radius: 5px; background: rgba(255,255,255,0.08); color: var(--dark-ink-2); }
+.dots { display: flex; gap: 6px; margin: 0 10px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; background: #4a423c; border: 0; padding: 0; cursor: pointer; transition: background 180ms, transform 180ms; }
+.dot.on { background: var(--accent); transform: scale(1.25); }
+
+.notes {
+  flex: 0 0 var(--notes-h); height: var(--notes-h); overflow: hidden; background: #201c19; border-top: 1px solid var(--dark-line);
+  color: var(--dark-ink); transition: flex-basis 320ms var(--ease-out), height 320ms var(--ease-out);
+}
+.notes-inner { height: 100%; display: grid; grid-template-columns: 1fr 260px; gap: 24px; padding: 16px 24px; }
+.notes-body { overflow-y: auto; font-size: 15px; line-height: 1.55; padding-right: 8px; }
+.notes-body h4 { margin: 0 0 6px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #f08a77; }
+.notes-body p { margin: 0 0 8px; }
+.notes-body ul { margin: 0 0 8px; padding-left: 18px; }
+.notes-body li { margin-bottom: 4px; }
+.notes-body q { color: #fff; font-weight: 600; quotes: "«" "»"; }
+.notes-side { border-left: 1px solid var(--dark-line); padding-left: 20px; font-size: 13px; color: var(--dark-ink-2); display: flex; flex-direction: column; gap: 10px; }
+.notes-side b { color: var(--dark-ink); }
+.notes-side .timer { font-size: 28px; font-weight: 800; color: var(--dark-ink); font-variant-numeric: tabular-nums; }
+.notes-side .ctl { height: 32px; font-size: 12px; align-self: flex-start; }
+
+body.idle .topbar, body.idle .controls { opacity: 0; }
+body.idle { cursor: none; }
+
+/* ---------- Lámina base ---------- */
+.slide {
+  position: absolute; inset: 0; background: var(--bg); border-radius: 18px; overflow: hidden;
+  opacity: 0; visibility: hidden; transform: translateX(28px);
+  transition: opacity var(--dur-scene) var(--ease-out), transform var(--dur-scene) var(--ease-out), visibility 0s linear var(--dur-scene);
+}
+.slide.before { transform: translateX(-28px); }
+.slide.active { opacity: 1; visibility: visible; transform: none; transition: opacity var(--dur-scene) var(--ease-out), transform var(--dur-scene) var(--ease-out), visibility 0s; }
+.slide.dark { background: var(--dark-bg); color: var(--dark-ink); }
+.slide .speaker { display: none; }
+.pad { position: absolute; inset: 0; padding: 52px 72px 70px; display: flex; flex-direction: column; }
+.kicker { margin: 0 0 10px; font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.dark .kicker { color: #f08a77; }
+h1, h2, h3 { margin: 0; letter-spacing: -0.02em; }
+h2 { font-size: 42px; line-height: 1.08; font-weight: 800; max-width: 1000px; }
+.lead { font-size: 18px; line-height: 1.5; color: var(--ink-2); margin: 12px 0 0; max-width: 860px; }
+.dark .lead { color: var(--dark-ink-2); }
+.hl { color: var(--accent); }
+.dark .hl { color: #ff7a63; }
+.sfoot {
+  position: absolute; left: 72px; right: 72px; bottom: 24px; display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px; color: var(--ink-3); font-weight: 600;
+}
+.sfoot span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.sfoot img { width: 18px; height: 18px; }
+.dark .sfoot { color: rgba(250,247,242,0.45); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700; background: var(--surface-2); color: var(--ink-2); }
+.chip.k { background: var(--kitchen-soft); color: #9a5304; }
+.chip.b { background: var(--bar-soft); color: var(--bar); }
+.chip.m { background: var(--ok-soft); color: #1f6b41; }
+.chip.a { background: var(--accent-soft); color: var(--accent-hover); }
+.grow { flex: 1 1 auto; min-height: 0; }
+.enter { opacity: 0; transform: translateY(14px); transition: opacity 550ms var(--ease-out), transform 550ms var(--ease-out); }
+.active .enter { opacity: 1; transform: none; }
+.active .enter.d1 { transition-delay: 90ms; } .active .enter.d2 { transition-delay: 180ms; }
+.active .enter.d3 { transition-delay: 270ms; } .active .enter.d4 { transition-delay: 360ms; }
+.active .enter.d5 { transition-delay: 450ms; } .active .enter.d6 { transition-delay: 540ms; }
+
+/* ---------- 1 Portada ---------- */
+.cover { display: grid; grid-template-columns: 1fr 400px; gap: 48px; align-items: center; padding: 56px 72px 84px; }
+.cover-logo { height: 58px; width: auto; margin: -8px 0 40px -14px; display: block; }
+.cover h1 { font-size: 54px; line-height: 1.04; font-weight: 800; letter-spacing: -0.03em; }
+.cover .lead { font-size: 19px; margin-top: 20px; max-width: 660px; }
+.cover-chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+.cover-chips .chip { background: rgba(250,247,242,0.08); color: var(--dark-ink); border: 1px solid var(--dark-line); padding: 8px 14px; }
+.cover-chips .chip b { color: #ff7a63; }
+.stack { position: relative; height: 430px; }
+.tk {
+  position: absolute; left: 0; right: 0; background: var(--dark-surface); border: 1px solid var(--dark-line); border-radius: 16px;
+  padding: 18px 20px; box-shadow: 0 20px 48px -12px rgba(0,0,0,0.5); border-left: 5px solid var(--kitchen);
+}
+.tk b { display: block; font-size: 20px; color: var(--dark-ink); }
+.tk small { display: block; font-size: 14px; color: var(--dark-ink-2); margin-top: 4px; }
+.tk .tag { position: absolute; right: 16px; top: 16px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--dark-ink-2); }
+.tk.t1 { top: 0; transform: rotate(-2deg); }
+.tk.t2 { top: 112px; left: 30px; right: -20px; border-left-color: var(--bar); transform: rotate(1.5deg); }
+.tk.t3 { top: 224px; left: -10px; right: 20px; border-left-color: var(--ok); transform: rotate(-1deg); }
+.tk.t4 { top: 336px; left: 20px; right: -10px; border-left-color: var(--accent); transform: rotate(1deg); }
+
+/* ---------- 2 Costo invisible ---------- */
+.cost-grid { display: grid; grid-template-columns: 400px 1fr; gap: 28px; margin-top: 26px; }
+.stat { padding: 22px 24px; }
+.stat + .stat { margin-top: 16px; }
+.stat .big { font-size: 56px; font-weight: 800; letter-spacing: -0.03em; color: var(--accent); line-height: 1; }
+.stat p { margin: 10px 0 0; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); }
+.timeline { padding: 22px 24px; }
+.timeline h3 { font-size: 17px; margin-bottom: 4px; }
+.timeline .sub { font-size: 13.5px; color: var(--ink-3); margin: 0 0 16px; }
+.tbar { display: flex; height: 54px; border-radius: 12px; overflow: hidden; gap: 3px; }
+.tbar div { display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; color: #fff; }
+.tlegend { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin-top: 16px; font-size: 14px; color: var(--ink-2); }
+.tlegend span { display: flex; align-items: flex-start; gap: 8px; line-height: 1.35; }
+.tlegend i { flex: 0 0 12px; height: 12px; border-radius: 4px; margin-top: 3px; }
+.trips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
+.trip { background: var(--surface-2); border-radius: 12px; padding: 12px; font-size: 13px; line-height: 1.35; color: var(--ink-2); }
+.trip b { display: block; font-size: 22px; color: var(--ink); margin-bottom: 2px; }
+.mathband {
+  margin-top: 18px; background: var(--dark-bg); color: var(--dark-ink); border-radius: 14px; padding: 14px 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 18px; font-size: 15px;
+}
+.mathband strong { font-size: 24px; color: #ff7a63; white-space: nowrap; }
+
+/* ---------- 3 Cómo funciona ---------- */
+.how { display: grid; grid-template-columns: 300px 1fr; gap: 48px; margin-top: 22px; align-items: start; }
+.phone {
+  width: 270px; height: 452px; border-radius: 38px; background: #111; padding: 12px; box-shadow: var(--shadow-float); position: relative; margin-top: -6px;
+}
+.phone .scr { width: 100%; height: 100%; border-radius: 30px; background: var(--bg); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+.phone .ph-head { padding: 22px 16px 10px; background: var(--surface); border-bottom: 1px solid var(--line); }
+.phone .ph-head b { font-size: 15px; display: block; }
+.phone .ph-head small { font-size: 11px; color: var(--ink-3); }
+.ph-tabs { display: flex; gap: 6px; padding: 10px 12px; }
+.ph-tabs span { font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); }
+.ph-tabs span.on { background: var(--ink); color: #fff; }
+.ph-item { display: flex; align-items: center; gap: 10px; margin: 0 12px 8px; padding: 9px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.ph-item .em { width: 42px; height: 42px; border-radius: 10px; background: var(--surface-2); display: grid; place-items: center; font-size: 22px; }
+.ph-item div { flex: 1; font-size: 12px; line-height: 1.3; }
+.ph-item div b { display: block; font-size: 12.5px; }
+.ph-item div small { color: var(--ink-3); }
+.ph-item .plus { width: 26px; height: 26px; border-radius: 8px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 16px; }
+.ph-cta { margin: auto 12px 14px; background: var(--accent); color: #fff; border-radius: 12px; text-align: center; padding: 12px; font-weight: 800; font-size: 13px; }
+.ph-toast {
+  position: absolute; left: 12px; right: 12px; bottom: 64px; background: var(--ok); color: #fff; border-radius: 12px; padding: 10px 12px;
+  font-size: 12px; font-weight: 700; opacity: 0; transform: translateY(10px);
+}
+.active .ph-toast { animation: toast 4.2s var(--ease-out) 1.4s infinite; }
+@keyframes toast { 0% { opacity: 0; transform: translateY(10px); } 10%, 70% { opacity: 1; transform: none; } 85%, 100% { opacity: 0; transform: translateY(10px); } }
+.steps { display: flex; flex-direction: column; gap: 14px; }
+.step { display: grid; grid-template-columns: 74px 1fr; gap: 18px; align-items: center; padding: 18px 22px; }
+.step .sec { font-size: 30px; font-weight: 800; color: var(--accent); letter-spacing: -0.03em; }
+.step h3 { font-size: 19px; }
+.step p { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.badges .chip { font-size: 14px; padding: 8px 14px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+
+/* ---------- 4 Ruteo ---------- */
+.route { display: grid; grid-template-columns: 300px 60px 1fr; gap: 0; margin-top: 24px; align-items: stretch; }
+.order { padding: 18px 20px; }
+.order h3 { font-size: 17px; }
+.order small.meta { display: block; color: var(--ink-3); font-size: 13px; margin: 2px 0 12px; }
+.order li { list-style: none; display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px dashed var(--line); font-size: 14.5px; font-weight: 600; }
+.order ul { margin: 0; padding: 0; }
+.order li i { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 10px; }
+.arrow { display: grid; place-items: center; color: var(--ink-3); font-size: 30px; font-weight: 800; }
+.stations { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.station { border-radius: var(--radius-card); overflow: hidden; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); display: flex; flex-direction: column; }
+.station header { padding: 12px 16px; color: #fff; font-weight: 800; font-size: 16px; display: flex; justify-content: space-between; align-items: center; }
+.station header small { font-weight: 600; opacity: .85; font-size: 12px; }
+.station .body { padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.kt { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; background: var(--bg); }
+.kt b { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.kt .items { color: var(--ink-2); margin-top: 4px; line-height: 1.4; }
+.sla { font-size: 11.5px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+.sla.g { background: var(--ok-soft); color: #1f6b41; }
+.sla.y { background: var(--kitchen-soft); color: #9a5304; }
+.sla.r { background: var(--late-soft); color: var(--late); }
+.kt.late { border-color: #f1b3a8; background: #fff6f4; }
+.kt.fly { opacity: 0; transform: translateX(-20px); }
+.active .kt.fly { animation: fly 600ms var(--ease-out) forwards; }
+.active .kt.fly.f2 { animation-delay: 250ms; } .active .kt.fly.f3 { animation-delay: 500ms; }
+@keyframes fly { to { opacity: 1; transform: none; } }
+.routefoot { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+.routefoot .card { padding: 14px 18px; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); display: flex; gap: 14px; align-items: center; }
+.routefoot .card b { color: var(--ink); }
+.routefoot .ico { font-size: 26px; }
+
+/* ---------- 5 Tecnología invisible ---------- */
+.vs { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; margin-top: 22px; position: relative; }
+.vs-badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 14px; z-index: 2; box-shadow: var(--shadow-float); }
+.opt { padding: 20px 24px; }
+.opt.featured { border: 2px solid var(--accent); }
+.opt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+.opt-head h3 { font-size: 21px; }
+.opt-head p { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-3); }
+.price-tag { text-align: right; white-space: nowrap; }
+.price-tag b { display: block; font-size: 26px; font-weight: 800; color: var(--accent); }
+.price-tag small { font-size: 12px; color: var(--ink-3); }
+.opt-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px dashed var(--line); font-size: 14.5px; line-height: 1.4; }
+.opt-row:last-child { border-bottom: 0; }
+.opt-row span { color: var(--ink-3); font-weight: 600; font-size: 13px; }
+.band-mini { display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; border-radius: 10px; padding: 6px 10px; font-size: 13px; font-weight: 700; }
+.vs-foot { margin-top: 16px; text-align: center; font-size: 16px; font-weight: 700; color: var(--ink); }
+.vs-foot span { color: var(--accent); }
+
+/* ---------- 6 Cierre 1 viaje ---------- */
+.close { display: grid; grid-template-columns: 380px 1fr; gap: 32px; margin-top: 20px; }
+.bill { padding: 20px; }
+.bill h3 { font-size: 17px; display: flex; justify-content: space-between; }
+.bill h3 small { font-size: 13px; color: var(--ink-3); font-weight: 600; }
+.bill .row { display: flex; justify-content: space-between; align-items: center; font-size: 14.5px; padding: 8px 0; border-bottom: 1px dashed var(--line); }
+.bill .lbl { color: var(--ink-2); font-weight: 600; font-size: 13px; margin: 12px 0 6px; }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button {
+  border: 1px solid var(--line-strong); background: var(--surface); color: var(--ink); border-radius: 10px; padding: 8px 12px;
+  font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all 180ms;
+}
+.seg button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.stepper { display: inline-flex; align-items: center; border: 1px solid var(--line-strong); border-radius: 10px; overflow: hidden; }
+.stepper button { width: 40px; height: 38px; border: 0; background: var(--surface-2); font-size: 20px; font-weight: 800; cursor: pointer; color: var(--ink); }
+.stepper output { min-width: 56px; text-align: center; font-weight: 800; font-size: 17px; }
+.each { margin-top: 14px; background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; }
+.each span { font-size: 13.5px; color: var(--accent-hover); font-weight: 700; }
+.each b { font-size: 26px; color: var(--accent-hover); font-weight: 800; }
+.close-right { display: flex; flex-direction: column; gap: 16px; }
+.pase-card { background: var(--dark-bg); color: var(--dark-ink); border-radius: var(--radius-card); padding: 18px 22px; box-shadow: var(--shadow-float); }
+.pase-card .lab { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--dark-ink-2); font-weight: 700; }
+.pase-card .main { font-size: 24px; font-weight: 800; margin-top: 8px; }
+.pase-card .main em { font-style: normal; color: #7be0a5; }
+.pase-card .meta { font-size: 14px; color: var(--dark-ink-2); margin-top: 6px; }
+.ba { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ba .card { padding: 16px 18px; }
+.ba h4 { margin: 0 0 8px; font-size: 15px; }
+.ba ol { margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+.ba .before ol li { text-decoration: line-through; text-decoration-color: rgba(217,65,43,0.55); }
+.ba .after { border: 2px solid var(--ok); }
+.ba .after h4 { color: var(--ok); }
+.close-note { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.pay-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pay-chips .chip { background: var(--surface); border: 1px solid var(--line); color: var(--ink); }
+.pay-chips .chip.a { background: var(--accent-soft); border-color: transparent; color: var(--accent-hover); }
+
+/* ---------- 7 Simulador ---------- */
+.sim { display: grid; grid-template-columns: 1fr 520px; gap: 26px; margin-top: 20px; }
+.sim-controls { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+.presets { display: flex; gap: 8px; flex-wrap: wrap; }
+.presets button { border: 1px solid var(--line-strong); background: var(--surface-2); border-radius: 999px; padding: 7px 12px; font-size: 13px; font-weight: 700; cursor: pointer; color: var(--ink); }
+.presets button:hover { border-color: var(--accent); }
+.field .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.field label { font-size: 14.5px; font-weight: 700; }
+.field .val { display: flex; align-items: center; gap: 6px; }
+.field input[type=number] {
+  width: 120px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 7px 10px; font-size: 17px; font-weight: 800; text-align: right; color: var(--ink); background: var(--surface);
+}
+.field input[type=number]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.field .unit { font-size: 13px; color: var(--ink-3); font-weight: 600; }
+input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; cursor: pointer; }
+.assume { font-size: 12px; color: var(--ink-3); line-height: 1.45; margin: 0; }
+.sim-out { background: var(--dark-bg); color: var(--dark-ink); border-radius: var(--radius-card); padding: 24px 26px; display: flex; flex-direction: column; box-shadow: var(--shadow-float); }
+.sim-out .lab { font-size: 13px; color: var(--dark-ink-2); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.sim-out .net { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; color: #7be0a5; margin: 6px 0 2px; font-variant-numeric: tabular-nums; }
+.sim-out .mult { font-size: 15px; color: var(--dark-ink-2); }
+.sim-out .mult b { color: #fff; }
+.bars { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
+.bar-row .t { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+.bar-row .t b { font-variant-numeric: tabular-nums; }
+.track { height: 10px; background: var(--dark-line); border-radius: 999px; overflow: hidden; }
+.track i { display: block; height: 100%; border-radius: 999px; background: #ff7a63; transition: width 400ms var(--ease-out); }
+.track i.b2 { background: #b18cf5; }
+.bar-row small { font-size: 12.5px; color: var(--dark-ink-2); }
+.cost-row { display: flex; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--dark-line); font-size: 14px; }
+.sim-out .go { margin-top: auto; display: flex; gap: 10px; padding-top: 16px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; border-radius: 12px; padding: 12px 18px;
+  font-weight: 800; font-size: 14.5px; border: 1px solid transparent; cursor: pointer; transition: background 180ms, border-color 180ms;
+}
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-ghost { background: transparent; border-color: var(--dark-line); color: var(--dark-ink); }
+.btn-ghost:hover { border-color: #6b6058; }
+.btn-light { background: var(--surface); color: var(--ink); border-color: var(--line); }
+.btn-wa { background: #1f9d55; color: #fff; }
+.btn-wa:hover { background: #198246; }
+
+/* ---------- 8 Planes ---------- */
+.plans-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.cur { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+.cur button { border: 0; background: transparent; padding: 8px 16px; border-radius: 999px; font-weight: 800; font-size: 14px; cursor: pointer; color: var(--ink-2); }
+.cur button.on { background: var(--ink); color: #fff; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+.plan { padding: 20px 22px; position: relative; display: flex; flex-direction: column; }
+.plan.pop { border: 2px solid var(--accent); }
+.plan .ribbon { position: absolute; top: -12px; left: 22px; background: var(--accent); color: #fff; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+.plan h3 { font-size: 19px; }
+.plan .who { font-size: 13px; color: var(--ink-3); margin: 3px 0 10px; }
+.plan .price { font-size: 34px; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.plan .price small { font-size: 14px; color: var(--ink-3); font-weight: 600; }
+.plan .alt { font-size: 12.5px; color: var(--ink-3); margin-bottom: 10px; }
+.plan ul { margin: 0; padding: 10px 0 0; border-top: 1px solid var(--line); list-style: none; font-size: 13.5px; line-height: 1.45; }
+.plan li { padding: 3px 0 3px 20px; position: relative; color: var(--ink-2); }
+.plan li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 800; }
+.kits { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px; }
+.kit { background: var(--surface-2); border-radius: 12px; padding: 12px 14px; font-size: 13px; line-height: 1.4; color: var(--ink-2); }
+.kit b { display: block; color: var(--ink); font-size: 14px; }
+.kit .kp { display: block; font-weight: 800; color: var(--accent-hover); margin-top: 4px; font-size: 14px; font-variant-numeric: tabular-nums; }
+.plans-note { margin-top: 12px; font-size: 13px; color: var(--ink-3); display: flex; gap: 18px; flex-wrap: wrap; }
+.plans-note b { color: var(--ink); }
+
+/* ---------- 9 Preguntas difíciles ---------- */
+.faq { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; margin-top: 26px; }
+.faq .card { padding: 20px 22px; grid-column: span 2; }
+.faq .card.w { grid-column: span 3; }
+.faq .q { font-weight: 800; font-size: 17px; line-height: 1.3; display: flex; gap: 10px; }
+.faq .q span { flex: 0 0 26px; height: 26px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-hover); display: grid; place-items: center; font-size: 13px; }
+.faq .a { margin: 10px 0 0; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+.faq .a b { color: var(--ink); }
+
+/* ---------- 10 Piloto ---------- */
+.pilot { display: grid; grid-template-columns: 1fr 350px; gap: 36px; margin-top: 26px; }
+.ptl { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.ptl div { background: var(--dark-surface); border: 1px solid var(--dark-line); border-radius: 14px; padding: 16px; position: relative; }
+.ptl div b { display: block; color: #ff7a63; font-size: 11.5px; letter-spacing: .03em; white-space: nowrap; text-transform: uppercase; }
+.ptl div h4 { margin: 6px 0 6px; font-size: 17px; color: var(--dark-ink); }
+.ptl div p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--dark-ink-2); }
+.terms { margin-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.terms div { border-top: 2px solid #ff7a63; padding-top: 10px; font-size: 14px; line-height: 1.45; color: var(--dark-ink-2); }
+.terms div b { display: block; color: var(--dark-ink); font-size: 18px; }
+.measure { margin-top: 26px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; color: var(--dark-ink-2); }
+.measure .chip { background: rgba(250,247,242,0.08); border: 1px solid var(--dark-line); color: var(--dark-ink); }
+.cta-box { background: var(--dark-surface); border: 1px solid var(--dark-line); border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.cta-box h3 { font-size: 19px; margin-bottom: 4px; }
+.cta-box .btn { width: 100%; justify-content: flex-start; }
+.cta-box .who { font-size: 13px; color: var(--dark-ink-2); margin-top: 6px; line-height: 1.5; }
+.cta-box .who b { color: var(--dark-ink); }
+
+/* ---------- Guion imprimible ---------- */
+#script { display: none; }
+
+/* ---------- Responsive chrome ---------- */
+@media (max-width: 900px) {
+  .topbar .title-now { display: none; }
+  .ctl .lbl, .ctl kbd { display: none; }
+  .dots { display: none; }
+  .notes-inner { grid-template-columns: 1fr; }
+  .notes-side { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .slide, .enter, .track i { transition: none !important; }
+  .active .ph-toast, .active .kt.fly { animation: none !important; opacity: 1; transform: none; }
+}
+
+/* ---------- Impresión limpia ---------- */
+@page slide { size: 1280px 720px; margin: 0; }
+@page script { size: A4 portrait; margin: 16mm; }
+@media print {
+  html, body { height: auto; overflow: visible; background: #fff; }
+  .topbar, .controls, .notes, .progress { display: none !important; }
+  .app { position: static; display: block; }
+  .viewport { overflow: visible; }
+  .stage { position: static; transform: none !important; width: auto; height: auto; }
+  .slide {
+    page: slide; position: relative; inset: auto; width: 1280px; height: 720px; border-radius: 0;
+    opacity: 1 !important; visibility: visible !important; transform: none !important; transition: none !important;
+    break-after: page; page-break-after: always; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .enter { opacity: 1 !important; transform: none !important; }
+  .ph-toast { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .kt.fly { opacity: 1 !important; transform: none !important; animation: none !important; }
+  body.print-script .viewport { display: none; }
+  body.print-script #script { display: block; page: script; font-family: var(--font); color: #1c1917; }
+  #script h1 { font-size: 20px; margin: 0 0 4px; }
+  #script .sm { font-size: 11px; color: #57534e; margin-bottom: 14px; }
+  #script section { break-inside: avoid; border-top: 1px solid #ddd; padding: 10px 0; font-size: 12px; line-height: 1.5; }
+  #script section h2 { font-size: 14px; margin: 0 0 4px; }
+  #script q { font-weight: 700; quotes: "«" "»"; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="progress" id="progress"></div>
+  <header class="topbar">
+    <span class="brand"><img src="../branding/mark.svg" alt="" width="26" height="26">SaleListo</span>
+    <span class="title-now" id="titleNow">Portada</span>
+    <span class="counter" id="counter">1 / 10</span>
+  </header>
+
+  <main class="viewport" id="viewport">
+    <div class="stage" id="stage">
+
+      <!-- ============ 1 · PORTADA ============ -->
+      <section class="slide dark" data-title="Portada ejecutiva">
+        <div class="pad cover">
+          <div>
+            <img class="cover-logo enter" src="../branding/logo-dark.svg" alt="SaleListo">
+            <p class="kicker enter d1">Propuesta para socios y encargados de salón</p>
+            <h1 class="enter d2">Más rotación y segundas rondas. <span class="hl">0% comisión</span> y <span class="hl">cero celulares</span> en el salón.</h1>
+            <p class="lead enter d3">Pedidos por QR en cada mesa, comandas separadas al instante en Cocina, Barra y Mostrador, y un equipo de salón coordinado sin pantallas en la mano.</p>
+            <div class="cover-chips enter d4">
+              <span class="chip"><b>14 días</b> de piloto sin riesgo</span>
+              <span class="chip"><b>1</b> sector crítico</span>
+              <span class="chip">Activo en <b>48 h</b></span>
+              <span class="chip"><b>0%</b> sobre tus ventas</span>
+            </div>
+          </div>
+          <div class="stack enter d3" aria-hidden="true">
+            <div class="tk t1"><span class="tag">Cocina</span><b>🍳 T5 · Retirar</b><small>Provoleta · Bife de chorizo</small></div>
+            <div class="tk t2"><span class="tag">Barra</span><b>🍸 T2 · Retirar</b><small>2 IPA · 1 Fernet con coca</small></div>
+            <div class="tk t3"><span class="tag">Mostrador</span><b>🍣 V3 · Retirar</b><small>Handroll salmón x2</small></div>
+            <div class="tk t4"><span class="tag">Cuenta</span><b>💵 M8 · Abona con $50.000</b><small>Llevar $15.800 de vuelto · 1 solo viaje</small></div>
+          </div>
+        </div>
+        <div class="sfoot"><span>Simón Martínez de Guereñu · Dirección Comercial y de Producto</span><span>01</span></div>
+        <div class="speaker">
+          <h4>Apertura (30 segundos)</h4>
+          <p><q>Gracias por el rato. Te robo diez minutos y te muestro una sola cosa: cómo sumar mesas y segundas rondas en tu sector más caliente sin tocar tu caja, sin comisiones y sin mozos caminando con el celular en la mano.</q></p>
+          <ul>
+            <li>Mirá a la persona, no a la pantalla. La portada se sostiene sola.</li>
+            <li>Preguntá antes de avanzar: <q>¿Cuál es hoy el sector que más te cuesta atender un viernes a la noche?</q> Anotá la respuesta: es el sector del piloto.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 2 · COSTO INVISIBLE ============ -->
+      <section class="slide" data-title="El costo invisible del viernes a la noche">
+        <div class="pad">
+          <p class="kicker enter">El problema</p>
+          <h2 class="enter d1">El costo invisible del viernes a la noche no está en la cocina. Está en la espera.</h2>
+          <div class="cost-grid">
+            <div>
+              <div class="card stat enter d2">
+                <div class="big">18 a 25 min</div>
+                <p>muertos por mesa entre que se sienta y se levanta: esperando carta, que les tomen el pedido, la cuenta y el vuelto.</p>
+              </div>
+              <div class="card stat enter d3">
+                <div class="big">4 viajes</div>
+                <p>de un mozo para cobrar una sola mesa. Multiplicalo por cada mesa del turno y entendés por qué el salón se siente desbordado.</p>
+              </div>
+            </div>
+            <div class="card timeline enter d3">
+              <h3>Una mesa de cuatro, viernes 21:30, sin SaleListo</h3>
+              <p class="sub">Minutos en los que la mesa está ocupada pero no consume</p>
+              <div class="tbar" aria-label="Distribución de 23 minutos muertos">
+                <div style="flex:6;background:#d97706">6'</div>
+                <div style="flex:5;background:#b45309">5'</div>
+                <div style="flex:4;background:#6d28d9">4'</div>
+                <div style="flex:8;background:#d9412b">8'</div>
+              </div>
+              <div class="tlegend">
+                <span><i style="background:#d97706"></i>Esperar que alguien acerque la carta o la explique</span>
+                <span><i style="background:#b45309"></i>Ya eligieron, pero el mozo está en otra mesa</span>
+                <span><i style="background:#6d28d9"></i>Vaso vacío, la segunda ronda que nadie tomó</span>
+                <span><i style="background:#d9412b"></i>Pedir la cuenta, dividirla y esperar el cambio</span>
+              </div>
+              <div class="trips">
+                <div class="trip"><b>1</b>Por fin lo ven y le piden la cuenta</div>
+                <div class="trip"><b>2</b>Vuelve con el pre-ticket impreso</div>
+                <div class="trip"><b>3</b>Busca el pago y el «¿cuánto es cada uno?»</div>
+                <div class="trip"><b>4</b>Regresa con el vuelto o el posnet</div>
+              </div>
+            </div>
+          </div>
+          <div class="mathband enter d4">
+            <span>25 mesas · 2,6 vueltas por turno · 85% de ocupación · 20 minutos muertos por mesa</span>
+            <strong>= más de 18 horas-mesa por noche</strong>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>02</span></div>
+        <div class="speaker">
+          <h4>Hacer que el dueño se vea en la lámina (1 minuto)</h4>
+          <p><q>Esto no es culpa de tus mozos. Un viernes el mozo pasa más de la mitad del turno caminando para preguntar, llevar el pre-ticket y volver con el cambio.</q></p>
+          <ul>
+            <li>Señalá la barra violeta: <q>Este pedacito es la segunda pinta que no se vendió porque nadie pasó por la mesa.</q></li>
+            <li>Leé la franja de abajo en voz alta y preguntá: <q>¿Cuántas mesas tenés vos y cuántas veces las das vuelta un viernes?</q> Usá esos números en la lámina 7.</li>
+            <li>No discutas los minutos exactos. Si dice <q>en mi local son menos</q>, respondé: <q>Perfecto, en el piloto lo medimos con tus datos reales.</q></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 3 · CÓMO FUNCIONA ============ -->
+      <section class="slide" data-title="Cómo funciona en 15 segundos">
+        <div class="pad">
+          <p class="kicker enter">Experiencia del cliente</p>
+          <h2 class="enter d1">Cómo funciona en 15 segundos, desde el celular de tu cliente.</h2>
+          <div class="how">
+            <div class="phone enter d2" aria-hidden="true">
+              <div class="scr">
+                <div class="ph-head"><b>Terraza · Mesa T4</b><small>Carta del día · Sin bajar apps</small></div>
+                <div class="ph-tabs"><span class="on">Tiradas</span><span>Platitos</span><span>Postres</span></div>
+                <div class="ph-item"><span class="em">🍺</span><div><b>IPA de la casa</b><small>Pinta 500 ml · $6.900</small></div><span class="plus">+</span></div>
+                <div class="ph-item"><span class="em">🍟</span><div><b>Papas rústicas</b><small>Veggie · $8.400</small></div><span class="plus">+</span></div>
+                <div class="ph-item"><span class="em">🧀</span><div><b>Provoleta</b><small>Sin TACC · $10.900</small></div><span class="plus">+</span></div>
+                <div class="ph-toast">✔ Enviado: 1 a Barra · 1 a Cocina</div>
+                <div class="ph-cta">Enviar pedido · $15.300</div>
+              </div>
+            </div>
+            <div class="steps">
+              <div class="card step enter d2"><span class="sec">0 s</span><div><h3>Escanea el QR fijo de su mesa</h3><p>Con la cámara del teléfono y sus propios datos 4G o 5G. Sin pedir la clave del Wi-Fi, sin bajar apps, sin registrarse.</p></div></div>
+              <div class="card step enter d3"><span class="sec">5 s</span><div><h3>Ve la carta con fotos y precios del día</h3><p>Filtros Sin TACC, Veggie o Sin alcohol, aclaraciones por plato y botón para repetir la ronda en un toque.</p></div></div>
+              <div class="card step enter d4"><span class="sec">15 s</span><div><h3>Envía y el pedido ya está en la estación correcta</h3><p>Las pintas llegan a Barra, la provoleta a Cocina. Tu mozo solo aparece para lo que importa: servir y atender.</p></div></div>
+              <div class="badges enter d5">
+                <span class="chip">📶 Usa el 4G/5G del cliente</span>
+                <span class="chip">🔒 QR con token no adivinable</span>
+                <span class="chip">🙋 Llamar al mozo en 2 toques</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>03</span></div>
+        <div class="speaker">
+          <h4>Demostración en vivo (1 minuto)</h4>
+          <p>Si estás en el local: poné el display acrílico sobre la mesa y pedile al dueño que escanee con su propio celular. Que él mismo pida una IPA.</p>
+          <p><q>Fijate que no te pedí el Wi-Fi ni te hice bajar nada. Tu Wi-Fi queda libre para la caja y las pantallas.</q></p>
+          <ul>
+            <li>Si pregunta por gente mayor: <q>El mozo sigue estando. El QR suma, no reemplaza: quien quiere pedir de palabra, pide de palabra.</q></li>
+            <li>Remarcá «repetir ronda en un toque»: es la palanca de las segundas pintas.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 4 · RUTEO ============ -->
+      <section class="slide" data-title="Ruteo instantáneo en hasta 3 estaciones">
+        <div class="pad">
+          <p class="kicker enter">Detrás del mostrador</p>
+          <h2 class="enter d1">Un pedido, tres estaciones, cero comandas de papel perdidas.</h2>
+          <div class="route">
+            <div class="card order enter d2">
+              <h3>Mesa T7 · Terraza</h3>
+              <small class="meta">Entró 21:42 · 1 solo envío del cliente</small>
+              <ul>
+                <li><i style="background:var(--bar)"></i>2 IPA de la casa</li>
+                <li><i style="background:var(--bar)"></i>1 Negroni</li>
+                <li><i style="background:var(--kitchen)"></i>1 Provoleta</li>
+                <li><i style="background:var(--kitchen)"></i>1 Bondiola braseada</li>
+                <li><i style="background:var(--ok)"></i>2 Handroll de salmón</li>
+                <li><i style="background:var(--ok)"></i>1 Chorizo a la parrilla</li>
+              </ul>
+            </div>
+            <div class="arrow enter d3" aria-hidden="true">→</div>
+            <div class="stations">
+              <div class="station enter d3">
+                <header style="background:#D97706">🍳 Cocina <small>3 activas</small></header>
+                <div class="body">
+                  <div class="kt fly"><b>T7 · Terraza <span class="sla g">🟢 3 min</span></b><div class="items">Provoleta · Bondiola braseada</div></div>
+                  <div class="kt fly f2"><b>S2 · Salón <span class="sla y">🟠 9 min</span></b><div class="items">Milanesa napolitana x2</div></div>
+                  <div class="kt fly f3 late"><b>V1 · Vereda <span class="sla r">🔴 16 min</span></b><div class="items">Ojo de bife · Papas</div></div>
+                </div>
+              </div>
+              <div class="station enter d4">
+                <header style="background:#6D28D9">🍸 Barra <small>2 activas</small></header>
+                <div class="body">
+                  <div class="kt fly"><b>T7 · Terraza <span class="sla g">🟢 1 min</span></b><div class="items">2 IPA · Negroni</div></div>
+                  <div class="kt fly f2"><b>T3 · Terraza <span class="sla g">🟢 4 min</span></b><div class="items">Fernet con coca x3</div></div>
+                </div>
+              </div>
+              <div class="station enter d5">
+                <header style="background:#2F8A57">🍣 Mostrador <small>Sushi / Parrilla</small></header>
+                <div class="body">
+                  <div class="kt fly"><b>T7 · Terraza <span class="sla g">🟢 2 min</span></b><div class="items">Handroll salmón x2 · Chorizo</div></div>
+                  <div class="kt fly f2"><b>B4 · Barra <span class="sla y">🟠 8 min</span></b><div class="items">Nigiri mixto x6</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="routefoot">
+            <div class="card enter d5"><span class="ico">🚦</span><span><b>Semáforo SLA en cada comanda:</b> verde hasta 8 min, ámbar de 8 a 15 y rojo con alerta desde los 15. El jefe de cocina ve qué mesa rescatar antes de que el cliente reclame.</span></div>
+            <div class="card enter d6"><span class="ico">🚫</span><span><b>Cajón de agotados en 1 toque:</b> se terminó la bondiola, cocina la pausa desde su pantalla y desaparece al instante de todas las mesas. Nadie pide lo que no hay.</span></div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>04</span></div>
+        <div class="speaker">
+          <h4>Hablarle al jefe de cocina y al barman (1 minuto)</h4>
+          <p><q>El cliente manda un solo pedido. El sistema lo parte solo: las pintas a Barra, la provoleta a Cocina y el handroll o el chorizo al Mostrador. Cada uno ve solamente lo suyo.</q></p>
+          <ul>
+            <li>Adaptá la tercera estación al local: Sushi en un japonés, Parrilla en una terraza con fuegos, Vitrina dulce en una cafetería.</li>
+            <li>Señalá la tarjeta roja: <q>Esta mesa ya está en 16 minutos. Hoy te enterás cuando el cliente se queja; acá te enterás antes.</q></li>
+            <li>Agotados: <q>Un toque desde cocina y deja de venderse. Sin gritar al salón.</q></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 5 · TECNOLOGÍA INVISIBLE ============ -->
+      <section class="slide" data-title="Tecnología invisible en el salón">
+        <div class="pad">
+          <p class="kicker enter">Cero celulares en la mano</p>
+          <h2 class="enter d1">Tecnología invisible en el salón. Tus mozos atienden mirando a la gente, no a una pantalla.</h2>
+          <div class="vs">
+            <span class="vs-badge enter d3">o</span>
+            <div class="card opt featured enter d2">
+              <div class="opt-head">
+                <div><h3>🖥️ Estación de Mozos fija en el Pase</h3><p>Incluida de serie en todos los planes</p></div>
+                <div class="price-tag"><b>USD 0</b><small>de hardware SaleListo</small></div>
+              </div>
+              <div class="opt-row"><span>Dónde está</span><div>Una tablet o pantalla horizontal que ya tengas, en el mostrador del pase o en la barra.</div></div>
+              <div class="opt-row"><span>El celular</span><div>Guardado en el locker o en la caja durante todo el turno.</div></div>
+              <div class="opt-row"><span>Cómo avisa</span><div>Columnas en vivo por mozo, legibles a 4 metros: qué retirar en Cocina, Barra y Mostrador, qué mesa llama y qué cuenta cobrar.</div></div>
+              <div class="opt-row"><span>Ideal para</span><div>Salones compactos, barras y locales donde el pase queda a la vista.</div></div>
+            </div>
+            <div class="card opt enter d3">
+              <div class="opt-head">
+                <div><h3>⌚ Kit Pulsera Xiaomi Smart Band</h3><p>Opcional, compatible con los 3 planes</p></div>
+                <div class="price-tag"><b>USD 145</b><small>Pack x3 · Pack x5 USD 230</small></div>
+              </div>
+              <div class="opt-row"><span>Dónde está</span><div>En la muñeca del mozo, vinculada por Bluetooth BLE.</div></div>
+              <div class="opt-row"><span>El celular</span><div>Guardado y bloqueado en el bolsillo. No se saca nunca en el salón.</div></div>
+              <div class="opt-row"><span>Cómo avisa</span><div>Vibra y se lee en medio segundo: <span class="band-mini">🍸 T2 · Retirar Barra</span></div></div>
+              <div class="opt-row"><span>Batería</span><div>10 a 14 días reales por carga.</div></div>
+              <div class="opt-row"><span>Ideal para</span><div>Patios largos, terrazas por escalera, entrepisos y locales de dos plantas.</div></div>
+            </div>
+          </div>
+          <p class="vs-foot enter d4">En los dos casos, <span>ningún mozo saca el celular frente a un cliente.</span></p>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>05</span></div>
+        <div class="speaker">
+          <h4>Desarmar el miedo número uno: «no quiero a mis mozos con el celular» (1 minuto)</h4>
+          <p><q>A mí tampoco me gusta ver un mozo mirando el teléfono. Por eso hay dos formas de trabajar y en ninguna el celular está en la mano.</q></p>
+          <ul>
+            <li>Si el local es compacto, cerrá con la izquierda: <q>Usás una tablet que ya tengas en el pase. Costo de hardware cero.</q></li>
+            <li>Si tiene patio, terraza o entrepiso, mostrá la pulsera en tu muñeca y hacela vibrar: <q>Tu mozo está arriba en la terraza y se entera de que las pintas están listas sin bajar a mirar.</q></li>
+            <li>No empujes la pulsera si no hace falta. El Plan Base ya resuelve el salón sin celulares.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 6 · CIERRE EN 1 VIAJE ============ -->
+      <section class="slide" data-title="Cierre en 1 solo viaje real">
+        <div class="pad">
+          <p class="kicker enter">El momento de la cuenta</p>
+          <h2 class="enter d1">Cierre en un solo viaje real: la mesa divide, declara cómo paga y el mozo llega con el vuelto exacto.</h2>
+          <div class="close">
+            <div class="card bill enter d2" id="bill">
+              <h3>Pedir la cuenta <small>Mesa T4 · Terraza</small></h3>
+              <div class="row"><span>Consumo</span><b id="vqBase">$86.400</b></div>
+              <div class="lbl">Propina</div>
+              <div class="seg" id="vqTip">
+                <button type="button" data-v="0">Sin propina</button>
+                <button type="button" data-v="10" class="on">10%</button>
+                <button type="button" data-v="15">15%</button>
+              </div>
+              <div class="row" style="margin-top:8px"><span>Total con propina</span><b id="vqTotal">$95.040</b></div>
+              <div class="lbl">Vaquita: dividir entre</div>
+              <div class="stepper"><button type="button" id="vqMinus" aria-label="Una persona menos">−</button><output id="vqN">4</output><button type="button" id="vqPlus" aria-label="Una persona más">+</button></div>
+              <div class="each"><span>Pone cada uno</span><b id="vqEach">$23.760</b></div>
+              <div class="lbl">Pagan en efectivo con</div>
+              <div class="seg" id="vqCash">
+                <button type="button" data-v="0">Importe justo</button>
+                <button type="button" data-v="100000" class="on">$100.000</button>
+                <button type="button" data-v="120000">$120.000</button>
+              </div>
+            </div>
+            <div class="close-right">
+              <div class="pase-card enter d3">
+                <div class="lab">Así lo ve el mozo en el Pase o en su pulsera</div>
+                <div class="main" id="vqPase">💵 T4 · Abona con $100.000 → <em>Llevar $4.960 de vuelto</em></div>
+                <div class="meta" id="vqMeta">Propina 10% incluida · 4 personas · La tarjeta queda fija hasta cerrar la mesa</div>
+              </div>
+              <div class="ba">
+                <div class="card before enter d4">
+                  <h4>Hoy: 4 viajes</h4>
+                  <ol><li>Le hacen señas para pedir la cuenta</li><li>Lleva el pre-ticket</li><li>Vuelve a buscar la plata</li><li>Regresa con el cambio</li></ol>
+                </div>
+                <div class="card after enter d5">
+                  <h4>Con SaleListo: 1 viaje</h4>
+                  <ol><li>Llega con el ticket, el vuelto exacto o el posnet, sabiendo la propina. Listo.</li></ol>
+                  <p class="close-note" style="margin:10px 0 0">Tarjeta, QR o transferencia también quedan declarados de antemano.</p>
+                </div>
+              </div>
+              <div class="pay-chips enter d6"><span class="chip">💵 Efectivo con vuelto</span><span class="chip">💳 Tarjeta</span><span class="chip">📱 QR</span><span class="chip">🏦 Transferencia</span><span class="chip a">✚ Propina declarada</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>06</span></div>
+        <div class="speaker">
+          <h4>Interactivo: que el dueño toque (1 minuto)</h4>
+          <p><q>Esto es la mesa argentina: cuatro amigos, uno paga con un billete grande y nadie sabe cuánto pone cada uno.</q></p>
+          <ul>
+            <li>Pasale la tablet: que cambie la propina y la cantidad de personas. El vuelto del Pase se recalcula solo.</li>
+            <li><q>Tu mozo ya sale de la barra con el cambio exacto en la mano. Se terminó el ir y volver.</q></li>
+            <li>Conectá con la lámina 2: <q>Esos 8 minutos rojos de la cuenta se van casi enteros.</q></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 7 · SIMULADOR ============ -->
+      <section class="slide" data-title="Simulador de retorno en vivo">
+        <div class="pad">
+          <p class="kicker enter">Hagamos la cuenta con tus números</p>
+          <h2 class="enter d1">Simulador de retorno en vivo para tu local.</h2>
+          <div class="sim">
+            <div class="card sim-controls enter d2">
+              <div class="presets" aria-label="Ejemplos rápidos">
+                <button type="button" data-m="10" data-t="22000" data-s="4">☕ Café de especialidad</button>
+                <button type="button" data-m="24" data-t="42000" data-s="3">🍜 Bistró / Ramen</button>
+                <button type="button" data-m="45" data-t="38000" data-s="4">🍺 Cervecería con patio</button>
+              </div>
+              <div class="field">
+                <div class="top"><label for="simM">Cantidad de mesas</label><span class="val"><input type="number" id="simMn" min="8" max="80" step="1" value="25" aria-label="Cantidad de mesas"><span class="unit">mesas</span></span></div>
+                <input type="range" id="simM" min="8" max="80" step="1" value="25">
+              </div>
+              <div class="field">
+                <div class="top"><label for="simT">Ticket promedio por mesa</label><span class="val"><span class="unit">ARS</span><input type="number" id="simTn" min="15000" max="150000" step="1000" value="45000" aria-label="Ticket promedio por mesa en pesos"></span></div>
+                <input type="range" id="simT" min="15000" max="150000" step="1000" value="45000">
+              </div>
+              <div class="field">
+                <div class="top"><label for="simS">Turnos fuertes por semana</label><span class="val"><input type="number" id="simSn" min="1" max="10" step="1" value="3" aria-label="Turnos fuertes por semana"><span class="unit">turnos</span></span></div>
+                <input type="range" id="simS" min="1" max="10" step="1" value="3">
+              </div>
+              <p class="assume">Supuestos conservadores, idénticos a la calculadora del sitio: 2,6 rotaciones por turno fuerte con 85% de ocupación, +10% de mesas atendidas por la rotación recuperada, +6% de ticket por segundas rondas, margen de contribución del 67% (CMV 33%) y 4,3 semanas por mes. Estimación orientativa, no constituye garantía de resultados.</p>
+            </div>
+            <div class="sim-out enter d3" aria-live="polite">
+              <span class="lab">Ganancia neta mensual estimada</span>
+              <div class="net" id="simNet">+ ARS 0</div>
+              <div class="mult"><b id="simMult">0x</b> el costo del plan <b id="simPlan">Salón / Bistró</b></div>
+              <div class="bars">
+                <div class="bar-row"><div class="t"><span>Mesas extra por rotación</span><b id="simRot">ARS 0</b></div><div class="track"><i id="simRotBar"></i></div><small id="simRotNote">0 mesas más por mes</small></div>
+                <div class="bar-row"><div class="t"><span>Segundas rondas y postres</span><b id="simRounds">ARS 0</b></div><div class="track"><i class="b2" id="simRoundsBar"></i></div><small>Contribución neta, ya descontado el costo de mercadería</small></div>
+                <div class="cost-row"><span>Abono fijo mensual · 0% comisión</span><b id="simCost">- ARS 102.375</b></div>
+              </div>
+              <div class="go">
+                <a class="btn btn-accent" id="simLink" href="../app/public/index.html?mesas=25&amp;ticket=45000&amp;turnos=3#roi" target="_blank" rel="noopener">Abrir en la calculadora completa ↗</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>07</span></div>
+        <div class="speaker">
+          <h4>El momento de la verdad (2 minutos)</h4>
+          <p><q>No te pido que me creas. Decime cuántas mesas tenés y cuánto deja una mesa promedio, y lo calculamos acá con supuestos conservadores.</q></p>
+          <ul>
+            <li>Cargá SUS números, no los de ejemplo. Los inputs aceptan teclado: tocá el número y escribí.</li>
+            <li>Si el resultado le parece alto, bajá el ticket o los turnos con él: <q>Aun siendo pesimistas, el abono se paga solo con muy pocas mesas extra por mes.</q></li>
+            <li>El botón abre la calculadora del sitio con los mismos valores para mandársela después por WhatsApp.</li>
+            <li>Nunca prometas el número: es una estimación. El piloto es donde se mide de verdad.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 8 · PLANES ============ -->
+      <section class="slide" data-title="Planes transparentes">
+        <div class="pad">
+          <div class="plans-head">
+            <div>
+              <p class="kicker enter">Precios claros</p>
+              <h2 class="enter d1">Abono fijo mensual. Lo que vendés en tus mesas es todo tuyo.</h2>
+            </div>
+            <div class="cur enter d2" role="group" aria-label="Moneda">
+              <button type="button" data-cur="ars" class="on">ARS</button>
+              <button type="button" data-cur="usd">USD</button>
+            </div>
+          </div>
+          <div class="plans">
+            <div class="card plan enter d2">
+              <h3>Barra / Café</h3>
+              <p class="who">Cafeterías, barras y locales chicos</p>
+              <div class="price" data-usd="35">ARS 55.125 <small>/ mes</small></div>
+              <div class="alt" data-alt-usd="35">USD 35 de referencia</div>
+              <ul><li>Hasta 12 mesas con QR fijo y 2 sectores</li><li>Ruteo a Cocina, Barra y Mostrador</li><li>Estación de Mozos fija incluida</li><li>Vaquita, vuelto exacto y resumen diario</li></ul>
+            </div>
+            <div class="card plan pop enter d3">
+              <span class="ribbon">Más elegido</span>
+              <h3>Salón / Bistró</h3>
+              <p class="who">Restaurantes, bistrós y cervecerías con vereda o terraza</p>
+              <div class="price" data-usd="65">ARS 102.375 <small>/ mes</small></div>
+              <div class="alt" data-alt-usd="65">USD 65 de referencia</div>
+              <ul><li>Hasta 30 mesas y 5 sectores</li><li>Mozos ilimitados, balanceo y reasignación automática</li><li>Pase filtrable por sector</li><li>Arqueo por turno hasta las 06:00 AM y CSV para Excel</li></ul>
+            </div>
+            <div class="card plan enter d4">
+              <h3>Gran Salón</h3>
+              <p class="who">Patios cerveceros, rooftops y más de 30 mesas</p>
+              <div class="price" data-usd="110">ARS 173.250 <small>/ mes</small></div>
+              <div class="alt" data-alt-usd="110">USD 110 de referencia</div>
+              <ul><li>Mesas y sectores ilimitados</li><li>Múltiples estaciones de pase por planta</li><li>Arqueo histórico y propinas por mozo</li><li>Ejecutivo de cuenta dedicado</li></ul>
+            </div>
+          </div>
+          <div class="kits">
+            <div class="kit enter d4"><b>Onboarding Express 48 h</b>Carta cargada, QRs y Pase listos<span class="kp" data-usd="40">ARS 63.000</span></div>
+            <div class="kit enter d5"><b>Kit físico QR llave en mano</b>Acrílicos o PVC UV para salón y vereda<span class="kp" data-usd="95" data-usd-to="160">ARS 149.625 a 252.000</span></div>
+            <div class="kit enter d5"><b>Kit Pulsera Pack x3</b>Xiaomi Smart Band vinculada<span class="kp" data-usd="145">ARS 228.375</span></div>
+            <div class="kit enter d6"><b>Kit Pulsera Pack x5</b>Para patios y dos plantas<span class="kp" data-usd="230">ARS 362.250</span></div>
+          </div>
+          <div class="plans-note enter d6"><span><b>0% comisión</b> sobre ventas</span><span><b>Sin permanencia</b> mínima</span><span>Cotización BNA de referencia: <b>1 USD = ARS 1.575</b></span><span>Kits opcionales, pago único</span></div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>08</span></div>
+        <div class="speaker">
+          <h4>Precio sin rodeos (1 minuto)</h4>
+          <p><q>Pagás un abono fijo. No te cobramos un porcentaje de lo que vendés: si un sábado facturás el doble, el abono es el mismo.</q></p>
+          <ul>
+            <li>Usá el botón ARS / USD según cómo piense el dueño. En Argentina, mostrá ARS primero.</li>
+            <li>Recomendá el plan según la cantidad de mesas que te dio en la lámina 7; no ofrezcas los tres a la vez.</li>
+            <li>Kits: <q>Son opcionales. Para el piloto no necesitás comprar nada.</q> El onboarding es bonificable al pasar a plan pago con débito automático.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 9 · PREGUNTAS DIFÍCILES ============ -->
+      <section class="slide" data-title="Respuestas a las 5 preguntas difíciles">
+        <div class="pad">
+          <p class="kicker enter">Sin vueltas</p>
+          <h2 class="enter d1">Las 5 preguntas difíciles que siempre nos hacen, respondidas de frente.</h2>
+          <div class="faq">
+            <div class="card enter d2"><div class="q"><span>1</span>«¿Y si alguien de la vereda manda pedidos en broma o se va sin pagar?»</div><p class="a">Cada mesa tiene un <b>QR con token no adivinable</b>, nadie puede inventar la dirección desde su casa. En vereda, el mozo titular valida la primera entrega y puede <b>anular en un toque</b> una comanda sospechosa.</p></div>
+            <div class="card enter d3"><div class="q"><span>2</span>«En mi salón el Wi-Fi se cae cuando se llena.»</div><p class="a">El cliente pide con <b>sus propios datos 4G o 5G</b>. Tu Wi-Fi queda libre solo para la caja y las pantallas de Cocina, Barra y Pase.</p></div>
+            <div class="card enter d4"><div class="q"><span>3</span>«Ya tengo Maxirest o Fudo.»</div><p class="a">No se reemplaza nada. <b>Tu facturador fiscal ante ARCA sigue intacto.</b> SaleListo acelera el salón y te entrega el arqueo por turno en <b>CSV para Excel</b>.</p></div>
+            <div class="card w enter d5"><div class="q"><span>4</span>«Con la inflación cambio precios cada mes.»</div><p class="a"><b>Ajuste masivo por porcentaje en un clic</b>, con vista previa antes y después y <b>botón de deshacer</b>. Los QR impresos no se tocan nunca: la carta se actualiza sola.</p></div>
+            <div class="card w enter d6"><div class="q"><span>5</span>«¿Me ato a un contrato largo?»</div><p class="a"><b>Permanencia cero.</b> Abono en pesos, 0% de comisión y ajuste trimestral topeado por IPC o BNA. Si no te sirve, lo das de baja y listo, sin letra chica.</p></div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>09</span></div>
+        <div class="speaker">
+          <h4>Anticiparse a las objeciones (1 minuto)</h4>
+          <p><q>Antes de que me preguntes, te cuento lo que nos pregunta todo el mundo.</q> Leé solo la pregunta en voz alta y dejá que la respuesta la lea él.</p>
+          <ul>
+            <li>Si ya respondiste alguna durante la charla, saltala: <q>Esta ya la vimos.</q></li>
+            <li>Maxirest / Fudo: no hables mal de su sistema. <q>Es muy bueno de la caja para adentro; nosotros trabajamos de la caja para afuera.</q></li>
+            <li>Si aparece una sexta objeción que no está acá, anotala y respondé: <q>Lo vemos en el piloto con tu operación real.</q></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ============ 10 · PILOTO ============ -->
+      <section class="slide dark" data-title="Propuesta de piloto de 14 días">
+        <div class="pad">
+          <p class="kicker enter">La propuesta</p>
+          <h2 class="enter d1">Probalo 14 días en tu sector más difícil. <span class="hl">Decidís con tus propios números.</span></h2>
+          <div class="pilot">
+            <div>
+              <div class="ptl">
+                <div class="enter d2"><b>Hoy</b><h4>Elegimos el sector</h4><p>Vereda, patio, terraza o entrepiso: el que más te cuesta un viernes.</p></div>
+                <div class="enter d3"><b>48 horas</b><h4>Llave en mano</h4><p>Cargamos tu carta, armamos los QR, el Pase y capacitamos al equipo en 30 minutos.</p></div>
+                <div class="enter d4"><b>2 fines de semana</b><h4>Operás en vivo</h4><p>Acompañamiento por WhatsApp durante el servicio, también viernes y sábado.</p></div>
+                <div class="enter d5"><b>Día 14</b><h4>Mirás el arqueo</h4><p>Rotación, segundas rondas y cuentas cerradas. Si no te cierra, devolvés lo prestado y listo.</p></div>
+              </div>
+              <div class="terms">
+                <div class="enter d5"><b>ARS 0</b>Piloto 100% bonificado, sin compromiso. Displays y pulseras en préstamo.</div>
+                <div class="enter d6"><b>1 sector</b>No tocamos el resto del salón ni tu caja durante la prueba.</div>
+                <div class="enter d6"><b>0 celulares</b>Estación de Mozos fija en el pase desde el primer día.</div>
+              </div>
+              <div class="measure enter d6"><span>El día 14 miramos juntos:</span><span class="chip">Mesas por turno</span><span class="chip">Segundas rondas</span><span class="chip">Tiempo de cuenta</span><span class="chip">Arqueo CSV</span></div>
+            </div>
+            <div class="cta-box enter d4">
+              <h3>Arrancamos cuando digas</h3>
+              <a class="btn btn-accent" href="../app/public/demo.html" target="_blank" rel="noopener">▶ Ver la demo en vivo</a>
+              <a class="btn btn-ghost" href="../app/public/index.html" target="_blank" rel="noopener">🌐 Recorrer el sitio de SaleListo</a>
+              <a class="btn btn-wa" href="https://wa.me/541138436571?text=Hola%20Sim%C3%B3n%2C%20quiero%20activar%20el%20piloto%20de%2014%20d%C3%ADas%20de%20SaleListo." target="_blank" rel="noopener">💬 WhatsApp (+54)1138436571</a>
+              <a class="btn btn-ghost" href="mailto:ventas@salelisto.com?subject=Piloto%20de%2014%20d%C3%ADas%20SaleListo">✉ ventas@salelisto.com</a>
+              <p class="who"><b>Simón Martínez de Guereñu</b><br>Dirección Comercial y de Producto</p>
+            </div>
+          </div>
+        </div>
+        <div class="sfoot"><span><img src="../branding/mark.svg" alt="">SaleListo</span><span>10</span></div>
+        <div class="speaker">
+          <h4>Cierre: pedir el sí al piloto, no a la compra (1 minuto)</h4>
+          <p><q>No te pido que lo compres. Te propongo que lo pruebes dos fines de semana en el sector que me dijiste al principio. En 48 horas lo dejamos andando y el día 14 miramos juntos los números.</q></p>
+          <ul>
+            <li>Volvé al sector que anotaste en la portada: <q>¿Arrancamos por la terraza este fin de semana o el próximo?</q> Pregunta de dos opciones, ambas son sí.</li>
+            <li>Pedí la carta actual (foto, PDF o planilla) y el nombre del encargado de turno para coordinar la capacitación.</li>
+            <li>Si duda, mostrá el acuerdo de piloto de 1 carilla y abrí la demo en vivo desde el primer botón.</li>
+            <li>Al salir, mandá por WhatsApp el link de la calculadora con sus números (lámina 7).</li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <section class="notes" id="notes" aria-label="Notas del orador" aria-hidden="true">
+    <div class="notes-inner">
+      <div class="notes-body" id="notesBody"></div>
+      <div class="notes-side">
+        <span>Tiempo de reunión</span>
+        <span class="timer" id="timer">00:00</span>
+        <span>Siguiente: <b id="nextTitle">El costo invisible</b></span>
+        <button type="button" class="ctl" id="timerReset">Reiniciar reloj</button>
+        <button type="button" class="ctl" id="printScript">Imprimir guion</button>
+      </div>
+    </div>
+  </section>
+
+  <nav class="controls" aria-label="Navegación de la presentación">
+    <button type="button" class="ctl" id="prevBtn" aria-label="Lámina anterior">←<span class="lbl">Anterior</span></button>
+    <div class="dots" id="dots"></div>
+    <button type="button" class="ctl primary" id="nextBtn" aria-label="Lámina siguiente"><span class="lbl">Siguiente</span>→</button>
+    <button type="button" class="ctl" id="notesBtn" aria-pressed="false" aria-controls="notes">🗒<span class="lbl">Notas</span><kbd>N</kbd></button>
+    <button type="button" class="ctl" id="fsBtn">⛶<span class="lbl">Pantalla completa</span><kbd>F</kbd></button>
+    <button type="button" class="ctl" id="printBtn" aria-label="Imprimir láminas">🖨<span class="lbl">Imprimir</span></button>
+  </nav>
+</div>
+
+<div id="script" aria-hidden="true"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+
+  var slides = $$('.slide');
+  var total = slides.length;
+  var current = 0;
+  var notesOpen = false;
+  var NOTES_H = 220;
+
+  /* ---------- Escalado del lienzo 1280x720 ---------- */
+  function fit() {
+    var vp = $('#viewport');
+    var w = vp.clientWidth - 24;
+    var h = vp.clientHeight - 16;
+    var s = Math.max(0.2, Math.min(w / 1280, h / 720));
+    document.documentElement.style.setProperty('--s', s.toFixed(4));
+  }
+
+  /* ---------- Navegación ---------- */
+  var dotsWrap = $('#dots');
+  slides.forEach(function (sl, i) {
+    var d = document.createElement('button');
+    d.type = 'button';
+    d.className = 'dot';
+    d.setAttribute('aria-label', 'Ir a la lámina ' + (i + 1) + ': ' + sl.getAttribute('data-title'));
+    d.addEventListener('click', function () { go(i); });
+    dotsWrap.appendChild(d);
+  });
+  var dots = $$('.dot', dotsWrap);
+
+  function go(i) {
+    if (i < 0) i = 0;
+    if (i > total - 1) i = total - 1;
+    current = i;
+    slides.forEach(function (sl, k) {
+      sl.classList.toggle('active', k === i);
+      sl.classList.toggle('before', k < i);
+      sl.setAttribute('aria-hidden', k === i ? 'false' : 'true');
+      if ('inert' in sl) sl.inert = k !== i;
+    });
+    dots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+    $('#counter').textContent = (i + 1) + ' / ' + total;
+    $('#titleNow').textContent = slides[i].getAttribute('data-title');
+    $('#progress').style.width = ((i + 1) / total * 100) + '%';
+    $('#prevBtn').disabled = i === 0;
+    $('#nextBtn').disabled = i === total - 1;
+    renderNotes();
+    if (history.replaceState) history.replaceState(null, '', '#' + (i + 1));
+  }
+  function next() { go(current + 1); }
+  function prev() { go(current - 1); }
+
+  $('#prevBtn').addEventListener('click', prev);
+  $('#nextBtn').addEventListener('click', next);
+
+  /* ---------- Notas del orador ---------- */
+  function renderNotes() {
+    var sp = $('.speaker', slides[current]);
+    $('#notesBody').innerHTML = sp ? sp.innerHTML : '<p>Sin notas para esta lámina.</p>';
+    var nx = slides[current + 1];
+    $('#nextTitle').textContent = nx ? nx.getAttribute('data-title') : 'Fin de la presentación';
+  }
+  function toggleNotes(force) {
+    notesOpen = typeof force === 'boolean' ? force : !notesOpen;
+    document.documentElement.style.setProperty('--notes-h', notesOpen ? NOTES_H + 'px' : '0px');
+    $('#notes').setAttribute('aria-hidden', notesOpen ? 'false' : 'true');
+    $('#notesBtn').setAttribute('aria-pressed', notesOpen ? 'true' : 'false');
+    setTimeout(fit, 340);
+    fit();
+  }
+  $('#notesBtn').addEventListener('click', function () { toggleNotes(); });
+
+  var t0 = Date.now();
+  function tick() {
+    var sec = Math.floor((Date.now() - t0) / 1000);
+    var m = Math.floor(sec / 60), s = sec % 60;
+    $('#timer').textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  setInterval(tick, 1000);
+  $('#timerReset').addEventListener('click', function () { t0 = Date.now(); tick(); });
+
+  /* ---------- Pantalla completa ---------- */
+  function toggleFs() {
+    var el = document.documentElement;
+    var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!fsEl) {
+      var req = el.requestFullscreen || el.webkitRequestFullscreen;
+      if (req) { var p = req.call(el); if (p && p.catch) p.catch(function () {}); }
+    } else {
+      var ex = document.exitFullscreen || document.webkitExitFullscreen;
+      if (ex) ex.call(document);
+    }
+  }
+  $('#fsBtn').addEventListener('click', toggleFs);
+  ['fullscreenchange', 'webkitfullscreenchange'].forEach(function (ev) {
+    document.addEventListener(ev, function () { setTimeout(fit, 60); armIdle(); });
+  });
+
+  var idleTimer = null;
+  function armIdle() {
+    document.body.classList.remove('idle');
+    clearTimeout(idleTimer);
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      idleTimer = setTimeout(function () { if (!notesOpen) document.body.classList.add('idle'); }, 2600);
+    }
+  }
+  document.addEventListener('mousemove', armIdle);
+  document.addEventListener('touchstart', armIdle, { passive: true });
+
+  /* ---------- Impresión ---------- */
+  function buildScript() {
+    var html = '<h1>SaleListo · Guion del orador</h1><p class="sm">Presentación comercial de 10 láminas · WhatsApp (+54)1138436571 · ventas@salelisto.com</p>';
+    slides.forEach(function (sl, i) {
+      var sp = $('.speaker', sl);
+      html += '<section><h2>' + (i + 1) + '. ' + sl.getAttribute('data-title') + '</h2>' + (sp ? sp.innerHTML : '') + '</section>';
+    });
+    $('#script').innerHTML = html;
+  }
+  $('#printBtn').addEventListener('click', function () { document.body.classList.remove('print-script'); window.print(); });
+  $('#printScript').addEventListener('click', function () {
+    buildScript();
+    document.body.classList.add('print-script');
+    window.print();
+  });
+  window.addEventListener('afterprint', function () { document.body.classList.remove('print-script'); });
+
+  /* ---------- Teclado ---------- */
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    var typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable);
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (typing) {
+      if (e.key === 'Escape') e.target.blur();
+      return;
+    }
+    switch (e.key) {
+      case 'ArrowRight': case 'PageDown': next(); e.preventDefault(); break;
+      case 'ArrowLeft': case 'PageUp': prev(); e.preventDefault(); break;
+      case ' ': case 'Spacebar':
+        if (tag === 'BUTTON' || tag === 'A') return;
+        if (e.shiftKey) prev(); else next();
+        e.preventDefault(); break;
+      case 'Home': go(0); e.preventDefault(); break;
+      case 'End': go(total - 1); e.preventDefault(); break;
+      case 'f': case 'F': toggleFs(); e.preventDefault(); break;
+      case 'n': case 'N': toggleNotes(); e.preventDefault(); break;
+      default:
+        if (/^[1-9]$/.test(e.key)) { go(+e.key - 1); }
+        else if (e.key === '0') { go(9); }
+    }
+  });
+
+  /* ---------- Swipe táctil ---------- */
+  var tx = null, ty = null, tStart = 0;
+  var vpEl = $('#viewport');
+  vpEl.addEventListener('touchstart', function (e) {
+    var t = e.target;
+    if (t.closest && t.closest('input, button, a, .seg, .stepper')) { tx = null; return; }
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; tStart = Date.now();
+  }, { passive: true });
+  vpEl.addEventListener('touchend', function (e) {
+    if (tx === null) return;
+    var dx = e.changedTouches[0].clientX - tx;
+    var dy = e.changedTouches[0].clientY - ty;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3 && Date.now() - tStart < 800) {
+      if (dx < 0) next(); else prev();
+    }
+    tx = null;
+  }, { passive: true });
+
+  /* ---------- Formatos ---------- */
+  var USD_ARS = 1575;
+  function fmtNum(n) { return Math.round(n).toLocaleString('es-AR'); }
+  function fmtARS(n) { return 'ARS ' + fmtNum(n); }
+  function fmtPesos(n) { return '$' + fmtNum(n); }
+
+  /* ---------- Lámina 6: Vaquita + vuelto ---------- */
+  var vq = { base: 86400, tip: 10, n: 4, cash: 100000 };
+  function renderVaquita() {
+    var totalT = Math.round(vq.base * (1 + vq.tip / 100));
+    var each = Math.ceil(totalT / vq.n);
+    $('#vqTotal').textContent = fmtPesos(totalT);
+    $('#vqEach').textContent = fmtPesos(each);
+    $('#vqN').textContent = vq.n;
+    var pase;
+    if (vq.cash > 0 && vq.cash >= totalT) {
+      pase = '💵 T4 · Abona con ' + fmtPesos(vq.cash) + ' → <em>Llevar ' + fmtPesos(vq.cash - totalT) + ' de vuelto</em>';
+    } else {
+      pase = '💵 T4 · Efectivo · <em>Importe justo ' + fmtPesos(totalT) + '</em>';
+    }
+    $('#vqPase').innerHTML = pase;
+    $('#vqMeta').textContent = (vq.tip ? 'Propina ' + vq.tip + '% incluida' : 'Sin propina') + ' · ' + vq.n + (vq.n === 1 ? ' persona' : ' personas') + ' · ' + fmtPesos(each) + ' cada uno · La tarjeta queda fija hasta cerrar la mesa';
+  }
+  function bindSeg(id, key) {
+    $$('#' + id + ' button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        $$('#' + id + ' button').forEach(function (x) { x.classList.toggle('on', x === b); });
+        vq[key] = +b.getAttribute('data-v');
+        renderVaquita();
+      });
+    });
+  }
+  bindSeg('vqTip', 'tip');
+  bindSeg('vqCash', 'cash');
+  $('#vqMinus').addEventListener('click', function () { vq.n = Math.max(1, vq.n - 1); renderVaquita(); });
+  $('#vqPlus').addEventListener('click', function () { vq.n = Math.min(20, vq.n + 1); renderVaquita(); });
+  renderVaquita();
+
+  /* ---------- Lámina 7: Simulador ROI (misma fórmula que la landing) ---------- */
+  var PLAN_COST = [
+    { max: 12, name: 'Barra / Café', ars: 55125, usd: 35 },
+    { max: 30, name: 'Salón / Bistró', ars: 102375, usd: 65 },
+    { max: Infinity, name: 'Gran Salón', ars: 173250, usd: 110 }
+  ];
+  function planFor(m) {
+    for (var i = 0; i < PLAN_COST.length; i++) if (m <= PLAN_COST[i].max) return PLAN_COST[i];
+    return PLAN_COST[PLAN_COST.length - 1];
+  }
+  var pairs = [['simM', 'simMn'], ['simT', 'simTn'], ['simS', 'simSn']];
+  function clampTo(input, v) {
+    var n = Number(v);
+    if (!isFinite(n)) return null;
+    var min = +input.min, max = +input.max, step = +input.step || 1;
+    n = Math.max(min, Math.min(max, n));
+    return Math.round(n / step) * step;
+  }
+  function calcROI() {
+    var M = +$('#simM').value, T = +$('#simT').value, S = +$('#simS').value;
+    var WEEKS = 4.3, ROTATIONS = 2.6, OCCUPANCY = 0.85, ROT_UPLIFT = 0.10, ROUND_UPLIFT = 0.06, MARGIN = 0.67;
+    var sessionsPerShift = M * ROTATIONS * OCCUPANCY;
+    var shiftsMonth = S * WEEKS;
+    var extraTables = sessionsPerShift * ROT_UPLIFT * shiftsMonth;
+    var rotNet = extraTables * T * MARGIN;
+    var roundsNet = sessionsPerShift * shiftsMonth * T * ROUND_UPLIFT * MARGIN;
+    var plan = planFor(M);
+    var gross = rotNet + roundsNet;
+    var net = gross - plan.ars;
+    var mult = gross / plan.ars;
+    $('#simNet').textContent = (net >= 0 ? '+ ' : '- ') + fmtARS(Math.abs(net));
+    $('#simMult').textContent = (mult >= 10 ? Math.round(mult) : mult.toFixed(1).replace('.', ',')) + 'x';
+    $('#simPlan').textContent = plan.name;
+    $('#simRot').textContent = '+ ' + fmtARS(rotNet);
+    $('#simRounds').textContent = '+ ' + fmtARS(roundsNet);
+    $('#simRotNote').textContent = fmtNum(extraTables) + ' mesas más atendidas por mes, contribución neta';
+    $('#simCost').textContent = '- ' + fmtARS(plan.ars) + ' (USD ' + plan.usd + ')';
+    var maxPart = Math.max(rotNet, roundsNet) || 1;
+    $('#simRotBar').style.width = (rotNet / maxPart * 100) + '%';
+    $('#simRoundsBar').style.width = (roundsNet / maxPart * 100) + '%';
+    $('#simLink').href = '../app/public/index.html?mesas=' + M + '&ticket=' + T + '&turnos=' + S + '#roi';
+  }
+  pairs.forEach(function (p) {
+    var r = $('#' + p[0]), n = $('#' + p[1]);
+    r.addEventListener('input', function () { n.value = r.value; calcROI(); });
+    n.addEventListener('input', function () {
+      var v = clampTo(r, n.value);
+      if (v !== null && n.value !== '') { r.value = v; calcROI(); }
+    });
+    n.addEventListener('change', function () {
+      var v = clampTo(r, n.value);
+      if (v === null) v = +r.value;
+      n.value = v; r.value = v; calcROI();
+    });
+  });
+  $$('.presets button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var vals = [b.getAttribute('data-m'), b.getAttribute('data-t'), b.getAttribute('data-s')];
+      pairs.forEach(function (p, i) { $('#' + p[0]).value = vals[i]; $('#' + p[1]).value = vals[i]; });
+      calcROI();
+    });
+  });
+  calcROI();
+
+  /* ---------- Lámina 8: toggle ARS / USD ---------- */
+  function setCurrency(cur) {
+    $$('.cur button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-cur') === cur); });
+    $$('.plan .price').forEach(function (el) {
+      var usd = +el.getAttribute('data-usd');
+      el.innerHTML = (cur === 'usd' ? 'USD ' + usd : fmtARS(usd * USD_ARS)) + ' <small>/ mes</small>';
+    });
+    $$('.plan .alt').forEach(function (el) {
+      var usd = +el.getAttribute('data-alt-usd');
+      el.textContent = cur === 'usd' ? fmtARS(usd * USD_ARS) + ' a cotización BNA' : 'USD ' + usd + ' de referencia';
+    });
+    $$('.kit .kp').forEach(function (el) {
+      var a = +el.getAttribute('data-usd');
+      var b = el.getAttribute('data-usd-to');
+      if (b) {
+        el.textContent = cur === 'usd' ? 'USD ' + a + ' a ' + b : fmtARS(a * USD_ARS) + ' a ' + fmtNum(+b * USD_ARS);
+      } else {
+        el.textContent = cur === 'usd' ? 'USD ' + a : fmtARS(a * USD_ARS);
+      }
+    });
+  }
+  $$('.cur button').forEach(function (b) {
+    b.addEventListener('click', function () { setCurrency(b.getAttribute('data-cur')); });
+  });
+  setCurrency('ars');
+
+  /* ---------- Arranque ---------- */
+  window.addEventListener('resize', fit);
+  window.addEventListener('orientationchange', function () { setTimeout(fit, 200); });
+  var start = parseInt((location.hash || '').replace('#', ''), 10);
+  go(isFinite(start) && start >= 1 && start <= total ? start - 1 : 0);
+  if (/[?&]notas=1/.test(location.search)) toggleNotes(true);
+  fit();
+})();
+</script>
+</body>
+</html>

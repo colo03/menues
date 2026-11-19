@@ -1,24 +1,24 @@
 # SaleListo
 
-**Plataforma gastronómica B2B/B2C en tiempo real para pedidos por QR sobre 4G/5G (sin Wi-Fi), ruteo simultáneo a Cocina y Barra con semáforo SLA, coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulsera Vibradora Xiaomi Band) y ecosistema comercial completo.**
+**Plataforma gastronómica B2B/B2C en tiempo real para pedidos por QR sobre 4G/5G (sin Wi-Fi), ruteo simultáneo en 3 estaciones (`Cocina`, `Barra` y `Mostrador`) con semáforo SLA, coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulsera Vibradora Xiaomi Band por Bluetooth BLE) y ecosistema comercial completo.**
 
-SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física del personal de salón en horas pico, cuidando la presencia visual frente al comensal. Funciona al instante desde cualquier navegador sin descargar aplicaciones para el cliente, sin requerir clave de Wi-Fi y con **0% de comisión sobre las ventas del restaurante**.
+SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física del personal de salón en horas pico con un enfoque **100% pro-equipo**, cuidando la presencia visual frente al comensal y conviviendo con el facturador fiscal ARCA actual del restaurante. Funciona al instante desde cualquier navegador sin descargar aplicaciones para el cliente, sin requerir clave de Wi-Fi, sin permanencia mínima y con **0% de comisión sobre las ventas**.
 
 ---
 
 ## Pilares Principales
 
-- **Landing Comercial B2B (`/`) y Hub Operativo (`/operacion.html`) desacoplados**:
-  - **Portada Comercial B2B (`app/public/index.html`)**: diseñada para conversión de dueños y encargados gastronómicos con loops de video optimizados (`app/public/media/` servidos por `HTTP Range 206`), reproductor interactivo del Spot Oficial con control de audio, comparativa operativa, simulador de balanceo de bloques, sección dedicada a operación sin celulares, explorador de pantallas, **calculadora interactiva de ROI**, matriz de planes en **ARS/USD** y formulario real de solicitud de piloto conectado a **`POST /api/leads`**.
-  - **Hub Operativo del Restaurante (`app/public/operacion.html`)**: punto de entrada interno para el personal del local con KPIs en vivo (mesas activas, comandas demoradas, retiros en pase, cobrado del día y leads comerciales nuevos), checklist diario de apertura de turno, QR de acceso rápido para TV/tablet y atajos directos a `pase.html`, `cocina.html`, `restaurante.html`, `mozo.html`, `cliente.html`, `qr.html` y `demo.html`.
-- **Autogestión en mesa por 4G/5G con QR seguro, buscador y filtros dietarios**: Cada mesa posee un código QR vectorial propio con token fijo anti-spoofing (`cliente.html?t=...`). El comensal explora la carta con fotos reales, **buscador instantáneo tolerante a tildes** y **filtros rápidos combinables (`Populares`, `Sin TACC`, `Veggie`, `Picante`**, además de pastillas `Vegano` y `Sin alcohol`), envía su pedido, llama al mozo o solicita la cuenta indicando medio de pago y porcentaje de propina.
-- **Separación directa Cocina / Barra y Semáforo SLA de demora**: Cada categoría dirige sus ítems automáticamente a **Cocina** o a **Barra** en el mismo segundo en que se confirma el pedido. Tanto la Comandera KDS (`cocina.html`) como la Estación de Pase (`pase.html`) y el Panel (`restaurante.html`) integran un **semáforo SLA visual y sonoro** legible a 3 o 4 metros (`🟢 En tiempo`, `🟠 Atención`, `🔴 Demorado`) con refresco liviano cada 15 segundos.
-- **Operación 100% sin celulares en el salón (Estación de Mozos fija + Modo Pulsera)**:
-  - **De serie en el Plan Base (`Estación de Mozos fija /pase.html`)**: una única pantalla o tablet horizontal en el mostrador del pase/barra dividida en columnas en vivo por cada mozo activo, con modo oscuro/claro, semáforo SLA, alerta sonora y carga rápida de pedidos en mostrador.
-  - **Adicional para patios, terrazas o salones grandes (`Kit Pulseras Vibradoras Xiaomi Band`)**: mediante PWA instalable + Service Worker + Web Push nativo en segundo plano, el teléfono queda bloqueado en el bolsillo o en un locker cercano y el camarero recibe vibraciones directas en su muñeca con avisos compactos (`🍸 T2 · Retirar Barra`, `💳 M8 · Tarjeta $34.200`).
-  - **Balanceo inteligente y continuidad de turno**: asignación híbrida (por bloque o automática por carga activa) y **reasignación automática inmediata** de mesas abiertas cuando un mozo corta turno.
-- **Carta anti-inflación, exportación contable CSV y bandeja de Consultas (`Leads`)**: Alta de categorías, fotos reales y etiquetas dietarias (`items.tags`), pausa instantánea de agotados, ajuste porcentual masivo de precios (`+%`), arqueo de caja con propinas por mozo, **exportación contable directa para Excel Argentina (`GET /api/export/sessions.csv` en UTF-8 con BOM y `;`)** y pestaña **`📨 Consultas`** en el Panel para gestionar en tiempo real los leads recibidos desde la Landing Page.
-- **Cero dependencias externas en el servidor**: Construido íntegramente sobre la biblioteca estándar de Python 3 (`http.server`, `sqlite3` en modo WAL, generador QR vectorial propio en `qrgen.py`, motor criptográfico Web Push RFC 8291/8292 en `webpush.py`, streaming parcial `HTTP 206` y exportador CSV), listo para correr en local o desplegarse en la nube sin instalar paquetes `pip`.
+- **Landing Comercial B2B (`/`) y Hub Operativo (`/operacion.html`) desacoplados y seguros**:
+  - **Portada Comercial B2B (`app/public/index.html`)**: orientada a dueños y encargados gastronómicos con loops de video optimizados (`app/public/media/` servidos por `HTTP Range 206`), reproductor interactivo del Spot Oficial, comparativa operativa, simulador de bloques, sección de operación sin celulares, acceso directo al Panel en rol aislado `demo_admin` (`restaurante.html?demo=1`), **calculadora interactiva de ROI con enlaces compartibles (`?mesas=&ticket=&turnos=#roi`)**, matriz transparente de planes en **ARS/USD** y formulario del **Piloto de 14 días** conectado a **`POST /api/leads`** con botón directo a WhatsApp seguro en móviles.
+  - **Hub Operativo del Restaurante (`app/public/operacion.html`)**: tablero interno conectado por **SSE en tiempo real** con KPIs vivos (mesas activas, comandas demoradas, retiros en pase y recaudación del turno vigente desde las `06:00 AM ART`), checklist diario de apertura, QR rápido para TV/tablet y accesos a todas las vistas operativas.
+- **Autogestión en mesa por 4G/5G con Calculadora "Vaquita", Vuelto Exacto y Repetir Ronda**: Cada mesa posee un código QR vectorial propio con token fijo anti-spoofing (`cliente.html?t=...`, hasta Versión 10). El comensal explora la carta con fotos reales, **buscador tolerante a tildes**, **filtros rápidos combinables (`Populares`, `Sin TACC`, `Veggie`, `Picante`**, más pastillas `Vegano` y `Sin alcohol`), repite rondas en 1 toque (`🔄 Repetir`), llama al mozo (recibiendo aviso en pantalla cuando va en camino) y solicita la cuenta con **Calculadora "Vaquita" (`÷ N` personas)**, propina y **declaración de efectivo con cálculo automático de vuelto** para cobrar en un solo viaje.
+- **Ruteo simultáneo en 3 Estaciones Reales (`Cocina`, `Barra` y `Mostrador`), Agotados 86 y Semáforo SLA**: Cada categoría o plato dirige sus ítems automáticamente a **Cocina**, **Barra** o **Mostrador** (sushi, parrilla exterior o vitrina de pastelería) en el mismo segundo en que se envía el pedido. La Comandera KDS (`cocina.html`) incluye cajón rápido **`🚫 Agotados`** para pausar platos en 1 toque, *Screen Wake Lock* y **semáforo SLA visual y sonoro** legible a 3 o 4 metros (`🟢 En tiempo`, `🟠 Atención`, `🔴 Demorado`).
+- **Operación 100% sin celulares en el salón (física exacta de las dos modalidades)**:
+  - **De serie desde el Plan Base (`Estación de Mozos fija /pase.html`)**: una única pantalla o tablet horizontal en el mostrador del pase/barra dividida en columnas por cada mozo activo, con **filtro por sector (`?bloque=`)**, compactación automática de mozos al día en salones grandes (`>= 4` columnas), **flujo en 2 pasos (`Voy -> En camino -> Atendido`)**, cobro persistente con vuelto exacto, actualización `tickSla()` no destructiva, *Screen Wake Lock* y carga rápida de pedidos. **Los teléfonos personales del personal quedan guardados en locker o caja.**
+  - **Adicional compatible con los 3 planes (`Kit Pulseras Vibradoras Xiaomi Band`)**: mediante PWA instalable (con íconos raster `180/192/512`) + Service Worker + Web Push cifrado en segundo plano y enlace **Bluetooth Low Energy (BLE)**, el teléfono va **guardado y con pantalla bloqueada en el bolsillo del camarero** (jamás se saca en el salón) y la muñeca vibra al instante mostrando avisos compactos (`🍸 T2 · Retirar Barra`, `💳 M8 · Efectivo c/$50k`).
+  - **Balanceo híbrido y continuidad de turno**: asignación fija por bloque o automática por carga activa y **reasignación automática inmediata** cuando un mozo corta turno.
+- **Carta anti-inflación reversible, integridad contable CSV (`06:00 AM ART`) y privacidad de Leads**: Ajuste porcentual masivo de precios con **Vista Previa Antes/Después (redondeo limpio a `$100`) y botón `↩ Deshacer`**, baja lógica contable (`archived = 1`) que preserva ventas históricas al borrar mesas o bloques, **exportación CSV directa para Excel Argentina (`GET /api/export/sessions.csv` en UTF-8 con BOM y `;`)** con corte de turno gastronómico a las `06:00 AM ART` (`UTC-3`), y aislamiento estricto de PII comercial en **`📨 Consultas`** (rol `demo_admin` aislado y entrega de leads reales exclusivamente al rol `admin` autenticado).
+- **Cero dependencias externas en el servidor**: Construido al 100% sobre la biblioteca estándar de Python 3 (`http.server`, `sqlite3` en modo WAL con persistencia monotónica `db.version` + `SERVER_SECRET` + `staff_sessions`, `/api/qrs` autenticado en prod, `qrgen.py` SVG Versión 10 de `271` bytes, `webpush.py` RFC 8291/8292 endurecido con Anti-Blind-SSRF, disco persistente en `render.yaml`, `HTTP 206` y `/api/health`), sin instalar paquetes `pip`.
 
 ---
 
@@ -27,27 +27,29 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 ```text
 .
 ├── app/                              # Aplicación web completa de SaleListo (Backend + Landing + Vistas + PWA)
-│   ├── server.py                     # Servidor HTTP multihilo, API REST, Leads, CSV, Range 206, Web Push y SSE
-│   ├── db.py                         # Motor transaccional SQLite WAL, balanceador, tags, leads, push y caja
-│   ├── webpush.py                    # Motor Web Push RFC 8291 (aes128gcm) + VAPID RFC 8292 en Python puro
-│   ├── qrgen.py                      # Generador propio de códigos QR vectoriales (SVG puro, sin CDNs)
+│   ├── server.py                     # Servidor HTTP endurecido, scopes SSE, Leads, CSV, Range 206, Push y Health
+│   ├── db.py                         # Motor SQLite WAL, corte 06:00 ART, 3 estaciones, Vaquita/vuelto y baja lógica
+│   ├── webpush.py                    # Motor Web Push RFC 8291 (aes128gcm) + VAPID RFC 8292 + Anti-SSRF en stdlib
+│   ├── qrgen.py                      # Generador propio de códigos QR vectoriales SVG (Versión 1 a 10, 271 bytes)
 │   ├── tests_e2e.py                  # Suite permanente de tests E2E en stdlib pura (DB temporal aislada)
 │   ├── iniciar.bat                   # Lanzador directo en un clic para Windows
-│   ├── PUBLICAR_EN_INTERNET.md       # Guía rápida de publicación cloud para operar con 4G/5G y HTTPS
-│   ├── data/                         # Datos en ejecución (salelisto.db, vapid_keys.json y uploads/)
+│   ├── PUBLICAR_EN_INTERNET.md       # Guía rápida de publicación cloud con disco persistente, 4G/5G y HTTPS
+│   ├── render.yaml                   # Blueprint local de despliegue cloud con volumen persistente /var/data
+│   ├── data/                         # Datos en ejecución (salelisto.db, vapid_keys.json, server_secret.key, uploads/)
 │   └── public/                       # Frontend responsivo, Landing B2B y PWA en HTML5, CSS3 y Vanilla JS
-│       ├── index.html                # Landing Page Comercial B2B (loops, Spot, ROI, planes ARS/USD y leads)
-│       ├── operacion.html            # Hub Operativo interno del restaurante con KPIs en vivo y accesos rápidos
+│       ├── index.html                # Landing Comercial B2B (loops, Spot, ROI compartible, planes ARS/USD y leads)
+│       ├── operacion.html            # Hub Operativo interno conectado por SSE en vivo, checklist y QR para TV
 │       ├── demo.html                 # Demo multipantalla con Simulador de Hora Pico en 1 clic paso a paso
-│       ├── pase.html                 # Estación de Mozos fija por columnas con semáforo SLA (0 celulares)
-│       ├── restaurante.html          # Panel del encargado (Salón, Mozos, Carta + tags, Caja CSV y Leads)
-│       ├── mozo.html                 # PWA móvil del mozo con Modo Pulsera (Xiaomi Band), test push y carga
-│       ├── cocina.html               # Comandera digital (KDS) por Cocina/Barra con semáforo SLA en vivo
-│       ├── cliente.html              # Carta QR con buscador instantáneo y filtros (Sin TACC, Veggie, Picante)
+│       ├── pase.html                 # Estación de Mozos fija por columnas + filtro por bloque (celulares en locker)
+│       ├── restaurante.html          # Panel del encargado (Salón, Mozos, 3 Estaciones, Inflación Undo, CSV y Leads)
+│       ├── mozo.html                 # PWA móvil del mozo con Modo Pulsera BLE (Xiaomi Band), test push y carga
+│       ├── cocina.html               # Comandera KDS en 3 estaciones (Cocina/Barra/Mostrador) + Agotados 86 + SLA
+│       ├── cliente.html              # Carta QR 4G con buscador, filtros, Repetir ronda, Vaquita y vuelto exacto
 │       ├── qr.html                   # Estudio de Impresión QR A4 (Tent-Card, Sticker, Tarjeta, Crema/Carbón y SVG)
 │       ├── media/                    # 5 videos web H.264 faststart (4 loops + Spot) y 5 posters JPG optimizados
 │       ├── css/ · js/                # Estilos modulares y lógica cliente (incluidos landing.css y landing.js)
 │       ├── manifest.json · sw.js     # Manifiesto PWA instalable y Service Worker para Web Push nativo
+│       ├── icon-180.png · icon-192.png · icon-512.png  # Íconos raster PWA (Android/iOS) desde mark.svg
 │       ├── og-salelisto.svg          # Imagen Open Graph 1200x630 para previsualización social de la Landing
 │       └── logo.svg · logo-dark.svg · mark.svg  # Identidad oficial (copia idéntica de branding/)
 ├── branding/                         # Sistema de marca unificado de SaleListo (fuente de verdad visual)
@@ -56,31 +58,39 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 │   ├── logo.svg · logo-dark.svg      # Logotipo horizontal oficial (Propuesta 01 · Pase Limpio), claro y oscuro
 │   ├── mark.svg                      # Isotipo oficial 64x64 (favicon, cabezal de app y piezas audiovisuales)
 │   └── propuestas_logos/             # Las 6 propuestas bocetadas en SVG, lámina comparativa y fundamentos
-├── comercial/                        # Estrategia comercial, dossier ejecutivo A4, pricing y prospección B2B
-│   ├── SaleListo_Dossier_Comercial.pdf # Dossier Comercial Ejecutivo A4 de 2 páginas listo para WhatsApp
+├── comercial/                        # Estrategia comercial, deck interactivo, dossier A4, piloto 14d y prospección
+│   ├── presentacion_interactiva.html # Deck comercial interactivo de 10 láminas + notas [N] + simuladores en vivo
+│   ├── SaleListo_Dossier_Comercial.pdf # Dossier Comercial Ejecutivo A4 (2 páginas exactas) listo para WhatsApp
 │   ├── brochure_b2b.html             # Fuente HTML/CSS A4 imprimible autónoma del Dossier Comercial
-│   ├── modelo_de_negocios.md         # Unit economics, Plan Base (Pase fijo) + Kit Pulseras Xiaomi Band
-│   ├── propuestas_restaurantes.md    # Playbook comercial, ICPs, objeciones y 26 prospectos reales
-│   └── prospectos_restaurantes.csv   # Base estructurada de prospectos gastronómicos
-├── marketing/                        # Fábrica completa de contenidos B2B lista para publicar (27 PNGs + 5 Reels)
+│   ├── SaleListo_Acuerdo_Piloto_14d.pdf # Acuerdo Simple de Piloto 14 Días + Comodato BLE (1 página A4 exacta)
+│   ├── acuerdo_piloto_14_dias.md     # Versión editable Markdown del acuerdo de piloto de 14 días sin riesgo
+│   ├── plantilla_carga_carta.csv     # Planilla modelo Excel/Sheets para onboarding llave en mano en 48 horas
+│   ├── modelo_de_negocios.md         # Unit economics, ROI exacto, OPEX escalonado, 12 objeciones y checklist MX
+│   ├── propuestas_restaurantes.md    # Playbook outbound (DMs <=35 palabras), guion inbound (<15 min) y 26 locales
+│   ├── mensajes_personalizados_26_locales.md # Prospección personalizada 1 a 1 para los 26 locales (DM + correo + #roi)
+│   └── prospectos_restaurantes.csv   # Base estructurada de 26 prospectos gastronómicos verificados en CABA/GBA
+├── marketing/                        # Fábrica completa de contenidos B2B (33 PNGs + 3 PDFs LinkedIn + 5 Reels MP4)
 │   ├── README.md                     # Inventario de piezas, sistema gráfico y guía de re-exportación
-│   ├── calendario_redes_30dias.md    # Plan editorial de 30 días, 20 copys y estructura de pauta Meta Ads
+│   ├── calendario_redes_30dias.md    # Plan editorial cronológico de 30 días (Copy #01-#20) y campaña Meta Ads
 │   ├── guiones_reels.md              # Escaletas de los 5 Reels producidos + 5 guiones de rodaje en salón real
 │   ├── reels/                        # 5 Reels verticales MP4 (1080x1920, 60 fps, voz ElevenLabs) + src/
-│   ├── posts/                        # 3 carruseles de 5 slides (1080x1350) + 4 posts individuales de feed
+│   ├── posts/                        # 3 carruseles (15 PNGs + 3 PDFs nativos para LinkedIn) + 4 posts individuales
+│   ├── stories/                      # 6 Historias verticales (1080x1920) con zonas seguras libres (260px/315px)
 │   ├── banners/                      # 8 banners multicanal (Web, Display, LinkedIn, Meta Ads y WhatsApp)
-│   └── src_grafica/                  # Plantillas editables HTML/CSS/JS, galería y exportador PNG Headless
-├── video-ad/                         # Spot publicitario vertical oficial (1080x1920, 60 fps) y pipeline v2
-│   ├── SaleListo_Ad.mp4              # Spot Oficial (<=5 palabras/escena, Pase + Pulsera, -14 LUFS)
+│   └── src_grafica/                  # Plantillas editables HTML/CSS/JS, galería y exportador PNG/PDF Headless
+├── video-ad/                         # Spot publicitario vertical oficial (1080x1920, 60 fps), v2 y pipeline Omni
+│   ├── SaleListo_Ad.mp4              # Spot Oficial v5 (<=5 palabras/escena, Pase + Pulsera, -14 LUFS)
+│   ├── generar_ad_omni.py            # Pipeline open-ended hacia Gemini Omni 1.2 Flash (Google Flow Ultra / CDP)
 │   ├── locucion_argentina.mp3        # Toma continua original en español argentino (ElevenLabs)
 │   ├── guion.md                      # Guion creativo v5 y escaleta de 6 escenas (E01 a E06)
 │   ├── referencias_ads.md            # Relevamiento de referencias Gastro-Tech y Motion SaaS
 │   └── v2/                           # Motor programático de composición HTML/JS, audio y codificación
-├── docs/                             # Documentación técnica y evolución de producto
-│   ├── arquitectura_salelisto.md     # Diseño del sistema, API, SLA, Leads, CSV, Range 206 y Web Push
-│   ├── mejoras_producto_ux.md        # Diagnóstico UX operativo, mejoras implementadas y hoja de ruta
+├── docs/                             # Documentación de arquitectura, producto y auditoría EGM
+│   ├── goldfish_review_report.md     # Informe oficial de auditoría y resolución Elephant-Goldfish Model (EGM)
+│   ├── arquitectura_salelisto.md     # Diseño del sistema, seguridad, 3 estaciones, SLA, Leads, CSV y Web Push
+│   ├── mejoras_producto_ux.md        # Evolución UX/TRIZ (Oleadas 1 a 4), suite E2E y Roadmap Fase 2-3
 │   └── auditoria_inicial_beta.md     # Diagnóstico histórico del prototipo inicial y resolución de bugs
-├── render.yaml                       # Blueprint de despliegue directo en Render desde la raíz del repo
+├── render.yaml                       # Blueprint cloud en Render con disco persistente /var/data y TZ Argentina
 └── Procfile                          # Comando de arranque web para plataformas cloud (Railway / Render)
 ```
 
@@ -89,7 +99,7 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 ## Ejecución Local Rápida
 
 ### Requisitos
-- **Python 3.10 o superior** (no requiere `pip install` ni paquetes de terceros).
+- **Python 3.10 o superior** (cero dependencias externas de `pip`).
 
 ### Iniciar el servidor
 
@@ -101,69 +111,64 @@ python app/server.py
 
 O en Windows, haciendo doble clic sobre [`app/iniciar.bat`](./app/iniciar.bat).
 
-*(Opcional: para correr la suite completa de tests E2E automáticos sobre una base temporal aislada, ejecutar `python app/tests_e2e.py`; para la autoverificación criptográfica de Web Push P-256 + AES-128-GCM + RFC 8291, correr `python app/webpush.py`).*
-
-Al iniciar por primera vez, el servidor crea y puebla automáticamente `app/data/salelisto.db` con bloques, mesas, mozos y carta de demostración (incluidas las etiquetas dietarias iniciales) listos para probar, junto con las claves VAPID locales en `app/data/vapid_keys.json`.
+*(Para correr la suite completa de tests E2E automáticos sobre una base temporal aislada, ejecutar `python -B app/tests_e2e.py`; para la autoverificación criptográfica de Web Push P-256 + AES-128-GCM + RFC 8291, correr `python app/webpush.py`).*
 
 ### Vistas Disponibles (`http://localhost:8123`)
 
 | Vista | Ruta | Rol / Uso |
 | :--- | :--- | :--- |
-| **Landing Comercial B2B** | [`/`](http://localhost:8123/) | Portada pública con videos loop, Spot Oficial, explorador, calculadora de ROI, planes ARS/USD y formulario de piloto (`POST /api/leads`). |
-| **Hub Operativo del Local** | [`/operacion.html`](http://localhost:8123/operacion.html) | Tablero interno del restaurante con KPIs en vivo, checklist de apertura, QR para TV y accesos a todas las vistas operativas. |
-| **Modo Demo Multipantalla** | [`/demo.html`](http://localhost:8123/demo.html) | Demo interactiva con **`⚡ Simular Hora Pico`** en 1 clic paso a paso (Cliente + Estación de Mozos + Cocina/Barra + Mozo + Encargado). |
-| **Estación de Mozos (Pase)** | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra con columnas por mozo activo, semáforo SLA y carga rápida *(0 celulares en salón)*. |
-| **Panel del Restaurante** | [`/restaurante.html`](http://localhost:8123/restaurante.html) | Gestión de salón, bloques, mozos, carta con tags dietarios, comandas SLA, arqueo CSV y bandeja de Consultas (`Leads`) *(PIN inicial: `1234`)*. |
-| **PWA Mozo / Modo Pulsera** | [`/mozo.html`](http://localhost:8123/mozo.html) | Configuración de **Modo Pulsera Xiaomi Band** (Web Push con pantalla bloqueada), alertas y pedidos manuales. |
-| **Pantalla Cocina y Barra** | [`/cocina.html`](http://localhost:8123/cocina.html) | Tablero KDS en tiempo real por estación (`Cocina`, `Barra` o `Ambos`) con semáforo SLA visual y sonoro. |
-| **Vista del Comensal** | `/cliente.html?t=<token>` | Carta QR por mesa con buscador instantáneo y filtros dietarios (`Populares`, `Sin TACC`, `Veggie`, `Picante`). |
-| **Estudio de Impresión QR** | [`/qr.html`](http://localhost:8123/qr.html) | Estudio de impresión A4 calibrado en mm (`Tent-Card 10x15 cm`, `Sticker 8x8 cm`, `Tarjeta Compacta`, estilo Crema/Carbón, filtro por bloque y descarga `.svg` individual). |
-
-*(Para usar otro puerto local, pasar el número como argumento: `python app/server.py 9000` o definir la variable de entorno `PORT`).*
+| **Landing Comercial B2B** | [`/`](http://localhost:8123/) | Portada pública con videos loop, Spot Oficial, explorador, calculadora ROI compartible, planes ARS/USD y formulario de piloto (`POST /api/leads`). |
+| **Hub Operativo del Local** | [`/operacion.html`](http://localhost:8123/operacion.html) | Tablero interno conectado por SSE en vivo con KPIs del turno (`06:00 AM ART`), checklist diario, QR para TV y accesos operativos. |
+| **Modo Demo Multipantalla** | [`/demo.html`](http://localhost:8123/demo.html) | Demo interactiva con **`⚡ Simular Hora Pico`** en 1 clic paso a paso y limpieza no destructiva de sesiones abiertas. |
+| **Estación de Mozos (Pase)** | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra filtrable por bloque (`?bloque=`), atención en dos tiempos y cobro persistente *(celulares en locker)*. |
+| **Panel del Restaurante** | [`/restaurante.html`](http://localhost:8123/restaurante.html) | Gestión de salón, mozos, carta con 3 estaciones y tags, ajuste % con deshacer, arqueo CSV y bandeja privada `#consultas` *(PIN inicial: `1234`)*. |
+| **PWA Mozo / Modo Pulsera** | [`/mozo.html`](http://localhost:8123/mozo.html) | Configuración de **Modo Pulsera Xiaomi Band** por Bluetooth BLE *(celular bloqueado en bolsillo)*, alertas y carga manual por categorías. |
+| **Comandera 3 Estaciones** | [`/cocina.html`](http://localhost:8123/cocina.html) | Tablero KDS en tiempo real (`Cocina`, `Barra`, `Mostrador` o `Todo`) con cajón rápido **`🚫 Agotados`** y semáforo SLA. |
+| **Vista del Comensal** | `/cliente.html?t=<token>` | Carta QR 4G con buscador, filtros dietarios, botón Repetir ronda, calculadora *Vaquita* y declaración de vuelto en efectivo. |
+| **Estudio de Impresión QR** | [`/qr.html`](http://localhost:8123/qr.html) | Estudio A4 calibrado en mm (`Tent-Card 10x15 cm`, `Sticker 8x8 cm`, `Tarjeta Compacta`, estilos Crema/Carbón, descarga `.svg` y PIN en prod). |
+| **Monitoreo de Salud** | [`/api/health`](http://localhost:8123/api/health) | Endpoint JSON liviano (`{"ok": true, "version": ..., "subscribers": ...}`) para observabilidad cloud. |
 
 ---
 
-## Despliegue en la Nube (Operación Real con 4G/5G y Web Push HTTPS)
-
-El repositorio está preparado en su raíz para publicarse directamente con HTTPS de modo que los prospectos naveguen la Landing B2B en `/`, los comensales escaneen los QRs usando sus propios datos móviles y los teléfonos vinculados a pulseras Xiaomi Band reciban notificaciones Web Push en segundo plano:
+## Despliegue en la Nube (4G/5G, Persistencia NVMe y Web Push HTTPS)
 
 1. Subí este repositorio a tu cuenta de **GitHub**.
-2. En **Render.com** (o **Railway.app**), creá un nuevo servicio web o Blueprint conectado al repositorio:
-   - [`render.yaml`](./render.yaml) define automáticamente `rootDir: app` y `startCommand: python server.py`.
-   - [`Procfile`](./Procfile) define `web: python app/server.py`.
-3. Una vez publicado el enlace seguro (`https://<tu-servicio>.onrender.com`), ingresá a `/operacion.html` o `/restaurante.html`:
+2. En **Render.com** (o **Railway.app**), creá un servicio web o Blueprint conectado al repositorio:
+   - [`render.yaml`](./render.yaml) configura automáticamente `rootDir: app`, `startCommand: python server.py`, disco persistente `1 GB` en `/var/data` (`DATA_DIR=/var/data`) y `TZ=America/Argentina/Buenos_Aires`.
+   - Opcionalmente definí `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` en variables de entorno para respaldo externo de suscripciones Push.
+3. Ingresá a `/restaurante.html` en tu URL HTTPS:
    - Cambiá el PIN de administrador inicial (`1234`) en **Caja y Ajustes**.
-   - Desactivá el *Modo Demo* para exigir sesión con PIN en las vistas de personal y proteger el arqueo CSV y la bandeja de leads.
-   - Cargá tu plano de bloques, tus mozos y tu carta real con sus etiquetas dietarias.
-4. Abrí `/pase.html` en la pantalla horizontal del mostrador/barra (o vinculá las pulseras desde `/mozo.html` en versión HTTPS) e imprimí los códigos QR definitivos desde `/qr.html`.
+   - Desactivá el *Modo Demo* (`demoMode = False`) para exigir sesión con PIN en vistas operativas y `/qr.html`, y aislar la bandeja de leads reales.
+   - Configurá tus bloques, mozos con PIN y tu carta real en las 3 estaciones (`Cocina`, `Barra`, `Mostrador`).
+4. Abrí `/pase.html` en la pantalla horizontal del mostrador/barra (o vinculá las pulseras Bluetooth BLE desde `/mozo.html`) e imprimí los códigos QR definitivos desde `/qr.html`.
 
-Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md), [`docs/arquitectura_salelisto.md`](./docs/arquitectura_salelisto.md) y [`docs/mejoras_producto_ux.md`](./docs/mejoras_producto_ux.md).
+Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md), [`docs/arquitectura_salelisto.md`](./docs/arquitectura_salelisto.md), [`docs/mejoras_producto_ux.md`](./docs/mejoras_producto_ux.md) y [`docs/goldfish_review_report.md`](./docs/goldfish_review_report.md).
 
 ---
 
 ## Identidad Visual y Sistema de Marca
 
-- **Sistema unificado ([`branding/`](./branding/sistema_de_marca.md))**: Una sola línea gráfica para la app web, la Landing Comercial, el pack de marketing y los videos. [`sistema_de_marca.md`](./branding/sistema_de_marca.md) documenta la paleta maestra (crema `#faf7f2`, tinta `#1c1917`, bermellón `#d9412b`, verde `#2f8a57`, Barra `#6d28d9`, Cocina `#d97706`), la tipografía `Plus Jakarta Sans`, radios, sombras, el motion sobrio con curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote y los criterios oficiales de contacto. Los mismos valores viven como variables en [`tokens.css`](./branding/tokens.css).
-- **Logo oficial (Propuesta 01 · Pase Limpio)**: Campana de pase geométrica con tilde ascendente en espacio negativo sobre squircle bermellón, más el wordmark **SaleListo** trazado a curvas (y variante `logo-dark.svg` con placa redondeada oscura `#1C1917` propia para contraste total sobre fondos blancos u oscuros). Los archivos [`logo.svg`](./branding/logo.svg), [`logo-dark.svg`](./branding/logo-dark.svg) y [`mark.svg`](./branding/mark.svg) son idénticos byte a byte en `branding/`, `app/public/` y `video-ad/v2/assets/`.
-- **Exploración de logos ([`branding/propuestas_logos/`](./branding/propuestas_logos/README.md))**: Las 6 propuestas bocetadas en SVG (logo + isotipo de cada una), con la lámina comparativa [`catalogo_logos.png`](./branding/propuestas_logos/catalogo_logos.png) en fondo claro, oscuro y favicon de 24 px.
+- **Sistema unificado ([`branding/`](./branding/sistema_de_marca.md))**: Una sola línea gráfica para la app web, la Landing Comercial, los documentos comerciales A4, el pack de marketing y los videos. [`sistema_de_marca.md`](./branding/sistema_de_marca.md) documenta la paleta maestra (`#faf7f2`, `#1c1917`, `#d9412b`, `#2f8a57`, `#6d28d9`, `#d97706`), tipografía `Plus Jakarta Sans`, radios, sombras, motion sobrio `cubic-bezier(0.22, 1, 0.36, 1)` y reglas de contacto, replicados en [`tokens.css`](./branding/tokens.css).
+- **Logo oficial (Propuesta 01 · Pase Limpio)**: Campana de pase geométrica con tilde ascendente en espacio negativo sobre squircle bermellón, más wordmark **SaleListo** en curvas (`logo.svg`, `logo-dark.svg` con placa `#1C1917` propia y `mark.svg` sincronizados byte a byte en `branding/`, `app/public/` y `video-ad/v2/assets/`).
 
 ---
 
-## Estrategia Comercial, Fábrica de Contenidos B2B y Videos
+## Estrategia Comercial, Activos Operativos A4, Marketing y Videos
 
-- **Estrategia, Dossier A4 y Prospección B2B ([`comercial/`](./comercial/))**: Incluye el **Dossier Comercial Ejecutivo A4 de 2 páginas** listo para enviar por WhatsApp o imprimir ([`SaleListo_Dossier_Comercial.pdf`](./comercial/SaleListo_Dossier_Comercial.pdf) y fuente editable [`brochure_b2b.html`](./comercial/brochure_b2b.html)), el modelo financiero y matriz de planes SaaS (**Plan Base con Estación de Mozos fija + Adicional Kit Pulseras Vibradoras Xiaomi Band**) con piloto sin riesgo de 14 días en [`modelo_de_negocios.md`](./comercial/modelo_de_negocios.md), junto con el playbook comercial, manejo de objeciones y propuestas personalizadas para 26 locales reales en [`propuestas_restaurantes.md`](./comercial/propuestas_restaurantes.md) y [`prospectos_restaurantes.csv`](./comercial/prospectos_restaurantes.csv).
-- **Kit Integral de Marketing y Redes ([`marketing/`](./marketing/README.md))**: Fábrica completa de contenidos B2B lista para pauta y publicación orgánica (**27 PNGs gráficos + 5 Reels verticales**):
-  - **5 Reels verticales MP4 (`1080x1920`, `60 fps`, `-14 LUFS`)** en [`marketing/reels/`](./marketing/reels/) con locución continua en español rioplatense generada con ElevenLabs (`Reel_01_Sin_Celulares_En_Salon.mp4`, `Reel_02_Segundas_Rondas_Terraza.mp4`, `Reel_03_Cero_Comision_Precios_Al_Dia.mp4`, `Reel_04_Cobrar_En_Un_Viaje.mp4` y `Reel_05_Piloto_14_Dias_Un_Sector.mp4`) y motor reproducible en `marketing/reels/src/`.
-  - **3 carruseles de 5 slides (`1080x1350`)** y **4 posts individuales de feed (`1080x1350`)** en [`marketing/posts/`](./marketing/posts/).
-  - **8 banners multicanal al píxel exacto** en [`marketing/banners/`](./marketing/banners/) (Web `1920x600`, Display `728x90` y `300x250`, LinkedIn portada y post, Meta Ads Feed y Story, y catálogo de WhatsApp Business).
-  - **Plantillas editables y exportador automatizado** en [`marketing/src_grafica/`](./marketing/src_grafica/), guiones de los 5 Reels y rodaje en salón real en [`guiones_reels.md`](./marketing/guiones_reels.md) y plan de 30 días con 20 copys + estructura de campañas Meta Ads en [`calendario_redes_30dias.md`](./marketing/calendario_redes_30dias.md).
-- **Spot Audiovisual Oficial ([`video-ad/`](./video-ad/README.md))**: Incluye [`SaleListo_Ad.mp4`](./video-ad/SaleListo_Ad.mp4) (`1080x1920`, `60 fps`, `-14 LUFS`, máximo 5 palabras en pantalla por escena, Escena 5 dedicada a **`Sin celulares`: `Pase` + `Pulsera`** y cierre institucional con `0% comisión`, `(+54)1138436571` y `ventas@salelisto.com`), la locución continua [`locucion_argentina.mp3`](./video-ad/locucion_argentina.mp3), el guion técnico [`guion.md`](./video-ad/guion.md) y el pipeline en [`video-ad/v2/`](./video-ad/v2/README.md).
+- **Kit Comercial B2B, Deck Interactivo y Onboarding en 48 Horas ([`comercial/`](./comercial/))**:
+  - **Deck Comercial Interactivo de 10 Láminas**: [`presentacion_interactiva.html`](./comercial/presentacion_interactiva.html) para reuniones presenciales, tablet o Zoom, con panel de notas del orador conmutable (`[N]`), simuladores interactivos en vivo de *Vaquita*/vuelto y retorno ROI, y selector de moneda `ARS/USD`.
+  - **Dossier Ejecutivo A4 de 2 páginas**: [`SaleListo_Dossier_Comercial.pdf`](./comercial/SaleListo_Dossier_Comercial.pdf) y su fuente editable [`brochure_b2b.html`](./comercial/brochure_b2b.html).
+  - **Acuerdo Simple de Piloto de 14 Días (2 fines de semana) + Comodato BLE en 1 página A4**: [`SaleListo_Acuerdo_Piloto_14d.pdf`](./comercial/SaleListo_Acuerdo_Piloto_14d.pdf) y [`acuerdo_piloto_14_dias.md`](./comercial/acuerdo_piloto_14_dias.md).
+  - **Planilla modelo de relevamiento de carta (48 h)**: [`plantilla_carga_carta.csv`](./comercial/plantilla_carga_carta.csv) lista para Excel/Google Sheets con las 3 estaciones y 5 etiquetas dietarias.
+  - **Modelo de Negocios y Playbook Personalizado 1 a 1 para 26 Locales**: unit economics, ROI exacto (`+ USD 2.345/mes`), OPEX escalonado y 12 objeciones en [`modelo_de_negocios.md`](./comercial/modelo_de_negocios.md); estrategia outbound/inbound (`SLA < 15 min`) en [`propuestas_restaurantes.md`](./comercial/propuestas_restaurantes.md); mensajes hechos a medida local por local (ángulo físico real, DM `<= 35` palabras, correo con asunto único y deep-link `#roi`) en [`mensajes_personalizados_26_locales.md`](./comercial/mensajes_personalizados_26_locales.md); y base estructurada en [`prospectos_restaurantes.csv`](./comercial/prospectos_restaurantes.csv).
+- **Fábrica de Contenidos B2B ([`marketing/`](./marketing/README.md))**: **33 PNGs gráficos totales + 3 PDFs nativos para LinkedIn + 5 Reels verticales MP4 (`1080x1920`, `60 fps`, `-14 LUFS`)** con locución rioplatense continua: **3 carruseles** (15 slides PNG `1080x1350` + 3 documentos PDF de 5 páginas sin márgenes para LinkedIn), **4 posts individuales** (incluyendo redondeo limpio a `$100`), **6 Historias verticales (`1080x1920`)** en `marketing/stories/`, **8 banners multicanal**, plantillas editables en `src_grafica/`, [`guiones_reels.md`](./marketing/guiones_reels.md) y plan cronológico de 30 días (`Copy #01` a `Copy #20` + campaña consolidada Meta Ads) en [`calendario_redes_30dias.md`](./marketing/calendario_redes_30dias.md).
+- **Spot Audiovisual Oficial y Pipeline Gemini Omni 1.2 Flash ([`video-ad/`](./video-ad/README.md))**: Spot Oficial v5 [`SaleListo_Ad.mp4`](./video-ad/SaleListo_Ad.mp4) (`1080x1920`, `60 fps`, `-14 LUFS`, máximo 5 palabras por escena, cierre institucional con `0% comisión`, `(+54)1138436571` y `ventas@salelisto.com`) más el script open-ended [`generar_ad_omni.py`](./video-ad/generar_ad_omni.py) para recreación audiovisual en **Gemini Omni 1.2 Flash (Google Flow Ultra)** vía CDP.
 
 ---
 
 ## Autor y Contacto
 
 **Simón Martínez de Guereñu**  
-- **WhatsApp / Teléfono:** `(+54)1138436571`  
+- **WhatsApp / Teléfono único:** `(+54)1138436571`  
 - **Correo electrónico (autor y prospección directa):** `simonguerenu@gmail.com`  
-- **Correo comercial en piezas de marca (Landing, Spot, Reels, Posts y Banners):** `ventas@salelisto.com`
+- **Correo comercial oficial (marca, Dossier, Acuerdo y piezas B2B):** `ventas@salelisto.com`

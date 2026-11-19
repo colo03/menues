@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Estación de Mozos (Pase)</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/pase.css">
 </head>
@@ -61,7 +63,7 @@
           ⛶ Pantalla completa
         </button>
 
-        <a class="p-ctrl-btn p-nav-link" href="cocina.html" title="Abrir comandera de Cocina y Barra">
+        <a class="p-ctrl-btn p-nav-link" href="cocina.html" title="Abrir comandera de Cocina, Barra y Mostrador">
           🍳 Cocina
         </a>
         <a class="p-ctrl-btn p-nav-link" href="restaurante.html" title="Abrir Panel del Encargado">
@@ -70,7 +72,11 @@
       </div>
     </header>
 
+    <nav class="p-sector-bar" id="pSectorBar" aria-label="Filtrar estación por sector" hidden></nav>
+
     <main class="p-board" id="pBoard" aria-live="polite"></main>
+
+    <aside class="p-idle-strip" id="pIdleStrip" aria-label="Mozos al día" hidden></aside>
   </div>
 
   <!-- Modal ágil para Pedido en mostrador y detalle rápido de mesa -->

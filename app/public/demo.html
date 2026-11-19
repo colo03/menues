@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Demo Interactiva en Tiempo Real</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <style>
     body { background: var(--dark-bg); color: var(--dark-ink); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
@@ -128,7 +130,7 @@
     <button type="button" class="sim-btn" id="simPeakBtn" title="Dispara una secuencia automática en vivo en las 3 pantallas">
       ⚡ Simular Hora Pico
     </button>
-    <button type="button" class="bar-ghost" id="clearDemoBtn" title="Limpia pedidos y llamados de prueba manteniendo carta y salón">
+    <button type="button" class="bar-ghost" id="clearDemoBtn" title="Limpia únicamente las mesas abiertas sin borrar el historial cerrado del día">
       ↺ Limpiar turno demo
     </button>
 
@@ -145,7 +147,7 @@
       <span class="sim-step" data-step="1">1 · Pedido mixto QR</span>
       <span class="sim-step" data-step="2">2 · Cocina + Barra listos</span>
       <span class="sim-step" data-step="3">3 · Llamado en salón</span>
-      <span class="sim-step" data-step="4">4 · Cuenta Tarjeta + 10%</span>
+      <span class="sim-step" data-step="4">4 · Cuenta + vuelto en 1 viaje</span>
     </div>
     <div class="sim-msg" id="simMsg">Listo para simular hora pico en tiempo real.</div>
     <button type="button" class="sim-close" id="simCloseBtn" aria-label="Ocultar barra de simulación">✕</button>
@@ -166,10 +168,11 @@
       <div class="col-head">
         <span class="label">3 · Pantallas Fijas del Local</span>
         <div class="r-tabs" id="rightTabs">
-          <button class="r-tab active" data-src="pase.html">🛎️ Estación de Mozos</button>
-          <button class="r-tab" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
-          <button class="r-tab" data-src="cocina.html?estacion=barra">🍸 Barra</button>
-          <button class="r-tab" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
+          <button class="r-tab active" type="button" data-src="pase.html">🛎️ Estación de Mozos</button>
+          <button class="r-tab" type="button" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
+          <button class="r-tab" type="button" data-src="cocina.html?estacion=barra">🍸 Barra</button>
+          <button class="r-tab" type="button" data-src="cocina.html?estacion=mostrador">🍣 Mostrador</button>
+          <button class="r-tab" type="button" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
         </div>
       </div>
       <div class="panel"><iframe id="rightFrame" src="pase.html" title="Pantallas Fijas del Local"></iframe></div>
@@ -178,8 +181,50 @@
 
   <script>
     (async () => {
+      let adminToken = sessionStorage.getItem('salelisto:adminToken') || '';
+      let simRunId = 0;
+
+      async function ensureAdminToken() {
+        if (adminToken) return adminToken;
+        try {
+          const r = await fetch('api/auth/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ demo: true }),
+          }).then((x) => x.json());
+          if (r && r.ok && r.token) {
+            adminToken = r.token;
+            sessionStorage.setItem('salelisto:adminToken', adminToken);
+            return adminToken;
+          }
+        } catch (_) {}
+        const pin = prompt('Modo producción activo. Ingresá el PIN del encargado para abrir la demo:') || '';
+        if (!pin) throw new Error('PIN requerido');
+        const r2 = await fetch('api/auth/admin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin }),
+        }).then((x) => x.json());
+        if (!r2.ok) throw new Error(r2.error || 'PIN incorrecto');
+        adminToken = r2.token;
+        sessionStorage.setItem('salelisto:adminToken', adminToken);
+        return adminToken;
+      }
+
+      async function fetchQrsSafe() {
+        let res = await fetch('api/qrs', {
+          headers: adminToken ? { 'X-Auth-Token': adminToken } : {},
+        });
+        if (res.status === 401) {
+          adminToken = '';
+          const tok = await ensureAdminToken();
+          res = await fetch('api/qrs', { headers: { 'X-Auth-Token': tok } });
+        }
+        return res.json();
+      }
+
       const [qrs, wpub] = await Promise.all([
-        fetch('api/qrs').then((r) => r.json()),
+        fetchQrsSafe(),
         fetch('api/waiters-public').then((r) => r.json()),
       ]);
 
@@ -194,14 +239,13 @@
       const simMsg = document.getElementById('simMsg');
 
       const allTables = [];
-      qrs.blocks.forEach((b) => {
+      (qrs.blocks || []).forEach((b) => {
         b.tables.forEach((t) => {
           allTables.push({ ...t, blockId: b.id, blockName: b.name });
           tSel.add(new Option(`${b.name} · Mesa ${t.code}`, t.qrToken));
         });
       });
 
-      // Preseleccionar una mesa de Terraza (ideal para la historia comercial) si existe
       const terrazaIdx = allTables.findIndex((t) => /terraza|exterior|patio/i.test(t.blockName));
       if (terrazaIdx >= 0) tSel.selectedIndex = terrazaIdx;
       else if (tSel.options.length > 3) tSel.selectedIndex = 3;
@@ -209,7 +253,6 @@
       wpub.waiters.forEach((w) => {
         wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera)'}`, w.id));
       });
-      // Alinear por defecto con Sofía (Terraza) si está disponible
       const sofiaIdx = wpub.waiters.findIndex((w) => w.available && /sof/i.test(w.name));
       if (sofiaIdx >= 0) wSel.selectedIndex = sofiaIdx;
 
@@ -229,6 +272,7 @@
         pase: 'pase.html',
         cocina: 'cocina.html?estacion=cocina',
         barra: 'cocina.html?estacion=barra',
+        mostrador: 'cocina.html?estacion=mostrador',
         encargado: 'restaurante.html?demo=1',
       };
       const initVista = new URLSearchParams(location.search).get('vista');
@@ -245,37 +289,6 @@
         rFrame.src = b.dataset.src;
       };
 
-      // ---------- Motor del Simulador de Hora Pico ----------
-      let adminToken = sessionStorage.getItem('salelisto:adminToken') || '';
-      let simRunId = 0;
-
-      async function ensureAdminToken() {
-        if (adminToken) return adminToken;
-        try {
-          const r = await fetch('api/auth/admin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ demo: true }),
-          }).then((x) => x.json());
-          if (r && r.ok && r.token) {
-            adminToken = r.token;
-            sessionStorage.setItem('salelisto:adminToken', adminToken);
-            return adminToken;
-          }
-        } catch (_) {}
-        const pin = prompt('Modo producción activo. Ingresá el PIN del encargado para ejecutar acciones de demo:') || '';
-        if (!pin) throw new Error('PIN requerido');
-        const r2 = await fetch('api/auth/admin', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pin }),
-        }).then((x) => x.json());
-        if (!r2.ok) throw new Error(r2.error || 'PIN incorrecto');
-        adminToken = r2.token;
-        sessionStorage.setItem('salelisto:adminToken', adminToken);
-        return adminToken;
-      }
-
       async function apiAct(type, payload = {}) {
         const tok = await ensureAdminToken();
         const res = await fetch('api/action', {
@@ -285,9 +298,25 @@
             ...(tok ? { 'X-Auth-Token': tok } : {}),
           },
           body: JSON.stringify({ type, payload }),
-        }).then((r) => r.json());
-        if (!res.ok) throw new Error(res.error || 'Error en acción');
-        return res;
+        });
+        if (res.status === 401) {
+          adminToken = '';
+          sessionStorage.removeItem('salelisto:adminToken');
+          const tok2 = await ensureAdminToken();
+          const res2 = await fetch('api/action', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(tok2 ? { 'X-Auth-Token': tok2 } : {}),
+            },
+            body: JSON.stringify({ type, payload }),
+          }).then((r) => r.json());
+          if (!res2.ok) throw new Error(res2.error || 'Error en acción');
+          return res2;
+        }
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Error en acción');
+        return data;
       }
 
       function setStepUI(currentStep, htmlMsg, finished = false) {
@@ -324,7 +353,6 @@
             throw new Error('Se necesita al menos 1 plato de cocina y 1 bebida de barra disponibles');
           }
 
-          // Elegir la mesa actualmente visible en el teléfono del cliente para que reaccione por SSE sin recargar
           const activeTables = (st.tables || []).filter((t) => t.active);
           const primaryTable = activeTables.find((t) => t.qrToken === tSel.value) || activeTables[0];
           const secondaryTable = activeTables.find((t) => t.id !== primaryTable.id && t.blockId !== primaryTable.blockId)
@@ -337,8 +365,8 @@
           const drink1 = barItems.find((i) => /gin|yuzu/i.test(i.name)) || barItems[0];
           const drink2 = barItems.find((i) => i.id !== drink1.id) || drink1;
 
-          // Paso 1: Pedido mixto en la mesa del cliente (se separa en Cocina + Barra) + pedido en otro sector
-          setStepUI(1, `<strong>Paso 1/4:</strong> Mesa ${primaryTable.code} (${primaryTable.blockName}) pide platos y tragos por QR → se separan solos entre Cocina y Barra.`);
+          // Paso 1: Pedido mixto en la mesa del cliente + pedido en otro sector
+          setStepUI(1, `<strong>Paso 1/4:</strong> Mesa ${primaryTable.code} (${primaryTable.blockName}) pide platos y tragos por QR -&gt; se separan solos entre Cocina y Barra.`);
           const r1 = await apiAct('order.create', {
             qrToken: primaryTable.qrToken,
             items: [
@@ -356,7 +384,6 @@
               })
             : null;
 
-          // Alinear el celular del mozo con quien tomó la mesa principal si corresponde
           const updatedTbl = (r1.state?.tables || []).find((t) => t.id === primaryTable.id);
           const assignedWid = updatedTbl?.waiterId;
           if (assignedWid && wSel.value !== assignedWid) {
@@ -367,8 +394,8 @@
           await wait(950);
           if (myRun !== simRunId) return;
 
-          // Paso 2: Barra y Cocina marcan listos los retiros -> se encienden Estación de Pase y Pulsera
-          setStepUI(2, `<strong>Paso 2/4:</strong> Cocina y Barra marcan "¡Listo!" → se encienden los retiros por columna en la Estación de Mozos y vibra la pulsera.`);
+          // Paso 2: Barra y Cocina marcan listos los retiros
+          setStepUI(2, `<strong>Paso 2/4:</strong> Cocina y Barra marcan "¡Listo!" -&gt; se encienden los retiros por columna en la Estación de Mozos y vibra la pulsera.`);
           const createdPrimary = r1.result?.orderIds || [];
           for (const oid of createdPrimary) {
             await apiAct('order.status', { orderId: oid, status: 'listo' });
@@ -385,7 +412,7 @@
           if (myRun !== simRunId) return;
 
           // Paso 3: Llamado de atención en otra mesa del salón
-          setStepUI(3, `<strong>Paso 3/4:</strong> Mesa ${callTable.code} toca "Llamar al mozo" (Agua / Hielo) → alerta inmediata en la columna de su mozo.`);
+          setStepUI(3, `<strong>Paso 3/4:</strong> Mesa ${callTable.code} toca "Llamar al mozo" (Agua / Hielo) -&gt; alerta inmediata en la columna de su mozo.`);
           await apiAct('call.create', {
             qrToken: callTable.qrToken,
             type: 'mozo',
@@ -395,8 +422,8 @@
           await wait(950);
           if (myRun !== simRunId) return;
 
-          // Paso 4: La mesa principal solicita la cuenta con Tarjeta + 10% propina (cobro en 1 viaje)
-          setStepUI(4, `<strong>Paso 4/4:</strong> Mesa ${primaryTable.code} pide la cuenta desde su QR con Tarjeta + 10% propina → importe exacto listo para cobrar en 1 solo viaje.`);
+          // Paso 4: La mesa principal solicita la cuenta con Tarjeta + 10% propina
+          setStepUI(4, `<strong>Paso 4/4:</strong> Mesa ${primaryTable.code} solicita la cuenta desde su QR con Tarjeta + 10% propina -&gt; importe exacto listo para cobrar en 1 solo viaje.`);
           await apiAct('call.create', {
             qrToken: primaryTable.qrToken,
             type: 'cuenta',
@@ -423,10 +450,10 @@
         simBtn.disabled = false;
         simBtn.textContent = '⚡ Simular Hora Pico';
         try {
-          await apiAct('data.clear_orders', {});
+          await apiAct('data.clear_open_turn', {});
           simStrip.hidden = false;
           document.querySelectorAll('.sim-step').forEach((el) => el.classList.remove('done', 'current'));
-          simMsg.innerHTML = '↺ <strong>Turno demo reiniciado:</strong> todas las mesas, comandas y llamados quedaron limpios.';
+          simMsg.innerHTML = '↺ <strong>Turno demo reiniciado:</strong> las mesas abiertas quedaron limpias conservando el historial cerrado del día.';
         } catch (err) {
           simStrip.hidden = false;
           simMsg.textContent = `⚠️ ${err.message}`;

@@ -1,6 +1,6 @@
 // Conexión reactiva con el servidor de SaleListo.
 // Soporta alcance separado para Clientes (solo su mesa + menú) y Personal (salón completo),
-// control de versión monotónica (evita condiciones de carrera POST vs SSE) y tokens de sesión.
+// control de versión monotónica (con recuperación limpia ante reinicios) y tokens de sesión.
 
 const ORDER_STATUSES = [
   { id: 'nuevo', label: 'Recibido' },
@@ -8,6 +8,12 @@ const ORDER_STATUSES = [
   { id: 'listo', label: 'Listo para llevar' },
   { id: 'entregado', label: 'Entregado' },
 ];
+
+const STATIONS_META = {
+  cocina: { id: 'cocina', label: '🍳 Cocina', short: 'Cocina', chipCls: 'est-cocina', icon: '🍳' },
+  barra: { id: 'barra', label: '🍸 Barra', short: 'Barra', chipCls: 'barra', icon: '🍸' },
+  mostrador: { id: 'mostrador', label: '🍣 Mostrador', short: 'Mostrador', chipCls: 'est-mostrador', icon: '🍣' },
+};
 
 let currentState = null;
 let currentVersion = 0;
@@ -26,11 +32,21 @@ function load() {
   return currentState;
 }
 
-function applyIncomingState(s) {
+function applyIncomingState(s, opts = {}) {
   if (!s) return;
-  if (typeof s.version === 'number' && s.version < currentVersion) return;
-  const changed = !currentState || s.version !== currentVersion || JSON.stringify(s) !== JSON.stringify(currentState);
-  currentVersion = typeof s.version === 'number' ? s.version : currentVersion;
+  const fromSSE = Boolean(opts.fromSSE);
+  const reconnected = Boolean(opts.reconnected);
+  if (!fromSSE && typeof s.version === 'number' && s.version < currentVersion) {
+    return;
+  }
+  const versionReset = fromSSE && (reconnected || (typeof s.version === 'number' && s.version < currentVersion));
+  const changed = !currentState
+    || versionReset
+    || s.version !== currentVersion
+    || JSON.stringify(s) !== JSON.stringify(currentState);
+  if (typeof s.version === 'number') {
+    currentVersion = s.version;
+  }
   currentState = s;
   if (changed) listeners.forEach((fn) => fn(s));
 }
@@ -53,32 +69,56 @@ function connectStream(opts = {}, onConnection) {
 
   return new Promise((resolve, reject) => {
     let resolved = false;
+    let hadDisconnect = false;
+    let authChecking = false;
     const es = new EventSource(`api/events?${params.toString()}`);
+
     es.onmessage = (e) => {
-      const s = JSON.parse(e.data);
+      let s;
+      try {
+        s = JSON.parse(e.data);
+      } catch (_) {
+        return;
+      }
       onConnection?.(true);
       if (!resolved) {
         resolved = true;
-        currentVersion = s.version || 0;
+        hadDisconnect = false;
+        currentVersion = typeof s.version === 'number' ? s.version : 0;
         currentState = s;
         resolve({ state: s, close: () => es.close() });
       } else {
-        applyIncomingState(s);
+        const wasDisconnected = hadDisconnect;
+        hadDisconnect = false;
+        applyIncomingState(s, { fromSSE: true, reconnected: wasDisconnected });
       }
     };
+
     es.onerror = async () => {
+      hadDisconnect = true;
       onConnection?.(false);
-      if (!resolved && scope === 'staff') {
+      if (scope === 'staff' && !authChecking) {
+        authChecking = true;
         try {
           const r = await fetch('api/staff-state', {
             headers: authToken ? { 'X-Auth-Token': authToken } : {},
           });
           if (r.status === 401) {
             es.close();
-            resolved = true;
-            reject(new Error('AUTH_REQUIRED'));
+            onConnection?.(true);
+            if (!resolved) {
+              resolved = true;
+              reject(new Error('AUTH_REQUIRED'));
+            } else {
+              opts.onAuthExpired?.();
+              window.dispatchEvent(new CustomEvent('salelisto:auth-expired'));
+            }
           }
-        } catch (_) {}
+        } catch (_) {
+          // Error transitorio de red: EventSource reintentará solo
+        } finally {
+          authChecking = false;
+        }
       }
     };
   });
@@ -97,7 +137,7 @@ async function apiPost(url, body = {}) {
   } catch (_) {
     throw new Error('Sin conexión con el servidor');
   }
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   if (!res.ok || data.ok === false) {
     const err = new Error(data.error || 'Ocurrió un error');
     err.status = res.status;
@@ -108,7 +148,7 @@ async function apiPost(url, body = {}) {
 
 async function dispatch(type, payload = {}) {
   const data = await apiPost('api/action', { type, payload });
-  if (data.state) applyIncomingState(data.state);
+  if (data.state) applyIncomingState(data.state, { fromSSE: false });
   return data;
 }
 
@@ -130,6 +170,22 @@ function escapeHtml(s) {
   ));
 }
 
+function normalizeSearch(s) {
+  return String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+}
+
+function stationInfo(station) {
+  return STATIONS_META[station] || STATIONS_META.cocina;
+}
+
 function stationLabel(station) {
-  return station === 'barra' ? '🍸 Barra' : '🍳 Cocina';
+  return stationInfo(station).label;
+}
+
+function stationChipClass(station) {
+  return stationInfo(station).chipCls;
 }

@@ -19,18 +19,27 @@ import socket
 import sys
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from db import ActionError, Database
+from db import (
+    AR_TZ,
+    SHIFT_CUTOFF_HOUR,
+    ActionError,
+    AuthError,
+    Database,
+    gastronomic_day_bounds_ms,
+    start_of_today_ms,
+)
 from qrgen import qr_svg
 from webpush import (
     b64url_decode,
     decode_p256_public,
     dispatch_webpush_async,
     ensure_vapid_keys,
+    validate_push_endpoint,
 )
 
 mimetypes.add_type('application/javascript; charset=utf-8', '.js')
@@ -50,13 +59,41 @@ DB_PATH = DATA_DIR / 'salelisto.db'
 UPLOADS_DIR = DATA_DIR / 'uploads'
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('PORT') or 8123)
 
-SERVER_SECRET = secrets.token_bytes(32)
+
+def ensure_server_secret(data_dir: Path) -> bytes:
+    """Carga o crea de forma atómica el secreto de 32 bytes en DATA_DIR/server_secret.key."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    secret_file = data_dir / 'server_secret.key'
+    if secret_file.is_file():
+        try:
+            raw_bytes = secret_file.read_bytes().strip()
+            try:
+                as_text = raw_bytes.decode('ascii').strip()
+                if len(as_text) == 64:
+                    return bytes.fromhex(as_text)
+            except (UnicodeDecodeError, ValueError):
+                pass
+            if len(raw_bytes) >= 32:
+                return raw_bytes[:32]
+        except OSError:
+            pass
+
+    fresh = secrets.token_bytes(32)
+    tmp_file = data_dir / f'server_secret.{secrets.token_hex(4)}.tmp'
+    tmp_file.write_text(fresh.hex() + '\n', encoding='ascii')
+    tmp_file.replace(secret_file)
+    try:
+        os.chmod(secret_file, 0o600)
+    except OSError:
+        pass
+    return fresh
+
+
+SERVER_SECRET = ensure_server_secret(DATA_DIR)
 db = Database(DB_PATH, UPLOADS_DIR)
 VAPID_KEYS = ensure_vapid_keys(DATA_DIR)
 
-# Sesiones ligeras en memoria para mozos y cocina
-staff_tokens: dict[str, str] = {}
-tokens_lock = threading.Lock()
+STAFF_ROLES = ('admin', 'demo_admin', 'waiter', 'kitchen')
 
 # Anti-spam liviano para el formulario público de la Landing (por IP)
 LEAD_WINDOW_S = 600
@@ -64,34 +101,38 @@ LEAD_MAX_PER_WINDOW = 6
 leads_rate: dict[str, list[float]] = {}
 leads_rate_lock = threading.Lock()
 
+# Anti fuerza bruta para endpoints /api/auth/* (por client_address[0])
+AUTH_WINDOW_S = 300
+AUTH_MAX_FAILURES = 10
+auth_failures: dict[str, list[float]] = {}
+auth_rate_lock = threading.Lock()
+
 
 def make_admin_token() -> str:
-    # Vinculado al PIN actual para invalidarse apenas el encargado cambie su PIN
+    # Vinculado al PIN actual y a SERVER_SECRET persistido: sobrevive reinicios y se invalida si cambia el PIN
     with db.lock:
         conn = db._connect()
         try:
             pin = conn.execute('SELECT admin_pin FROM restaurant WHERE id = 1').fetchone()['admin_pin']
         finally:
             conn.close()
-    return 'adm_' + hmac.new(SERVER_SECRET, pin.encode('utf-8'), hashlib.sha256).hexdigest()
+    return 'adm_' + hmac.new(SERVER_SECRET, str(pin).encode('utf-8'), hashlib.sha256).hexdigest()
 
 
 def resolve_role(token: str) -> str:
-    if not token:
+    tok = str(token or '').strip()
+    if not tok:
         return 'client'
-    if hmac.compare_digest(token, make_admin_token()):
+    if hmac.compare_digest(tok, make_admin_token()):
         return 'admin'
-    with tokens_lock:
-        if token in staff_tokens:
-            return staff_tokens[token]
+    sess = db.get_staff_session(tok)
+    if sess:
+        return str(sess['role'])
     return 'client'
 
 
-def create_staff_token(role: str = 'waiter') -> str:
-    tok = f'{role[:3]}_' + secrets.token_urlsafe(18)
-    with tokens_lock:
-        staff_tokens[tok] = role
-    return tok
+def create_staff_token(role: str = 'waiter', waiter_id: str = '') -> str:
+    return db.create_staff_session(role=role, waiter_id=waiter_id)
 
 
 def lan_ip() -> str:
@@ -103,14 +144,25 @@ def lan_ip() -> str:
         return '127.0.0.1'
 
 
-# ---------- Suscriptores Server-Sent Events (filtrados por rol) ----------
+# ---------- Suscriptores Server-Sent Events (filtrados por rol y acotados) ----------
 
 class Subscriber:
     def __init__(self, scope: str, qr_token: str = '', legacy_code: str = ''):
-        self.scope = scope  # 'staff' | 'client'
+        self.scope = scope  # 'admin' | 'demo_admin' | 'staff' | 'client'
         self.qr_token = qr_token
         self.legacy_code = legacy_code
-        self.q: queue.Queue[str] = queue.Queue()
+        self.q: queue.Queue[str] = queue.Queue(maxsize=24)
+
+    def enqueue(self, payload: str) -> None:
+        while True:
+            try:
+                self.q.put_nowait(payload)
+                return
+            except queue.Full:
+                try:
+                    self.q.get_nowait()
+                except queue.Empty:
+                    pass
 
 
 subscribers: set[Subscriber] = set()
@@ -128,20 +180,38 @@ def flush_pending_webpush() -> None:
         dispatch_webpush_async(deliveries, VAPID_KEYS, on_expired=_on_push_expired)
 
 
+def _staff_scope_for_role(role: str) -> str:
+    if role == 'admin':
+        return 'admin'
+    if role == 'demo_admin':
+        return 'demo_admin'
+    return 'staff'
+
+
 def broadcast_updates() -> None:
     with subs_lock:
         current_subs = list(subscribers)
     if not current_subs:
         return
 
-    staff_json: str | None = None
+    staff_cache: dict[str, str] = {}
     client_cache: dict[tuple[str, str], str] = {}
+    demo_on: bool | None = None
 
     for sub in current_subs:
-        if sub.scope == 'staff':
-            if staff_json is None:
-                staff_json = json.dumps(db.get_staff_state(), ensure_ascii=False)
-            sub.q.put(staff_json)
+        if sub.scope in ('admin', 'demo_admin', 'staff'):
+            eff_scope = sub.scope
+            if eff_scope == 'demo_admin':
+                if demo_on is None:
+                    demo_on = db.is_demo_mode()
+                if not demo_on:
+                    eff_scope = 'staff'
+            if eff_scope not in staff_cache:
+                staff_cache[eff_scope] = json.dumps(
+                    db.get_staff_state(role=eff_scope),
+                    ensure_ascii=False,
+                )
+            sub.enqueue(staff_cache[eff_scope])
         else:
             key = (sub.qr_token, sub.legacy_code)
             if key not in client_cache:
@@ -149,10 +219,12 @@ def broadcast_updates() -> None:
                     db.get_client_state(sub.qr_token, sub.legacy_code),
                     ensure_ascii=False,
                 )
-            sub.q.put(client_cache[key])
+            sub.enqueue(client_cache[key])
 
 
 class Handler(SimpleHTTPRequestHandler):
+    timeout = 30
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(PUBLIC), **kwargs)
 
@@ -170,7 +242,7 @@ class Handler(SimpleHTTPRequestHandler):
             sys.stderr.write(f"{self.command} {self.path} {args[1] if len(args) > 1 else ''}\n")
 
     def _effective_base_url(self) -> str:
-        staff = db.get_staff_state()
+        staff = db.get_staff_state(role='staff')
         configured = staff['restaurant'].get('publicUrl') or ''
         if configured:
             return configured.rstrip('/')
@@ -292,16 +364,35 @@ class Handler(SimpleHTTPRequestHandler):
             return self._serve_media(path[len('/media/'):], head_only=True)
         return super().do_HEAD()
 
-    # ---------- Autorización de encargado para endpoints de lectura ----------
+    # ---------- Autorización y Rate-Limiting ----------
 
     def _request_role(self, qs: dict[str, list[str]] | None = None) -> str:
         auth = self.headers.get('X-Auth-Token') or ((qs or {}).get('token') or [''])[0]
         return resolve_role(auth)
 
     def _admin_or_demo(self, qs: dict[str, list[str]] | None = None) -> bool:
-        return self._request_role(qs) == 'admin' or db.is_demo_mode()
+        return self._request_role(qs) in ('admin', 'demo_admin') or db.is_demo_mode()
 
-    # ---------- Exportación contable CSV (arqueo) ----------
+    def _auth_rate_limited(self) -> bool:
+        ip = str(self.client_address[0] if self.client_address else 'unknown')
+        now = time.time()
+        with auth_rate_lock:
+            hits = [t for t in auth_failures.get(ip, []) if now - t < AUTH_WINDOW_S]
+            auth_failures[ip] = hits
+            return len(hits) >= AUTH_MAX_FAILURES
+
+    def _record_auth_failure(self) -> None:
+        ip = str(self.client_address[0] if self.client_address else 'unknown')
+        now = time.time()
+        with auth_rate_lock:
+            hits = [t for t in auth_failures.get(ip, []) if now - t < AUTH_WINDOW_S]
+            hits.append(now)
+            auth_failures[ip] = hits
+            if len(auth_failures) > 2000:
+                for k in [k for k, v in auth_failures.items() if not v or now - v[-1] > AUTH_WINDOW_S]:
+                    auth_failures.pop(k, None)
+
+    # ---------- Exportación contable CSV (arqueo en hora Argentina UTC-3 con corte 06:00) ----------
 
     @staticmethod
     def _csv_safe(value) -> str:
@@ -312,30 +403,38 @@ class Handler(SimpleHTTPRequestHandler):
         return txt
 
     def _send_sessions_csv(self, qs: dict[str, list[str]]) -> None:
-        def parse_day(key: str, end_of_day: bool) -> int | None:
-            raw = (qs.get(key) or [''])[0].strip()
-            if not raw:
-                return None
-            try:
-                d = datetime.strptime(raw, '%Y-%m-%d')
-            except ValueError:
-                return None
-            if end_of_day:
-                d = d.replace(hour=23, minute=59, second=59, microsecond=999000)
-            return int(d.timestamp() * 1000)
+        now_ar = datetime.now(AR_TZ)
+        raw_desde = (qs.get('desde') or [''])[0].strip()
+        raw_hasta = (qs.get('hasta') or [''])[0].strip()
+        turno = (qs.get('turno') or [''])[0].strip().lower()
 
-        since = parse_day('desde', False)
-        until = parse_day('hasta', True)
-        rows = db.get_closed_sessions_export()
-        if since is not None:
-            rows = [r for r in rows if (r['closedAt'] or 0) >= since]
-        if until is not None:
-            rows = [r for r in rows if (r['closedAt'] or 0) <= until]
+        since: int | None = None
+        until: int | None = None
+
+        if turno == 'hoy':
+            since = start_of_today_ms(now_ar)
+        else:
+            cal_today = now_ar.strftime('%Y-%m-%d')
+            if now_ar.hour < SHIFT_CUTOFF_HOUR and raw_desde == cal_today and raw_hasta == cal_today:
+                shift_ymd = (now_ar - timedelta(days=1)).strftime('%Y-%m-%d')
+                raw_desde = shift_ymd
+                raw_hasta = shift_ymd
+
+            if raw_desde:
+                b_start = gastronomic_day_bounds_ms(raw_desde)
+                if b_start is not None:
+                    since = b_start[0]
+            if raw_hasta:
+                b_end = gastronomic_day_bounds_ms(raw_hasta)
+                if b_end is not None:
+                    until = b_end[1]
+
+        rows = db.get_closed_sessions_export(since_ms=since, until_ms=until)
 
         def fmt(ts) -> tuple[str, str]:
             if not ts:
                 return '', ''
-            dt = datetime.fromtimestamp(ts / 1000)
+            dt = datetime.fromtimestamp(ts / 1000, tz=AR_TZ)
             return dt.strftime('%d/%m/%Y'), dt.strftime('%H:%M')
 
         buf = io.StringIO()
@@ -357,7 +456,7 @@ class Handler(SimpleHTTPRequestHandler):
                 r['id'],
             ])
         raw = ('\ufeff' + buf.getvalue()).encode('utf-8')
-        fname = f"arqueo_salelisto_{datetime.now().strftime('%Y%m%d-%H%M')}.csv"
+        fname = f"arqueo_salelisto_{now_ar.strftime('%Y%m%d-%H%M')}.csv"
         self.send_response(200)
         self.send_header('Content-Type', 'text/csv; charset=utf-8')
         self.send_header('Content-Disposition', f'attachment; filename="{fname}"')
@@ -392,14 +491,29 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/media/'):
             return self._serve_media(path[len('/media/'):])
 
+        if path == '/api/health':
+            with subs_lock:
+                sub_cnt = len(subscribers)
+            return self.send_json(
+                200,
+                {
+                    'ok': True,
+                    'version': db.version,
+                    'subscribers': sub_cnt,
+                },
+            )
+
         if path == '/api/leads':
-            if not self._admin_or_demo(qs):
-                return self.send_json(401, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
-            try:
-                limit = int((qs.get('limit') or ['50'])[0])
-            except ValueError:
-                limit = 50
-            return self.send_json(200, {'ok': True, 'leads': db.get_leads(limit)})
+            role = self._request_role(qs)
+            if role == 'admin':
+                try:
+                    limit = int((qs.get('limit') or ['50'])[0])
+                except ValueError:
+                    limit = 50
+                return self.send_json(200, {'ok': True, 'leads': db.get_leads(limit)})
+            if role == 'demo_admin':
+                return self.send_json(200, {'ok': True, 'leads': db.get_demo_leads()})
+            return self.send_json(401, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
 
         if path == '/api/export/sessions.csv':
             if not self._admin_or_demo(qs):
@@ -432,32 +546,41 @@ class Handler(SimpleHTTPRequestHandler):
             return
 
         if path == '/api/qrs':
+            role = self._request_role(qs)
+            if not db.is_demo_mode() and role not in STAFF_ROLES:
+                return self.send_json(
+                    401,
+                    {'ok': False, 'error': 'Sesión de personal requerida para ver los códigos QR'},
+                )
             base = self._effective_base_url()
-            st = db.get_staff_state()
+            st = db.get_staff_state(role='staff')
             blocks_out = []
-            for b in st['blocks']:
-                b_tables = [t for t in st['tables'] if t['blockId'] == b['id'] and t['active']]
-                cards = []
-                for t in b_tables:
-                    url = f"{base}/cliente.html?t={t['qrToken']}"
-                    cards.append(
+            try:
+                for b in st['blocks']:
+                    b_tables = [t for t in st['tables'] if t['blockId'] == b['id'] and t['active']]
+                    cards = []
+                    for t in b_tables:
+                        url = f"{base}/cliente.html?t={t['qrToken']}"
+                        cards.append(
+                            {
+                                'id': t['id'],
+                                'code': t['code'],
+                                'seats': t['seats'],
+                                'qrToken': t['qrToken'],
+                                'url': url,
+                                'svg': qr_svg(url),
+                            }
+                        )
+                    blocks_out.append(
                         {
-                            'id': t['id'],
-                            'code': t['code'],
-                            'seats': t['seats'],
-                            'qrToken': t['qrToken'],
-                            'url': url,
-                            'svg': qr_svg(url),
+                            'id': b['id'],
+                            'name': b['name'],
+                            'icon': b['icon'],
+                            'tables': cards,
                         }
                     )
-                blocks_out.append(
-                    {
-                        'id': b['id'],
-                        'name': b['name'],
-                        'icon': b['icon'],
-                        'tables': cards,
-                    }
-                )
+            except ValueError as e:
+                return self.send_json(400, {'ok': False, 'error': str(e)})
             return self.send_json(
                 200,
                 {
@@ -474,27 +597,27 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_json(200, db.get_client_state(tok, mesa))
 
         if path == '/api/staff-state':
-            auth = self.headers.get('X-Auth-Token') or (qs.get('token') or [''])[0]
-            role = resolve_role(auth)
+            role = self._request_role(qs)
             if role == 'client' and not db.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión requerida'})
-            return self.send_json(200, db.get_staff_state())
+            return self.send_json(200, db.get_staff_state(role=_staff_scope_for_role(role)))
 
         if path == '/api/waiters-public':
             # Lista mínima de mozos para la pantalla de ingreso del celular del mozo
-            st = db.get_staff_state()
+            st = db.get_staff_state(role='staff')
+            demo_on = bool(st['restaurant']['demoMode'])
             return self.send_json(
                 200,
                 {
                     'restaurant': st['restaurant']['name'],
-                    'demoMode': st['restaurant']['demoMode'],
+                    'demoMode': demo_on,
                     'waiters': [
                         {
                             'id': w['id'],
                             'name': w['name'],
                             'color': w['color'],
                             'available': w['available'],
-                            'hasPin': w['hasPin'],
+                            'hasPin': bool(w['hasPin'] or not demo_on),
                         }
                         for w in st['waiters']
                     ],
@@ -506,11 +629,11 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path == '/api/events':
             scope = (qs.get('scope') or ['client'])[0]
-            if scope == 'staff':
-                tok = (qs.get('token') or [''])[0]
-                if resolve_role(tok) == 'client' and not db.is_demo_mode():
+            if scope in ('staff', 'admin', 'demo_admin'):
+                role = self._request_role(qs)
+                if role == 'client' and not db.is_demo_mode():
                     return self.send_json(401, {'ok': False, 'error': 'No autorizado'})
-                return self._stream_events(Subscriber('staff'))
+                return self._stream_events(Subscriber(_staff_scope_for_role(role)))
             qr_tok = (qs.get('t') or [''])[0]
             mesa = (qs.get('mesa') or [''])[0]
             return self._stream_events(Subscriber('client', qr_tok, mesa))
@@ -522,18 +645,23 @@ class Handler(SimpleHTTPRequestHandler):
         path = parsed.path
 
         try:
-            length = int(self.headers.get('Content-Length') or 0)
+            raw_len = self.headers.get('Content-Length')
+            length = int(raw_len) if raw_len is not None else 0
+            if length < 0:
+                return self.send_json(400, {'ok': False, 'error': 'Content-Length inválido'})
             if length > 4_000_000:
                 raise ActionError('Datos demasiado grandes (máx. 4 MB)')
-            body = json.loads(self.rfile.read(length) or b'{}')
+            raw_data = self.rfile.read(length) if length > 0 else b'{}'
+            body = json.loads(raw_data or b'{}')
         except ActionError as e:
             return self.send_json(400, {'ok': False, 'error': str(e)})
         except (ValueError, TypeError):
             return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
 
+        if not isinstance(body, dict):
+            return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
+
         if path == '/api/leads':
-            if not isinstance(body, dict):
-                return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
             if self._lead_rate_limited():
                 return self.send_json(
                     429,
@@ -546,34 +674,57 @@ class Handler(SimpleHTTPRequestHandler):
             broadcast_updates()
             return self.send_json(200, {'ok': True, 'lead': lead})
 
+        if path in ('/api/auth/admin', '/api/auth/waiter', '/api/auth/kitchen'):
+            if self._auth_rate_limited():
+                return self.send_json(
+                    429,
+                    {'ok': False, 'error': 'Demasiados intentos fallidos. Esperá 5 minutos antes de volver a probar.'},
+                )
+
         if path == '/api/auth/admin':
-            if body.get('demo') and db.is_demo_mode():
-                return self.send_json(200, {'ok': True, 'token': make_admin_token(), 'role': 'admin'})
+            if body.get('demo'):
+                if db.is_demo_mode():
+                    return self.send_json(
+                        200,
+                        {'ok': True, 'token': create_staff_token('demo_admin'), 'role': 'demo_admin'},
+                    )
+                self._record_auth_failure()
+                return self.send_json(
+                    401,
+                    {'ok': False, 'error': 'El Modo Demostración está desactivado; ingresá el PIN del encargado'},
+                )
             pin = str(body.get('pin') or '')
             if db.verify_admin_pin(pin):
                 return self.send_json(200, {'ok': True, 'token': make_admin_token(), 'role': 'admin'})
+            self._record_auth_failure()
             return self.send_json(401, {'ok': False, 'error': 'PIN de encargado incorrecto'})
 
         if path == '/api/auth/waiter':
             try:
                 w = db.verify_waiter_login(str(body.get('waiterId') or ''), str(body.get('pin') or ''))
-                return self.send_json(200, {'ok': True, 'waiter': w, 'token': create_staff_token('waiter')})
+                return self.send_json(
+                    200,
+                    {'ok': True, 'waiter': w, 'token': create_staff_token('waiter', waiter_id=w['id']), 'role': 'waiter'},
+                )
             except ActionError as e:
+                self._record_auth_failure()
                 return self.send_json(401, {'ok': False, 'error': str(e)})
 
         if path == '/api/auth/kitchen':
             if body.get('pin'):
                 if not db.verify_admin_pin(str(body.get('pin'))):
+                    self._record_auth_failure()
                     return self.send_json(401, {'ok': False, 'error': 'PIN incorrecto'})
             elif not db.is_demo_mode():
+                self._record_auth_failure()
                 return self.send_json(401, {'ok': False, 'error': 'Ingresá el PIN del local para abrir Cocina/Barra'})
-            return self.send_json(200, {'ok': True, 'token': create_staff_token('kitchen')})
+            return self.send_json(200, {'ok': True, 'token': create_staff_token('kitchen'), 'role': 'kitchen'})
 
         auth_header = self.headers.get('X-Auth-Token') or ''
         role = resolve_role(auth_header)
 
         if path == '/api/push/subscribe':
-            if role not in ('admin', 'waiter', 'kitchen') and not db.is_demo_mode():
+            if role not in STAFF_ROLES and not db.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
             try:
                 waiter_id = str(body.get('waiterId') or '').strip()
@@ -581,6 +732,10 @@ class Handler(SimpleHTTPRequestHandler):
                 if not isinstance(sub, dict):
                     raise ActionError('Suscripción Web Push inválida')
                 endpoint = str(sub.get('endpoint') or '').strip()
+                try:
+                    validate_push_endpoint(endpoint, resolve_dns=False)
+                except ValueError as err:
+                    raise ActionError(str(err)) from err
                 keys = sub.get('keys') if isinstance(sub.get('keys'), dict) else {}
                 p256dh = str(keys.get('p256dh') or sub.get('p256dh') or '').strip()
                 auth_sec = str(keys.get('auth') or sub.get('auth') or '').strip()
@@ -600,6 +755,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return self.send_json(400, {'ok': False, 'error': str(e)})
 
         if path == '/api/push/unsubscribe':
+            if role not in STAFF_ROLES and not db.is_demo_mode():
+                return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
             sub = body.get('subscription') if isinstance(body.get('subscription'), dict) else {}
             endpoint = str(body.get('endpoint') or sub.get('endpoint') or '').strip()
             removed = db.delete_push_subscription(endpoint)
@@ -608,7 +765,7 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_json(200, {'ok': True, 'removed': removed})
 
         if path == '/api/push/test':
-            if role not in ('admin', 'waiter', 'kitchen') and not db.is_demo_mode():
+            if role not in STAFF_ROLES and not db.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
             waiter_id = str(body.get('waiterId') or '').strip()
             endpoint = str(body.get('endpoint') or '').strip()
@@ -656,16 +813,18 @@ class Handler(SimpleHTTPRequestHandler):
             result = db.execute(action_type, payload, role=role)
             flush_pending_webpush()
             broadcast_updates()
-            if role in ('admin', 'waiter', 'kitchen') or (
+            if role in STAFF_ROLES or (
                 db.is_demo_mode() and action_type not in ('order.create', 'call.create')
             ):
-                state_out = db.get_staff_state()
+                state_out = db.get_staff_state(role=_staff_scope_for_role(role))
             else:
                 state_out = db.get_client_state(
                     str(payload.get('qrToken') or ''),
                     str(payload.get('mesa') or ''),
                 )
             return self.send_json(200, {'ok': True, 'result': result, 'state': state_out})
+        except AuthError as e:
+            return self.send_json(e.status, {'ok': False, 'error': str(e)})
         except ActionError as e:
             return self.send_json(400, {'ok': False, 'error': str(e)})
         except (ValueError, TypeError) as e:
@@ -679,11 +838,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
 
         initial = (
-            db.get_staff_state()
-            if sub.scope == 'staff'
+            db.get_staff_state(role=sub.scope)
+            if sub.scope in ('admin', 'demo_admin', 'staff')
             else db.get_client_state(sub.qr_token, sub.legacy_code)
         )
-        sub.q.put(json.dumps(initial, ensure_ascii=False))
+        sub.enqueue(json.dumps(initial, ensure_ascii=False))
 
         with subs_lock:
             subscribers.add(sub)
@@ -695,11 +854,22 @@ class Handler(SimpleHTTPRequestHandler):
                 except queue.Empty:
                     self.wfile.write(b': ping\n\n')
                 self.wfile.flush()
-        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, OSError):
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError, OSError):
             pass
         finally:
+            self.close_connection = True
             with subs_lock:
                 subscribers.discard(sub)
+
+
+class SaleListoHTTPServer(ThreadingHTTPServer):
+    daemon_threads = True
+
+    def handle_error(self, request, client_address) -> None:
+        exc = sys.exc_info()[1]
+        if isinstance(exc, (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError)):
+            return
+        super().handle_error(request, client_address)
 
 
 def main() -> None:
@@ -708,8 +878,7 @@ def main() -> None:
             stream.reconfigure(errors='replace', line_buffering=True)
         except Exception:
             pass
-    server = ThreadingHTTPServer(('0.0.0.0', PORT), Handler)
-    server.daemon_threads = True
+    server = SaleListoHTTPServer(('0.0.0.0', PORT), Handler)
     base = f'http://{lan_ip()}:{PORT}'
     print('\n  SaleListo está corriendo\n')
     print(f'  Inicio / Portada:       {base}/')

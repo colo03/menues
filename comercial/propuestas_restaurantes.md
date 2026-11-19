@@ -1,23 +1,24 @@
 # Plan Comercial y Prospección B2B: SaleListo en Buenos Aires
 
 **Autor:** Simón Martínez de Guereñu  
-**Contacto directo:** `simonguerenu@gmail.com` *(casilla comercial secundaria: `ventas@salelisto.com`)* | `(+54)1138436571`  
+**Contacto directo:** `simonguerenu@gmail.com` *(casilla comercial oficial: `ventas@salelisto.com`)* | `(+54)1138436571`  
 **Alcance geográfico:** CABA (Palermo, Chacarita, Villa Crespo, Colegiales, Belgrano, San Telmo) y Zona Norte (Vicente López, Olivos, San Isidro)  
-**Objetivo comercial:** Conseguir demos en vivo de 10 minutos y activar pruebas piloto sin riesgo en un sector puntual del local (terraza, patio, vereda o boxes), operando **100% sin celulares en la mano de los mozos**.
+**Oferta canónica de conversión:** Conseguir demos presenciales en vivo de 10 minutos y activar el **Piloto sin riesgo de 14 días (2 fines de semana completos) en 1 sector crítico del local, puesto en marcha llave en mano en 48 horas**, operando **100% sin celulares en la mano de los mozos**.
 
 ---
 
 ## Resumen diferencial del producto ("SaleListo")
 
-Antes de salir a contactar locales, conviene alinear el argumento central de venta: **SaleListo no reemplaza la hospitalidad del salón, no compite con la calidez del equipo ni pone a los mozos a mirar celulares frente al cliente; elimina las caminatas vacías y los tiempos muertos que frenan el consumo y la rotación.**
+Antes de salir a contactar locales o responder consultas entrantes, conviene alinear el argumento central de venta: **SaleListo no reemplaza la hospitalidad del salón, no busca recortar personal ni pone a los mozos a mirar celulares frente al cliente; elimina las caminatas vacías, las cuentas grupales eternas y los tiempos muertos que frenan el consumo y la rotación.**
 
-1. **Cero fricción de conectividad (4G/5G directo):** El comensal escanea el QR de su mesa con su propia red móvil 4G/5G, sin pedir clave de Wi-Fi, sin registrarse y sin descargar aplicaciones. Ideal para patios profundos, veredas, jardines y casonas antiguas de paredes anchas donde el Wi-Fi del local se corta.
-2. **QR con token fijo por mesa y plano visual por bloques:** El restaurante arma en minutos su mapa real con bloques pre-armados (**Interior, Terraza, Vereda, Barra, Sectores**).
-3. **División automática de comanda en tiempo real (Cocina vs. Barra):** En un solo pedido del cliente, las pintas, cafés o cócteles entran directo al monitor de **Barra** y los platos entran en simultáneo a **Cocina**, sin que nadie tenga que transcribir ni cantar comandas. Si se acaba un barril o un plato del día, se pausa en 2 segundos desde el panel y desaparece de todos los teléfonos al instante.
-4. **Asignación inteligente de mozos y continuidad de turno:** Cada mesa asigna automáticamente un camarero (por sector fijo pre-asignado o de forma dinámica según la carga de trabajo actual) y permite **reasignación inmediata** cuando un mozo corta turno o rota de sector, evitando mesas huérfanas.
-5. **Operación 100% sin celulares en el salón (dos modalidades según el formato del local):**
-   * **De serie desde el Plan Base: Estación de Mozos fija (`/pase.html`):** Una única tablet o pantalla horizontal en el mostrador del pase o la barra, dividida en columnas en vivo por cada mozo activo y legible a 3 o 4 metros de distancia. Muestra qué retirar en Cocina, qué retirar en Barra, llamados de mesa y cuentas solicitadas (con medio de pago y propina elegida), además de permitir cargar un pedido tradicional en mostrador en 5 segundos. Ningún camarero lleva celular encima.
-   * **Adicional pago para grandes superficies: Kit Pulseras Vibradoras SaleListo (Xiaomi Smart Band configuradas):** Pensado para patios cerveceros, terrazas por escalera, jardines o veredas dobles (**Pack 3 pulseras USD 145** / **Pack 5 pulseras USD 230** / individual **USD 48**, pago único). El teléfono queda bloqueado en el bolsillo o en un locker cercano y el mozo siente la vibración en la muñeca leyendo en medio segundo `🍸 T2 · Retirar Barra` o `💳 M8 · Tarjeta $34.200` (15 g de peso, resistentes al agua y 10 a 14 días de batería real).
+1. **Cero fricción de conectividad (4G/5G directo con QR anti-spoofing):** El comensal escanea el QR de token fijo único de su mesa con su propia red móvil 4G/5G, sin pedir clave de Wi-Fi, sin registrarse y sin descargar aplicaciones. Ideal para patios profundos, veredas, jardines y casonas antiguas de paredes anchas donde el Wi-Fi interno se corta.
+2. **Plano visual por bloques y gestión anti-inflación con vista previa:** El restaurante organiza su salón con bloques reales (**Interior, Terraza, Vereda, Barra, Patio, Salón VIP**), pausa platos o barriles agotados (*86*) en 1 toque desde el Panel o desde Cocina, y actualiza precios por porcentaje masivo viendo la vista previa antes/después (con botón Deshacer).
+3. **División automática en hasta 3 estaciones reales (`Cocina`, `Barra` y `Mostrador`):** En un mismo pedido de la mesa, las pintas o cócteles entran al monitor de **Barra**, los platos calientes van a **Cocina** y el sushi, la parrilla exterior o la pastelería viajan a **Mostrador** (`🍣 Mostrador`), todo en simultáneo y con semáforo SLA de demora.
+4. **Cobro en 1 solo viaje con Calculadora "Vaquita" y Vuelto Exacto:** Al pedir la cuenta desde el QR, el grupo divide entre `N` personas en pantalla (*Vaquita*), elige propina y medio de pago, y si abona en **Efectivo** declara con cuánto paga (`$20.000`, `$50.000`, etc.) para que el mozo lleve el vuelto exacto en un único viaje.
+5. **Asignación inteligente pro-equipo y continuidad de turno:** Cada mesa asigna automáticamente un camarero (por sector fijo pre-asignado o de forma dinámica según carga activa) y **reasigna automáticamente las mesas abiertas** cuando alguien corta turno, sin dejar mesas huérfanas.
+6. **Operación 100% sin celulares en el salón (física exacta de las dos modalidades):**
+   * **De serie desde el Plan Base: Estación de Mozos fija (`/pase.html`):** Una única tablet o pantalla horizontal en el mostrador del pase o la barra (filtrable por sector `?bloque=...` y legible a 3 o 4 metros). Con esta modalidad **los teléfonos personales de los mozos pueden quedar guardados bajo llave en el locker o en caja durante todo el turno**. Muestra retiros listos, llamados (con aviso *"En camino"* al cliente) y cuentas con propina y vuelto calculado.
+   * **Adicional compatible con los 3 planes: Kit Pulseras Vibradoras SaleListo (Xiaomi Smart Band por Bluetooth BLE):** Pensado para patios cerveceros, terrazas por escalera, jardines o veredas dobles (**Pack 3 pulseras USD 145** / **Pack 5 pulseras USD 230** / individual **USD 48**, pago único). Por alcance físico Bluetooth BLE, el teléfono del camarero va **guardado y con pantalla bloqueada en su bolsillo** (jamás se saca ni se mira en el salón) y el mozo siente la vibración directa en la muñeca leyendo en medio segundo `🍸 T2 · Retirar Barra` o `💳 M8 · Efectivo c/$50k` (15 g de peso, resistencia al agua 5 ATM y 10 a 14 días de batería real).
 
 ---
 
@@ -25,51 +26,51 @@ Antes de salir a contactar locales, conviene alinear el argumento central de ven
 
 ### ICP A: Cervecerías artesanales y bares con terraza, patio o vereda grande
 
-* **Morfología del local:** Galpones cerveceros, esquinas de doble vereda, casonas con patios traseros de más de 100 m2 o bares con terrazas/rooftops por escalera, con entre 12 y 50 canillas rotativas más despacho de cocina rápida o tapeo.
+* **Morfología del local:** Galpones cerveceros, esquinas de doble vereda, casonas con patios traseros de más de 100 m2 o bares con terrazas/rooftops por escalera, con entre 12 y 50 canillas rotativas más despacho de cocina rápida, tapeo o parrilla.
 * **Qué ocurre hoy en hora pico (19:30 a 00:30 hs):**
-  * Los camareros pasan la mitad del turno subiendo y bajando escaleras o cruzando patios llenos con las dos manos ocupadas por bandejas, solo para tomar nota o llevar un posnet.
-  * Cuando un grupo de amigos termina su primera pinta en la terraza, si tarda 12 minutos en cruzar miradas con el mozo, conversa con el vaso vacío y termina pidiendo una ronda menos en la noche.
+  * Los camareros pasan la mitad del turno subiendo y bajando escaleras o cruzando patios llenos con las dos manos ocupadas por bandejas, solo para tomar nota, llevar cambio o buscar un posnet.
+  * Cuando un grupo de amigos termina su primera pinta en la terraza, si tarda 12 minutos en cruzar miradas con el mozo (o si desea repetir la misma ronda y no hay nadie cerca), conversa con el vaso vacío y pide una ronda menos en la noche.
   * Las pizarras rotan rápido: cuando se pincha un barril de IPA o NEIPA en pleno viernes, el mozo recién se entera en la barra y tiene que volver hasta el fondo del patio para ofrecer otro estilo.
-* **Impacto directo de SaleListo (Modalidad estrella: Estación de Pase + Kit Pulseras Vibradoras Xiaomi Band):**
-  * **Captura inmediata de segundas y terceras rondas:** Pedir dos pintas extra desde la mesa en 15 segundos con 4G/5G eleva entre un 15% y un 25% la venta de bebida en sectores exteriores.
-  * **Manos libres y pintas siempre frescas:** La comanda entra directo a Barra y al mozo le vibra la **pulsera Xiaomi Band en la muñeca** (`🍸 T2 · Retirar Barra`) con el teléfono bloqueado y guardado recién cuando las pintas están tiradas y listas para llevar, sin sacar pantallas en medio del patio y evitando que la cerveza pierda espuma en el mostrador.
-  * **Baja de barriles en vivo:** Al agotar una canilla en el panel, deja de figurar como disponible al instante.
+* **Impacto directo de SaleListo (Modalidad estrella: Estación de Pase + Kit Pulseras Vibradoras Xiaomi Band BLE):**
+  * **Captura inmediata de segundas y terceras rondas (botón `🔄 Repetir`):** Pedir otra ronda igual desde la mesa en 10 segundos con 4G/5G eleva entre un 15% y un 25% la venta de bebida en sectores exteriores.
+  * **Manos libres y pintas siempre frescas:** La comanda entra directo a Barra y al mozo le vibra la **pulsera Xiaomi Band en la muñeca** (`🍸 T2 · Retirar Barra`) con el teléfono guardado y bloqueado en su bolsillo recién cuando las pintas están tiradas, sin sacar pantallas en medio del patio y evitando que la cerveza pierda espuma.
+  * **Baja 86 de barriles en vivo y cuentas grupales rápidas:** Al agotar una canilla se pausa al instante, y al cerrar la noche el grupo usa la calculadora *Vaquita* desde el QR e informa con cuánto efectivo paga.
 * **Decisor a contactar:** Socio operativo, encargado general de turno noche o jefe de salón/barra.
-* **Puerta de entrada ideal (Piloto):** Activar SaleListo durante dos fines de semana únicamente en la **Terraza** o el **Patio trasero** (probando la Estación del Pase en barra y pulseras de muestra en muñeca).
+* **Puerta de entrada canónica (Piloto):** Activar SaleListo **sin riesgo durante 14 días (2 fines de semana completos) únicamente en la Terraza o el Patio trasero, puesto en marcha llave en mano en 48 horas** (con comodato opcional de pulseras de prueba).
 
 ### ICP B: Restaurantes modernos, bistrós, asiáticos, ramen, sushi y bares de platitos que cuidan la estética de salón
 
-* **Morfología del local:** Izakayas, barras de ramen, handroll bars, bistrós de autor, cantinas asiáticas y neo-pulperías de raciones al centro. Cuidan al extremo la iluminación, la vajilla y la presencia del servicio; suelen trabajar con fila en la vereda o doble turno estricto de cena, combinando cocina caliente, barra fría (sushi/crudos) y coctelería.
+* **Morfología del local:** Izakayas, barras de ramen, handroll bars, bistrós de autor, cantinas asiáticas y neo-pulperías de raciones al centro. Cuidan al extremo la iluminación, la vajilla y la presencia del servicio; suelen trabajar con fila en la vereda o doble turno estricto de cena, combinando **3 estaciones reales**: cocina caliente, mostrador frío (sushi/crudos/omakase) y barra de coctelería.
 * **Qué ocurre hoy en hora pico (20:00 a 23:30 hs):**
   * El consumo es **fragmentado y por oleadas**: primero salen baos o gyozas con un trago, a los 20 minutos suman un ramen o handrolls sueltos, y más tarde otro cóctel o postre. Si pedir un adicional requiere esperar al camarero, ese plato extra muchas veces no se pide.
-  * Los dueños y jefes de salón **rechazan terminantemente que sus camareros caminen con un celular en la mano**, porque rompe el clima del restaurante y da la impresión de que el personal está distraído usando WhatsApp.
-  * Con gente haciendo fila en la puerta, perder 8 minutos al inicio para tomar el primer pedido y otros 10 minutos al final entre pedir la cuenta, esperar el ticket, elegir propina y cobrar representa casi 20 minutos improductivos por mesa.
-* **Impacto directo de SaleListo (Modalidad estrella: Plan Base con Estación de Mozos fija `/pase.html`, cero celulares en salón):**
-  * **Estética de salón impecable sin pantallas personales:** Una única tablet horizontal en el mostrador del pase o la barra muestra columnas por mozo visibles a 3 o 4 metros. Ningún camarero toca un celular durante el servicio; al pasar por el pase ve su columna encendida y retira el plato caliente o lleva el cobro exacto (y en locales con boxes cerrados de tatami o patios largos, pueden sumar las pulseras negras discretas de 15 g en muñeca).
-  * **Aumento de rotación real y micro-comandas:** Achicar entre 12 y 15 minutos los tiempos administrativos habilita medio turno o un turno completo adicional sin apurar la cena, ruteando cada platito extra directo a Cocina o Barra.
-  * **Cierre ágil con propina predefinida:** El cliente solicita la cuenta indicando medio de pago y propina desde su mesa; la tarjeta verde aparece en la columna del mozo en el pase (`💳 M8 · Tarjeta $34.200`) y el camarero se acerca una sola vez directamente a cobrar.
+  * Los dueños y jefes de salón **rechazan terminantemente que sus camareros caminen con un celular en la mano**, porque rompe el clima del restaurante.
+  * Con gente haciendo fila en la puerta, perder 8 minutos al inicio para tomar el primer pedido y otros 10 minutos al final dividiendo la cuenta y cobrando representa casi 20 minutos improductivos por mesa.
+* **Impacto directo de SaleListo (Modalidad estrella: Plan Base / Salón con Estación de Mozos fija `/pase.html` + 3 Estaciones):**
+  * **Estética de salón impecable con celulares guardados en locker:** Una única tablet horizontal en el mostrador del pase muestra columnas por mozo visibles a 3 o 4 metros; ningún camarero lleva teléfono encima durante el servicio (y en locales con boxes cerrados de tatami o patios largos, pueden sumar las pulseras negras discretas de 15 g con el teléfono bloqueado en el bolsillo).
+  * **Ruteo real en 3 estaciones (`Cocina` + `Barra` + `Mostrador`):** Los caldos calientes entran a Cocina, los cócteles a Barra y las piezas de sushi/handrolls directo a `🍣 Mostrador`, permitiendo pausar pescados o raciones agotadas (*86*) desde la propia comandera.
+  * **Cierre ágil en 1 viaje:** El cliente solicita la cuenta indicando división *Vaquita*, propina y medio de pago (más billete con el que abona si es efectivo); la tarjeta queda visible en la columna del mozo hasta cerrar la sesión.
 * **Decisor a contactar:** Dueño gastronómico, chef propietario o jefe de operaciones/salón.
-* **Puerta de entrada ideal (Piloto):** Probarlo con una tablet en el pase para **mesas de vereda**, **boxes/tatamis** o el **turno de almuerzo ejecutivo / primeras mesas de la noche**.
+* **Puerta de entrada canónica (Piloto):** Piloto de **14 días (2 fines de semana completos), activado llave en mano en 48 horas**, enfocado en **mesas de vereda**, **boxes/tatamis** o el **turno de almuerzo ejecutivo**.
 
 ### ICP C: Cafeterías de especialidad y locales de brunch con múltiples sectores (vereda + salón + patio)
 
 * **Morfología del local:** Casonas recicladas con jardín o patio interno, esquinas amplias con doble vereda y terrazas luminosas. Tienen picos intensos en desayunos tardíos, almuerzos y fines de semana de brunch (9:30 a 16:30 hs), además de clientes que trabajan con laptop entre semana.
 * **Qué ocurre hoy en hora pico:**
-  * Desconexión física entre la **Barra de Barista / Mostrador de laminados** (en el frente) y el **Patio o Terraza** (al fondo o en planta alta), sumada a la **Cocina de brunch** (huevos, tostados, pancakes).
-  * Los fines de semana muchos locales suspenden reservas por exceso de demanda, pero la vereda y el patio sufren demoras porque el camarero queda atrapado llevando tazas de a viajes cortos.
-  * Entre semana, quien trabaja con su computadora y mochila en el patio o primer piso no quiere dejar sus pertenencias solas para ir hasta la caja a pedir un segundo flat white o un roll de canela, por lo que estira una sola taza durante dos horas.
-* **Impacto directo de SaleListo (Modalidad combinada: Estación de Mozos en barra barista + opción Pulsera para jardín/terraza):**
-  * **Sincronización Barista + Cocina sin celulares a la vista:** Al pedir un brunch desde la mesa, el café entra directo a la máquina espresso y el plato caliente entra a cocina al mismo tiempo. En el mostrador de café, la **Estación de Mozos (`/pase.html`)** ordena por columnas cada retiro del salón, y el camarero asignado al jardín o primer piso puede llevar pulsera vibradora para enterarse al segundo cuando sale cada bandeja.
-  * **Monetización de mesas de coworking y patio:** El cliente que trabaja o charla afuera suma un segundo café o pastelería en dos toques con su 4G/5G sin moverse de su silla.
-  * **Control de pastelería horneada en el día:** Cuando se vende el último croissant de almendras o pain au chocolat del lote matutino, se marca agotado en un clic y se evitan reclamos o idas y vueltas.
-* **Decisor a contactar:** Fundador/dueño de marca, encargado de local o responsable de operaciones (especialmente atractivo en marcas de 2 a 6 sedes).
-* **Puerta de entrada ideal (Piloto):** Implementarlo primero en **Vereda + Patio/Terraza** durante sábados y domingos de brunch y mañanas de coworking.
+  * Desconexión física entre las **3 estaciones típicas del formato**: la **Barra de Barista** (café de especialidad), el **Mostrador de Boulangerie / Laminados** (pastelería horneada) y la **Cocina de Brunch** (huevos, tostados, pancakes), frente al **Patio o Terraza** en el fondo o primer piso.
+  * Los fines de semana la vereda y el patio sufren demoras porque el camarero queda atrapado subiendo y bajando escaleras.
+  * Entre semana, quien trabaja con su computadora y mochila en el patio o primer piso no quiere dejar sus pertenencias solas para ir hasta la caja a pedir un segundo flat white o un roll de canela.
+* **Impacto directo de SaleListo (Modalidad combinada: 3 Estaciones + Pase en barra + Pulsera BLE en jardín/terraza):**
+  * **Sincronización Barista + Mostrador Dulce + Cocina sin celulares a la vista:** En un mismo pedido de brunch, el flat white entra a Barra, el croissant de almendras a Mostrador y los huevos benedictinos a Cocina. La **Estación de Mozos (`/pase.html`)** ordena los retiros en barra, y quien cubre el jardín o primer piso recibe el pulso Bluetooth BLE en su muñeca con el celular bloqueado en el bolsillo.
+  * **Monetización de mesas de coworking y patio:** El cliente que trabaja afuera suma un segundo café o algo dulce en dos toques con su 4G/5G sin levantarse de su silla.
+  * **Control instantáneo de pastelería recién horneada:** Cuando sale el último laminado de la tanda matutina, el mostrador lo marca agotado en 1 clic.
+* **Decisor a contactar:** Fundador/dueño de marca, encargado de local o responsable de operaciones.
+* **Puerta de entrada canónica (Piloto):** Piloto de **14 días (2 fines de semana de brunch + días hábiles de coworking)** en **Vereda + Patio/Terraza**, puesto en marcha llave en mano en **48 horas**.
 
 ---
 
 ## 2. Investigación Web de Restaurantes, Bares y Cafeterías Reales en Buenos Aires (26 Prospectos Verificados)
 
-Todos los locales listados a continuación fueron verificados mediante búsqueda web en guías gastronómicas actuales, sitios oficiales y perfiles activos de redes sociales. Se detallan únicamente canales públicos verificados.
+Todos los locales listados a continuación fueron verificados en guías gastronómicas actuales, sitios oficiales y perfiles activos de redes sociales. Se detallan únicamente canales públicos verificados.
 
 ### Resumen rápido del mapeo por zona e ICP
 
@@ -84,21 +85,21 @@ Todos los locales listados a continuación fueron verificados mediante búsqueda
 | 7 | **Piso Cero Terrace** | Vicente López (Zona Norte) | A | Amplia terraza verde ("Green Terrace"), barra de coctelería y salón interior | `@pisocero_terrace` / `pisoceroterrace.com.ar` |
 | 8 | **Club Lucero** | Palermo | A | Gran patio bajo enredaderas, barra de coctelería/tirados y salón interior | `@clublucerobar` / `linktr.ee/clublucero` |
 | 9 | **Buena Birra Social Club** | Colegiales y Palermo | A | Casona con patio cervecero, salón interior y barra de 16 canillas | `@buenabirra` / `buenabirrasocialclub.com` |
-| 10 | **Harakiri de Una** | Palermo | B | Salón amplio, boxes privados de tatami/kotatsu, barra de sushi/tragos y cocina ramen | `@harakirideuna` / `harakirideuna.com.ar` |
-| 11 | **Mirutaki** | Palermo | B | Salón japonés y barra, modalidad sin reservas con espera habitual en puerta | `@mirutaki` / `mirutaki.com` |
-| 12 | **Yuzu Izakaya** | Palermo y Belgrano | B | Salón izakaya de platitos japoneses, barra y mesas exteriores | `@yuzu.izakaya` / `linktr.ee/yuzu.izakaya` |
+| 10 | **Harakiri de Una** | Palermo | B | Salón amplio, boxes privados de tatami/kotatsu, mostrador de sushi, barra y cocina ramen | `@harakirideuna` / `harakirideuna.com.ar` |
+| 11 | **Mirutaki** | Palermo | B | Salón japonés y barra sushi/ramen, modalidad sin reservas con espera habitual en puerta | `@mirutaki` / `mirutaki.com` |
+| 12 | **Yuzu Izakaya** | Palermo y Belgrano | B | Salón izakaya de platitos japoneses, mostrador sushi, barra y mesas exteriores | `@yuzu.izakaya` / `linktr.ee/yuzu.izakaya` |
 | 13 | **Bushi Resto** | Villa Crespo / Chacarita | B | Esquina con doble vereda, barra a la vista y salón de alta rotación | `@bushiresto` |
 | 14 | **Norimōto** | Colegiales y Palermo | B | Barra japonesa de handrolls en vivo + mesas exteriores/vereda, sin reservas | `@norimoto.ba` / `norimoto.co/arg/home` |
 | 15 | **Cang Tin** | Palermo | B | Cantina asiática con salón intenso, barra de tragos, sector abierto y vereda | `@cang.tin` |
 | 16 | **KOI Dumplings & Ramen** | Villa Crespo y Palermo | B | Ramen bar en Mercat Villa Crespo y salones propios de street food + coctelería | `@koidumplings` / `contacto@koidumplings.com` |
 | 17 | **Abreboca** | Chacarita | B | Casona centenaria con salón, gran patio andaluz calefaccionado y cocina al fondo | `@abreboca.ba` / `linktr.ee/abreboca_ba` |
 | 18 | **Nikkai Shokudo** | San Telmo | B | Amplio salón comedor en Asociación Japonesa + galería, doble turno intenso | `@nikkaishokudo` / `comedornikkai@gmail.com` |
-| 19 | **Asato Sushi** | Olivos (Zona Norte) | B | Salón íntimo, barra omakase/sushi y terraza exterior | `@asatosushi` / `wokiapp.com/restaurante/asato-sushi` |
+| 19 | **Asato Sushi** | Olivos (Zona Norte) | B | Salón íntimo, mostrador omakase/sushi y terraza exterior | `@asatosushi` / `wokiapp.com/restaurante/asato-sushi` |
 | 20 | **Sāntal Café** | Colegiales, Belgrano y Chacarita | C | Doble vereda grande (Colegiales), patio/terraza verde y varios ambientes (Belgrano) | `@santalcafe` / `1cafecito.mas@gmail.com` |
-| 21 | **Malvón** | Villa Crespo | C | Casona espaciosa con varios salones, vereda y gran patio trasero arbolado | `@malvonba` / `malvon.ar` |
-| 22 | **Gontran Cherrier** | Palermo y Belgrano | C | Esquina de dos plantas con vereda, salón boulangerie y gran terraza en 1er piso | `@gontrancherrierar` / `gontrancherrier.com.ar/contacto` |
+| 21 | **Malvón** | Villa Crespo | C | Casona espaciosa con varios salones, panadería, vereda y gran patio trasero arbolado | `@malvonba` / `malvon.ar` |
+| 22 | **Gontran Cherrier** | Palermo y Belgrano | C | Esquina de dos plantas con vereda, vitrina boulangerie y gran terraza en 1er piso | `@gontrancherrierar` / `gontrancherrier.com.ar/contacto` |
 | 23 | **Rita Specialty Coffee** | Colegiales, Palermo y Belgrano | C | Veredas amplias, barras de especialidad y salones con fila de brunch los findes | `@ritaspecialtycoffee` |
-| 24 | **Aire Libre** | Belgrano | C | Jardín urbano selvático e invernadero + salón en dos plantas (900 m2, 220 cubiertos) | `@airelibre.ba` / `wokiapp.com/restaurante/aire-libre` |
+| 24 | **Aire Libre** | Belgrano | C | Jardín urbano selvático, invernadero, parrilla y salón en dos plantas (900 m2, 220 cubiertos) | `@airelibre.ba` / `wokiapp.com/restaurante/aire-libre` |
 | 25 | **Vecino "Cocina de Barrio"** | Olivos (Zona Norte) | C | Antigua casona reciclada con salones divididos, vereda y gran patio rústico | `@vecino.cocinadebarrio` |
 | 26 | **Zarpado Café** | San Isidro y Olivos (Zona Norte) | C | Mesas exteriores/patio pet-friendly, barra de especialidad y salón | `@zarpadocafe` / `linktr.ee/zarpadocafe` |
 
@@ -111,56 +112,56 @@ Todos los locales listados a continuación fueron verificados mediante búsqueda
 **1. Desarmadero Bar & Desarmadero Session**
 * **Barrio y dirección:** Palermo (`Gorriti 4295` y `Gorriti 4300`, esquina Lavalleja).
 * **Sectores verificados:** Dos locales enfrentados que operan como polo cervecero: salones interiores, barras con más de 40 canillas rotativas nacionales e internacionales, amplias veredas sobre la esquina y terraza al aire libre.
-* **Canales públicos verificados:** Instagram [`@desarmaderobar`](https://www.instagram.com/desarmaderobar) y `@desarmadero_session` | Web [`https://desarmadero.com.ar`](https://desarmadero.com.ar) | Email `contacto@desarmadero.com.ar` (reservas también por DM de Instagram).
-* **Dolor específico que resuelve SaleListo:** Con más de 40 canillas en rotación constante y mesas repartidas entre terraza, veredas y dos salones, cada barril agotado obliga a avisar a todo el equipo y cada demora en tomar pedido en la terraza cuesta segundas pintas. SaleListo sincroniza stock de canillas al instante y manda los pedidos de bebida directo a Barra y las tapas/hamburguesas a Cocina.
+* **Canales públicos verificados:** Instagram [`@desarmaderobar`](https://www.instagram.com/desarmaderobar) y `@desarmadero_session` | Web [`https://desarmadero.com.ar`](https://desarmadero.com.ar) | Email `contacto@desarmadero.com.ar`.
+* **Dolor específico que resuelve SaleListo:** Con más de 40 canillas en rotación constante y mesas repartidas entre terraza, veredas y dos salones, cada barril agotado obliga a avisar a todo el equipo y cada demora en tomar pedido en la terraza cuesta segundas pintas. SaleListo sincroniza bajas de barriles (*86*) al instante y manda bebidas a Barra y tapas/hamburguesas a Cocina.
 
 **2. Strange Brewing (Colegiales y Strange 2 Chacarita)**
 * **Barrio y dirección:** Colegiales (`Delgado 658`) y Chacarita (`Concepción Arenal 4768`).
-* **Sectores verificados:** En Colegiales, taproom de fábrica con barra, salón y vereda amplia; en Chacarita (Strange 2), salón más espacioso con barra cervecera, cocina moderna con panadería propia, vereda y galería en entrepiso preparada incluso para ciclos musicales y DJs.
-* **Canales públicos verificados:** Instagram [`@strangebrewin`](https://www.instagram.com/strangebrewin) | Web [`https://www.strange.com.ar`](https://www.strange.com.ar) y portal [`https://camus.strange.com.ar`](https://camus.strange.com.ar) (con botón directo a WhatsApp oficial en su web).
-* **Dolor específico que resuelve SaleListo:** Sus estilos experimentales (NEIPAs, sours, ediciones limitadas) y platos de cocina propia rotan permanentemente. Separar en tiempo real las comandas de Barra y Cocina desde el entrepiso o la vereda evita filas en el mostrador y asegura que ningún comensal pida una cerveza que acaba de agotarse.
+* **Sectores verificados:** En Colegiales, taproom de fábrica con barra, salón y vereda amplia; en Chacarita (Strange 2), salón espacioso con barra cervecera, cocina moderna con panadería propia, vereda y galería en entrepiso.
+* **Canales públicos verificados:** Instagram [`@strangebrewin`](https://www.instagram.com/strangebrewin) | Web [`https://www.strange.com.ar`](https://www.strange.com.ar) y portal [`https://camus.strange.com.ar`](https://camus.strange.com.ar).
+* **Dolor específico que resuelve SaleListo:** Sus estilos experimentales (NEIPAs, sours, ediciones limitadas) y platos de cocina propia rotan permanentemente. Separar en tiempo real las comandas de Barra y Cocina desde el entrepiso o la vereda evita filas en el mostrador y asegura que nadie pida un barril recién agotado.
 
 **3. Growlers (Chacarita y Belgrano)**
 * **Barrio y dirección:** Chacarita (`Olleros 3750`) y Belgrano (`Cuba 2202`).
-* **Sectores verificados:** En Chacarita cuenta con un enorme patio de 250 m2 más un primer piso al aire libre y barra de 20 canillas (15 de cerveza artesanal y 5 de gin tonic, sidra y vermut tirado); en Belgrano combina terraza al aire libre, vereda y salón.
+* **Sectores verificados:** En Chacarita cuenta con un patio de 250 m2 más un primer piso al aire libre y barra de 20 canillas; en Belgrano combina terraza al aire libre, vereda y salón.
 * **Canales públicos verificados:** Instagram [`@growlerscc`](https://www.instagram.com/growlerscc).
-* **Dolor específico que resuelve SaleListo:** En noches de alta convocatoria y eventos sociales (como encuentros grupales en el patio de 250 m2 y la planta alta de Chacarita), los mozos caminan tramos larguísimos. El QR fijo por mesa operando sobre 4G/5G permite que cualquier grupo pida otra ronda de pintas o milanesas al instante, haciendo vibrar la pulsera Xiaomi Band en la muñeca del mozo recién cuando la bandeja está lista en la barra.
+* **Dolor específico que resuelve SaleListo:** En noches de alta convocatoria grupal en el patio de 250 m2 y la planta alta de Chacarita, los mozos caminan tramos larguísimos. El QR fijo sobre 4G/5G permite repetir rondas al instante, dividir la cuenta con la calculadora *Vaquita* y hacer vibrar la pulsera Xiaomi Band en la muñeca del mozo (con el celular bloqueado en el bolsillo) recién cuando la bandeja está lista en la barra.
 
 **4. Bierlife**
 * **Barrio y dirección:** San Telmo (`Humberto 1º 670`).
-* **Sectores verificados:** Casona histórica de enormes dimensiones en San Telmo con múltiples salones conectados, grandes patios cerveceros cubiertos y semicubiertos, pantalla gigante y más de 45 canillas activas.
+* **Sectores verificados:** Casona histórica en San Telmo con múltiples salones conectados, grandes patios cerveceros cubiertos y semicubiertos, pantalla gigante y más de 45 canillas activas.
 * **Canales públicos verificados:** Instagram [`@bierlife.oficial`](https://www.instagram.com/bierlife.oficial) | Ficha cervecera [`https://www.birramos.com.ar/bierlife-bar`](https://www.birramos.com.ar/bierlife-bar).
-* **Dolor específico que resuelve SaleListo:** Manejar más de 45 canillas y varios patios llenos en simultáneo genera cuellos de botella en las barras y confusión sobre qué mesa pidió comida y qué mesa pidió bebida. Armar el plano por sectores en SaleListo, con asignación automática de camareros según carga y división Cocina/Barra hacia la Estación de Mozos y pulseras vibradoras, ordena los picos de happy hour y partidos.
+* **Dolor específico que resuelve SaleListo:** Manejar más de 45 canillas y varios patios llenos genera cuellos de botella en las barras. Armar el plano por sectores en SaleListo, con asignación automática de camareros según carga, división Cocina/Barra hacia la Estación de Mozos y calculadora *Vaquita* para mesas grandes, ordena los picos de happy hour y partidos.
 
 **5. El Galpón de Tacuara (Belgrano y San Isidro)**
 * **Barrio y dirección:** Belgrano (`Av. Juramento 2781`) y San Isidro (`Av. Márquez y Av. Fleming`, frente a la rotonda).
 * **Sectores verificados:** En Belgrano, local de dos pisos con mesas de pool en ambas plantas, salón, vereda, patio trasero y terraza; en San Isidro, gran galpón cervecero con amplio espacio exterior para grupos.
-* **Canales públicos verificados:** Instagram [`@cerveceriatacuara`](https://www.instagram.com/cerveceriatacuara) y `@elgalpondetacuara_belgrano` | Web [`https://www.elgalpondetacuara.com`](https://www.elgalpondetacuara.com) (link de WhatsApp en bio por sucursal).
-* **Dolor específico que resuelve SaleListo:** El ambiente musical y festivo más la dispersión entre segundo piso, sector de pool, patio trasero y terraza dificultan que el cliente llame al mozo para repetir bebida o cerrar mesa. Las alertas vibratorias en la pulsera del camarero asignado a cada planta (sin tener que sacar el celular) destraban pedidos adicionales durante toda la noche.
+* **Canales públicos verificados:** Instagram [`@cerveceriatacuara`](https://www.instagram.com/cerveceriatacuara) y `@elgalpondetacuara_belgrano` | Web [`https://www.elgalpondetacuara.com`](https://www.elgalpondetacuara.com).
+* **Dolor específico que resuelve SaleListo:** La dispersión entre segundo piso, sector de pool, patio trasero y terraza dificulta llamar al mozo para repetir bebida o cerrar mesa. Las alertas vibratorias Bluetooth BLE en la pulsera del camarero de cada planta (con el teléfono bloqueado en el bolsillo, sin sacarlo en el salón) destraban rondas adicionales toda la noche.
 
 **6. Atis Bar**
 * **Barrio y dirección:** San Telmo (`Perú 1024`).
 * **Sectores verificados:** Antiguo convento de 1890 reconvertido en bar y restaurante de día completo (9:00 a 00:00 hs, por orden de llegada): planta baja, patio andaluz colonial y una icónica terraza jardín en altura con más de 500 plantas y parrilla propia en la terraza.
 * **Canales públicos verificados:** Instagram [`@atis.bar`](https://www.instagram.com/atis.bar).
-* **Dolor específico que resuelve SaleListo:** Es el caso perfecto para SaleListo por tres motivos: (1) muros históricos anchos donde el Wi-Fi interno suele sufrir pero el 4G/5G en terraza y patio funciona directo; (2) múltiples niveles donde hoy los empleados deben avisarse entre planta baja y terraza para saber qué mesas se liberan; (3) despacho cruzado entre cafetería/barra, cocina y parrilla en terraza.
+* **Dolor específico que resuelve SaleListo:** Combina tres desafíos hechos a medida para SaleListo: (1) muros históricos anchos donde el Wi-Fi interno sufre pero el 4G/5G vuela; (2) múltiples niveles con Estaciones de Pase filtrables por bloque (`?bloque=terraza`); y (3) ruteo simultáneo en las **3 estaciones reales**: Cocina principal, Barra de tragos/café y Mostrador/Parrilla en terraza.
 
 **7. Piso Cero Terrace**
 * **Barrio y dirección:** Vicente López, Zona Norte (`Av. del Libertador 1545`).
-* **Sectores verificados:** Gran terraza verde al aire libre ("Green Terrace"), barra de coctelería de autor y salón interior, muy elegido para after office, cenas y eventos corporativos o sociales.
-* **Canales públicos verificados:** Instagram [`@pisocero_terrace`](https://www.instagram.com/pisocero_terrace) | Web [`https://pisoceroterrace.com.ar`](https://pisoceroterrace.com.ar) y `https://pisoceroterrace.com.ar/links` (botón directo de consultas por WhatsApp web).
-* **Dolor específico que resuelve SaleListo:** Durante el pico de after office en Avenida del Libertador entran muchas mesas al mismo tiempo a la terraza; si el primer cóctel tarda en tomarse y despacharse, se pierde la ventana de segunda ronda antes de la cena. Dividir Barra de Coctelería y Cocina en tiempo real y balancear automáticamente la carga de mozos en terraza acelera todo el servicio.
+* **Sectores verificados:** Gran terraza verde al aire libre ("Green Terrace"), barra de coctelería de autor y salón interior, muy elegido para after office, cenas y eventos.
+* **Canales públicos verificados:** Instagram [`@pisocero_terrace`](https://www.instagram.com/pisocero_terrace) | Web [`https://pisoceroterrace.com.ar`](https://pisoceroterrace.com.ar).
+* **Dolor específico que resuelve SaleListo:** Durante el pico de after office en Avenida del Libertador entran muchos grupos juntos a la terraza; dividir Barra de Coctelería y Cocina en tiempo real, balancear mozos y agilizar la división grupal de cuenta con *Vaquita* asegura la segunda ronda antes de la cena.
 
 **8. Club Lucero**
 * **Barrio y dirección:** Palermo (`Nicaragua 6048`).
 * **Sectores verificados:** Bar cultural y gastronómico con extenso patio descubierto bajo enredaderas, barra de tragos/tirados y salón interior con ciclos de DJs y cine club.
 * **Canales públicos verificados:** Instagram `@clublucerobar` | Linktree oficial [`https://linktr.ee/clublucero`](https://linktr.ee/clublucero).
-* **Dolor específico que resuelve SaleListo:** En un patio nocturno con iluminación baja y música en vivo, los clientes en las mesas del fondo pierden contacto visual con el servicio. Escanear el QR de la mesa con datos móviles para sumar tragos y platitos o pedir la cuenta con propina mejora el consumo sin cortar el clima del lugar.
+* **Dolor específico que resuelve SaleListo:** En un patio nocturno con iluminación baja y música en vivo, las mesas del fondo pierden contacto visual con el servicio. Escanear el QR con 4G/5G para sumar tragos y platitos o pedir la cuenta declarando vuelto mejora el consumo sin cortar el clima.
 
 **9. Buena Birra Social Club**
 * **Barrio y dirección:** Colegiales (`Zapiola 1353`) y sede en Palermo (`Honduras 5143`).
-* **Sectores verificados:** Bar de fábrica en casona de barrio con patio cervecero con plantas, salón interior a media luz y barra de 16 canillas (14 de cerveza propia más gin y vermut tirado).
+* **Sectores verificados:** Bar de fábrica en casona de barrio con patio cervecero arbolado, salón interior a media luz y barra de 16 canillas.
 * **Canales públicos verificados:** Instagram [`@buenabirra`](https://www.instagram.com/buenabirra) | Web `http://www.buenabirrasocialclub.com`.
-* **Dolor específico que resuelve SaleListo:** La disposición de casa de barrio separa visualmente la barra de canillas de las mesas del patio. Con SaleListo, las comandas de picadas o sándwiches van a Cocina y las pintas (incluyendo estilos nitrogenados delicados como su Nitro Stout) van a Barra, avisando al mozo en el segundo exacto en que salen para servirlas en punto óptimo.
+* **Dolor específico que resuelve SaleListo:** La disposición de casona separa visualmente la barra de canillas del patio. Con SaleListo, las picadas van a Cocina y las pintas (incluyendo estilos delicados como su Nitro Stout) van a Barra, avisando en la pulsera del camarero en el segundo exacto en que salen.
 
 ---
 
@@ -168,63 +169,63 @@ Todos los locales listados a continuación fueron verificados mediante búsqueda
 
 **10. Harakiri de Una**
 * **Barrio y dirección:** Palermo (`Honduras 4756`).
-* **Sectores verificados:** Salón principal amplio, boxes privados tradicionales con tatami y mesas kotatsu (donde se come descalzo al estilo japonés), barra de sushi/coctelería y cocina caliente de caldos ramen.
-* **Canales públicos verificados:** Instagram [`@harakirideuna`](https://www.instagram.com/harakirideuna) | Web oficial [`https://harakirideuna.com.ar`](https://harakirideuna.com.ar) (con botón de WhatsApp directo en la web).
-* **Dolor específico que resuelve SaleListo:** Los boxes privados de tatami son su gran diferencial estético, pero obligan al mozo a asomarse constantemente o al cliente a esperar para pedir otra entrada, un trago o la cuenta. Con QR fijo en cada box tatami, el cliente pide adicionales o llama al mozo con un toque y la comanda se reparte sola entre Barra/Sushi y Cocina de Ramen.
+* **Sectores verificados:** Salón principal amplio, boxes privados tradicionales con tatami y mesas kotatsu, mostrador de sushi, barra de coctelería y cocina caliente de caldos ramen.
+* **Canales públicos verificados:** Instagram [`@harakirideuna`](https://www.instagram.com/harakirideuna) | Web oficial [`https://harakirideuna.com.ar`](https://harakirideuna.com.ar).
+* **Dolor específico que resuelve SaleListo:** Los boxes privados de tatami dan intimidad pero aíslan visualmente a la mesa. Con QR fijo en cada box tatami, el cliente pide adicionales o llama silenciosamente al mozo y la comanda se reparte sola entre las **3 estaciones**: `🍣 Mostrador` (sushi), `🍸 Barra` (tragos) y `🍳 Cocina` (ramen).
 
 **11. Mirutaki**
 * **Barrio y dirección:** Palermo (`Ángel Justiniano Carranza 2339`).
-* **Sectores verificados:** Salón japonés contemporáneo, barra y mesas; opera de miércoles a domingo únicamente en turno noche (19:00 a 23:00 hs) **sin reservas, por estricto orden de llegada**, generando espera frecuente afuera.
+* **Sectores verificados:** Salón japonés contemporáneo, barra y mesas; opera de miércoles a domingo en turno noche (19:00 a 23:00 hs) **sin reservas, por estricto orden de llegada**.
 * **Canales públicos verificados:** Instagram [`@mirutaki`](https://www.instagram.com/mirutaki) | Web oficial [`https://mirutaki.com`](https://mirutaki.com).
-* **Dolor específico que resuelve SaleListo:** En solo 4 horas de despacho nocturno sin reservas, cada minuto muerto entre que una mesa se sienta, ordena entradas (gyoza, karaage, takoyaki), suma sushi/ramen y pide la cuenta define cuántas personas de la fila logran cenar. Agilizar la toma inicial y el cobro final suma mesas servidas por jornada sin presionar al comensal.
+* **Dolor específico que resuelve SaleListo:** En solo 4 horas de despacho nocturno con fila afuera, ahorrar 12 a 15 minutos entre la toma inicial (ruteada a Cocina, Barra y Mostrador Sushi) y el cobro en 1 viaje define cuántas personas de la fila logran cenar, con los celulares de los mozos guardados en el locker gracias a `pase.html`.
 
 **12. Yuzu Izakaya Ramen & Sushi**
 * **Barrio y dirección:** Palermo (`Paraguay 3521`) y Belgrano (`Barrio Chino`).
-* **Sectores verificados:** Formato bar de tapas japonesas estilo izakaya (baos, sando, dim sum, 7 estilos de ramen y sushi) con salón, barra y vereda.
-* **Canales públicos verificados:** Instagram [`@yuzu.izakaya`](https://www.instagram.com/yuzu.izakaya) | Linktree [`https://linktr.ee/yuzu.izakaya`](https://linktr.ee/yuzu.izakaya) | Reservas Woki [`https://www.wokiapp.com/restaurante/yuzu-izakaya`](https://www.wokiapp.com/restaurante/yuzu-izakaya).
-* **Dolor específico que resuelve SaleListo:** En una propuesta de platitos japoneses para compartir, el ticket crece cuando pedir un bao o unos rolls más a mitad de la charla es instantáneo. SaleListo absorbe esas micro-comandas continuas y las divide entre cocina caliente y barra sin recargar a los camareros.
+* **Sectores verificados:** Bar de tapas japonesas estilo izakaya (baos, sando, dim sum, ramen y sushi) con salón, barra y vereda.
+* **Canales públicos verificados:** Instagram [`@yuzu.izakaya`](https://www.instagram.com/yuzu.izakaya) | Linktree [`https://linktr.ee/yuzu.izakaya`](https://linktr.ee/yuzu.izakaya) | Woki [`https://www.wokiapp.com/restaurante/yuzu-izakaya`](https://www.wokiapp.com/restaurante/yuzu-izakaya).
+* **Dolor específico que resuelve SaleListo:** En platitos japoneses para compartir, el ticket crece cuando pedir un bao o unos rolls más a mitad de la charla es instantáneo. SaleListo absorbe esas micro-comandas y las divide entre Cocina caliente, Mostrador de sushi y Barra.
 
 **13. Bushi Resto**
-* **Barrio y dirección:** Villa Crespo, en el límite con Chacarita (`Bonpland 1201`).
-* **Sectores verificados:** Esquina luminosa y moderna con mesas en ambas veredas, barra y salón interior, especializada en ramen artesanal, dumplings y postres propios (como su famoso Sanbushito).
+* **Barrio y dirección:** Villa Crespo, límite con Chacarita (`Bonpland 1201`).
+* **Sectores verificados:** Esquina moderna con mesas en ambas veredas, barra y salón interior, especializada en ramen artesanal, dumplings y postres propios.
 * **Canales públicos verificados:** Instagram [`@bushiresto`](https://www.instagram.com/bushiresto).
-* **Dolor específico que resuelve SaleListo:** Atender dos frentes de vereda más el salón interior en una esquina muy transitada exige entradas y salidas permanentes del personal. Con SaleListo las mesas exteriores piden directo por 4G/5G, reciben confirmación de cocina y avisan cuando quieren cerrar la cuenta eligiendo propina y medio de pago.
+* **Dolor específico que resuelve SaleListo:** Atender dos frentes de vereda más el salón interior exige entradas y salidas permanentes. Con SaleListo las mesas exteriores piden directo por 4G/5G (con control por bloque `?bloque=vereda`) y cierran la cuenta en un único viaje.
 
 **14. Norimōto**
-* **Barrio y dirección:** Colegiales (`Virrey Avilés 3298`), Palermo (`Av. del Libertador 3897` esq. Dorrego y Palermo Hollywood) y Zona Norte (Pacheco y próxima apertura en Al Río, Vicente López).
-* **Sectores verificados:** Primer handroll bar de Buenos Aires, con barra japonesa de preparación en vivo más mesas exteriores/vereda, abierto de corrido de 12:00 a 00:00 hs **sin reservas**.
-* **Canales públicos verificados:** Instagram `@norimoto.ba` | Web oficial [`https://www.norimoto.co/arg/home`](https://www.norimoto.co/arg/home) (con accesos directos a WhatsApp por cada sucursal).
-* **Dolor específico que resuelve SaleListo:** El consumo de handrolls es secuencial: los comensales prueban un set inicial y deciden sobre la marcha qué piezas repetir o qué bebida sumar. En mesas de vereda o salón auxiliar, disparar piezas extra al instante desde el QR de mesa eleva el ticket promedio y mantiene altísima la rotación diaria.
+* **Barrio y dirección:** Colegiales (`Virrey Avilés 3298`), Palermo (`Av. del Libertador 3897` esq. Dorrego y Palermo Hollywood) y Zona Norte.
+* **Sectores verificados:** Primer handroll bar de Buenos Aires, con barra japonesa en vivo más mesas exteriores/vereda, abierto de corrido de 12:00 a 00:00 hs **sin reservas**.
+* **Canales públicos verificados:** Instagram `@norimoto.ba` | Web oficial [`https://www.norimoto.co/arg/home`](https://www.norimoto.co/arg/home).
+* **Dolor específico que resuelve SaleListo:** El consumo de handrolls es secuencial: los comensales prueban un set inicial y deciden sobre la marcha qué piezas repetir hacia `🍣 Mostrador` y qué bebida sumar a `🍸 Barra`, manteniendo altísima la rotación diaria.
 
 **15. Cang Tin**
 * **Barrio y dirección:** Palermo (`Av. Dorrego 2415`).
-* **Sectores verificados:** Cantina vietnamita y tailandesa con salón de alta energía, barra de coctelería, sector semiabierto y mesas en vereda; combina turnos de reserva y mesas por orden de llegada.
-* **Canales públicos verificados:** Instagram [`@cang.tin`](https://www.instagram.com/cang.tin) (reservas vía Meitre y consultas por DM).
-* **Dolor específico que resuelve SaleListo:** Carta de curries, rolls frescos, platitos intensos y cócteles que salen en ritmos distintos; separar al instante la comanda de Barra de Tragos y la de Cocina y encender la columna del camarero en la Estación del Pase (sin celulares en mano en el salón) evita demoras en noches llenas.
+* **Sectores verificados:** Cantina vietnamita y tailandesa con salón de alta energía, barra de coctelería, sector semiabierto y mesas en vereda.
+* **Canales públicos verificados:** Instagram [`@cang.tin`](https://www.instagram.com/cang.tin).
+* **Dolor específico que resuelve SaleListo:** Carta de curries, rolls frescos y cócteles con filtros rápidos (*Picante, Sin TACC, Veggie*); separar al instante Barra y Cocina hacia la Estación del Pase (sin celulares en mano en el salón) evita cuellos de botella en noches llenas.
 
 **16. KOI Dumplings & Ramen**
 * **Barrio y dirección:** Villa Crespo (`Thames 747, Local 11, Mercat Villa Crespo`) y Palermo (`Beruti 3336, Local 15, Palermo Off`, además de sedes propias).
-* **Sectores verificados:** Barras de ramen y salones modernos de street food asiático (dumplings, baos, buns, ramen) y coctelería tirada/de autor, con alto volumen en almuerzos ejecutivos y noches.
-* **Canales públicos verificados:** Instagram [`@koidumplings`](https://www.instagram.com/koidumplings) | Web oficial [`https://koidumplings.com`](https://koidumplings.com) | Email directo verificado `contacto@koidumplings.com`.
-* **Dolor específico que resuelve SaleListo:** Al operar múltiples locales con altísima rotación y personal que rota por turnos, necesitan un estándar ágil sin camareros usando celulares personales: Estación de Mozos fija en el mostrador por columnas, reasignación inmediata de mesas cuando cambia un turno, división automática entre barra de coctelería y cocina de vapor/caldos, y actualización instantánea de faltantes.
+* **Sectores verificados:** Barras de ramen y salones modernos de street food asiático y coctelería tirada/de autor, con alto volumen mediodía y noche.
+* **Canales públicos verificados:** Instagram [`@koidumplings`](https://www.instagram.com/koidumplings) | Web [`https://koidumplings.com`](https://koidumplings.com) | Email `contacto@koidumplings.com`.
+* **Dolor específico que resuelve SaleListo:** Ordena turnos de alta rotación sin camareros usando teléfonos personales: Estación de Mozos fija en el mostrador por columnas (con celulares en locker), reasignación automática de mesas cuando cambia un turno y división Cocina/Barra en tiempo real.
 
 **17. Abreboca**
 * **Barrio y dirección:** Chacarita (`Fraga 541`).
-* **Sectores verificados:** "Neo-pulpería" en una casona centenaria restaurada: salón delantero, un gran patio andaluz central calefaccionado con parra y azulejos originales, y cocina completamente a la vista ubicada al fondo del terreno.
-* **Canales públicos verificados:** Instagram [`@abreboca.ba`](https://www.instagram.com/abreboca.ba) | Linktree [`https://linktr.ee/abreboca_ba`](https://linktr.ee/abreboca_ba) (con acceso a Woki y WhatsApp oficial).
-* **Dolor específico que resuelve SaleListo:** La propuesta invita explícitamente a ir en grupo y pedir varias raciones de charcutería, quesos, platitos calientes y vermuts al centro. Como la cocina está al fondo pasando el patio andaluz, cada viaje innecesario desgasta al salón; la Estación de Mozos en el pase más pulseras vibradoras discretas coordinan el despacho de punta a punta de la casona manteniendo intacta su estética.
+* **Sectores verificados:** "Neo-pulpería" en casona centenaria restaurada: salón delantero, gran patio andaluz central calefaccionado y cocina a la vista ubicada al fondo del terreno.
+* **Canales públicos verificados:** Instagram [`@abreboca.ba`](https://www.instagram.com/abreboca.ba) | Linktree [`https://linktr.ee/abreboca_ba`](https://linktr.ee/abreboca_ba).
+* **Dolor específico que resuelve SaleListo:** La cocina está al fondo pasando todo el patio andaluz; la Estación de Mozos en el pase más pulseras vibradoras discretas (con el celular bloqueado en el bolsillo del camarero) coordinan raciones de charcutería, vermuts y platos calientes cuidando la estética histórica de la casona.
 
 **18. Nikkai Shokudo**
 * **Barrio y dirección:** San Telmo (`Av. Independencia 732`).
-* **Sectores verificados:** Restaurante tradicional japonés dentro de la Asociación Japonesa en la Argentina, con amplio salón comedor y galería/patio lindero, funcionando de lunes a sábado en dos ventanas intensas (12:00 a 15:30 y 19:30 a 23:00 hs).
-* **Canales públicos verificados:** Instagram [`@nikkaishokudo`](https://www.instagram.com/nikkaishokudo) | Menú web [`https://nikkaishokudo.menudigital.ar`](https://nikkaishokudo.menudigital.ar) | Email directo verificado `comedornikkai@gmail.com`.
-* **Dolor específico que resuelve SaleListo:** Ya utilizan carta digital de lectura, pero el mozo sigue teniendo que tomar manualmente cada comanda en un salón grande que se llena de golpe a las 12:30 y a las 20:00 hs. Pasar de un menú estático a SaleListo les permite recibir los pedidos divididos entre Sushi, Cocina Caliente y Bebidas y agilizar el cierre de cuentas antes de las 15:30 y 23:00 hs.
+* **Sectores verificados:** Restaurante tradicional japonés dentro de la Asociación Japonesa en la Argentina, con amplio salón comedor y galería, en dos ventanas intensas (12:00 a 15:30 y 19:30 a 23:00 hs).
+* **Canales públicos verificados:** Instagram [`@nikkaishokudo`](https://www.instagram.com/nikkaishokudo) | Menú web [`https://nikkaishokudo.menudigital.ar`](https://nikkaishokudo.menudigital.ar) | Email `comedornikkai@gmail.com`.
+* **Dolor específico que resuelve SaleListo:** Ya usan carta digital de lectura, pero el mozo sigue anotando manualmente en un salón que se llena de golpe. Evolucionar a SaleListo les rutea en vivo las **3 estaciones** (`🍣 Mostrador` de sushi, `🍳 Cocina` caliente y `🍸 Barra`) y agiliza los cierres de cuenta antes de las 15:30 y 23:00 hs.
 
 **19. Asato Sushi & Asian Food**
 * **Barrio y dirección:** Olivos, Zona Norte (`Corrientes 584, Olivos`).
-* **Sectores verificados:** Salón cuidado, barra de sushi/omakase y terraza exterior en el corazón de Olivos, trabajando mediodía y noche de martes a domingo (lunes mediodía).
-* **Canales públicos verificados:** Instagram [`@asatosushi`](https://www.instagram.com/asatosushi) | Reservas Woki [`https://www.wokiapp.com/restaurante/asato-sushi`](https://www.wokiapp.com/restaurante/asato-sushi).
-* **Dolor específico que resuelve SaleListo:** Al tener capacidad acotada muy demandada los fines de semana y mesas en terraza exterior, cada repetición de bebida, entrada o pedido de cuenta resuelto desde el celular mejora la atención personalizada sin recargar al equipo de salón y libera puntualmente el segundo turno de reservas.
+* **Sectores verificados:** Salón cuidado, mostrador de sushi/omakase y terraza exterior en el corazón de Olivos.
+* **Canales públicos verificados:** Instagram [`@asatosushi`](https://www.instagram.com/asatosushi) | Woki [`https://www.wokiapp.com/restaurante/asato-sushi`](https://www.wokiapp.com/restaurante/asato-sushi).
+* **Dolor específico que resuelve SaleListo:** En capacidad acotada con doble turno de reservas y terraza exterior, separar Mostrador Sushi, Cocina y Barra y cobrar en un solo viaje libera puntualmente las mesas para el segundo turno.
 
 ---
 
@@ -232,128 +233,189 @@ Todos los locales listados a continuación fueron verificados mediante búsqueda
 
 **20. Sāntal Café (Colegiales, Belgrano y Chacarita)**
 * **Barrio y dirección:** Colegiales (`Conde 1200`), Belgrano (`O'Higgins 1502`, Espacio Pirámide) y Chacarita (`Loyola 1599`).
-* **Sectores verificados:** En Colegiales, doble vereda muy amplia + salón + barra; en Belgrano, múltiples ambientes con sillones y patio/terraza con vegetación; en Chacarita, vereda + salón + barra (además de cava de vinos y tapas por la tarde/noche). Abren de 7:30 a 20:30 hs (viernes hasta 23:00 en Colegiales).
-* **Canales públicos verificados:** Instagram [`@santalcafe`](https://www.instagram.com/santalcafe) | Web oficial [`https://www.santal.info/buenosaires`](https://www.santal.info/buenosaires) | Email público en sitio oficial `1cafecito.mas@gmail.com`.
-* **Dolor específico que resuelve SaleListo:** Conviven dos dinámicas opuestas en distintos sectores: público de brunch rápido en las grandes veredas y clientes de coworking que pasan toda la mañana en los sillones o el patio de Belgrano. Con SaleListo en las mesas, quien trabaja pide un segundo café filtrado o almuerzo sin levantarse ni descuidar su laptop, y a la tarde el mismo QR impulsa copas de vino y tapas.
+* **Sectores verificados:** Doble vereda muy amplia en Colegiales, patio/terraza con vegetación y sillones en Belgrano, y salón + cava de vinos/tapas en Chacarita.
+* **Canales públicos verificados:** Instagram [`@santalcafe`](https://www.instagram.com/santalcafe) | Web [`https://www.santal.info/buenosaires`](https://www.santal.info/buenosaires) | Email `1cafecito.mas@gmail.com`.
+* **Dolor específico que resuelve SaleListo:** Quien trabaja con su laptop en el patio pide un segundo café filtrado o almuerzo sin descuidar sus cosas, y en brunch las comandas viajan separadas entre Barra Barista, Mostrador Dulce y Cocina.
 
 **21. Malvón**
 * **Barrio y dirección:** Villa Crespo (`Serrano 789`).
-* **Sectores verificados:** Gran casona antigua de barrio con vereda, varios salones internos sucesivos, mostrador de panadería/pastelería y un amplio patio trasero colorido rodeado de plantas.
-* **Canales públicos verificados:** Instagram [`@malvonba`](https://www.instagram.com/malvonba) | Web oficial [`https://www.malvon.ar`](https://www.malvon.ar) | Linktree [`https://linktr.ee/malvonserrano`](https://linktr.ee/malvonserrano) (con acceso directo a WhatsApp en web).
-* **Dolor específico que resuelve SaleListo:** En pleno brunch de sábado o domingo, la distancia entre el patio del fondo, la barra de café/pastelería y la cocina genera caminatas constantes y demoras para sumar un jugo, otro café o pedir la cuenta. Dividir automáticamente Barra/Pastelería vs. Cocina hacia la Estación de Mozos en barra (más pulsera vibradora opcional para quien cubre el patio) ordena por completo la casona.
+* **Sectores verificados:** Gran casona antigua de barrio con vereda, varios salones internos sucesivos, mostrador de panadería/pastelería y amplio patio trasero arbolado.
+* **Canales públicos verificados:** Instagram [`@malvonba`](https://www.instagram.com/malvonba) | Web [`https://www.malvon.ar`](https://www.malvon.ar) | Linktree [`https://linktr.ee/malvonserrano`](https://linktr.ee/malvonserrano).
+* **Dolor específico que resuelve SaleListo:** Conecta el patio del fondo con las 3 estaciones (Barra de café, Mostrador de panadería y Cocina de fuegos) hacia la Estación de Mozos y pulsera BLE opcional para quien cubre el jardín.
 
 **22. Gontran Cherrier (Palermo y Belgrano)**
-* **Barrio y dirección:** Palermo Soho (`Malabia 1805`, esquina Costa Rica, frente a Plaza Armenia) y Belgrano (`Zabala 1901`, esquina Arribeños; también sede en Av. Congreso 1701, límite Belgrano/Núñez).
+* **Barrio y dirección:** Palermo Soho (`Malabia 1805`, frente a Plaza Armenia) y Belgrano (`Zabala 1901` y `Av. Congreso 1701`).
 * **Sectores verificados:** En Palermo, gran esquina de dos plantas con extensa vereda, salón en planta baja con vitrina de boulangerie francesa y amplia terraza al aire libre en el primer piso.
 * **Canales públicos verificados:** Instagram [`@gontrancherrierar`](https://www.instagram.com/gontrancherrierar) | Web [`https://gontrancherrier.com.ar/contacto`](https://gontrancherrier.com.ar/contacto).
-* **Dolor específico que resuelve SaleListo:** Subir y bajar la escalera hacia la terraza del primer piso en Plaza Armenia solo para tomar pedidos o informar qué piezas de viennoiserie quedan disponibles consume muchísimo tiempo operativo. Con SaleListo actualizan el stock de panadería horneada al minuto y reciben las comandas de terraza ya separadas entre cafetería, mostrador dulce y cocina francesa.
+* **Dolor específico que resuelve SaleListo:** Ahorra subidas y bajadas de escalera a la terraza de Plaza Armenia, pausa viennoiserie agotada (*86*) al minuto y recibe las comandas ya divididas entre Barra Barista, Mostrador Boulangerie y Cocina francesa.
 
 **23. Rita Specialty Coffee (Colegiales, Palermo y Belgrano)**
 * **Barrio y dirección:** Colegiales (`Matienzo 2489`), Palermo (`Soler 6093` y `Armenia 1595`) y Belgrano (`Vuelta de Obligado 1183`).
-* **Sectores verificados:** Locales de arquitectura minimalista con amplias veredas, barras de café de especialidad a la vista y salones interiores; toman reservas solo de lunes a jueves porque de viernes a domingo trabajan a capacidad plena por orden de llegada.
-* **Canales públicos verificados:** Instagram [`@ritaspecialtycoffee`](https://www.instagram.com/ritaspecialtycoffee) | Página oficial [`https://www.facebook.com/ritaspecialtycoffee`](https://www.facebook.com/ritaspecialtycoffee).
-* **Dolor específico que resuelve SaleListo:** De viernes a domingo el desafío central es absorber la fila de brunch sin perder calidad de atención en vereda y salón. Separar en tiempo real las bebidas frías/calientes del barista de los platos abundantes de cocina (tostados de chipá, brunchs) y coordinar los retiros desde una única pantalla fija en el mostrador sin celulares en el salón aumenta la cantidad de mesas atendidas por fin de semana.
+* **Sectores verificados:** Amplias veredas, barras de café de especialidad a la vista y salones interiores que de viernes a domingo operan sin reservas por orden de llegada.
+* **Canales públicos verificados:** Instagram [`@ritaspecialtycoffee`](https://www.instagram.com/ritaspecialtycoffee) | Página [`https://www.facebook.com/ritaspecialtycoffee`](https://www.facebook.com/ritaspecialtycoffee).
+* **Dolor específico que resuelve SaleListo:** Absorbe la fila de brunch de viernes a domingo separando al instante bebidas de barista y platos calientes y acelerando el cobro en vereda con una única pantalla fija en el mostrador.
 
 **24. Aire Libre**
 * **Barrio y dirección:** Belgrano (`Av. del Libertador 6327`).
-* **Sectores verificados:** Predio de 900 m2 con capacidad para 220 comensales distribuidos entre un gran jardín urbano selvático, estructura tipo invernadero de hierro y vidrio, barra de coctelería y salón en dos plantas; ofrece brunch dominguero, almuerzos y cenas con horno de barro y parrilla.
-* **Canales públicos verificados:** Instagram [`@airelibre.ba`](https://www.instagram.com/airelibre.ba) | Reservas Woki [`https://www.wokiapp.com/restaurante/aire-libre`](https://www.wokiapp.com/restaurante/aire-libre).
-* **Dolor específico que resuelve SaleListo:** En una superficie de 900 m2 y dos plantas con 220 cubiertos (donde los fines de semana no queda una silla libre), coordinar los tiempos entre el jardín exterior, la barra, la planta alta y los fuegos exige una logística milimétrica. El plano por bloques con asignación de mozos por carga, Estación de Pase por columnas y Kit de Pulseras Vibradoras Xiaomi Band reduce recorridos improductivos sin que ningún camarero camine mirando un teléfono.
+* **Sectores verificados:** Predio de 900 m2 para 220 comensales con jardín urbano selvático, invernadero, barra de coctelería, horno de barro/parrilla y salón en dos plantas.
+* **Canales públicos verificados:** Instagram [`@airelibre.ba`](https://www.instagram.com/airelibre.ba) | Woki [`https://www.wokiapp.com/restaurante/aire-libre`](https://www.wokiapp.com/restaurante/aire-libre).
+* **Dolor específico que resuelve SaleListo:** Coordina 900 m2 y dos plantas combinando las 3 estaciones (Cocina, Barra y Parrilla/Mostrador), Estaciones de Pase filtradas por bloque y Kit de Pulseras Vibradoras Xiaomi Band con el teléfono bloqueado en el bolsillo del mozo.
 
 **25. Vecino "Cocina de Barrio" (VCNO)**
 * **Barrio y dirección:** Olivos, Zona Norte (`Rioja 3053, Olivos`).
-* **Sectores verificados:** Antigua casona de barrio reciclada con varios salones internos independientes, mesas exteriores y un gran patio rústico con mucha vegetación, activo desde las 8:30 hs con desayunos/brunch hasta la medianoche con cenas.
+* **Sectores verificados:** Antigua casona reciclada con varios salones internos independientes, mesas exteriores y gran patio rústico con vegetación.
 * **Canales públicos verificados:** Instagram [`@vecino.cocinadebarrio`](https://www.instagram.com/vecino.cocinadebarrio).
-* **Dolor específico que resuelve SaleListo:** La propia arquitectura de casona dividida en ambientes separados más el patio trasero genera puntos ciegos donde en horarios pico se ralentiza la atención. Un QR con token fijo por mesa que funciona con 4G/5G permite llamar al mozo, sumar cafés o platitos y pedir la cuenta desde cualquier rincón de la casa sin sentirse desatendido.
+* **Dolor específico que resuelve SaleListo:** Elimina los puntos ciegos de los salones separados y el patio mediante comandas 4G/5G directas y aviso inmediato al comensal cuando el mozo toca *"Voy"* en el pase.
 
 **26. Zarpado Café (San Isidro y Olivos)**
 * **Barrio y dirección:** San Isidro / Acassuso (`Av. del Libertador 14656`) y Olivos (`Cmte. Leonardo Rosales 2419`).
-* **Sectores verificados:** Cafeterías de especialidad pet-friendly y bici-friendly en Zona Norte con sectores al aire libre/vereda/patio, barra de café y salón interior, abiertas todos los días de 8:00 a 21:00 hs.
+* **Sectores verificados:** Cafeterías pet-friendly y bici-friendly en Zona Norte con mesas exteriores/patio, barra de especialidad y salón interior.
 * **Canales públicos verificados:** Instagram [`@zarpadocafe`](https://www.instagram.com/zarpadocafe) | Linktree [`https://linktr.ee/zarpadocafe`](https://linktr.ee/zarpadocafe).
-* **Dolor específico que resuelve SaleListo:** Muchos clientes llegan con mascotas o bicicletas y se sientan directo en las mesas exteriores; si entran al mostrador se arma cuello de botella junto al take-away, y si esperan afuera tardan en ser vistos. Con SaleListo ordenan desde su mesa exterior directo a barra y cocina, liberando la caja para el público al paso.
+* **Dolor específico que resuelve SaleListo:** Quienes llegan con mascotas o bicicletas piden y repiten desde las mesas exteriores sin hacer fila en la caja junto al take-away.
 
 ---
 
-## 3. Propuestas Comerciales y Secuencias de Contacto a Medida
+## 3. Propuestas Comerciales, Secuencias Outbound y Guion Inbound WhatsApp
 
-### Estrategia comercial recomendada: "Demo de 10 minutos -> Piloto acotado a 1 sector"
+### Oferta canónica sin fricción: "Demo de 10 minutos -> Piloto de 14 días (2 fines de semana) activado en 48 horas"
 
-En gastronomía nadie quiere cambiar todo su sistema un viernes a la noche ni ver a sus camareros distraídos con teléfonos personales. Por eso la oferta comercial entra sin fricción en dos pasos:
-1. **Primer paso (Demo en vivo de 10 minutos):** Nos acercamos en horario tranquilo (por ejemplo, martes o miércoles a las 16:30 o 17:30 hs antes del despacho) con una tablet mostrando la **Estación de Mozos fija (`/pase.html`)** y una **Xiaomi Smart Band configurada**. En 10 minutos el dueño o encargado escanea un QR de prueba con su 4G/5G, pide una bebida + un plato, ve cómo se separa solo entre Barra y Cocina, comprueba cómo se enciende la columna del mozo en la pantalla del pase y siente vibrar la pulsera en la muñeca con el celular bloqueado y guardado.
-2. **Segundo paso (Piloto sin riesgo de 7 a 14 días en un solo sector):** En lugar de pedirle que migre todo el local de golpe, le proponemos **activar SaleListo únicamente en su sector más lejano o crítico** (la terraza del primer piso, el patio del fondo, la vereda o los boxes de tatami). Se configura el plano con bloques pre-armados en menos de media hora y se mide en cancha cuántas segundas rondas suma y cuánto agiliza el cierre de cuentas.
+Toda prospección saliente y toda respuesta entrante convergen hacia **una única promesa comercial simple y verificable**:
+1. **Paso 1 (Demo en vivo de 10 minutos en horario valle):** Nos acercamos un martes, miércoles o jueves entre las 10:30 y las 12:00 hs o entre las 16:30 y las 18:30 hs con una tablet mostrando la **Estación de Mozos fija (`/pase.html`)** y una **Xiaomi Smart Band configurada**. En 10 minutos el dueño o encargado escanea un QR de prueba con su propio 4G, envía un pedido mixto, ve cómo se separa entre Cocina, Barra y Mostrador, comprueba cómo se enciende la columna del mozo en `pase.html` y siente vibrar la pulsera en la muñeca con el celular bloqueado y guardado en el bolsillo.
+2. **Paso 2 (Piloto sin riesgo de 14 días / 2 fines de semana completos en 1 solo sector, llave en mano en 48 horas):** Sin tocar su salón principal ni su caja fiscal actual, activamos SaleListo en **48 horas** únicamente en su sector más crítico (terraza, patio, vereda o boxes de tatami), firmando el acuerdo simple de 1 carilla ([`SaleListo_Acuerdo_Piloto_14d.pdf`](./SaleListo_Acuerdo_Piloto_14d.pdf)) y relevando la carta con [`plantilla_carga_carta.csv`](./plantilla_carga_carta.csv). Al cumplir los **2 fines de semana completos (Día 14)**, medimos juntos segundas rondas y rotación real.
 
 ---
 
-### A. Secuencias cortas para Instagram DM y WhatsApp Comercial
+### A. Secuencias cortas para Instagram DM (Mensaje 1 <= 35 palabras) y WhatsApp Saliente
 
-> **Consejo táctico para Instagram DM:** No envíes un bloque largo en el primer mensaje. En cuentas de bares y restaurantes que reciben reservas por DM (como `@desarmaderobar`, `@growlerscc`, `@atis.bar` o `@bushiresto`), el community manager o encargado filtra en 3 segundos. El Mensaje 1 debe demostrar que conocés su local real y abrir conversación; recién cuando responden o dejan visto se pasa al audio corto o al Mensaje 2.
+> **Regla de oro para Instagram DM (`<= 35 palabras` en el Mensaje 1):** En cuentas gastronómicas que reciben reservas por DM (`@desarmaderobar`, `@growlerscc`, `@atis.bar`, `@bushiresto`), el CM o encargado descarta bloques largos en menos de 3 segundos. **Todo Mensaje 1 tiene 35 palabras o menos**: menciona su formato real, nombra el beneficio sin celulares y pide derivación rápida al encargado. Recién cuando responden se envía el Mensaje 2 o un audio de 25 segundos.
 
 #### Secuencia DM / WhatsApp 1: Para ICP A (Cervecerías y bares con terraza o patio grande)
 
-* **Mensaje 1 (Día 1, rompehielo personalizado, ejemplo para Growlers Chacarita / Desarmadero / Atis Bar):**
-  > ¡Hola equipo de [Nombre del Bar]! ¿Cómo andan? Consulta rápida para quien maneja la operación del salón/terraza: desarrollamos **SaleListo**, un sistema donde las mesas del patio o la terraza piden segundas rondas directo con su 4G/5G (sin pedir clave de Wi-Fi), dividiendo solo lo que va a Barra de canillas y lo que va a Cocina, y avisando en una pantalla de pase o con una vibración en pulsera Xiaomi Band (sin que el mozo saque el celular) recién cuando las pintas ya están tiradas. ¿Con quién podría hablar 2 minutos para mostrarles una prueba en vivo? Soy Simón (`(+54)1138436571`).
+* **Mensaje 1 (Día 1 · Rompehielo `<= 35 palabras`):**
+  > ¡Hola equipo de [Bar]! Consulta para el encargado: con **SaleListo** la terraza pide segundas pintas por 4G directo a Barra, sin Wi-Fi ni mozos mirando celulares. ¿A quién le muestro una demo? Simón `(+54)1138436571`.
 
-* **Mensaje 2 (Día 4, seguimiento de valor concreto si hubo visto o respuesta breve):**
-  > ¡Gracias por leer! Te sumo el dato que más les sirve a los bares con terraza o patio grande: no hace falta tocar la operación de todo el local ni tener camareros mirando teléfonos. Podemos armar en 20 minutos el bloque solo de la **terraza / patio** con QR fijos por mesa, pantalla de pase por columnas en barra y pulseras vibradoras de prueba durante una semana sin compromiso para medir cuántas pintas extra salen, además de poder dar de baja un barril agotado al instante. Si les sirve, paso un martes o miércoles antes de que abran y se los muestro andando en 10 minutos. Te dejo mi contacto directo: Simón Martínez de Guereñu, `(+54)1138436571` / `simonguerenu@gmail.com`.
+* **Mensaje 2 (Día 4 · Seguimiento tras respuesta o visto):**
+  > ¡Gracias por leer! Lo mejor para bares con patio o terraza es que no tocamos todo el local: **en 48 horas activamos llave en mano un piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza/patio, con pantalla fija de pase en barra (teléfonos en locker) o pulseras Xiaomi Band que vibran con el celular bloqueado en el bolsillo recién cuando las pintas están tiradas, más calculadora *Vaquita* al pedir la cuenta. ¿Paso un martes o miércoles antes de abrir y lo ven andando en 10 minutos? Simón Martínez de Guereñu, `(+54)1138436571` / `simonguerenu@gmail.com`.
 
-* **Mensaje 3 (Día 9, cierre suave sin presión):**
-  > ¡Buenas! No los quiero molestar en plena semana de laburo. Dejo abierta la invitación por si más adelante quieren probar el piloto en el sector exterior antes de los días fuertes de calor. Cualquier cosa me escriben directo al `(+54)1138436571` o a `simonguerenu@gmail.com` y me acerco en 10 minutos al local con la demo lista. ¡Éxitos con el finde!
+* **Mensaje 3 (Día 9 · Cierre suave sin presión):**
+  > ¡Buenas! No quiero molestarlos en plena semana. Dejo abierta la invitación por si quieren activar el piloto de 14 días en el sector exterior antes de las noches fuertes. Me encuentran en `(+54)1138436571` o `simonguerenu@gmail.com`. ¡Éxitos el finde!
 
 ---
 
-#### Secuencia DM / WhatsApp 2: Para ICP B (Ramen, izakayas, sushi, bistrós y platitos con estética cuidada de salón)
+#### Secuencia DM / WhatsApp 2: Para ICP B (Ramen, izakayas, sushi, bistrós y platitos con estética cuidada)
 
-* **Mensaje 1 (Día 1, ejemplo adaptable a Mirutaki / Yuzu Izakaya / Bushi Resto / Harakiri de Una):**
-  > ¡Hola gente de [Nombre del Restaurante]! ¿Cómo están? Viendo el ritmo que manejan a la noche (y lo clave que es cada minuto cuando hay espera o cuando una mesa va sumando gyozas, tragos o piezas a mitad de la cena), armamos **SaleListo**: cada mesa tiene un QR fijo que anda directo con 4G/5G, separa sola la comanda entre Cocina y Barra, y coordina a los mozos desde una **Estación fija en el pase** por columnas para que **ningún camarero ande mirando el celular en el salón**. ¿A qué correo o encargado le puedo acercar una demo de 10 minutos?
+* **Mensaje 1 (Día 1 · Rompehielo `<= 35 palabras`):**
+  > ¡Hola equipo de [Restaurante]! Armamos **SaleListo**: QR 4G que separa Cocina, Barra y Mostrador Sushi, con pantalla fija en el pase y cero mozos usando celular. ¿Con qué encargado coordino 10 min de demo?
 
-* **Mensaje 2 (Día 4, seguimiento enfocado en rotación y estética de salón):**
-  > Sumo un detalle cortito: en lugares de ramen, sushi o platitos que cuidan mucho la puesta en escena, el Plan Base ya trae la **Estación de Mozos fija** para el mostrador (cero celulares en mano), y achicar 10 o 12 minutos entre la primera toma y el pedido de cuenta ya con propina elegida habilita un recambio más en las mesas más buscadas. Si quieren verlo en vivo, paso 10 minutos antes del servicio de la noche y lo probamos en tiempo real. Mi número directo es `(+54)1138436571` (`simonguerenu@gmail.com`).
+* **Mensaje 2 (Día 4 · Seguimiento enfocado en rotación y estética de salón):**
+  > Sumo un dato clave para salones que cuidan la puesta en escena: con la **Estación de Mozos fija** los teléfonos del equipo quedan guardados en el locker, y ahorrar 12 a 15 minutos entre la primera comanda y el cobro en un solo viaje habilita un recambio más cuando hay espera afuera. Podemos probarlo **14 días (2 fines de semana) sin riesgo** en un sector, dejándolo listo llave en mano en **48 horas**. Mi directo es `(+54)1138436571` (`simonguerenu@gmail.com`).
 
-* **Mensaje 3 (Día 8, cierre breve):**
-  > ¡Hola! Paso por última vez para no spamear el chat de reservas. Si en algún momento quieren agilizar las micro-comandas a mitad de cena o el pedido de cuenta en horas pico sin perder estética de salón, me encuentran en `(+54)1138436571` o `simonguerenu@gmail.com`. ¡Gran semana para todo el equipo!
+* **Mensaje 3 (Día 8 · Cierre breve):**
+  > ¡Hola! Paso por última vez para no ocupar el chat de reservas. Si más adelante quieren probar el piloto de 14 días para agilizar micro-comandas y cierres de cuenta sin perder estética de salón, me escriben al `(+54)1138436571` o `simonguerenu@gmail.com`. ¡Gran semana!
 
 ---
 
 #### Secuencia DM / WhatsApp 3: Para ICP C (Cafeterías de especialidad y brunch con vereda + salón + patio)
 
-* **Mensaje 1 (Día 1, ejemplo adaptable a Malvón / Rita / Vecino Cocina de Barrio / Zarpado Café):**
-  > ¡Hola equipo de [Nombre del Café]! ¿Qué tal? Les escribo cortito por la operación de brunch y mesas exteriores: creamos **SaleListo**, una plataforma donde el cliente en el patio o la vereda pide desde su mesa directo con 4G/5G, mandando en simultáneo el café a la Barra de barista y los platos calientes a Cocina, y ordenando los retiros en una **pantalla fija de pase** en el mostrador (o con pulsera vibradora en muñeca, sin celulares en el salón). ¿Me podrían indicar con quién conversar para mostrarles una demo rápida de 10 minutos en horario valle?
+* **Mensaje 1 (Día 1 · Rompehielo `<= 35 palabras`):**
+  > ¡Hola equipo de [Café]! Con **SaleListo** el patio y la vereda piden por 4G directo a Barista, Mostrador y Cocina, sin mozos mirando celulares. ¿Con quién coordino una demo rápida? Simón `(+54)1138436571`.
 
-* **Mensaje 2 (Día 4, ángulo coworking + pastelería del día):**
-  > Les dejo dos casos puntuales donde más rinde en cafeterías con patio y vereda: primero, la persona que está trabajando con la compu pide un segundo flat white o algo dulce desde la silla sin tener que levantar sus cosas para ir al mostrador; segundo, cuando se termina un laminado del día lo pausás en 2 segundos y desaparece del menú al instante. Podemos hacer una prueba piloto sin riesgo solo en el patio o la vereda durante un par de findes. Quedo atento en `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
+* **Mensaje 2 (Día 4 · Ángulo coworking + pastelería del día + piloto 14 días):**
+  > Les cuento dónde más rinde en brunch y café: quien trabaja con su compu en el patio pide un segundo flat white sin dejar sus cosas solas, y cuando se acaba un laminado lo pausan en 1 toque desde el mostrador. Les ofrecemos un **piloto sin riesgo de 14 días (2 fines de semana completos)** solo en patio/vereda, activado llave en mano en **48 horas**. Quedo atento en `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
 
-* **Mensaje 3 (Día 9, cierre cordial):**
-  > ¡Buenas tardes! Dejo acá mi contacto (`(+54)1138436571` / `simonguerenu@gmail.com`) por si quieren evaluar el piloto de patio/vereda cuando tengan 10 minutos libres una tarde tranquila. ¡Abrazo y éxitos con el brunch del finde!
+* **Mensaje 3 (Día 9 · Cierre cordial):**
+  > ¡Buenas tardes! Dejo mi contacto (`(+54)1138436571` / `simonguerenu@gmail.com`) por si quieren ver en 10 minutos el piloto de 14 días para patio y vereda una tarde tranquila. ¡Éxitos con el brunch del finde!
 
 ---
 
-#### Mensajes hiper-personalizados 1 a 1 listos para enviar a 5 prospectos estrella sin email público
+#### Abordajes 1 a 1 para los 5 prospectos estrella sin email público (DM inicial `<= 35 palabras` + Mensaje 2 al responder)
 
 1. **Para Atis Bar (`@atis.bar`, San Telmo):**
-   > ¡Hola equipo de Atis! Trabajando por orden de llegada entre la planta baja, el patio andaluz y semejante terraza llena de plantas con parrilla arriba, imagino la cantidad de subidas y bajadas que hace el equipo en cada turno. Armamos **SaleListo** justo para locales así: el cliente escanea el QR de su mesa con su propio 4G/5G (sin depender de que el Wi-Fi atraviese paredes antiguas), cada comanda se divide sola entre Cocina, Barra y Terraza, y el mozo asignado recibe el aviso en la **Estación del Pase** o con una vibración directa en su **pulsera Xiaomi Band** recién cuando sale el pedido, sin tener que andar sacando el celular. ¿Con quién puedo coordinar 10 minutos un día de semana tranquilo para mostrárselo funcionando en vivo? Soy Simón Martínez de Guereñu (`(+54)1138436571` / `simonguerenu@gmail.com`).
+   * **Mensaje 1 DM (`<= 35 palabras`):**
+     > ¡Hola equipo de Atis! Con **SaleListo** la terraza jardín pide por 4G (sin Wi-Fi entre muros antiguos) separando Cocina, Barra y Parrilla, sin mozos con celular. ¿Con qué encargado hablo 2 min?
+   * **Mensaje 2 (al responder):**
+     > ¡Genial! En Perú 1024 además podemos filtrar una Estación de Pase arriba y usar pulseras Xiaomi Band con el celular bloqueado en el bolsillo para ahorrar escaleras. En **48 horas** les activamos un **piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza. ¿Paso 10 min un martes o miércoles? Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
 
-2. **Para Piso Cero Terrace (`@pisocero_terrace` / WhatsApp web en `pisoceroterrace.com.ar`, Vicente López):**
-   > ¡Hola equipo de Piso Cero! Les consulto por la operación de salón y terraza: cuando explota el after office en la Green Terrace y entran varios grupos a la vez, ¿les interesaría probar un piloto donde las mesas de terraza puedan disparar rondas de cócteles y tapeo directo con su 4G/5G, separando al instante lo que entra a Barra de Autor y lo que va a Cocina? Con **SaleListo** además el sistema reparte las mesas según carga real y opera **sin celulares en la mano del mozo**, usando una pantalla fija por columnas en barra o pulseras vibradoras discretas cuando salen los tragos o piden la cuenta con propina. Si les suma, me acerco 10 minutos a Libertador 1545 antes de la apertura para hacerles una demo en vivo. Simón Martínez de Guereñu (`(+54)1138436571`).
+2. **Para Piso Cero Terrace (`@pisocero_terrace`, Vicente López):**
+   * **Mensaje 1 DM (`<= 35 palabras`):**
+     > ¡Hola equipo de Piso Cero! En after office de la Green Terrace, **SaleListo** toma rondas 4G directo a Coctelería y Cocina, sin mozos mirando celulares. ¿Con quién coordino 10 min de demo?
+   * **Mensaje 2 (al responder):**
+     > ¡Buenísimo! Para grupos grandes en Libertador 1545 suma muchísimo la calculadora *Vaquita* al pedir la cuenta y las pulseras vibradoras con el teléfono guardado en el bolsillo. Podemos activar en **48 horas** un **piloto gratuito de 14 días (2 fines de semana)** solo en la terraza. Mi WhatsApp directo es `(+54)1138436571` (Simón Martínez de Guereñu).
 
-3. **Para Harakiri de Una (`@harakirideuna` / WhatsApp web en `harakirideuna.com.ar`, Palermo):**
-   > ¡Hola equipo de Harakiri de Una! Los boxes tradicionales de tatami en Honduras 4756 son espectaculares, pero suelen tener un desafío operativo clásico: como dan privacidad, el cliente no siempre cruza mirada fácil con el camarero para sumar nigiris, otro cóctel o pedir la cuenta. Desarrollamos **SaleListo**, donde cada box o mesa tiene un QR fijo que funciona directo con 4G/5G, divide sola la comanda entre Barra/Sushi y Cocina de Ramen, y avisa en la **Estación del Pase** o en una **pulsera vibradora silenciosa** (cero camareros mirando teléfonos en el salón) tanto llamados como cierres de cuenta con propina. ¿Les parece bien si paso 10 minutos antes de abrir una tarde para mostrarles cómo quedaría un piloto exclusivo en los boxes de tatami? Quedo atento en el `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
+3. **Para Harakiri de Una (`@harakirideuna`, Palermo):**
+   * **Mensaje 1 DM (`<= 35 palabras`):**
+     > ¡Hola equipo de Harakiri! Para sus boxes tatami armamos **SaleListo**: QR 4G que divide Sushi, Barra y Cocina Ramen, sin mozos con celular en mano. ¿A qué encargado le muestro una demo?
+   * **Mensaje 2 (al responder):**
+     > ¡Gracias! En Honduras 4756 los boxes ganan atención instantánea sin perder intimidad: pantalla fija en el pase (celulares en locker) o pulsera silenciosa, puesta en marcha llave en mano en **48 horas** para probarlo **14 días (2 fines de semana)** exclusivo en los tatamis. Quedo atento en `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
 
 4. **Para Abreboca (`@abreboca.ba`, Chacarita):**
-   > ¡Hola gente de Abreboca! Qué gran puesta lograron en Fraga 541 con el patio andaluz y la cocina a la vista al fondo. Les escribo porque en casonas profundas donde las mesas van pidiendo charcutería, raciones calientes y vermuts en varias tandas para poner al centro, los camareros terminan haciendo kilómetros entre el frente, el patio y el fondo. Con **SaleListo** cada mesa puede sumar raciones o vino desde su celular (con 4G/5G, sin pedir clave de Wi-Fi), la comanda separa sola Barra y Cocina, y **ningún mozo pierde presencia mirando celulares**: lo ven por columnas en la **Estación fija del pase** o les vibra una pulsera liviana recién cuando el plato está listo para llevarlo caliente. Si tienen 10 minutos un miércoles o jueves antes de las 20 hs, me acerco a Chacarita y lo ven andando en vivo. Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
+   * **Mensaje 1 DM (`<= 35 palabras`):**
+     > ¡Hola gente de Abreboca! Con la cocina al fondo del patio en Fraga 541, **SaleListo** ahorra caminatas sumando raciones y vermuts por 4G, cero celulares en mano. ¿Con quién coordino 10 min?
+   * **Mensaje 2 (al responder):**
+     > ¡Qué bueno! Con la Estación fija en el pase y pulseras livianas (con el celular bloqueado en el bolsillo) cuidan al 100% la estética de la casona. Les armamos en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana)** en el patio andaluz. ¿Paso un miércoles o jueves antes de las 20 hs? Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
 
 5. **Para Vecino "Cocina de Barrio" (`@vecino.cocinadebarrio`, Olivos):**
-   > ¡Hola equipo de Vecino! En una casona reciclada con salones separados y un patio tan lindo como el de Rioja 3053, suele pasar en hora pico de brunch o cena que las mesas de los ambientes internos o del fondo tardan en enganchar al camarero para pedir un café más o la cuenta. Creamos **SaleListo** para resolver ese cuello de botella cuidando la estética del salón: el cliente escanea el QR fijo de su mesa con datos móviles, la comanda se divide sola entre Barra de Café/Tragos y Cocina, y el equipo se coordina sin celulares en la mano desde una **pantalla fija en el pase** (o con pulsera vibradora para el patio). ¿Con quién puedo hablar 2 minutos para proponerles una prueba piloto sin costo en el sector del patio? Soy Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
+   * **Mensaje 1 DM (`<= 35 palabras`):**
+     > ¡Hola equipo de Vecino! En los salones y el patio de Rioja 3053, **SaleListo** toma pedidos 4G hacia Café, Barra y Cocina sin mozos usando celular. ¿Con qué encargado hablo 2 min?
+   * **Mensaje 2 (al responder):**
+     > ¡Gracias por contestar! Así eliminan puntos ciegos en hora pico y avisan al cliente apenas el mozo sale hacia su mesa. En **48 horas** dejamos andando un **piloto sin costo de 14 días (2 fines de semana)** solo en el patio rústico. Me escriben al `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
 
 ---
 
-### B. Correos Electrónicos Personalizados (Asuntos y estructuras 100% diferenciados)
+### B. Guion de Respuesta y Calificación Inbound en WhatsApp (SLA < 15 min)
 
-Cada uno de los siguientes correos está redactado con una estructura narrativa, un gancho inicial y una línea de asunto completamente distintos para evitar cualquier sensación de plantilla masiva. Los primeros cuatro están dirigidos a prospectos con casilla verificada y los siguientes cubren cadenas de brunch y seguimiento.
+Cuando un dueño o encargado gastronómico toca el botón de WhatsApp desde uno de nuestros **5 Reels**, un **anuncio de Meta Ads** o envía el formulario de la **Landing Page B2B** (que dispara alerta sonora inmediata en la bandeja `restaurante.html#consultas`), la probabilidad de agendar la demo presencial se multiplica por 4x si respondemos en **menos de 15 minutos** (`< 5 minutos` en horario valle de martes a jueves).
+
+#### Paso 1: Respuesta inicial en menos de 15 minutos (máximo 3 líneas + 2 preguntas fáciles)
+
+* **Variante 1A · Lead entrante desde formulario de Landing Page (`#consultas`, donde ya sabemos nombre del local, zona y mesas):**
+  > ¡Hola [Nombre]! Soy Simón de **SaleListo**, recién recibí tu consulta por **[Nombre del Local]** en [Barrio].
+  > Para prepararte el ejemplo justo antes de hablar: de las ~[N] mesas que comentaste, **¿tienen vereda, patio o terraza además del salón?** ¿Y hoy usan algún QR de lectura o comandera en cocina?
+
+* **Variante 1B · Lead entrante directo por WhatsApp desde Reel / Instagram / Dossier (aún no sabemos qué local es):**
+  > ¡Hola [Nombre]! Soy Simón de **SaleListo**, ¡gracias por escribir!
+  > Contame cortito **cómo se llama el local y en qué zona están**, y **cuántas mesas o sectores manejan aprox.** (salón, vereda, patio o terraza), así te paso los números exactos para el formato de ustedes.
+
+#### Paso 2: Calificación rápida (Matriz en 60 segundos) + Envío de ROI Personalizado y Dossier PDF
+
+Apenas el prospecto responde esas dos líneas, identificamos su configuración ideal y le enviamos **un enlace personalizado de la Calculadora ROI** junto al PDF de 2 páginas ([`SaleListo_Dossier_Comercial.pdf`](./SaleListo_Dossier_Comercial.pdf)):
+
+| Señal que menciona el lead | Configuración a recomendar en la respuesta | Sector ideal para el Piloto de 14 días |
+| :--- | :--- | :--- |
+| *"Tenemos salón chico / bistró y odiamos ver mozos con teléfono"* | **Estación de Mozos fija (`/pase.html`)** en mostrador/barra (celulares guardados en locker, USD 0 hardware). | Vereda o hilera de 8 mesas durante 2 fines de semana. |
+| *"Tenemos patio grande, doble vereda o terraza por escalera"* | **Estación de Pase + Kit Pulseras Xiaomi Band BLE** (celular bloqueado en el bolsillo del mozo; prestamos 2 pulseras en comodato en el piloto). | Terraza o Patio trasero durante 2 fines de semana. |
+| *"Hacemos sushi / parrilla / panadería además de cocina y barra"* | Destacar ruteo en las **3 estaciones reales (`Cocina`, `Barra` y `Mostrador`)** + botón rápido de agotados (*86*). | Sector de mayor rotación o boxes. |
+| *"Usamos Maxirest / Fudo / Bistrosoft en caja"* | Aclarar convivencia 100% pacífica: ticket fiscal consolidado en su caja habitual + arqueo CSV para Excel con corte `06:00 AM`. | 1 bloque acotado sin tocar su caja fiscal. |
+
+* **Mensaje 2 Inbound (envío de valor concreto + cierre directo a los 10 min presenciales):**
+  > ¡Clarísimo! Con ese formato en [Nombre del Local], podés operar **100% sin celulares en el salón** (con una pantalla fija en el pase y los teléfonos en el locker, o con pulseras Xiaomi Band vibrando en la muñeca con el celular bloqueado en el bolsillo si cubren [terraza/patio]) y sin tocar [Maxirest/Fudo/tu caja actual].
+  > Te adjunto acá el **Dossier de 2 carillas** con los planes en pesos (0% comisión y sin permanencia) y el cálculo estimado para [N] mesas.
+  > Lo más práctico es que **me acerque 10 minutos en horario tranquilo** con la pantalla de pase y una pulsera de muestra para que lo prueben con su 4G; si les cierra, **en 48 horas les activamos sin cargo un Piloto de 14 días (2 fines de semana)** solo en [la terraza / el patio / la vereda]. ¿Te queda mejor **este martes a las 17:00 o el miércoles a las 11:00 hs**?
+
+#### Paso 3: Post-Demo / Activación en 48 Horas (Envío en el acto al cerrar el piloto)
+
+Apenas el dueño acepta probar el piloto de 14 días en la mesa:
+1. Enviar por WhatsApp [`SaleListo_Acuerdo_Piloto_14d.pdf`](./SaleListo_Acuerdo_Piloto_14d.pdf) (1 página A4 simple sin letra chica) para conformidad rápida.
+2. Pedir fotos/PDF de su carta actual o compartirle [`plantilla_carga_carta.csv`](./plantilla_carga_carta.csv) si prefiere pasarla en planilla.
+3. Agendar en el acto el horario exacto dentro de las próximas **48 horas** (30 minutos antes de la apertura del turno) para dejar QRs en las mesas del sector piloto y hacer la puesta en marcha con el encargado y los mozos.
+
+#### Paso 4: Seguimiento Inbound Anti-Frío (si dejó en visto tras pedir info)
+
+* **A las 24 horas (audio corto de 20 seg o texto de 2 líneas):**
+  > ¡Hola [Nombre]! Sé que en gastronomía el día vuela. Te dejo picando la propuesta del **piloto sin cargo de 14 días (2 fines de semana)** solo en un sector de [Nombre del Local] (nosotros cargamos toda la carta en 48 h): avisame qué tarde tranquila andás 10 minutos por el local y paso a mostrártelo en vivo.
+* **A las 72 horas (último toque elegante):**
+  > ¡Buenas [Nombre]! Esta semana estamos cerrando los 3 cupos de pilotos llave en mano en la zona de [Barrio]. Si quieren reservar uno para probarlo en [terraza/vereda] sin compromiso, chiflame por acá y lo agendamos; si prefieren verlo más adelante, queda mi contacto a mano. ¡Buen servicio!
+
+---
+
+### C. Correos Electrónicos Personalizados (Asuntos y estructuras 100% diferenciados)
+
+Cada uno de los siguientes correos está redactado con una estructura narrativa, un gancho inicial y una línea de asunto completamente distintos para evitar cualquier sensación de plantilla masiva.
 
 ---
 
 #### Correo 1: Dirigido a Desarmadero Bar & Session (`contacto@desarmadero.com.ar` | ICP A)
-*Estructura: Observación puntual desde la dinámica de terraza y canillas rotativas -> 3 puntos operativos concretos -> Propuesta de piloto solo en terraza.*
+*Estructura: Observación puntual desde la dinámica de terraza y canillas rotativas -> 3 puntos operativos concretos -> Propuesta de piloto de 14 días en terraza activado en 48 h.*
 
 **Asunto:** Las segundas pintas en la terraza de Gorriti y la rotación de las 40 canillas
 
@@ -361,13 +423,13 @@ Hola equipo de Desarmadero,
 
 Cuando la esquina de Gorriti y Lavalleja está a tope entre las veredas, los dos salones y la terraza, hay dos situaciones que se repiten en casi todas las cervecerías de alto volumen: el grupo de amigos que se queda charlando con el vaso vacío en la terraza porque justo no cruza mirada con el camarero, y el barril que se pincha a mitad de la noche obligando a avisar mesa por mesa qué estilo ya no sale.
 
-Construimos **SaleListo** específicamente para resolver esa fricción en bares de gran caudal sin cambiar la forma en que atienden ni poner a los chicos a mirar celulares en medio del turno:
+Construimos **SaleListo** específicamente para resolver esa fricción en bares de gran caudal sin tocar su facturador actual ni poner a los chicos a mirar celulares en medio del turno:
 
-* **Pedidos directos por 4G/5G sin pedir clave de Wi-Fi:** Cada mesa tiene un QR con token fijo. Si un grupo en la terraza quiere dos pintas más y unas tapas, las dispara en 15 segundos desde su teléfono sin esperar ni bajar a la barra.
-* **Separación instantánea Barra vs. Cocina + aviso sin celulares en mano:** La cerveza entra directo a Barra y la comida a Cocina en simultáneo. Al camarero asignado se le enciende su columna en la **Estación de Mozos fija** de la barra (o le vibra una **pulsera Xiaomi Band** en la muñeca con el teléfono guardado) recién cuando las pintas están servidas para llevarlas con la espuma intacta.
-* **Control de canillas y precios en vivo:** Si se agota un estilo invitado, lo pausan en un clic desde el panel y desaparece de la carta digital en el acto.
+* **Pedidos directos por 4G/5G y botón Repetir ronda:** Cada mesa tiene un QR con token fijo seguro. Si un grupo en la terraza quiere dos pintas más y unas tapas, las dispara en 10 segundos sin pedir clave de Wi-Fi, y al final divide la cuenta con la calculadora *Vaquita* informando con cuánto efectivo paga.
+* **Separación instantánea Barra vs. Cocina + aviso sin celulares en mano:** La cerveza entra directo a Barra y la comida a Cocina. Al camarero asignado se le enciende su columna en la **Estación de Mozos fija** de la barra (o le vibra una **pulsera Xiaomi Band** en la muñeca con el teléfono bloqueado en el bolsillo) recién cuando las pintas están servidas para llevarlas con la espuma intacta.
+* **Control 86 de canillas y precios en vivo:** Si se agota un estilo invitado, lo pausan en un clic desde Barra o el Panel y desaparece de la carta digital en el acto.
 
-En vez de tocar toda la operación de entrada, les propongo algo muy simple: pasar un día de semana antes de las 18 hs a mostrarles una **demo en vivo de 10 minutos** y, si les cierra, probar un **piloto sin riesgo únicamente en el sector de la terraza** durante dos fines de semana para medir cuántas rondas adicionales suma.
+En vez de cambiar toda la operación de entrada, les propongo algo muy simple: pasar un día de semana antes de las 18 hs a mostrarles una **demo en vivo de 10 minutos** y, si les cierra, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos) únicamente en la terraza** para medir cuántas rondas adicionales suma.
 
 ¿Les queda cómodo este martes o miércoles a las 17:15 hs en Gorriti 4295, o prefieren otro horario?
 
@@ -375,29 +437,27 @@ Un saludo,
 
 **Simón Martínez de Guereñu**  
 SaleListo  
-Correo: `simonguerenu@gmail.com`  
+Correo: `simonguerenu@gmail.com` (`ventas@salelisto.com`)  
 Teléfono / WhatsApp: `(+54)1138436571`
 
 ---
 
 #### Correo 2: Dirigido a KOI Dumplings & Ramen (`contacto@koidumplings.com` | ICP B, multi-local)
-*Estructura: Enfoque gerencial multi-sucursal (almuerzo ejecutivo + noche + rotación de turnos de personal) -> Comparativa operativa -> Invitación a demo corta.*
+*Estructura: Enfoque gerencial multi-sucursal (almuerzo ejecutivo + noche + rotación de turnos de personal) -> Flujo numerado -> Invitación a demo y piloto de 14 días.*
 
 **Asunto:** Operación de salón sin celulares en mano y recambio de turnos en KOI
 
 Hola equipo de KOI,
 
-Les escribo pensando en la velocidad que exigen formatos como Palermo Off o sus salones propios, tanto en la ventana de menú de mediodía de días hábiles como en los picos nocturnos donde una misma mesa combina dumplings, baos, ramen y coctelería.
+Pensando en la velocidad que exigen formatos como Palermo Off o sus salones propios, tanto en la ventana de almuerzo de días hábiles como en los picos nocturnos donde una misma mesa combina dumplings, baos, ramen y coctelería, suele aparecer un cuello de botella silencioso: las micro-comandas a mitad de la comida se frenan cuando el salón explota, y ningún encargado quiere ver camareros distraídos con teléfonos personales en la mano ni perder seguimiento cuando cambia un turno.
 
-En cadenas gastronómicas jóvenes suele aparecer un cuello de botella silencioso: por un lado, las micro-comandas a mitad de la comida (sumar unos buns o un segundo cóctel) se frenan si el salón está lleno; por otro, nadie quiere tener camareros caminando distraídos con celulares personales en la mano ni perder mesas cuando cambia un turno.
+Con **SaleListo** armamos una plataforma operativa pensada para ordenar ese flujo manteniendo intacta su caja fiscal actual:
 
-Con **SaleListo** armamos una plataforma lado cliente y lado restaurante pensada para estandarizar ese flujo en minutos:
+1. **Estación de Mozos fija en el pase (incluida desde el Plan Base):** Una sola tablet horizontal en el mostrador organiza columnas en vivo por cada camarero en turno (legibles a 3 o 4 metros, dejando los celulares personales guardados en el locker), con asignación híbrida y **reasignación automática inmediata** si alguien corta turno.
+2. **Ruteo automático en hasta 3 estaciones:** El comensal escanea el QR de su mesa con su propio 4G/5G y el pedido viaja separado entre Cocina (vapor/caldos), Barra (coctelería/tirados) y Mostrador si lo requieren, con botón rápido de agotados (*86*) directo en cocina.
+3. **Cobro en un solo viaje:** Al pedir la cuenta, la mesa elige división *Vaquita*, propina y medio de pago (más vuelto exacto si abona en efectivo), ganando entre 10 y 12 minutos por rotación.
 
-1. **Estación de Mozos fija en el pase (incluida en el Plan Base):** Una sola tablet horizontal en el mostrador organiza columnas en vivo por cada camarero en turno (legibles a 3 o 4 metros), con asignación fija o automática según carga real y **reasignación inmediata** si alguien corta turno. Cero celulares en el salón.
-2. **Ruteo automático en tiempo real:** El comensal escanea el QR de su mesa con su propio 4G/5G y el pedido se divide solo entre Cocina (vapor/caldos) y Barra (coctelería/bebidas).
-3. **Cierre ágil de cuenta:** Cuando la mesa toca pedir la cuenta, elige medio de pago y propina desde su mesa; la alerta aparece lista en la columna del camarero (`💳 Tarjeta / Propina 10%`) para ir directo a cobrar, ganando entre 10 y 12 minutos por rotación.
-
-Me encantaría mostrarles el panel, la Estación de Mozos y la vista de cliente funcionando en tiempo real en una **demo de 10 minutos** (puede ser presencial en Beruti 3336 o por videollamada corta) y evaluar una prueba piloto acotada a un solo sector de una sede.
+Me encantaría mostrarles la Estación de Mozos y la vista de cliente funcionando en tiempo real en una **demo de 10 minutos** (presencial en Beruti 3336 o por videollamada corta) y evaluar un **piloto sin cargo de 14 días (2 fines de semana)** en un sector de una sede, puesto en marcha llave en mano en **48 horas**.
 
 ¿Con quién del equipo de operaciones podría coordinar 10 minutos esta semana?
 
@@ -410,23 +470,23 @@ SaleListo
 ---
 
 #### Correo 3: Dirigido a Nikkai Shokudo (`comedornikkai@gmail.com` | ICP B, doble turno concentrado)
-*Estructura: Reconocimiento de su carta digital actual -> Pregunta matemática sobre sus ventanas de 3.5 horas -> Cómo pasar de carta de lectura a despacho sincronizado.*
+*Estructura: Reconocimiento de su carta digital actual -> Pregunta operativa sobre sus ventanas de 3.5 horas -> Evolución a 3 estaciones reales + piloto 14 días.*
 
 **Asunto:** Idea para agilizar los turnos de 12:00 y 19:30 en Nikkai Shokudo
 
 Estimado equipo de Nikkai Shokudo,
 
-Vi que en Avenida Independencia 732 ya trabajan con menú digital de lectura, y justamente por eso quería acercarles una vuelta de tuerca pensada para el ritmo particular que tienen ustedes de lunes a sábado: concentrar todo el salón lleno en dos ventanas bien marcadas (de 12:00 a 15:30 y de 19:30 a 23:00 hs).
+Vi que en Avenida Independencia 732 ya trabajan con menú digital de lectura, y justamente por eso quería acercarles una mejora pensada para el ritmo particular que tienen ustedes de lunes a sábado: concentrar el comedor lleno en dos ventanas bien marcadas (de 12:00 a 15:30 y de 19:30 a 23:00 hs).
 
-Cuando todo el público entra casi al mismo tiempo, el cuello de botella rara vez está en la calidad de la cocina; está en los minutos que pasan hasta que el camarero puede tomar nota mesa por mesa, separar qué va a sushi y qué va a cocina caliente, y sobre todo atender todos los pedidos de cuenta juntos cerca del cierre sin perder la sobriedad tradicional del comedor.
+Cuando todo el público ingresa casi al mismo tiempo, el cuello de botella rara vez está en la cocina; está en los minutos que pasan hasta tomar nota mesa por mesa, separar qué va a sushi y qué va a cocina caliente, y atender todos los pedidos de cuenta juntos cerca del cierre cuidando la sobriedad del salón.
 
-Desarrollamos **SaleListo** para que ese mismo código QR en cada mesa pase de ser un catálogo fijo a un asistente silencioso para sus camareros:
+Desarrollamos **SaleListo** para que ese mismo código QR en cada mesa pase de ser un catálogo de lectura a un asistente silencioso para su equipo:
 
-* El comensal entra directo con su 4G/5G (sin pedir contraseña de Wi-Fi) y arma su pedido con aclaraciones incluidas, o bien presiona un botón para llamar al mozo si prefiere atención tradicional.
-* La comanda se separa sola al instante entre las estaciones del local, y si un plato del día se termina a las 14:15 hs, lo marcan agotado en un toque para que nadie lo pida por error.
-* **Cero celulares en el salón:** Una única pantalla de **Estación de Mozos** en el mostrador de despacho muestra una columna por camarero indicando qué platos retirar y qué mesas solicitaron la cuenta ya con propina y forma de pago (y en la galería exterior pueden sumar si desean pulseras vibradoras discretas).
+* El comensal entra con su 4G/5G (sin pedir clave de Wi-Fi) y envía su pedido con aclaraciones, o presiona llamar al mozo si prefiere atención tradicional (con carga rápida en mostrador en 5 segundos).
+* La comanda se separa sola entre las **3 estaciones reales (`Mostrador de Sushi`, `Cocina Caliente` y `Barra`)**, y si un plato del día se termina a las 14:15 hs se marca agotado en un toque.
+* **Cero celulares en el salón:** Una única pantalla de **Estación de Mozos** en el mostrador muestra una columna por camarero indicando retiros listos y cuentas solicitadas con propina, división y vuelto exacto.
 
-No requiere instalaciones complejas ni compromisos largos: podemos hacer una **muestra en vivo de 10 minutos** entre las 15:30 y las 16:00 hs (justo al terminar su turno de mediodía) y, si les resulta útil, probarlo en apenas 5 o 6 mesas del salón durante una semana.
+No requiere instalaciones complejas ni compromisos de permanencia: podemos hacer una **muestra en vivo de 10 minutos** entre las 15:30 y las 16:00 hs y, si les resulta útil, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos)** en 6 a 8 mesas del salón.
 
 Quedo a disposición por este correo o directo en el `(+54)1138436571` para combinar el día que mejor les quede.
 
@@ -440,27 +500,27 @@ SaleListo
 ---
 
 #### Correo 4: Dirigido a Sāntal Café (`1cafecito.mas@gmail.com` | ICP C, brunch + coworking + vinos en 3 sedes)
-*Estructura: Contraste entre las tres franjas del día de Sāntal (coworking, brunch en veredas/patio y cava de vinos) -> Solución operativa -> Oferta de piloto en una sede.*
+*Estructura: Contraste entre las tres franjas del día de Sāntal -> Solución en 3 estaciones -> Oferta de piloto de 14 días activado en 48 h.*
 
 **Asunto:** Patio de O'Higgins, veredas de Conde y segundas tazas sin levantarse de la mesa
 
 Hola equipo de Sāntal,
 
-Siguiendo lo que vienen construyendo en Colegiales, Espacio Pirámide en Belgrano y Loyola en Chacarita, hay algo muy interesante en el formato de ustedes: en un mismo día conviven personas trabajando horas con la computadora en los sillones o el patio, grupos de brunch sin reserva en las veredas grandes, y gente que a la tarde pasa del café de especialidad a la cava de vinos y las tapas.
+Siguiendo lo que vienen construyendo en Colegiales, Espacio Pirámide en Belgrano y Loyola en Chacarita, hay algo muy valioso en el formato de ustedes: en un mismo día conviven personas trabajando horas con la computadora en los sillones o el patio, grupos de brunch sin reserva en las veredas grandes, y público que a la tarde pasa del café de especialidad a la cava de vinos y las tapas.
 
-En esa mezcla suele quedar plata arriba de la mesa por un motivo muy cotidiano: quien está trabajando solo con su notebook y mochila en el patio de Belgrano o al fondo del salón casi nunca quiere dejar sus cosas solas para acercarse a la barra a pedir un segundo filtrado o un cinnamon roll; y en las veredas grandes de Conde 1200, los fines de semana el equipo corre entre la máquina espresso y la cocina de brunch.
+En esa mezcla suele quedar facturación sin capturar por un motivo cotidiano: quien está trabajando solo con su notebook y mochila en el patio de Belgrano casi nunca quiere dejar sus cosas solas para acercarse a la barra a pedir un segundo filtrado o algo dulce; y en las veredas grandes de Conde 1200, los fines de semana el equipo corre entre la máquina espresso, el mostrador y la cocina de brunch.
 
 Con **SaleListo** resolvemos las dos puntas cuidando la estética de cada local:
 
-* **Más ticket por hora en coworking y exterior:** Cada mesa tiene un QR fijo que abre al instante con 4G/5G. El cliente suma otro café, algo de pastelería horneada en la mañana o una copa de vino a la tarde sin moverse de su asiento.
-* **División automática Barra Barista vs. Cocina sin celulares a la vista:** En un pedido de brunch, el flat white entra directo a Barra y el avo toast o los huevos revueltos entran a Cocina en tiempo real. En el mostrador, la **Estación de Mozos fija** ordena por columnas cada retiro, y el camarero de patio/vereda puede usar una **pulsera vibradora liviana** para enterarse al instante cuando cada parte está lista.
-* **Baja inmediata de pastelería agotada:** Apenas sale la última unidad de un laminado o plato, se desactiva en segundos desde el panel para las mesas de todo el local.
+* **Más ticket por hora en coworking y exterior:** Cada mesa tiene un QR fijo que abre en menos de un segundo con 4G/5G. El cliente suma otro café, pastelería recién horneada o una copa de vino a la tarde sin moverse de su silla.
+* **División automática en 3 estaciones (`Barra Barista`, `Mostrador Dulce` y `Cocina`) sin celulares a la vista:** En el mostrador, la **Estación de Mozos fija** ordena por columnas cada retiro (con teléfonos guardados en locker), y el camarero de patio/vereda puede llevar una **pulsera vibradora liviana** con su celular bloqueado en el bolsillo para enterarse al instante cuando sale cada bandeja.
+* **Baja inmediata de pastelería agotada:** Apenas sale la última unidad de un laminado, se pausa en 1 toque para todas las mesas.
 
-¿Qué les parece si coordinamos una **demo de 10 minutos** en cualquiera de los tres locales (en una franja tranquila de martes o miércoles a la tarde) y evaluamos una **prueba piloto sin costo en el patio de Belgrano o en las veredas de Colegiales**?
+¿Qué les parece si coordinamos una **demo de 10 minutos** en cualquiera de los locales (martes o miércoles a la tarde) y evaluamos un **piloto sin costo de 14 días (2 fines de semana completos)** en el patio de Belgrano o en las veredas de Colegiales, puesto en marcha llave en mano en **48 horas**?
 
 Pueden responderme por acá o escribirme directo al `(+54)1138436571`.
 
-¡Felicitaciones por los 9 años y un gran saludo!
+¡Un gran saludo para todo el equipo!
 
 **Simón Martínez de Guereñu**  
 SaleListo  
@@ -469,20 +529,20 @@ SaleListo
 ---
 
 #### Correo 5: Modelo para Cafeterías/Boulangeries con Terraza o Jardín (ej. Gontran Cherrier / Malvón / Aire Libre)
-*Estructura: Escena concreta de fin de semana al mediodía -> Pregunta directa al encargado -> Beneficios medibles en 7 días.*
+*Estructura: Escena concreta de fin de semana al mediodía -> Pregunta directa al encargado -> Beneficios medibles en 14 días (2 fines de semana).*
 
-**Asunto:** Prueba piloto para la terraza / jardín en horarios pico de brunch
+**Asunto:** Piloto de 2 fines de semana para la terraza / jardín en picos de brunch
 
 Hola equipo de [Nombre del Local],
 
-Sábado 12:30 del mediodía, sol pleno y todas las mesas exteriores ocupadas: ese es el momento más rentable de la semana, pero también cuando más viajes en falso hace el equipo subiendo a la terraza o cruzando hasta el fondo del jardín solo para ver quién levanta la mano, avisar que se terminó una pieza de pastelería o llevar la cuenta.
+Sábado 12:30 del mediodía, sol pleno y todas las mesas exteriores ocupadas: ese es el momento más fuerte de la semana, pero también cuando más viajes en falso hace el equipo subiendo a la terraza o cruzando hasta el fondo del jardín solo para ver quién levanta la mano, avisar que se terminó una pieza de viennoiserie o llevar cambio.
 
-¿Les interesaría medir durante 7 días cuánto mejora la rotación y el ticket promedio del sector exterior con un piloto sin riesgo de **SaleListo**, sin que ningún camarero tenga que andar con el celular en la mano?
+¿Les interesaría medir durante **14 días (2 fines de semana completos)** cuánto mejora la rotación y el ticket promedio del sector exterior con un **piloto sin riesgo de SaleListo activado llave en mano en 48 horas**, sin que ningún camarero ande con el celular en la mano?
 
 Cómo funciona en la práctica dentro del local:
-* Armamos el plano exacto de ustedes con bloques pre-armados (**Interior, Terraza, Vereda, Barra, Sectores**) sin frenar el servicio ni instalar cableado, porque el cliente opera directo con su red 4G/5G.
-* Cuando una mesa pide, las infusiones/jugos van a Barra y los platos elaborados van a Cocina al mismo tiempo.
-* El equipo se coordina desde una única **Estación de Mozos fija** por columnas en el mostrador de despacho o mediante **pulseras vibradoras Xiaomi Band** en la muñeca para quienes cubren jardín o terraza (alertando bebidas listas, platos calientes, llamados y pedidos de cuenta con propina definida, con reasignación inmediata si un mozo termina su turno).
+* Cargamos nosotros toda la carta y armamos el bloque exterior sin frenar el servicio ni instalar cableado, porque el cliente opera directo con su red 4G/5G.
+* Cuando una mesa pide, las infusiones van a **Barra**, la pastelería a **Mostrador** y los platos calientes a **Cocina** en simultáneo.
+* El equipo se coordina desde una única **Estación de Mozos fija** por columnas en el mostrador (dejando teléfonos en locker) o mediante **pulseras vibradoras Xiaomi Band** en la muñeca con el celular bloqueado en el bolsillo para quienes cubren jardín o terraza.
 
 Solo necesito **10 minutos** en el local fuera del horario fuerte para que prueben en vivo la pantalla de pase y la pulsera de muestra. ¿Con quién puedo coordinar esta semana?
 
@@ -490,7 +550,7 @@ Atentamente,
 
 **Simón Martínez de Guereñu**  
 SaleListo  
-Correo: `simonguerenu@gmail.com`  
+Correo: `simonguerenu@gmail.com` (`ventas@salelisto.com`)  
 Contacto directo: `(+54)1138436571`
 
 ---
@@ -499,11 +559,11 @@ Contacto directo: `(+54)1138436571`
 
 **Follow-up 1 (Enviar a los 4 días hábiles, estructura ultra-corta de 4 líneas):**
 
-* **Asunto:** Piloto de 7 días solo en un sector de [Nombre del Local]
+* **Asunto:** Piloto de 14 días (2 fines de semana) en un sector de [Nombre del Local]
 * **Cuerpo:**
   > Hola equipo de [Nombre del Local], ¿cómo están?
   >
-  > Retomo cortito mi mensaje anterior con una propuesta bien concreta: en vez de evaluar un cambio para todo el salón, les ofrezco armar sin cargo el bloque de **solo 6 a 10 mesas (en terraza, patio o vereda)** con **SaleListo** para que vean en servicio real cómo divide comandas entre Cocina y Barra sobre 4G/5G y coordina a los mozos **sin celulares en el salón** (desde una pantalla fija en el pase o con pulsera vibradora).
+  > Retomo cortito mi mensaje anterior con una propuesta bien concreta: en vez de evaluar un cambio para todo el salón, **en 48 horas les dejamos activado sin cargo el bloque de solo 6 a 10 mesas (en terraza, patio o vereda) durante 14 días (2 fines de semana completos)** para que midan en servicio real cómo **SaleListo** divide Cocina, Barra y Mostrador sobre 4G/5G y coordina a los mozos **sin celulares en el salón**.
   >
   > Si tienen 10 minutos este martes o jueves en horario valle, me acerco con la tablet y una pulsera de prueba y lo vemos en vivo.
   >
@@ -516,40 +576,52 @@ Contacto directo: `(+54)1138436571`
 * **Cuerpo:**
   > Hola nuevamente,
   >
-  > Escribo por última vez para no llenarles la bandeja de entrada. Si hoy no están buscando optimizar tiempos de comanda entre barra, cocina y sectores exteriores, los dejo tranquilos; y si el tema lo maneja otra persona del equipo (socio operativo o encargado general), les agradezco mucho si me indican a quién dirigirle una demo corta de 10 minutos.
+  > Escribo por última vez para no llenarles la bandeja de entrada. Si hoy no están buscando optimizar tiempos de comanda entre barra, mostrador, cocina y sectores exteriores, los dejo tranquilos; y si el tema lo maneja otra persona del equipo (socio operativo o encargado general), les agradezco mucho si me indican a quién dirigirle una demo corta de 10 minutos.
   >
-  > Dejo mis datos directos por si más adelante quieren activar una prueba piloto: `simonguerenu@gmail.com` y `(+54)1138436571`.
+  > Dejo mis datos directos por si más adelante quieren activar el piloto de 14 días: `simonguerenu@gmail.com` y `(+54)1138436571`.
   >
   > ¡Muy buena semana y éxitos con el servicio!  
   > **Simón Martínez de Guereñu**
 
 ---
 
-## 4. Playbook de Ejecución: Guion de Demo de 10 Minutos y Respuesta a Objeciones
+## 4. Playbook de Ejecución: Demo de 10 Minutos y las 10 Objeciones Clave de Calle
 
 ### Guion cronometrado para la Demo de 10 minutos en el local
 
-1. **Minuto 0 a 2 (Conexión real 4G/5G):** Pedile al dueño o encargado que escanee con su propio celular (con el Wi-Fi apagado) un QR de mesa de prueba mientras vos apoyás en la barra la tablet con la **Estación de Mozos (`/pase.html`)** y le ponés en la mano una **Xiaomi Smart Band configurada**. Mostrale que la carta abre en menos de 2 segundos sin apps ni contraseñas.
-2. **Minuto 2 a 5 (División Cocina vs. Barra + Cero celulares en el salón):** Que agregue al carrito una bebida (ej. una IPA o un flat white) y un plato con aclaración ("sin cebolla") y toque enviar. Mostrale en tiempo real cómo la comanda se divide sola entre **Barra** y **Cocina**, asigna al mozo del sector **Terraza** y, al marcar "Listo" en Barra, se enciende en grande la columna de ese camarero en **`/pase.html`** y vibra al instante la **pulsera Xiaomi Band** (`🍸 T2 · Retirar Barra`) con el teléfono bloqueado en tu bolsillo.
-3. **Minuto 5 a 8 (Stock instantáneo + Reasignación de turno):** Desde el panel, pausá un plato o canilla agotada y pedile que mire su pantalla: se actualiza al instante. Luego simulá que un mozo termina su turno a las 00:00 hs y reasigná sus mesas activas en dos toques sin perder ni una cuenta abierta.
-4. **Minuto 8 a 10 (Llamado al mozo, Cuenta con propina y Cierre al Piloto):** Que toque "Llamar al mozo" y después "Pedir la cuenta" seleccionando propina y medio de pago (`💳 Tarjeta $34.200`), viendo cómo aparece listo para cobrar en la Estación del Pase y en la pulsera. Cerrá con una sola pregunta: *"¿Qué sector hoy les da más caminatas: la terraza, el patio o la vereda? Arranquemos probándolo 7 días solo ahí, sin tocar el resto del salón."*
+1. **Minuto 0 a 2 (Conexión real 4G/5G):** Pedile al dueño o encargado que escanee con su propio celular (con el Wi-Fi apagado) un QR de mesa de prueba mientras apoyás en la barra la tablet con la **Estación de Mozos (`/pase.html`)** y le ponés en la mano una **Xiaomi Smart Band configurada**. Mostrale que la carta con buscador y filtros (*Sin TACC, Veggie*) abre en menos de 2 segundos sin apps ni claves.
+2. **Minuto 2 a 5 (Ruteo en 3 Estaciones + Física exacta Cero Celulares):** Que agregue al carrito una bebida (Barra), un plato caliente (Cocina) y una entrada/sushi/postre (Mostrador) y toque enviar. Mostrale cómo se divide solo entre las **3 estaciones**, asigna al mozo de **Terraza** y, al marcar "Listo", se enciende la columna de ese camarero en **`/pase.html`** (donde los teléfonos del salón quedan en el locker) y vibra al instante la **pulsera Xiaomi Band** (`🍸 T2 · Retirar Barra`) con el teléfono guardado y bloqueado en tu bolsillo.
+3. **Minuto 5 a 8 (Agotados 86 desde Cocina + Inflación con Vista Previa + Reasignación):** Pausá un plato agotado directo desde el botón `🚫 Agotados` de cocina, mostrá la vista previa antes/después del ajuste masivo por inflación y simulá que un mozo termina su turno reasignando sus mesas abiertas en un clic.
+4. **Minuto 8 a 10 (Llamado "En camino", Cuenta con "Vaquita" + Vuelto y Cierre al Piloto de 14 días):** Que toque "Llamar al mozo" (mostrá cómo al tocar `✔ Voy` en el pase su celular le avisa *"Tu mozo ya va camino a tu mesa"*) y después "Pedir la cuenta" dividiendo entre 4 personas con *Vaquita* y marcando **Efectivo con $50.000** para ver el vuelto exacto en el pase. Cerrá con una sola pregunta: *"¿Qué sector hoy les exige más caminatas: la terraza, el patio o la vereda? En 48 horas te lo dejamos andando ahí y lo probás 14 días (2 fines de semana completos) sin riesgo ni tocar el resto del salón."*
 
-### Respuestas cortas a las 6 objeciones más habituales
+### Respuestas cortas y contundentes a las 10 objeciones reales en Buenos Aires
 
-* **"¿Mis mozos tienen que estar con el celular en la mano? Queda mal que parezca que están chateando en el salón."**  
-  *"Coincido al 100%, y por eso diseñamos SaleListo para operar con **cero celulares en el salón** en dos modalidades: en el **Plan Base ya viene incluida la Estación de Mozos fija (`/pase.html`)**, que es una sola pantalla o tablet horizontal en el mostrador del pase/barra dividida en columnas grandes por camarero (ningún mozo lleva teléfono encima, y si toma un pedido hablando lo carga ahí mismo en 5 segundos). Y si tenés patio grande, terraza o dos plantas, sumás el **Kit opcional de Pulseras Vibradoras Xiaomi Band** (Pack 3 por USD 145 o Pack 5 por USD 230 pago único): el teléfono queda bloqueado en el bolsillo o en un locker cercano y al mozo le vibra la muñeca leyendo en medio segundo `🍸 T2 · Retirar Barra` o `💳 M8 · Tarjeta $34.200`, con batería para 10 a 14 días."*
+* **1. "¿Mis mozos tienen que estar con el celular en la mano? Queda mal que parezca que chatean en el salón."**  
+  *"Coincido al 100%, y por eso operás con **cero celulares en mano** en dos modalidades reales: con la **Estación de Mozos fija (`/pase.html`)** incluida desde el Plan Base, ponés una sola pantalla horizontal en el mostrador del pase/barra y **los teléfonos de tus mozos quedan guardados en el locker o en caja**. Y si tenés patio grande o terraza por escalera, sumás el **Kit de Pulseras Xiaomi Band por Bluetooth BLE** (compatible desde el Plan Barra; Pack 3 USD 145 / Pack 5 USD 230): el teléfono va **guardado y bloqueado en el bolsillo del mozo** sin sacarse jamás en el salón, y la muñeca le vibra recién cuando hay algo listo para llevar."*
 
-* **"Nosotros ya tenemos menú QR."**  
-  *"Casi todos tienen hoy un PDF o una web de lectura, y está bárbaro para ver precios. El problema es que después de leer el PDF, el cliente en el fondo del patio igual tiene que quedarse esperando 10 minutos con la mano levantada para pedir una segunda pinta o la cuenta. SaleListo convierte ese QR en comandas reales divididas entre Barra y Cocina y avisos directos en el pase o en la pulsera del mozo."*
+* **2. "¿Qué pasa si mandan pedidos falsos desde afuera o si una mesa en la vereda pide y se levanta sin pagar ('paga Dios')?"**  
+  *"Contra pedidos remotos falsos, cada QR usa un **token criptográfico aleatorio único** (`?t=...`, nunca `?mesa=4` adivinable) y el listado de QRs está cerrado con PIN en producción. Y para la **Vereda**, en `pase.html` filtrás el bloque `?bloque=vereda` con mozo asignado: al entrar el primer pedido de una mesa nueva, el mozo valida visualmente la mesa al acercar el servicio o la primera ronda, manteniendo contacto humano cercano que frena cualquier intento de irse sin pagar (y en Roadmap Fase 2 sumamos modo opcional de prepago QR exclusivo para vereda nocturna)."*
 
-* **"No queremos perder la calidez de nuestros mozos ni parecer un fast food."**  
-  *"Totalmente de acuerdo: el mozo sigue recibiendo a la mesa, recomendando vinos o estilos y llevando todo en mano con la vista puesta en el salón y no en una pantalla. Lo único que le sacamos al mozo es el desgaste físico de subir tres veces la escalera en vacío o anotar apurado. Incluso tiene botón de 'Llamar al mozo' para ir a asesorar en persona."*
+* **3. "Las mesas grandes de amigos tardan un siglo dividiendo la cuenta o nos vuelven locos pidiendo cambio de $50.000."**  
+  *"Lo resolvimos en el mismo botón de **Pedir la cuenta**: trae integrada la **Calculadora 'Vaquita'** (`÷ Dividir entre N personas`) que les dice al instante cuánto pone cada uno con propina incluida, y si eligen **Efectivo** marcan con cuánto pagan (`Importe justo`, `$20.000`, `$50.000` o monto exacto). En el pase queda fijo el cartel con el **vuelto exacto a llevar** hasta cerrar la mesa, así el mozo hace **1 solo viaje**."*
 
-* **"En el fondo del patio / en la vereda nuestro Wi-Fi anda flojo."**  
-  *"Justamente por eso SaleListo está pensado para funcionar liviano y directo sobre el 4G/5G del teléfono del cliente. Ni siquiera tienen que pasar la clave del Wi-Fi interno del local."*
+* **4. "Ya usamos Maxirest / Fudo / Bistrosoft para facturar con ARCA y no quiero cambiar la caja ni cargar doble."**  
+  *"No tocás ni das de baja tu facturador fiscal ante **ARCA (ex AFIP)**. SaleListo corre al lado como tu acelerador de salón, Cocina, Barra, Mostrador y Pase: absorbe todas las rondas rápidas por 4G y, cuando la mesa pide la cuenta, tu cajero emite **un único ticket fiscal consolidado** en Maxirest/Fudo/Bistrosoft en 10 segundos mirando el total de SaleListo, más un **arqueo CSV listo para Excel** al cierre del turno (con corte gastronómico a las `06:00 AM`)."*
 
-* **"Mis camareros rotan de sector o cortan turno a mitad de la noche."**  
-  *"Lo contemplamos de fábrica: podés asignar mozos por sector fijo o dejar que el sistema reparta mesas automáticamente según la carga de trabajo de cada uno en ese momento, y si un chico corta turno a medianoche reasignás sus mesas en un clic."*
+* **5. "¿Hay contrato de permanencia, comisiones ocultas o aumentos sorpresa?"**  
+  *"Cero: **0% de comisión sobre ventas**, **sin permanencia mínima ni multa de baja** en ningún plan. Facturamos localmente en **Pesos Argentinos (ARS)** manteniendo fijo el valor todo el trimestre, con ajuste trimestral transparente topeado por IPC / Dólar Oficial BNA (o anual congelado con 2 meses bonificados). El abono representa menos del 0,20% de tu venta: se paga solo con 3 a 4 mesas extra o ~25 pintas adicionales en todo el mes."*
 
-* **"No quiero frenar el local ni capacitar a todo el personal un viernes."**  
-  *"Por eso nunca arrancamos con todo el local. Armamos en 20 minutos solo el bloque de la terraza o del patio (6 u 8 mesas), dejamos abierta la Estación de Mozos en una tablet de barra y lo prueban una semana sin riesgo mientras el salón principal sigue igual que siempre."*
+* **6. "Nosotros ya tenemos menú QR en PDF o link."**  
+  *"El PDF sirve para leer, pero es mudo: el cliente en el fondo del patio igual queda esperando 10 minutos con la mano levantada para pedir otra pinta o la cuenta, y si se agota un plato sigue figurando. SaleListo convierte ese QR en comandas reales hacia Cocina, Barra y Mostrador y ajustes de precios en 5 segundos."*
+
+* **7. "No queremos perder la calidez de nuestros mozos ni que el jefe de salón sienta que le recortamos gente."**  
+  *"Nuestro enfoque es **100% pro-equipo**: jamás buscamos recortar personal, sino evitar que los viernes y sábados tu equipo corra desbordado. El mozo sigue recibiendo y asesorando con calidez, camina la mitad de viajes vacíos y suma más propinas por mayor rotación y segundas rondas."*
+
+* **8. "En el fondo del patio o en la vereda nuestro Wi-Fi anda flojo."**  
+  *"Por eso SaleListo abre ultraliviano directo sobre el **4G/5G del teléfono del cliente**, sin pasar la clave del Wi-Fi del local."*
+
+* **9. "Mis camareros rotan de sector o cortan turno a medianoche."**  
+  *"Podés asignar mozos por bloque fijo o por balanceo automático de carga, y cuando un mozo corta turno reasignás sus mesas abiertas en un clic sin dejar cuentas colgadas."*
+
+* **10. "No tengo tiempo de cargar toda la carta ni frenar el local un viernes."**  
+  *"Vos no cargás nada: nos pasás fotos o PDF de tu carta (o nuestra planilla rápida `plantilla_carga_carta.csv`) y **en 48 horas te dejamos activado llave en mano el Piloto de 14 días (2 fines de semana completos)** únicamente en 6 a 10 mesas de tu terraza, patio o vereda mientras el salón principal sigue igual que siempre."*

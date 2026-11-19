@@ -5,6 +5,7 @@
 
   const EMOJIS = ['🍜', '🍣', '🍙', '🥟', '🍛', '🍱', '🍤', '🍗', '🥢', '🥞', '🫛', '🥗', '🍔', '🍕', '🥩', '🍝', '🌮', '🍡', '🍰', '🍮', '🍨', '🍸', '🍺', '🍷', '🍹', '🧃', '🥤', '🍵', '☕'];
   const COLORS = ['#d9412b', '#2f6bd9', '#2f8a57', '#8b5cf6', '#d97706', '#0d9488', '#db2777', '#4f46e5'];
+  const PRICE_BACKUP_KEY = 'salelisto:lastPriceBackup';
 
   let state = null;
   let view = 'pedidos';
@@ -19,6 +20,17 @@
   let knownLeads = new Set();
   let leadFilter = 'activas';
   let cajaConfigDirty = false;
+  let panelBound = false;
+  let activeStream = null;
+  let unsubState = null;
+
+  // Preservar selecciones del modal operativo de mesa ante actualizaciones SSE
+  const tableModalDraft = {
+    tableId: null,
+    pay: null,
+    tip: null,
+    dirty: false,
+  };
 
   const ITEM_TAG_OPTIONS = [
     ['sin_tacc', '🌾 Sin TACC'],
@@ -34,6 +46,31 @@
     descartado: { label: 'Descartado', cls: 'cancelado' },
   };
 
+  function getPriceBackup() {
+    try {
+      const raw = sessionStorage.getItem(PRICE_BACKUP_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function savePriceBackup(backup) {
+    try {
+      if (backup) sessionStorage.setItem(PRICE_BACKUP_KEY, JSON.stringify(backup));
+      else sessionStorage.removeItem(PRICE_BACKUP_KEY);
+    } catch (_) {}
+    syncUndoPriceBtn();
+  }
+
+  function syncUndoPriceBtn() {
+    const btn = $('#undoPriceHeaderBtn');
+    if (!btn) return;
+    const bk = getPriceBackup();
+    const canUndo = Boolean(state?.restaurant?.canUndoPrices || (bk && Array.isArray(bk.items) && bk.items.length > 0));
+    btn.hidden = !canUndo;
+  }
+
   // ---------- Autenticación del Panel ----------
   let savedToken = sessionStorage.getItem('salelisto:adminToken') || '';
   if (savedToken) setAuthToken(savedToken);
@@ -46,8 +83,8 @@
         sessionStorage.setItem('salelisto:adminToken', r.token);
       }
       if (!getAuthToken()) throw new Error('AUTH_REQUIRED');
-      const conn = await connectStream({ scope: 'staff' }, connectionBanner);
-      state = conn.state;
+      activeStream = await connectStream({ scope: 'staff' }, connectionBanner);
+      state = activeStream.state;
       startPanel();
     } catch (_) {
       showPinGate();
@@ -55,10 +92,25 @@
   }
 
   function showPinGate() {
+    if (activeStream) {
+      try { activeStream.close(); } catch (_) {}
+      activeStream = null;
+    }
+    if (unsubState) {
+      unsubState();
+      unsubState = null;
+    }
     $('#adminLayout').hidden = true;
     $('#pinGate').hidden = false;
     $('#pinInput').focus();
   }
+
+  window.addEventListener('salelisto:auth-expired', () => {
+    toast('🔒 Tu sesión de encargado venció o cambió el PIN. Ingresá nuevamente.');
+    sessionStorage.removeItem('salelisto:adminToken');
+    setAuthToken('');
+    showPinGate();
+  });
 
   $('#pinForm').onsubmit = async (e) => {
     e.preventDefault();
@@ -69,22 +121,19 @@
       sessionStorage.setItem('salelisto:adminToken', res.token);
       $('#pinInput').value = '';
       unlockAudio();
-      const conn = await connectStream({ scope: 'staff' }, connectionBanner);
-      state = conn.state;
+      activeStream = await connectStream({ scope: 'staff' }, connectionBanner);
+      state = activeStream.state;
       startPanel();
     } catch (err) {
       toast(`⚠️ ${err.message}`);
     }
   };
 
-  // tryBoot() se invoca al final del archivo: así todas las constantes (NEXT_FLOW, VIEW_HASH...)
-  // ya están inicializadas cuando el panel arranca solo con una sesión guardada o ?demo=1.
-
   async function act(type, payload) {
     try {
       return await dispatch(type, payload);
     } catch (err) {
-      if (err.status === 401 || /encargado/i.test(err.message)) {
+      if (err.status === 401 || /sesión requerida|no autorizado/i.test(err.message)) {
         sessionStorage.removeItem('salelisto:adminToken');
         setAuthToken('');
         showPinGate();
@@ -102,21 +151,38 @@
     knownCalls = new Set(state.calls.map((c) => c.id));
     knownLeads = new Set((state.leads || []).map((l) => l.id));
 
-    onAudioState((on) => {
-      const b = $('#adminAudioBtn');
-      b.className = `audio-pill ${on ? 'on' : 'off'}`;
-      b.innerHTML = on ? '🔊 <span class="lbl">Sonido activo</span>' : '🔇 <span class="lbl">Activar sonido</span>';
-    });
-    $('#adminAudioBtn').onclick = () => {
-      unlockAudio();
-      ding(1);
-      toast('🔊 Campana activada en el panel');
-    };
+    if (!panelBound) {
+      onAudioState((active, detail) => {
+        const b = $('#adminAudioBtn');
+        const mb = $('#adminAudioBtnMob');
+        if (b) {
+          b.className = `audio-pill ${active ? 'on' : 'off'}`;
+          if (active) b.innerHTML = '🔊 <span class="lbl">Sonido activo</span>';
+          else if (detail && detail.muted) b.innerHTML = '🔇 <span class="lbl">Silenciado</span>';
+          else b.innerHTML = '🔇 <span class="lbl">Activar sonido</span>';
+        }
+        if (mb) {
+          mb.className = `audio-pill mob-audio-btn ${active ? 'on' : 'off'}`;
+          mb.textContent = active ? '🔊 Activo' : (detail && detail.muted ? '🔇 Silenciado' : '🔇 Sonido');
+        }
+      });
 
-    bindPanelEvents();
+      const handleToggleAudio = async () => {
+        const muted = await toggleSoundMute();
+        toast(muted ? '🔇 Campana del panel silenciada' : '🔊 Campana activada en el panel');
+      };
+      $('#adminAudioBtn').onclick = handleToggleAudio;
+      $('#adminAudioBtnMob').onclick = handleToggleAudio;
+
+      bindPanelEvents();
+      panelBound = true;
+    }
+
+    syncUndoPriceBtn();
     renderAll();
 
-    subscribe((s) => {
+    if (unsubState) unsubState();
+    unsubState = subscribe((s) => {
       state = s;
       const openOrds = s.orders.filter((o) => o.isOpenSession);
       const newOrders = openOrds.filter((o) => !knownOrders.has(o.id) && o.status === 'nuevo');
@@ -125,7 +191,7 @@
       newOrders.forEach((o) => {
         freshIds.add(o.id);
         setTimeout(() => freshIds.delete(o.id), 5000);
-        toast(`🧾 Nuevo pedido (${o.station.toUpperCase()}) · Mesa ${o.tableCode}`);
+        toast(`🧾 Nuevo pedido (${stationInfo(o.station).short.toUpperCase()}) · Mesa ${o.tableCode}`);
       });
       newCalls.forEach((c) => {
         toast(c.type === 'mozo' ? `🙋 Mesa ${c.tableCode} llama a ${c.waiterName || 'mozo'}` : `💳 Mesa ${c.tableCode} pide la cuenta`);
@@ -143,12 +209,18 @@
 
       if (openTableModalId && !$('#modalBackdrop').hidden) {
         const stillExists = s.tables.some((t) => t.id === openTableModalId);
-        if (stillExists) renderTableOperationalModal(openTableModalId);
+        if (stillExists) renderTableOperationalModal(openTableModalId, true);
       }
     });
-
-    setInterval(renderAll, 30000);
   }
+
+  // Refrescar etiquetas de minutos cada 30 s sin romper formularios abiertos
+  setInterval(() => {
+    if (state && !$('#adminLayout').hidden) {
+      renderBoard();
+      renderCalls();
+    }
+  }, 30000);
 
   // ---------- KPIs Reales ----------
   function renderKpis() {
@@ -169,7 +241,7 @@
 
   // ---------- 1. Tablero de Comandas ----------
   const NEXT_FLOW = {
-    nuevo: { label: 'Aceptar → Preparar', cls: 'btn-primary' },
+    nuevo: { label: 'Aceptar -> Preparar', cls: 'btn-primary' },
     cocina: { label: 'Listo (Avisar mozo)', cls: 'btn-ok' },
     listo: { label: 'Entregado', cls: 'btn-ghost' },
   };
@@ -194,7 +266,7 @@
         <small class="${late ? 'late' : ''}">#${o.id.slice(1)} · ${timeAgo(o.createdAt)}</small>
       </div>
       <div class="ticket-meta">
-        <span class="chip ${o.station === 'barra' ? 'barra' : 'est-cocina'}">${stationLabel(o.station)}</span>
+        <span class="chip ${stationChipClass(o.station)}">${stationLabel(o.station)}</span>
         ${o.waiterName
           ? `<span class="waiter-pill"><span class="waiter-dot" style="background:${escapeHtml(o.waiterColor)}"></span>${escapeHtml(o.waiterName)}</span>`
           : '<span class="chip">Sin mozo</span>'}
@@ -206,9 +278,9 @@
       <div class="ticket-foot">
         <strong>${money(o.total)}</strong>
         <div style="display:flex;gap:4px;margin-left:auto">
-          ${o.status !== 'nuevo' ? `<button class="btn btn-xs btn-ghost" title="Retroceder estado" data-rev="${o.id}">↩</button>` : ''}
-          ${!isCancel && o.status !== 'entregado' ? `<button class="btn btn-xs btn-danger" title="Anular pedido" data-cancel-ord="${o.id}">✕</button>` : ''}
-          ${nxt ? `<button class="btn btn-xs ${nxt.cls}" data-adv="${o.id}">${nxt.label}</button>` : ''}
+          ${o.status !== 'nuevo' ? `<button class="btn btn-xs btn-ghost" type="button" title="Retroceder estado" data-rev="${escapeHtml(o.id)}">↩</button>` : ''}
+          ${!isCancel && o.status !== 'entregado' ? `<button class="btn btn-xs btn-danger" type="button" title="Anular pedido" data-cancel-ord="${escapeHtml(o.id)}">✕</button>` : ''}
+          ${nxt ? `<button class="btn btn-xs ${nxt.cls}" type="button" data-adv="${escapeHtml(o.id)}">${nxt.label}</button>` : ''}
         </div>
       </div>
     </article>`;
@@ -266,7 +338,7 @@
     };
 
     if (!state.blocks.length) {
-      $('#blocksContainer').innerHTML = `<div class="empty"><span class="big">🏗️</span>Tu salón todavía no tiene bloques.<br><button class="btn btn-primary" style="margin-top:12px" id="emptyAddBlock">+ Agregar primer bloque pre-armado</button></div>`;
+      $('#blocksContainer').innerHTML = `<div class="empty"><span class="big">🏗️</span>Tu salón todavía no tiene bloques.<br><button class="btn btn-primary" type="button" style="margin-top:12px" id="emptyAddBlock">+ Agregar primer bloque pre-armado</button></div>`;
       const eb = $('#emptyAddBlock');
       if (eb) eb.onclick = () => openBlockModal(null);
       return;
@@ -288,19 +360,20 @@
             <h2>${escapeHtml(b.name)}</h2>
             <span class="muted">(${tbls.length} mesa${tbls.length === 1 ? '' : 's'})</span>
             ${assignTag}
+            <a class="btn btn-xs btn-ghost" href="pase.html?bloque=${encodeURIComponent(b.id)}" target="_blank" title="Abrir Estación de Pase filtrada en este sector">🛎️ Pase sector</a>
           </div>
           ${designMode ? `<div class="block-actions">
-            <button class="btn btn-xs btn-ghost" title="Subir bloque" data-bmove="${b.id}" data-dir="-1">↑</button>
-            <button class="btn btn-xs btn-ghost" title="Bajar bloque" data-bmove="${b.id}" data-dir="1">↓</button>
-            <button class="btn btn-xs btn-ghost" data-add-table="${b.id}">+ 1 Mesa</button>
-            <button class="btn btn-xs btn-ghost" data-bulk-table="${b.id}">+ Varias mesas</button>
-            <button class="btn btn-xs btn-ghost" data-edit-block="${b.id}">✏️ Configurar bloque</button>
-            <button class="btn btn-xs btn-danger" data-del-block="${b.id}">🗑️</button>
+            <button class="btn btn-xs btn-ghost" type="button" title="Subir bloque" data-bmove="${escapeHtml(b.id)}" data-dir="-1">↑</button>
+            <button class="btn btn-xs btn-ghost" type="button" title="Bajar bloque" data-bmove="${escapeHtml(b.id)}" data-dir="1">↓</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-add-table="${escapeHtml(b.id)}">+ 1 Mesa</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-bulk-table="${escapeHtml(b.id)}">+ Varias mesas</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-edit-block="${escapeHtml(b.id)}">✏️ Configurar bloque</button>
+            <button class="btn btn-xs btn-danger" type="button" data-del-block="${escapeHtml(b.id)}">🗑️</button>
           </div>` : ''}
         </div>
         <div class="tables-grid" style="grid-template-columns: repeat(auto-fill, minmax(${Math.max(145, Math.round(720 / Math.max(2, b.columns)))}px, 1fr))">
           ${tbls.map((t) => `
-            <button class="table-tile ${t.status}" data-table-click="${t.id}">
+            <button class="table-tile ${t.status}" type="button" data-table-click="${escapeHtml(t.id)}">
               <div style="display:flex;justify-content:space-between;width:100%;align-items:baseline">
                 <span class="num">${escapeHtml(t.code)}</span>
                 <small style="font-size:11px;color:var(--ink-3)">${t.seats} pers.</small>
@@ -325,12 +398,12 @@
           : '100% Automático activo: cada nueva mesa se asigna al mozo disponible con menos mesas abiertas en todo el local.'}</p>
       </div>
       <div class="pill-group">
-        <button class="pill ${isHybrid ? 'active' : ''}" data-gmode="hybrid">🎯 Por Bloques + Automático</button>
-        <button class="pill ${!isHybrid ? 'active' : ''}" data-gmode="auto">⚡ 100% Automático</button>
+        <button class="pill ${isHybrid ? 'active' : ''}" type="button" data-gmode="hybrid">🎯 Por Bloques + Automático</button>
+        <button class="pill ${!isHybrid ? 'active' : ''}" type="button" data-gmode="auto">⚡ 100% Automático</button>
       </div>`;
 
     if (!state.waiters.length) {
-      $('#waitersGrid').innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="big">🏃</span>No hay mozos cargados todavía.<br>Agregá mozos para que el sistema les asigne mesas y les avise en su celular.</div>';
+      $('#waitersGrid').innerHTML = '<div class="empty" style="grid-column:1/-1"><span class="big">🏃</span>No hay mozos cargados todavía.<br>Agregá mozos para que el sistema les asigne mesas y les avise.</div>';
       return;
     }
 
@@ -346,7 +419,7 @@
             <div class="muted">${w.hasPin ? '🔒 Con PIN' : 'Ingreso directo'}</div>
           </div>
           <label class="switch" title="Cambiar disponibilidad en el momento">
-            <input type="checkbox" data-wtoggle="${w.id}" ${w.available ? 'checked' : ''}>
+            <input type="checkbox" data-wtoggle="${escapeHtml(w.id)}" ${w.available ? 'checked' : ''}>
             <span class="track"></span>
             ${w.available ? 'Disponible' : 'Fuera'}
           </label>
@@ -378,8 +451,8 @@
         <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:auto;padding-top:4px">
           <a class="btn btn-xs btn-ghost" href="mozo.html?waiter=${encodeURIComponent(w.id)}" target="_blank">📱 Abrir celular mozo</a>
           <div style="display:flex;gap:4px">
-            <button class="icon-btn" title="Editar mozo" data-wedit="${w.id}">✏️</button>
-            <button class="icon-btn" title="Eliminar mozo (reasigna sus mesas)" data-wdel="${w.id}">🗑️</button>
+            <button class="icon-btn" type="button" title="Editar mozo" data-wedit="${escapeHtml(w.id)}">✏️</button>
+            <button class="icon-btn" type="button" title="Eliminar mozo (reasigna sus mesas)" data-wdel="${escapeHtml(w.id)}">🗑️</button>
           </div>
         </div>
       </article>`;
@@ -388,24 +461,27 @@
 
   // ---------- 4. Menú, Categorías y Precios ----------
   function renderMenuAdmin() {
+    syncUndoPriceBtn();
     if (!state.categories.length) {
       $('#menuAdmin').innerHTML = '<div class="empty"><span class="big">📖</span>Creá primero una categoría para empezar a cargar platos y bebidas.</div>';
       return;
     }
+    const routeText = (st) => st === 'barra' ? '🍸 Va a Barra' : st === 'mostrador' ? '🍣 Va a Mostrador' : '🍳 Va a Cocina';
+
     $('#menuAdmin').innerHTML = state.categories.map((c) => {
       const items = state.items.filter((i) => i.cat === c.id);
       return `<div class="cat-block">
         <div class="cat-head">
           <h2>
             ${c.icon} ${escapeHtml(c.name)}
-            <span class="chip ${c.station === 'barra' ? 'barra' : 'est-cocina'}">${c.station === 'barra' ? '🍸 Va a Barra' : '🍳 Va a Cocina'}</span>
+            <span class="chip ${stationChipClass(c.station)}">${routeText(c.station)}</span>
             <span class="muted">(${items.length})</span>
           </h2>
           <div style="display:flex;gap:4px">
-            <button class="btn btn-xs btn-ghost" data-cmove="${c.id}" data-dir="-1" title="Subir">↑</button>
-            <button class="btn btn-xs btn-ghost" data-cmove="${c.id}" data-dir="1" title="Bajar">↓</button>
-            <button class="btn btn-xs btn-ghost" data-cedit="${c.id}">✏️ Editar</button>
-            <button class="btn btn-xs btn-danger" data-cdel="${c.id}">🗑️</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-cmove="${escapeHtml(c.id)}" data-dir="-1" title="Subir">↑</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-cmove="${escapeHtml(c.id)}" data-dir="1" title="Bajar">↓</button>
+            <button class="btn btn-xs btn-ghost" type="button" data-cedit="${escapeHtml(c.id)}">✏️ Editar</button>
+            <button class="btn btn-xs btn-danger" type="button" data-cdel="${escapeHtml(c.id)}">🗑️</button>
           </div>
         </div>
         ${items.length ? items.map((i) => `
@@ -415,7 +491,7 @@
               <div class="name">
                 ${escapeHtml(i.name)}
                 ${i.popular ? '<span class="chip nuevo">Popular</span>' : ''}
-                ${i.stationOverride ? `<span class="chip ${i.stationOverride === 'barra' ? 'barra' : 'est-cocina'}">${stationLabel(i.stationOverride)}</span>` : ''}
+                ${i.stationOverride ? `<span class="chip ${stationChipClass(i.stationOverride)}">${stationLabel(i.stationOverride)}</span>` : ''}
                 ${(i.tags || []).filter((t) => !(t === 'veggie' && (i.tags || []).includes('vegano'))).map((t) => {
                   const opt = ITEM_TAG_OPTIONS.find(([id]) => id === t);
                   return opt ? `<span class="chip diet-chip">${opt[1]}</span>` : '';
@@ -425,13 +501,13 @@
             </div>
             <span class="price">${money(i.price)}</span>
             <label class="switch">
-              <input type="checkbox" data-itoggle="${i.id}" ${i.available ? 'checked' : ''}>
+              <input type="checkbox" data-itoggle="${escapeHtml(i.id)}" ${i.available ? 'checked' : ''}>
               <span class="track"></span>
               ${i.available ? 'Disponible' : 'Agotado'}
             </label>
             <div class="row-actions">
-              <button class="icon-btn" title="Editar" data-iedit="${i.id}">✏️</button>
-              <button class="icon-btn" title="Eliminar" data-idel="${i.id}">🗑️</button>
+              <button class="icon-btn" type="button" title="Editar" data-iedit="${escapeHtml(i.id)}">✏️</button>
+              <button class="icon-btn" type="button" title="Eliminar" data-idel="${escapeHtml(i.id)}">🗑️</button>
             </div>
           </div>`).join('')
         : '<p class="muted" style="padding:8px 4px">Sin productos en esta categoría.</p>'}
@@ -440,8 +516,6 @@
   }
 
   // ---------- 5. Caja y Configuración ----------
-  // El resumen se refresca en vivo; el formulario de configuración NO se re-dibuja
-  // mientras el encargado está escribiendo (antes cada pedido nuevo borraba lo tipeado).
   function renderCaja() {
     const k = state.kpis;
     const payEntries = Object.entries(k.byPayment || {});
@@ -511,15 +585,16 @@
           Permitir Modo Demo (desactivalo al abrir al público real)
         </label>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn btn-primary">Guardar configuración</button>
+          <button class="btn btn-primary" type="submit">Guardar configuración</button>
           <button class="btn btn-ghost btn-sm" type="button" id="discardConfigBtn" hidden>Descartar cambios</button>
           <span class="muted" id="configDirtyHint" hidden>Cambios sin guardar</span>
         </div>
       </form>
 
       <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-sm btn-ghost" id="clearOrdersBtn">🧹 Limpiar solo pedidos/sesiones</button>
-        <button class="btn btn-sm btn-danger" id="factoryResetBtn">↺ Restaurar demo de fábrica</button>
+        <button class="btn btn-sm btn-ghost" type="button" id="clearOpenTurnBtn">🧹 Limpiar mesas abiertas</button>
+        <button class="btn btn-sm btn-ghost" type="button" id="clearOrdersBtn">🧹 Limpiar todo el día</button>
+        <button class="btn btn-sm btn-danger" type="button" id="factoryResetBtn">↺ Restaurar demo de fábrica</button>
       </div>`;
 
     const form = $('#restConfigForm');
@@ -549,9 +624,11 @@
       });
       if (ok) {
         if (pin) {
-          const r2 = await apiPost('api/auth/admin', { pin });
-          setAuthToken(r2.token);
-          sessionStorage.setItem('salelisto:adminToken', r2.token);
+          try {
+            const r2 = await apiPost('api/auth/admin', { pin });
+            setAuthToken(r2.token);
+            sessionStorage.setItem('salelisto:adminToken', r2.token);
+          } catch (_) {}
         }
         cajaConfigDirty = false;
         renderCajaConfig();
@@ -559,6 +636,10 @@
       }
     };
 
+    $('#clearOpenTurnBtn').onclick = async () => {
+      if (!confirm('¿Limpiar solo las mesas abiertas en este momento conservando el historial cerrado del día?')) return;
+      if (await act('data.clear_open_turn')) toast('🧹 Mesas abiertas limpiadas; el arqueo cerrado sigue intacto');
+    };
     $('#clearOrdersBtn').onclick = async () => {
       if (!confirm('¿Limpiar todos los pedidos y cuentas del día conservando intactos tus bloques, mesas, mozos y menú? Te recomendamos descargar antes el Arqueo CSV.')) return;
       if (await act('data.clear_orders')) toast('🧹 Pedidos limpiados; tu configuración sigue intacta');
@@ -623,7 +704,6 @@
     if (digits.length < 8) return '';
     if (digits.startsWith('00')) digits = digits.slice(2);
     if (digits.startsWith('0')) digits = digits.slice(1);
-    // Celulares argentinos: wa.me requiere 54 9 + característica sin 0 ni 15
     if (digits.length === 10) digits = `549${digits}`;
     else if (digits.startsWith('54') && !digits.startsWith('549') && digits.length === 12) digits = `549${digits.slice(2)}`;
     const who = lead.name ? ` ${lead.name.split(' ')[0]}` : '';
@@ -716,31 +796,55 @@
     return res;
   }
 
-  // ---------- Barra derecha: Solicitudes en vivo ----------
+  // ---------- Barra derecha + Pestaña móvil: Solicitudes en vivo ----------
+  function buildCallsHtml(pending) {
+    if (!pending.length) {
+      return '<div class="empty"><span class="big">☕</span>Sin solicitudes pendientes.<br>Todo tranquilo en el salón.</div>';
+    }
+    return pending.map((c) => {
+      if (c.type === 'mozo') {
+        return `<div class="call mozo">
+          <div class="call-head"><strong>🙋 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
+          <p>Motivo: <strong>${escapeHtml(c.reason)}</strong><br>Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong> ${c.status === 'en_camino' ? '· 🏃 En camino' : ''}</p>
+          <div class="call-actions">
+            ${c.status === 'pendiente' ? `<button class="btn btn-xs" type="button" data-call-way="${escapeHtml(c.id)}">En camino</button>` : ''}
+            <button class="btn btn-xs" type="button" data-call-done="${escapeHtml(c.id)}">Atendido</button>
+          </div>
+        </div>`;
+      }
+      const cash = Math.max(0, Number(c.cashAmount) || 0);
+      const splitWays = Math.max(1, Number(c.splitWays) || 1);
+      const total = Number(c.total) || 0;
+      const splitNote = splitWays > 1 ? ` · ÷ ${splitWays} (${money(Math.ceil(total / splitWays))} c/u)` : '';
+      const cashNote = c.payment === 'Efectivo' && cash > total
+        ? `<span class="r-change-badge">💵 Abona con ${money(cash)} -&gt; Llevar ${money(cash - total)} de vuelto</span><br>`
+        : c.payment === 'Efectivo' && cash === total && total > 0
+        ? `<span class="r-change-badge" style="background:var(--ok-soft);color:var(--ok)">💵 Importe justo</span><br>`
+        : '';
+      return `<div class="call cuenta">
+        <div class="call-head"><strong>💳 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
+        <p>Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% -&gt; <strong>${money(total)}</strong>${splitNote}<br>${cashNote}Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong> ${c.status === 'en_camino' ? '· 🏃 Llevando cobro' : ''}</p>
+        <div class="call-actions">
+          ${c.status === 'pendiente' ? `<button class="btn btn-xs" type="button" data-call-way="${escapeHtml(c.id)}">Llevando cobro</button>` : ''}
+          <button class="btn btn-xs btn-primary" type="button" data-open-bill="${escapeHtml(c.tableId)}">Ver cuenta y cerrar</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
   function renderCalls() {
     const pending = state.calls.slice().reverse();
     $('#callCount').hidden = !pending.length;
     $('#callCount').textContent = pending.length;
-    if (!pending.length) {
-      $('#calls').innerHTML = '<div class="empty"><span class="big">☕</span>Sin solicitudes pendientes.<br>Todo tranquilo en el salón.</div>';
-      return;
+    const mobBadge = $('#navCallsMob');
+    if (mobBadge) {
+      mobBadge.hidden = !pending.length;
+      mobBadge.textContent = pending.length;
     }
-    $('#calls').innerHTML = pending.map((c) => c.type === 'mozo'
-      ? `<div class="call mozo">
-          <div class="call-head"><strong>🙋 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-          <p>Motivo: <strong>${escapeHtml(c.reason)}</strong><br>Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong> ${c.status === 'en_camino' ? '· 🏃 En camino' : ''}</p>
-          <div class="call-actions">
-            ${c.status === 'pendiente' ? `<button class="btn btn-xs" data-call-way="${c.id}">En camino</button>` : ''}
-            <button class="btn btn-xs" data-call-done="${c.id}">Atendido</button>
-          </div>
-        </div>`
-      : `<div class="call cuenta">
-          <div class="call-head"><strong>💳 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-          <p>Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% → <strong>${money(c.total)}</strong><br>Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong></p>
-          <div class="call-actions">
-            <button class="btn btn-xs btn-primary" data-open-bill="${c.tableId}">Ver cuenta y cerrar</button>
-          </div>
-        </div>`).join('');
+    const html = buildCallsHtml(pending);
+    $('#calls').innerHTML = html;
+    const mobEl = $('#callsMobile');
+    if (mobEl) mobEl.innerHTML = html;
   }
 
   // ---------- Modales ----------
@@ -749,22 +853,31 @@
     $('#modalBackdrop').hidden = false;
     onMount?.($('#modal'));
   }
+
   function closeModal() {
     openTableModalId = null;
+    tableModalDraft.tableId = null;
+    tableModalDraft.dirty = false;
     $('#modalBackdrop').hidden = true;
   }
 
-  function renderTableOperationalModal(tableId) {
+  function renderTableOperationalModal(tableId, fromSse = false) {
     const t = state.tables.find((x) => x.id === tableId);
     if (!t) return closeModal();
+
+    const prevOpenId = openTableModalId;
     openTableModalId = tableId;
+    if (prevOpenId !== tableId) {
+      tableModalDraft.tableId = tableId;
+      tableModalDraft.dirty = false;
+    }
+
     const blk = state.blocks.find((b) => b.id === t.blockId);
     const tOrders = state.orders.filter((o) => o.isOpenSession && o.tableId === t.id);
     const activeOrders = tOrders.filter((o) => o.status !== 'cancelado');
     const pendingDelivery = activeOrders.filter((o) => o.status !== 'entregado').length;
     const billCall = state.calls.find((c) => c.tableId === t.id && c.type === 'cuenta');
 
-    // Agrupar respetando nombre + precio unitario exacto (corrige desfase si cambió un precio entre rondas)
     const grouped = [];
     activeOrders.forEach((o) => o.items.forEach((i) => {
       const key = `${i.name}::${i.price}`;
@@ -774,8 +887,30 @@
     }));
 
     const sub = t.subtotal || 0;
-    let chosenPay = billCall?.payment || 'Tarjeta';
-    let chosenTip = billCall?.tip ?? (billCall ? 0 : 10);
+    // Preservar selecciones abiertas ante SSE; default de propina no solicitada = 0%
+    let chosenPay = (fromSse && tableModalDraft.dirty && tableModalDraft.tableId === tableId)
+      ? tableModalDraft.pay
+      : (billCall?.payment || 'Tarjeta');
+    let chosenTip = (fromSse && tableModalDraft.dirty && tableModalDraft.tableId === tableId)
+      ? tableModalDraft.tip
+      : (billCall?.tip ?? 0);
+
+    const cashAmount = Math.max(0, Number(billCall?.cashAmount) || 0);
+    const splitWays = Math.max(1, Number(billCall?.splitWays) || 1);
+    const initGrand = sub + Math.round((sub * chosenTip) / 100);
+
+    const formatModalBillExtra = (payMethod, grandVal) => {
+      const notes = [];
+      if (splitWays > 1) {
+        notes.push(`<div style="font-size:13px;font-weight:700;color:var(--ink-2)">÷ Cuenta dividida entre ${splitWays} personas: <strong>${money(Math.ceil(grandVal / splitWays))} c/u</strong></div>`);
+      }
+      if (payMethod === 'Efectivo' && cashAmount > grandVal) {
+        notes.push(`<div class="r-change-badge" style="font-size:13px">💵 Abona con ${money(cashAmount)} -&gt; Llevar <strong>${money(cashAmount - grandVal)}</strong> de vuelto</div>`);
+      } else if (payMethod === 'Efectivo' && cashAmount === grandVal && grandVal > 0) {
+        notes.push(`<div class="r-change-badge" style="background:var(--ok-soft);color:var(--ok);font-size:13px">💵 Abona con importe justo (${money(grandVal)})</div>`);
+      }
+      return notes.join('');
+    };
 
     openModal(`
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
@@ -788,10 +923,10 @@
 
       ${t.sessionId ? `
         <div class="field" style="margin:12px 0">
-          <label>Mozo atendiendo esta mesa</label>
+          <label for="reassignWaiterSel">Mozo atendiendo esta mesa</label>
           <select class="input" id="reassignWaiterSel">
-            <option value="">-- Sin mozo asignado --</option>
-            ${state.waiters.map((w) => `<option value="${w.id}" ${w.id === t.waiterId ? 'selected' : ''}>${escapeHtml(w.name)} ${w.available ? '(En turno)' : '(Fuera de turno)'}</option>`).join('')}
+            <option value="" ${!t.waiterId ? 'selected' : ''}>-- Sin mozo asignado --</option>
+            ${state.waiters.map((w) => `<option value="${escapeHtml(w.id)}" ${w.id === t.waiterId ? 'selected' : ''}>${escapeHtml(w.name)} ${w.available ? '(En turno)' : '(Fuera de turno)'}</option>`).join('')}
           </select>
         </div>
 
@@ -802,41 +937,60 @@
           <div class="bill-total"><span>Subtotal actual</span><span>${money(sub)}</span></div>
         </div>
 
-        ${pendingDelivery ? `<div style="background:var(--warn-soft);color:var(--warn);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px">⚠️ Hay ${pendingDelivery} comanda(s) que todavía figuran sin entregar en Cocina/Barra.</div>` : ''}
+        ${pendingDelivery ? `<div style="background:var(--warn-soft);color:var(--warn);padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px">⚠️ Hay ${pendingDelivery} comanda(s) que todavía figuran sin entregar.</div>` : ''}
 
         <div class="two" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
           <div class="field">
-            <label>Medio de pago</label>
-            <select class="input" id="mPaySel">${['Efectivo', 'Tarjeta', 'QR', 'Transferencia'].map((p) => `<option ${p === chosenPay ? 'selected' : ''}>${p}</option>`).join('')}</select>
+            <label for="mPaySel">Medio de pago</label>
+            <select class="input" id="mPaySel">${['Efectivo', 'Tarjeta', 'QR', 'Transferencia'].map((p) => `<option value="${p}" ${p === chosenPay ? 'selected' : ''}>${p}</option>`).join('')}</select>
           </div>
           <div class="field">
-            <label>Propina</label>
-            <select class="input" id="mTipSel">${[0, 5, 10, 15].map((p) => `<option value="${p}" ${p === chosenTip ? 'selected' : ''}>${p}% (${money(Math.round(sub * p / 100))})</option>`).join('')}</select>
+            <label for="mTipSel">Propina</label>
+            <select class="input" id="mTipSel">${[0, 5, 10, 15].map((p) => `<option value="${p}" ${p === chosenTip ? 'selected' : ''}>${p}% (${money(Math.round((sub * p) / 100))})</option>`).join('')}</select>
           </div>
         </div>
-        <div class="bill-total" style="margin-top:10px"><span>Total a cobrar</span><span id="mGrandTotal">${money(sub + Math.round(sub * chosenTip / 100))}</span></div>
+        <div id="mExtraBillInfo" style="margin-top:8px">${formatModalBillExtra(chosenPay, initGrand)}</div>
+        <div class="bill-total" style="margin-top:10px"><span>Total a cobrar</span><span id="mGrandTotal">${money(initGrand)}</span></div>
       ` : '<p class="muted" style="margin:16px 0">La mesa está libre. Se abrirá y asignará mozo en cuanto el cliente escanee el QR y pida, o si cargás un pedido manual.</p>'}
 
       <div class="modal-actions">
-        <button class="btn btn-ghost" data-cancel>Cerrar ventana</button>
-        <button class="btn btn-ghost" id="manualOrderBtn">+ Pedido manual</button>
-        ${t.sessionId ? `<button class="btn btn-primary" id="confirmCloseTableBtn">Cobrar y cerrar mesa</button>` : ''}
+        <button class="btn btn-ghost" type="button" data-cancel>Cerrar ventana</button>
+        <button class="btn btn-ghost" type="button" id="manualOrderBtn">+ Pedido manual</button>
+        ${t.sessionId ? `<button class="btn btn-primary" type="button" id="confirmCloseTableBtn">Cobrar y cerrar mesa</button>` : ''}
       </div>`, (el) => {
       const rw = el.querySelector('#reassignWaiterSel');
       if (rw) {
         rw.onchange = async () => {
-          if (!rw.value) return;
-          const ok = await act('session.reassign', { tableId: t.id, waiterId: rw.value });
-          if (ok) toast(`🪑 Mesa ${t.code} asignada a ${ok.result?.waiterName || 'mozo'}`);
+          const wantedWid = rw.value;
+          const ok = await act('session.reassign', { tableId: t.id, waiterId: wantedWid });
+          if (ok) {
+            toast(wantedWid
+              ? `🪑 Mesa ${t.code} asignada a ${ok.result?.waiterName || 'mozo'}`
+              : `🪑 Mesa ${t.code} dejada sin mozo asignado`);
+          } else {
+            rw.value = t.waiterId || '';
+          }
         };
       }
+
+      const paySel = el.querySelector('#mPaySel');
       const tipSel = el.querySelector('#mTipSel');
-      if (tipSel) {
-        tipSel.onchange = () => {
-          const p = Number(tipSel.value);
-          el.querySelector('#mGrandTotal').textContent = money(sub + Math.round(sub * p / 100));
-        };
-      }
+      const syncDraftAndTotals = () => {
+        const p = paySel ? paySel.value : chosenPay;
+        const tipPct = tipSel ? Number(tipSel.value) : chosenTip;
+        tableModalDraft.tableId = t.id;
+        tableModalDraft.pay = p;
+        tableModalDraft.tip = tipPct;
+        tableModalDraft.dirty = true;
+        const grandVal = sub + Math.round((sub * tipPct) / 100);
+        const totEl = el.querySelector('#mGrandTotal');
+        if (totEl) totEl.textContent = money(grandVal);
+        const exEl = el.querySelector('#mExtraBillInfo');
+        if (exEl) exEl.innerHTML = formatModalBillExtra(p, grandVal);
+      };
+      paySel?.addEventListener('change', syncDraftAndTotals);
+      tipSel?.addEventListener('change', syncDraftAndTotals);
+
       el.querySelector('#manualOrderBtn').onclick = () => openQuickManualOrderModal(t);
       const closeBtn = el.querySelector('#confirmCloseTableBtn');
       if (closeBtn) {
@@ -846,8 +1000,8 @@
             if (!confirm(`Todavía hay ${pendingDelivery} pedido(s) sin entregar en la Mesa ${t.code}. ¿Marcarlos como entregados y cerrar la cuenta igual?`)) return;
             force = true;
           }
-          const pay = el.querySelector('#mPaySel')?.value || 'Efectivo';
-          const tip = Number(el.querySelector('#mTipSel')?.value || 0);
+          const pay = paySel?.value || 'Efectivo';
+          const tip = Number(tipSel?.value || 0);
           const ok = await act('table.close', { tableId: t.id, payment: pay, tip, force });
           if (ok) {
             closeModal();
@@ -867,7 +1021,7 @@
       <form class="form" id="quickOrdForm">
         <div class="field">
           <label>Producto</label>
-          <select class="input" name="itemId">${availItems.map((i) => `<option value="${i.id}">${i.emoji} ${escapeHtml(i.name)} (${money(i.price)} · ${i.effectiveStation === 'barra' ? 'Barra' : 'Cocina'})</option>`).join('')}</select>
+          <select class="input" name="itemId">${availItems.map((i) => `<option value="${escapeHtml(i.id)}">${i.emoji} ${escapeHtml(i.name)} (${money(i.price)} · ${stationInfo(i.effectiveStation).short})</option>`).join('')}</select>
         </div>
         <div class="two">
           <div class="field"><label>Cantidad</label><input class="input" type="number" name="qty" min="1" max="30" value="1" required></div>
@@ -875,7 +1029,7 @@
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">Enviar a Cocina / Barra</button>
+          <button class="btn btn-primary" type="submit">Enviar comanda</button>
         </div>
       </form>`, (el) => {
       el.querySelector('#quickOrdForm').onsubmit = async (e) => {
@@ -907,7 +1061,7 @@
           <div class="field">
             <label>Elegí un bloque pre-armado de referencia</label>
             <div class="tpl-grid" id="tplPicker">
-              ${templates.map((t) => `<button type="button" class="tpl-btn ${t.id === selectedTpl.id ? 'sel' : ''}" data-tpl="${t.id}"><span>${t.icon}</span><span>${escapeHtml(t.name)}</span></button>`).join('')}
+              ${templates.map((t) => `<button type="button" class="tpl-btn ${t.id === selectedTpl.id ? 'sel' : ''}" data-tpl="${escapeHtml(t.id)}"><span>${t.icon}</span><span>${escapeHtml(t.name)}</span></button>`).join('')}
             </div>
           </div>` : ''}
         <div class="two">
@@ -929,7 +1083,7 @@
           <div style="display:flex;gap:10px;flex-wrap:wrap;padding:8px 10px;background:var(--surface-2);border-radius:10px">
             ${state.waiters.length ? state.waiters.map((w) => `
               <label style="display:inline-flex;align-items:center;gap:6px;font-weight:600;cursor:pointer">
-                <input type="checkbox" name="waiterId" value="${w.id}" ${block?.waiterIds?.includes(w.id) ? 'checked' : ''}>
+                <input type="checkbox" name="waiterId" value="${escapeHtml(w.id)}" ${block?.waiterIds?.includes(w.id) ? 'checked' : ''}>
                 ${escapeHtml(w.name)}
               </label>`).join('') : '<span class="muted">Aún no hay mozos creados.</span>'}
           </div>
@@ -945,7 +1099,7 @@
           </div>` : ''}
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">${block ? 'Guardar cambios' : 'Crear bloque y mesas'}</button>
+          <button class="btn btn-primary" type="submit">${block ? 'Guardar cambios' : 'Crear bloque y mesas'}</button>
         </div>
       </form>`, (el) => {
       const modeSel = el.querySelector('#bfMode');
@@ -1005,7 +1159,7 @@
         </div>
         <div class="field">
           <label>Bloque / Sector</label>
-          <select class="input" name="blockId">${state.blocks.map((b) => `<option value="${b.id}" ${b.id === cur.blockId ? 'selected' : ''}>${b.icon} ${escapeHtml(b.name)}</option>`).join('')}</select>
+          <select class="input" name="blockId">${state.blocks.map((b) => `<option value="${escapeHtml(b.id)}" ${b.id === cur.blockId ? 'selected' : ''}>${b.icon} ${escapeHtml(b.name)}</option>`).join('')}</select>
         </div>
         <label class="switch">
           <input type="checkbox" name="active" ${cur.active ? 'checked' : ''}>
@@ -1020,7 +1174,7 @@
         <div class="modal-actions">
           ${isEdit ? `<button type="button" class="btn btn-danger" id="delTblBtn" style="margin-right:auto">Eliminar mesa</button>` : ''}
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">${isEdit ? 'Guardar' : 'Crear mesa'}</button>
+          <button class="btn btn-primary" type="submit">${isEdit ? 'Guardar' : 'Crear mesa'}</button>
         </div>
       </form>`, (el) => {
       if (isEdit) {
@@ -1033,7 +1187,7 @@
           }
         };
         el.querySelector('#delTblBtn').onclick = async () => {
-          if (!confirm(`¿Eliminar la Mesa ${tbl.code}?`)) return;
+          if (!confirm(`¿Eliminar la Mesa ${tbl.code}? (Si tiene historial de arqueo se conservará en los reportes).`)) return;
           if (await act('table.delete', { id: tbl.id })) {
             closeModal();
             toast('Mesa eliminada');
@@ -1067,8 +1221,16 @@
       <form class="form" id="waiterForm">
         <div class="two">
           <div class="field"><label>Nombre</label><input class="input" name="name" required maxlength="40" value="${escapeHtml(cur.name)}"></div>
-          <div class="field"><label>PIN celular (opcional, 4 dígitos)</label><input class="input" name="pin" maxlength="6" placeholder="${w?.hasPin ? 'Dejar vacío = sin PIN' : 'Opcional'}"></div>
+          <div class="field">
+            <label>PIN celular (opcional, 4 a 6 dígitos)</label>
+            <input class="input" name="pin" id="wfPinInput" inputmode="numeric" maxlength="6" placeholder="${w?.hasPin ? 'Dejar vacío = mantener PIN actual' : 'Opcional'}">
+          </div>
         </div>
+        ${w?.hasPin ? `
+          <label style="display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer">
+            <input type="checkbox" name="clearPin" id="wfClearPin" style="width:16px;height:16px;accent-color:var(--accent)">
+            Quitar PIN actual (permitir ingreso sin PIN individual)
+          </label>` : ''}
         <div class="field">
           <label>Color identificador</label>
           <div class="color-pick">${COLORS.map((c) => `<button type="button" class="color-swatch ${c === color ? 'sel' : ''}" data-col="${c}" style="background:${c}"></button>`).join('')}</div>
@@ -1078,7 +1240,7 @@
           <div style="display:flex;gap:10px;flex-wrap:wrap;padding:10px;background:var(--surface-2);border-radius:10px">
             ${state.blocks.map((b) => `
               <label style="display:inline-flex;align-items:center;gap:6px;font-weight:600;cursor:pointer">
-                <input type="checkbox" name="blockId" value="${b.id}" ${cur.blockIds?.includes(b.id) ? 'checked' : ''}>
+                <input type="checkbox" name="blockId" value="${escapeHtml(b.id)}" ${cur.blockIds?.includes(b.id) ? 'checked' : ''}>
                 ${b.icon} ${escapeHtml(b.name)}
               </label>`).join('')}
           </div>
@@ -1090,9 +1252,21 @@
         </label>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">${w ? 'Guardar cambios' : 'Agregar mozo'}</button>
+          <button class="btn btn-primary" type="submit">${w ? 'Guardar cambios' : 'Agregar mozo'}</button>
         </div>
       </form>`, (el) => {
+      const clrChk = el.querySelector('#wfClearPin');
+      const pinInp = el.querySelector('#wfPinInput');
+      if (clrChk && pinInp) {
+        clrChk.onchange = () => {
+          if (clrChk.checked) {
+            pinInp.value = '';
+            pinInp.disabled = true;
+          } else {
+            pinInp.disabled = false;
+          }
+        };
+      }
       el.querySelectorAll('[data-col]').forEach((b) => b.onclick = () => {
         color = b.dataset.col;
         el.querySelectorAll('[data-col]').forEach((x) => x.classList.toggle('sel', x === b));
@@ -1100,10 +1274,12 @@
       el.querySelector('#waiterForm').onsubmit = async (e) => {
         e.preventDefault();
         const f = new FormData(e.target);
+        const clearPin = Boolean(clrChk && clrChk.checked);
         const res = await act('waiter.save', {
           id: w?.id,
           name: f.get('name').trim(),
-          pin: f.get('pin').trim(),
+          pin: clearPin ? '' : (f.get('pin') || '').trim(),
+          clearPin,
           color,
           available: f.has('available'),
           blockIds: f.getAll('blockId'),
@@ -1124,7 +1300,7 @@
       <h3>${cat ? 'Editar Categoría' : 'Nueva Categoría del Menú'}</h3>
       <form class="form" id="catForm">
         <div class="two">
-          <div class="field"><label>Nombre (ej: Pastas, Tragos, Parrilla)</label><input class="input" name="name" required maxlength="40" value="${escapeHtml(cur.name)}"></div>
+          <div class="field"><label>Nombre (ej: Pastas, Tragos, Sushi, Parrilla)</label><input class="input" name="name" required maxlength="40" value="${escapeHtml(cur.name)}"></div>
           <div class="field"><label>Ícono / Emoji</label><input class="input" name="icon" maxlength="8" value="${escapeHtml(cur.icon)}"></div>
         </div>
         <div class="field">
@@ -1132,11 +1308,12 @@
           <select class="input" name="station">
             <option value="cocina" ${cur.station === 'cocina' ? 'selected' : ''}>🍳 Directo a Cocina</option>
             <option value="barra" ${cur.station === 'barra' ? 'selected' : ''}>🍸 Directo a Barra</option>
+            <option value="mostrador" ${cur.station === 'mostrador' ? 'selected' : ''}>🍣 Directo a Mostrador / Sushi / Parrilla</option>
           </select>
         </div>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">${cat ? 'Guardar' : 'Crear categoría'}</button>
+          <button class="btn btn-primary" type="submit">${cat ? 'Guardar' : 'Crear categoría'}</button>
         </div>
       </form>`, (el) => {
       el.querySelector('#catForm').onsubmit = async (e) => {
@@ -1170,7 +1347,7 @@
         <div class="field"><label>Descripción</label><input class="input" name="desc" maxlength="140" value="${escapeHtml(it.desc)}"></div>
         <div class="two">
           <div class="field"><label>Precio ($)</label><input class="input" name="price" type="number" min="0" step="50" required value="${it.price}"></div>
-          <div class="field"><label>Categoría</label><select class="input" name="cat">${state.categories.map((c) => `<option value="${c.id}" ${c.id === it.cat ? 'selected' : ''}>${c.icon} ${escapeHtml(c.name)} (${c.station === 'barra' ? 'Barra' : 'Cocina'})</option>`).join('')}</select></div>
+          <div class="field"><label>Categoría</label><select class="input" name="cat">${state.categories.map((c) => `<option value="${escapeHtml(c.id)}" ${c.id === it.cat ? 'selected' : ''}>${c.icon} ${escapeHtml(c.name)} (${stationInfo(c.station).short})</option>`).join('')}</select></div>
         </div>
         <div class="two">
           <div class="field">
@@ -1189,6 +1366,7 @@
             <option value="" ${!it.stationOverride ? 'selected' : ''}>Usar el destino de su categoría</option>
             <option value="cocina" ${it.stationOverride === 'cocina' ? 'selected' : ''}>🍳 Forzar Cocina</option>
             <option value="barra" ${it.stationOverride === 'barra' ? 'selected' : ''}>🍸 Forzar Barra</option>
+            <option value="mostrador" ${it.stationOverride === 'mostrador' ? 'selected' : ''}>🍣 Forzar Mostrador / Sushi / Parrilla</option>
           </select>
         </div>
         <div class="field">
@@ -1201,7 +1379,7 @@
         <label class="switch"><input type="checkbox" name="available" ${it.available ? 'checked' : ''}><span class="track"></span>Disponible hoy</label>
         <div class="modal-actions">
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">${item ? 'Guardar cambios' : 'Agregar al menú'}</button>
+          <button class="btn btn-primary" type="submit">${item ? 'Guardar cambios' : 'Agregar al menú'}</button>
         </div>
       </form>`, (el) => {
       el.querySelectorAll('[data-emoji]').forEach((b) => b.onclick = () => {
@@ -1243,23 +1421,50 @@
     });
   }
 
+  async function undoLastBulkPrice(btn = null) {
+    const bk = getPriceBackup();
+    const hasServerUndo = Boolean(state?.restaurant?.canUndoPrices);
+    const hasLocalUndo = Boolean(bk && Array.isArray(bk.items) && bk.items.length);
+    if (!hasServerUndo && !hasLocalUndo) {
+      toast('No hay ajuste previo para deshacer');
+      return false;
+    }
+    const desc = bk?.label ? ` (${bk.label})` : '';
+    if (!confirm(`¿Deshacer el último ajuste porcentual de precios${desc} y restaurar los valores anteriores?`)) {
+      return false;
+    }
+    if (btn) btn.disabled = true;
+    const payload = hasServerUndo ? {} : { prices: bk.items };
+    const res = await act('price.undo', payload);
+    if (btn) btn.disabled = false;
+    if (res) {
+      savePriceBackup(null);
+      toast(`↩ Deshecho: se restauraron ${res.result?.restored || bk?.items?.length || 0} precio(s) exactos`);
+      return true;
+    }
+    return false;
+  }
+
   function openBulkPriceModal() {
     openTableModalId = null;
+    const existingBackup = getPriceBackup();
+    const canUndo = Boolean(state?.restaurant?.canUndoPrices || (existingBackup && existingBackup.items?.length));
+
     openModal(`
       <h3>📈 Actualizar precios por porcentaje</h3>
       <form class="form" id="bulkForm">
         <div class="field">
-          <label>Aplicar sobre</label>
-          <select class="input" name="categoryId">
+          <label for="bulkCat">Aplicar sobre</label>
+          <select class="input" name="categoryId" id="bulkCat">
             <option value="">Toda la carta (${state.items.length} productos)</option>
-            ${state.categories.map((c) => `<option value="${c.id}">${c.icon} Solo ${escapeHtml(c.name)}</option>`).join('')}
+            ${state.categories.map((c) => `<option value="${escapeHtml(c.id)}">${c.icon} Solo ${escapeHtml(c.name)}</option>`).join('')}
           </select>
         </div>
         <div class="two">
-          <div class="field"><label>Porcentaje (ej: 10 o -5)</label><input class="input" type="number" name="percent" step="0.5" required placeholder="10"></div>
+          <div class="field"><label for="bulkPct">Porcentaje (ej: 10 o -5)</label><input class="input" type="number" name="percent" id="bulkPct" step="0.5" value="10" required placeholder="10"></div>
           <div class="field">
-            <label>Redondear precios a múltiplo de</label>
-            <select class="input" name="roundTo">
+            <label for="bulkRound">Redondear precios a múltiplo de</label>
+            <select class="input" name="roundTo" id="bulkRound">
               <option value="100" selected>$100</option>
               <option value="50">$50</option>
               <option value="10">$10</option>
@@ -1267,29 +1472,101 @@
             </select>
           </div>
         </div>
+        <div class="field">
+          <label id="bulkPreviewTitle">Vista previa Antes / Después</label>
+          <div class="preview-box" id="bulkPreviewBox"></div>
+        </div>
         <div class="modal-actions">
+          ${canUndo ? `<button type="button" class="btn btn-ghost" id="bulkUndoBtn" style="margin-right:auto">↩ Deshacer último ajuste</button>` : ''}
           <button type="button" class="btn btn-ghost" data-cancel>Cancelar</button>
-          <button class="btn btn-primary">Aplicar ajuste</button>
+          <button class="btn btn-primary" type="submit" id="bulkApplyBtn">Aplicar ajuste</button>
         </div>
       </form>`, (el) => {
+      const catSel = el.querySelector('#bulkCat');
+      const pctInp = el.querySelector('#bulkPct');
+      const rndSel = el.querySelector('#bulkRound');
+      const prevBox = el.querySelector('#bulkPreviewBox');
+      const prevTitle = el.querySelector('#bulkPreviewTitle');
+      const applyBtn = el.querySelector('#bulkApplyBtn');
+
+      const updatePreview = () => {
+        const cid = catSel.value;
+        const pct = Number(pctInp.value || 0);
+        const roundTo = Math.max(1, Number(rndSel.value || 100));
+        const targetItems = cid ? state.items.filter((i) => i.cat === cid) : state.items;
+
+        if (!pct || pct < -90 || pct > 500 || !targetItems.length) {
+          prevTitle.textContent = 'Vista previa Antes / Después';
+          prevBox.innerHTML = '<p class="muted" style="padding:8px 0">Ingresá un porcentaje distinto de 0% (entre -90% y +500%) para ver los nuevos precios.</p>';
+          applyBtn.disabled = true;
+          return;
+        }
+        applyBtn.disabled = false;
+        const sign = pct > 0 ? `+${pct}%` : `${pct}%`;
+        prevTitle.textContent = `Vista previa (${targetItems.length} producto${targetItems.length === 1 ? '' : 's'} · ${sign})`;
+        applyBtn.textContent = `Aplicar ${sign} a ${targetItems.length} ítems`;
+
+        const factor = 1 + pct / 100;
+        prevBox.innerHTML = targetItems.map((i) => {
+          const newPrice = Math.round(Math.max(0, i.price * factor) / roundTo) * roundTo;
+          return `<div class="preview-row">
+            <span>${i.emoji || ''} ${escapeHtml(i.name)}</span>
+            <span class="preview-old">${money(i.price)}</span>
+            <span class="preview-new">${money(newPrice)}</span>
+          </div>`;
+        }).join('');
+      };
+
+      catSel.onchange = updatePreview;
+      pctInp.oninput = updatePreview;
+      rndSel.onchange = updatePreview;
+      updatePreview();
+
+      const undoBtn = el.querySelector('#bulkUndoBtn');
+      if (undoBtn) {
+        undoBtn.onclick = async () => {
+          if (await undoLastBulkPrice(undoBtn)) closeModal();
+        };
+      }
+
       el.querySelector('#bulkForm').onsubmit = async (e) => {
         e.preventDefault();
         const f = new FormData(e.target);
+        const cid = f.get('categoryId');
+        const pct = Number(f.get('percent'));
+        const roundTo = Number(f.get('roundTo'));
+        const affected = cid ? state.items.filter((i) => i.cat === cid) : state.items;
+        const catObj = cid ? state.categories.find((c) => c.id === cid) : null;
+        const snapshot = {
+          ts: Date.now(),
+          label: `${pct > 0 ? '+' : ''}${pct}% en ${catObj ? catObj.name : 'toda la carta'}`,
+          items: affected.map((i) => ({ id: i.id, price: i.price })),
+        };
+
         const res = await act('menu.adjust_prices', {
-          categoryId: f.get('categoryId'),
-          percent: Number(f.get('percent')),
-          roundTo: Number(f.get('roundTo')),
+          categoryId: cid,
+          percent: pct,
+          roundTo,
         });
         if (res) {
+          savePriceBackup(snapshot);
           closeModal();
-          toast(`📈 Se actualizaron ${res.result?.updated || 0} precios al instante`);
+          toast(`📈 Se actualizaron ${res.result?.updated || affected.length} precios al instante`);
         }
       };
     });
   }
 
   // ---------- Eventos delegados ----------
-  const VIEW_HASH = { pedidos: '#comandas', mesas: '#salon', mozos: '#mozos', menu: '#menu', caja: '#caja', leads: '#consultas' };
+  const VIEW_HASH = {
+    pedidos: '#comandas',
+    solicitudes: '#solicitudes',
+    mesas: '#salon',
+    mozos: '#mozos',
+    menu: '#menu',
+    caja: '#caja',
+    leads: '#consultas',
+  };
 
   function setView(next) {
     if (!document.getElementById(`view-${next}`)) return;
@@ -1305,7 +1582,15 @@
       if (!b) return;
       setView(b.dataset.view);
     };
-    const hashView = { '#comandas': 'pedidos', '#salon': 'mesas', '#mozos': 'mozos', '#menu': 'menu', '#caja': 'caja', '#consultas': 'leads' }[location.hash];
+    const hashView = {
+      '#comandas': 'pedidos',
+      '#solicitudes': 'solicitudes',
+      '#salon': 'mesas',
+      '#mozos': 'mozos',
+      '#menu': 'menu',
+      '#caja': 'caja',
+      '#consultas': 'leads',
+    }[location.hash];
     if (hashView) setView(hashView);
 
     $('#boardStationFilter').onclick = (e) => {
@@ -1337,6 +1622,7 @@
     $('#addBlockBtn').onclick = () => openBlockModal(null);
 
     $('#blocksContainer').onclick = async (e) => {
+      if (e.target.closest('a')) return;
       const tc = e.target.closest('[data-table-click]');
       if (tc) {
         const tbl = state.tables.find((x) => x.id === tc.dataset.tableClick);
@@ -1399,10 +1685,11 @@
     $('#newCatBtn').onclick = () => openCategoryModal(null);
     $('#newItemBtn').onclick = () => openItemModal(null);
     $('#bulkPriceBtn').onclick = () => openBulkPriceModal();
+    $('#undoPriceHeaderBtn').onclick = (e) => undoLastBulkPrice(e.currentTarget);
 
     $('#menuAdmin').onchange = (e) => {
       const t = e.target.closest('[data-itoggle]');
-      if (t) act('item.toggle', { id: t.dataset.itoggle, available: t.checked });
+      if (t) act('item.toggle', { id: t.dataset.itoggle, itemId: t.dataset.itoggle, available: t.checked });
     };
     $('#menuAdmin').onclick = async (e) => {
       const cm = e.target.closest('[data-cmove]');
@@ -1424,7 +1711,7 @@
       }
     };
 
-    $('#calls').onclick = (e) => {
+    const handleCallsClick = (e) => {
       const w = e.target.closest('[data-call-way]');
       if (w) act('call.status', { id: w.dataset.callWay, status: 'en_camino' });
       const d = e.target.closest('[data-call-done]');
@@ -1432,6 +1719,8 @@
       const b = e.target.closest('[data-open-bill]');
       if (b) renderTableOperationalModal(b.dataset.openBill);
     };
+    $('#calls').onclick = handleCallsClick;
+    $('#callsMobile').onclick = handleCallsClick;
 
     $('#modalBackdrop').onclick = (e) => {
       if (e.target.id === 'modalBackdrop' || e.target.closest('[data-cancel]')) closeModal();
@@ -1476,7 +1765,6 @@
       const reply = e.target.closest('[data-lead-reply]');
       if (reply) {
         const lead = (state.leads || []).find((l) => l.id === reply.dataset.leadReply);
-        // Al responder, la consulta pasa sola a "Contactado" (sin frenar la apertura del link)
         if (lead && lead.status === 'nuevo') {
           setLeadStatus(lead.id, 'contactado', true).then((r) => { if (r) toast('✔ Marcada como Contactado'); });
         }

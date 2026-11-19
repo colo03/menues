@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>SaleListo · Más mesas por noche y un salón en calma en hora pico</title>
-  <meta name="description" content="Pedidos y cobro desde el QR de cada mesa con el 4G del cliente, comandas separadas para Cocina y Barra, y mozos coordinados sin celulares en el salón. 0% comisión por venta.">
+  <meta name="description" content="Pedidos y solicitud de cuenta desde el QR de cada mesa con el 4G del cliente, comandas separadas para Cocina, Barra y Mostrador, y mozos coordinados sin celulares en el salón. 0% comisión por venta.">
   <meta name="theme-color" content="#FAF7F2">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
@@ -16,6 +16,8 @@
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +34,9 @@
       <a class="nav-brand" href="#top" aria-label="SaleListo, volver al inicio">
         <img src="logo.svg" alt="SaleListo" width="128" height="34">
       </a>
+      <button class="nav-burger" id="nav-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
       <nav class="nav-links" id="nav-links" aria-label="Secciones">
         <a href="#como-funciona">Cómo funciona</a>
         <a href="#sin-celulares">Sin celulares</a>
@@ -50,9 +55,6 @@
         <a class="btn btn-ghost btn-sm" href="demo.html">▶ Probar Demo en Vivo</a>
         <a class="btn btn-primary btn-sm" href="#piloto">Solicitar Piloto</a>
       </div>
-      <button class="nav-burger" id="nav-burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-links">
-        <span></span><span></span><span></span>
-      </button>
     </div>
   </header>
 
@@ -70,7 +72,7 @@
         <div class="hero-copy">
           <p class="eyebrow eyebrow-light"><span class="dot-live"></span> Para restaurantes, cervecerías, bares y cafés</p>
           <h1 id="hero-title">Más mesas por noche.<br><span class="hl-accent">Un salón en calma</span> en plena hora pico.</h1>
-          <p class="hero-lead">El cliente pide y paga desde el QR de su mesa con su propio 4G. Cocina y Barra reciben su parte al instante, y tus mozos caminan solo cuando hay algo listo para llevar. Sin comisión por venta y sin celulares en el salón.</p>
+          <p class="hero-lead">El cliente pide y solicita la cuenta desde el QR de su mesa con su propio 4G. Cocina, Barra y Mostrador reciben su parte al instante, y tus mozos caminan solo cuando hay algo listo para llevar. Sin comisión por venta y sin celulares en el salón.</p>
 
           <ul class="hero-badges" aria-label="Diferenciales clave">
             <li><span class="b-ico">%</span> 0% comisión por venta</li>
@@ -89,7 +91,7 @@
           <div class="phone" id="spot">
             <div class="phone-notch" aria-hidden="true"></div>
             <div class="phone-screen">
-              <video id="spot-video" autoplay muted loop playsinline preload="metadata" poster="media/spot-salelisto-poster.jpg">
+              <video id="spot-video" muted loop playsinline preload="metadata" poster="media/spot-salelisto-poster.jpg">
                 <source src="media/spot-salelisto.mp4" type="video/mp4">
               </video>
               <div class="spot-fallback" aria-hidden="true">
@@ -338,7 +340,7 @@
             <div class="mode-head">
               <span class="pill pill-ok">Incluido de serie en todos los planes</span>
               <h3>Estación de Mozos fija en el Pase</h3>
-              <p>Una tablet o monitor horizontal en el mostrador del pase o la barra, con una columna por mozo legible a 4 metros. Pasa, mira su columna, toca el botón gigante y sigue.</p>
+              <p>Una tablet o monitor horizontal en el mostrador del pase o la barra, con una columna por mozo legible a 4 metros. Los celulares quedan guardados en un locker o en caja: el mozo pasa, mira su columna, toca el botón gigante y sigue.</p>
             </div>
             <figure class="mode-diagram" aria-label="Diagrama: pantalla del pase con una columna por mozo">
               <svg viewBox="0 0 440 230" role="img" aria-labelledby="dg1-t">
@@ -380,7 +382,7 @@
             </figure>
             <dl class="mode-facts">
               <div><dt>Hardware</dt><dd><strong>USD 0</strong> · usás la tablet, notebook o monitor que ya tenés</dd></div>
-              <div><dt>Ideal para</dt><dd>Salones compactos, cafeterías y barras con pase a la vista</dd></div>
+              <div><dt>Ideal para</dt><dd>Salones compactos, cafeterías y barras con pase a la vista (celulares en locker)</dd></div>
               <div><dt>Acción</dt><dd>Botón gigante <span class="kbd">✔ Ya lo llevé</span> y carga de pedidos en 5 segundos</dd></div>
             </dl>
             <a class="link-arrow link-light" href="pase.html">Abrir la Estación de Mozos real <span aria-hidden="true">→</span></a>
@@ -391,11 +393,11 @@
             <div class="mode-head">
               <span class="pill pill-accent-dark">Adicional llave en mano</span>
               <h3>Kit Pulsera Vibradora Xiaomi Smart Band</h3>
-              <p>Para patios cerveceros, terrazas por escalera o veredas largas. El teléfono queda bloqueado en el bolsillo o en un locker y el aviso llega como una vibración corta en la muñeca.</p>
+              <p>Para patios cerveceros, terrazas por escalera o veredas largas. El celular va bloqueado en el bolsillo del mozo (jamás se saca en el salón) y el aviso llega por Bluetooth como una vibración corta en la muñeca.</p>
             </div>
-            <figure class="mode-diagram" aria-label="Diagrama: pulsera con aviso T2 retirar barra">
+            <figure class="mode-diagram" aria-label="Diagrama: pulsera con aviso T2 retirar barra y celular bloqueado en el bolsillo">
               <svg viewBox="0 0 440 230" role="img" aria-labelledby="dg2-t">
-                <title id="dg2-t">Pulsera vibradora mostrando el aviso T2 Retirar Barra</title>
+                <title id="dg2-t">Pulsera vibradora mostrando el aviso T2 Retirar Barra con celular bloqueado en el bolsillo</title>
                 <!-- ondas -->
                 <g stroke="#D9412B" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9">
                   <path class="wave w-a" d="M118 78 C104 98 104 132 118 152"/>
@@ -413,13 +415,15 @@
                   <text x="190" y="126" font-size="15" font-weight="800" fill="#FAF7F2">T2</text>
                   <text x="190" y="144" font-size="10" font-weight="700" fill="#C4B5FD">Retirar Barra</text>
                 </g>
-                <!-- locker -->
-                <g transform="translate(340 70)">
-                  <rect x="0" y="0" width="70" height="96" rx="8" fill="#26221F" stroke="#38322E" stroke-width="2"/>
-                  <rect x="22" y="22" width="26" height="46" rx="5" fill="#57534E"/>
-                  <path d="M30 40 v-5 a5 5 0 0 1 10 0 v5" stroke="#FAF7F2" stroke-width="2" fill="none"/>
-                  <rect x="28" y="40" width="14" height="11" rx="2" fill="#FAF7F2"/>
-                  <text x="35" y="86" font-family="Plus Jakarta Sans, sans-serif" font-size="10" font-weight="700" fill="rgba(250,247,242,0.75)" text-anchor="middle">celular</text>
+                <!-- celular bloqueado en el bolsillo -->
+                <g transform="translate(328 58)">
+                  <rect x="18" y="4" width="48" height="72" rx="9" fill="#0F0D0C" stroke="#57534E" stroke-width="2"/>
+                  <path d="M36 28 v-4 a6 6 0 0 1 12 0 v4" stroke="#FAF7F2" stroke-width="2" fill="none"/>
+                  <rect x="34" y="28" width="16" height="12" rx="2.5" fill="#FAF7F2"/>
+                  <path d="M8 46 H76 V82 C76 96 64 106 42 108 C20 106 8 96 8 82 Z" fill="#26221F" stroke="#38322E" stroke-width="2"/>
+                  <path d="M14 54 H70" stroke="#57534E" stroke-width="1.5" stroke-dasharray="4 3"/>
+                  <text x="42" y="124" font-family="Plus Jakarta Sans, sans-serif" font-size="9.5" font-weight="700" fill="rgba(250,247,242,0.82)" text-anchor="middle">celular bloqueado</text>
+                  <text x="42" y="136" font-family="Plus Jakarta Sans, sans-serif" font-size="9.5" font-weight="700" fill="rgba(250,247,242,0.68)" text-anchor="middle">en el bolsillo</text>
                 </g>
                 <g transform="translate(18 92)" font-family="Plus Jakarta Sans, sans-serif" font-weight="800">
                   <text x="0" y="0" font-size="26" fill="#FAF7F2">14</text>
@@ -461,11 +465,11 @@
           <div class="tab-panel" role="tabpanel" id="panel-carta" aria-labelledby="tab-carta">
             <div class="panel-copy">
               <h3>Carta Cliente QR</h3>
-              <p>Fotos reales, filtros por dieta, aclaraciones escritas por el comensal, botón para llamar al mozo y pedido de cuenta con medio de pago y propina.</p>
+              <p>Fotos reales, filtros por dieta, aclaraciones escritas por el comensal, botón para llamar al mozo y solicitud de cuenta con propina, calculadora Vaquita y vuelto en efectivo.</p>
               <ul class="ticks ticks-sm">
                 <li>Abre en segundos con 4G, sin app ni Wi-Fi</li>
                 <li>Platos agotados desaparecen al instante</li>
-                <li>Segunda ronda en 10 segundos</li>
+                <li>Repetir otra ronda igual en 1 toque</li>
               </ul>
               <div class="panel-links">
                 <a class="btn btn-primary btn-sm" href="demo.html">Probar la carta en la demo</a>
@@ -489,7 +493,7 @@
           <div class="tab-panel" role="tabpanel" id="panel-pase" aria-labelledby="tab-pase" hidden>
             <div class="panel-copy">
               <h3>Estación de Mozos (Pase)</h3>
-              <p>Pantalla fija horizontal con una columna por mozo: retiros de Cocina y Barra, llamados, cuentas exactas y carga de pedidos en mostrador.</p>
+              <p>Pantalla fija horizontal filtrable por sector con una columna por mozo: retiros de Cocina, Barra y Mostrador, llamados, cuentas con vuelto exacto y carga rápida.</p>
               <ul class="ticks ticks-sm">
                 <li>Legible a 4 metros, con alerta sonora suave</li>
                 <li>Botón gigante para confirmar entregas</li>
@@ -514,20 +518,20 @@
           <!-- KDS -->
           <div class="tab-panel" role="tabpanel" id="panel-kds" aria-labelledby="tab-kds" hidden>
             <div class="panel-copy">
-              <h3>Monitor Cocina / Barra</h3>
-              <p>Comandera digital de alto contraste que filtra por estación. Cada ticket muestra mesa, aclaraciones y minutos transcurridos con semáforo de demora.</p>
+              <h3>Monitor Cocina / Barra / Mostrador</h3>
+              <p>Comandera digital de alto contraste que filtra hasta 3 estaciones (Cocina, Barra y Mostrador/Parrilla/Sushi) y permite pausar platos agotados en 1 toque.</p>
               <ul class="ticks ticks-sm">
-                <li>Filtro Cocina, Barra o ambas</li>
-                <li>Aclaraciones del cliente sin reescribir</li>
-                <li>Un toque para marcar listo</li>
+                <li>Filtro Cocina, Barra, Mostrador o todas</li>
+                <li>Cajón rápido de platos agotados en 1 toque</li>
+                <li>Semáforo SLA de demora en vivo</li>
               </ul>
               <div class="panel-links">
-                <a class="btn btn-primary btn-sm" href="cocina.html">Abrir Monitor Cocina/Barra</a>
+                <a class="btn btn-primary btn-sm" href="cocina.html">Abrir Comandera</a>
               </div>
             </div>
             <div class="panel-preview">
               <div class="mock-kds">
-                <div class="mk-head"><span><img src="mark.svg" alt="" width="20" height="20"> Comandera</span><span class="mk-filter"><b class="on-k">Cocina</b><b>Barra</b><b>Ambas</b></span></div>
+                <div class="mk-head"><span><img src="mark.svg" alt="" width="20" height="20"> Comandera</span><span class="mk-filter"><b class="on-k">Cocina</b><b>Barra</b><b>Mostrador</b></span></div>
                 <div class="mk-tickets">
                   <div class="mk-t"><div class="mk-t-head"><b>T5</b><span class="sla ok">4 min</span></div><p>1× Provoleta</p><p>1× Bife de chorizo <em>a punto</em></p><span class="mk-done">Marcar listo</span></div>
                   <div class="mk-t"><div class="mk-t-head"><b>V2</b><span class="sla warn">9 min</span></div><p>2× Milanesa napolitana</p><p>1× Papas rústicas</p><span class="mk-done">Marcar listo</span></div>
@@ -541,10 +545,10 @@
           <div class="tab-panel" role="tabpanel" id="panel-mozo" aria-labelledby="tab-mozo" hidden>
             <div class="panel-copy">
               <h3>Pulsera + App Mozo</h3>
-              <p>La app del mozo recibe avisos Web Push aun con la pantalla apagada y los replica en la Xiaomi Smart Band. El teléfono no sale del bolsillo.</p>
+              <p>La app del mozo recibe avisos Web Push aun con la pantalla apagada y los replica en la Xiaomi Smart Band. El teléfono queda bloqueado en el bolsillo.</p>
               <ul class="ticks ticks-sm">
                 <li>Avisos solo cuando hay algo para hacer</li>
-                <li>Retiros, llamados y cuentas exactas</li>
+                <li>Retiros, llamados y cuentas con vuelto exacto</li>
                 <li>Toma manual de pedidos si hace falta</li>
               </ul>
               <div class="panel-links">
@@ -560,7 +564,7 @@
               <div class="mock-phone mock-phone-sm">
                 <div class="mp-head"><img src="mark.svg" alt="" width="22" height="22"><div><strong>Martín</strong><small>Terraza · en turno</small></div><span class="pill pill-ok">⌚ Pulsera</span></div>
                 <div class="mz-alert a-bar"><b>🍸 T2 · Retirar Barra</b><small>2 IPA pinta · Fernet con cola</small></div>
-                <div class="mz-alert a-pay"><b>💳 T6 · Efectivo $28.500</b><small>Paga con $30.000</small></div>
+                <div class="mz-alert a-pay"><b>💳 T6 · Efectivo $28.500</b><small>Abona con $30.000 · vuelto $1.500</small></div>
                 <div class="mz-alert a-call"><b>🙋 T3 · Llama al mozo</b><small>hace 30 s</small></div>
                 <div class="mp-cart">Mis mesas abiertas · 3</div>
               </div>
@@ -571,14 +575,14 @@
           <div class="tab-panel" role="tabpanel" id="panel-panel" aria-labelledby="tab-panel" hidden>
             <div class="panel-copy">
               <h3>Panel Encargado Anti-Inflación</h3>
-              <p>Actualizá toda la carta (o una categoría) con un porcentaje en un clic. Además: plano de bloques, mozos en turno, platos agotados y arqueo por medio de pago y propinas.</p>
+              <p>Actualizá toda la carta (o una categoría) con vista previa Antes/Después y botón Deshacer en un clic. Además: plano de bloques, mozos en turno y arqueo CSV.</p>
               <ul class="ticks ticks-sm">
-                <li>Ajuste masivo % por categoría o total</li>
+                <li>Ajuste masivo % con vista previa y deshacer</li>
                 <li>Agotados en vivo en todas las mesas</li>
-                <li>Arqueo por turno y medio de pago</li>
+                <li>Arqueo por turno, medio de pago y propinas</li>
               </ul>
               <div class="panel-links">
-                <a class="btn btn-primary btn-sm" href="restaurante.html">Abrir Panel del Encargado</a>
+                <a class="btn btn-primary btn-sm" href="restaurante.html?demo=1">Abrir Panel del Encargado</a>
               </div>
             </div>
             <div class="panel-preview">
@@ -621,7 +625,7 @@
             <div class="range">
               <div class="range-top"><label for="roi-ticket">Ticket promedio por mesa</label><output id="roi-ticket-out" for="roi-ticket">ARS 45.000</output></div>
               <input type="range" id="roi-ticket" min="15000" max="150000" step="1000" value="45000">
-              <div class="range-scale"><span>ARS 15.000</span><span>ARS 150.000</span></div>
+              <div class="range-scale"><span id="roi-ticket-min">ARS 15.000</span><span id="roi-ticket-max">ARS 150.000</span></div>
             </div>
             <div class="range">
               <div class="range-top"><label for="roi-shifts">Turnos fuertes por semana</label><output id="roi-shifts-out" for="roi-shifts">3 turnos</output></div>
@@ -632,7 +636,13 @@
           </form>
 
           <div class="roi-result" aria-live="polite">
-            <p class="roi-label">Ganancia neta mensual estimada</p>
+            <div class="roi-top-row">
+              <p class="roi-label">Ganancia neta mensual estimada</p>
+              <div class="currency currency-dark" role="group" aria-label="Moneda de la calculadora ROI">
+                <button type="button" class="cur-btn" data-cur="ars" aria-pressed="true">ARS</button>
+                <button type="button" class="cur-btn" data-cur="usd" aria-pressed="false">USD</button>
+              </div>
+            </div>
             <p class="roi-big" id="roi-net">ARS 0</p>
             <p class="roi-multiple"><span id="roi-mult">0x</span> el costo del plan</p>
             <div class="roi-bars">
@@ -640,7 +650,10 @@
               <div class="roi-bar"><div class="rb-top"><span>Segundas rondas y postres</span><b id="roi-rounds">ARS 0</b></div><div class="rb-track"><i id="roi-rounds-bar" class="rb-bar-2"></i></div><small>contribución neta, ya descontado el CMV</small></div>
               <div class="roi-bar roi-cost"><div class="rb-top"><span>Plan recomendado: <strong id="roi-plan">Salón / Bistró</strong></span><b id="roi-cost">- ARS 102.375</b></div><small>Abono fijo mensual · 0% comisión</small></div>
             </div>
-            <a class="btn btn-primary btn-block" id="roi-cta" href="#piloto">Quiero estos números en mi local <span aria-hidden="true">→</span></a>
+            <div class="roi-cta-stack">
+              <a class="btn btn-primary btn-block" id="roi-cta" href="#piloto">Quiero estos números en mi local <span aria-hidden="true">→</span></a>
+              <button class="btn btn-light-ghost btn-block btn-sm roi-copy-btn" type="button" id="roi-copy-link">🔗 Copiar enlace con este cálculo</button>
+            </div>
           </div>
         </div>
       </div>
@@ -652,7 +665,7 @@
         <div class="section-head section-head-center reveal">
           <p class="eyebrow">Planes</p>
           <h2 id="plans-title">Abono fijo. <span class="hl-accent">0% de comisión</span> sobre lo que vendés.</h2>
-          <p class="section-lead">Todos los planes incluyen la Estación de Mozos fija, el ruteo Cocina/Barra y el ajuste masivo de precios.</p>
+          <p class="section-lead">Todos los planes incluyen la Estación de Mozos fija, ruteo por estación (Cocina, Barra y Mostrador) y ajuste masivo de precios.</p>
           <div class="currency" role="group" aria-label="Moneda de los precios">
             <button type="button" class="cur-btn" data-cur="ars" aria-pressed="true">Pesos (ARS)</button>
             <button type="button" class="cur-btn" data-cur="usd" aria-pressed="false">USD ref.</button>
@@ -670,7 +683,7 @@
               <li>Hasta <strong>2 bloques</strong> (ej. Interior + Vereda)</li>
               <li>Hasta <strong>3 mozos</strong> en turno</li>
               <li><strong>Estación de Pase incluida</strong></li>
-              <li>Ruteo Cocina / Barra y ajuste % por inflación</li>
+              <li>Ruteo Cocina / Barra / Mostrador y ajuste %</li>
               <li>Soporte por WhatsApp lun a sáb</li>
             </ul>
             <a class="btn btn-ghost btn-block plan-cta" href="#piloto" data-plan="Barra / Café">Elegir Barra / Café</a>
@@ -685,9 +698,9 @@
             <ul class="plan-list">
               <li>Hasta <strong>30 mesas</strong> con QR fijo</li>
               <li>Hasta <strong>5 bloques</strong> (Interior, Terraza, Vereda, Barra, VIP)</li>
-              <li><strong>Mozos ilimitados</strong> y balanceo híbrido</li>
-              <li>Reasignación automática y Modo Pulsera</li>
-              <li><strong>Arqueo completo</strong> por turno, medio de pago y propinas</li>
+              <li>Hasta <strong>3 estaciones</strong> (Cocina, Barra y Mostrador/Parrilla/Sushi)</li>
+              <li><strong>Mozos ilimitados</strong>, balanceo híbrido y Modo Pulsera</li>
+              <li><strong>Arqueo CSV completo</strong> por turno, medio de pago y propinas</li>
               <li>Soporte prioritario, vie y sáb hasta las 00:00</li>
             </ul>
             <a class="btn btn-primary btn-block plan-cta" href="#piloto" data-plan="Salón / Bistró">Elegir Salón / Bistró</a>
@@ -695,15 +708,16 @@
 
           <article class="plan reveal">
             <h3>Gran Salón / Multisede</h3>
-            <p class="plan-for">Patios cerveceros, rooftops, parrillas de más de 30 mesas y cadenas</p>
+            <p class="plan-for">Patios cerveceros, rooftops, parrillas de más de 30 mesas y grupos</p>
             <p class="plan-price"><span class="price" data-usd="110" data-ars="173250">ARS 173.250</span><small>/mes</small></p>
             <p class="plan-alt" data-usd-alt="110">USD 110/mes de referencia, por sucursal</p>
             <ul class="plan-list">
+              <li><strong>Todo lo del plan Salón / Bistró +</strong></li>
               <li><strong>Mesas y bloques ilimitados</strong></li>
-              <li>Múltiples estaciones de pase por planta o sector</li>
-              <li><strong>Listas horarias</strong> (Happy Hour, Menú Ejecutivo)</li>
-              <li>Métricas de tiempos y propinas por mozo</li>
-              <li>Reportes históricos exportables</li>
+              <li>Múltiples Estaciones de Pase filtradas por sector y <strong>3 estaciones</strong> (Cocina, Barra y Mostrador/Parrilla/Sushi)</li>
+              <li>Métricas de tiempos, propinas por mozo y reportes exportables</li>
+              <li>Listas horarias (Happy Hour, Ejecutivo) <span class="pill-soon">(Próximamente)</span></li>
+              <li>Multisede centralizado <span class="pill-soon">(Próximamente)</span></li>
               <li><strong>Soporte dedicado</strong> y capacitación continua</li>
             </ul>
             <a class="btn btn-ghost btn-block plan-cta" href="#piloto" data-plan="Gran Salón / Multisede">Elegir Gran Salón</a>
@@ -790,7 +804,7 @@
           </div>
           <div class="acc-item">
             <h3><button class="acc-btn" type="button" aria-expanded="false" aria-controls="faq-3" id="faq-3-btn">¿Mis mozos van a andar con el celular en la mano?<span class="acc-ico" aria-hidden="true"></span></button></h3>
-            <div class="acc-panel" id="faq-3" role="region" aria-labelledby="faq-3-btn" hidden><p>No. Con el Plan Base miran la Estación de Mozos fija en el pase cada vez que pasan por el mostrador. Si tu salón es grande, sumás el Kit Pulsera: el teléfono queda guardado y el aviso llega como vibración en la muñeca.</p></div>
+            <div class="acc-panel" id="faq-3" role="region" aria-labelledby="faq-3-btn" hidden><p>No. Con la Estación de Mozos fija en el pase, los teléfonos pueden quedar guardados en un locker o en caja y el equipo mira el monitor cada vez que pasa por el mostrador. Si sumás el Kit Pulsera (Bluetooth BLE), el celular va bloqueado en el bolsillo del mozo (nunca se saca en el salón) y cada aviso llega como vibración corta en la muñeca.</p></div>
           </div>
           <div class="acc-item">
             <h3><button class="acc-btn" type="button" aria-expanded="false" aria-controls="faq-4" id="faq-4-btn">¿Qué pasa si alguien hace un pedido en broma?<span class="acc-ico" aria-hidden="true"></span></button></h3>
@@ -798,11 +812,11 @@
           </div>
           <div class="acc-item">
             <h3><button class="acc-btn" type="button" aria-expanded="false" aria-controls="faq-5" id="faq-5-btn">¿Tengo que comprar equipos?<span class="acc-ico" aria-hidden="true"></span></button></h3>
-            <div class="acc-panel" id="faq-5" role="region" aria-labelledby="faq-5-btn" hidden><p>No es obligatorio. La Estación de Pase y las pantallas de Cocina y Barra corren en cualquier navegador: una tablet, una notebook o un monitor que ya tengas. Los acrílicos QR y las pulseras son kits opcionales.</p></div>
+            <div class="acc-panel" id="faq-5" role="region" aria-labelledby="faq-5-btn" hidden><p>No es obligatorio. La Estación de Pase y los monitores de Cocina, Barra y Mostrador corren en cualquier navegador: una tablet, una notebook o un monitor que ya tengas. Los acrílicos QR y las pulseras son kits opcionales.</p></div>
           </div>
           <div class="acc-item">
             <h3><button class="acc-btn" type="button" aria-expanded="false" aria-controls="faq-6" id="faq-6-btn">¿Cómo actualizo los precios con la inflación?<span class="acc-ico" aria-hidden="true"></span></button></h3>
-            <div class="acc-panel" id="faq-6" role="region" aria-labelledby="faq-6-btn" hidden><p>Desde el Panel del Encargado aplicás un porcentaje a toda la carta o a una categoría en un clic, con redondeo. Los nuevos precios aparecen al instante en todas las mesas, sin reimprimir nada.</p></div>
+            <div class="acc-panel" id="faq-6" role="region" aria-labelledby="faq-6-btn" hidden><p>Desde el Panel del Encargado aplicás un porcentaje a toda la carta o a una categoría con vista previa antes/después, redondeo y botón para deshacer en un clic. Los nuevos precios aparecen al instante en todas las mesas, sin reimprimir nada.</p></div>
           </div>
           <div class="acc-item">
             <h3><button class="acc-btn" type="button" aria-expanded="false" aria-controls="faq-7" id="faq-7-btn">¿Cuánto tarda la puesta en marcha?<span class="acc-ico" aria-hidden="true"></span></button></h3>
@@ -889,9 +903,9 @@
               <svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="30" fill="#E3F3EA"/><path d="M20 33l8 8 16-17" stroke="#2F8A57" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
             <h3 id="done-title">¡Listo! Recibimos tu solicitud.</h3>
-            <p id="done-text">Te escribimos en menos de 24 horas hábiles para coordinar el piloto. Si querés acelerar, seguí ahora mismo por WhatsApp con tu resumen ya cargado.</p>
+            <p id="done-text">Tu consulta quedó registrada. Tocá abajo si querés abrir WhatsApp ahora mismo.</p>
             <div class="done-summary" id="done-summary"></div>
-            <a class="btn btn-wa btn-block btn-lg" id="done-wa" href="https://wa.me/541138436571" target="_blank" rel="noopener">💬 Continuar por WhatsApp</a>
+            <a class="btn btn-wa btn-block btn-lg" id="done-wa" href="https://wa.me/541138436571" target="_blank" rel="noopener">💬 Abrir WhatsApp ahora mismo</a>
             <a class="btn btn-ghost btn-block" id="done-mail" href="mailto:ventas@salelisto.com">✉️ Enviar por correo a ventas@salelisto.com</a>
             <button class="done-reset" type="button" id="done-reset">Cargar otra solicitud</button>
           </div>
@@ -906,7 +920,7 @@
       <div class="footer-top">
         <div class="footer-brand">
           <img src="logo.svg" alt="SaleListo" width="150" height="40">
-          <p>Pedidos desde la mesa sobre 4G, Cocina y Barra separadas al instante y un salón coordinado sin celulares. Suscripción plana con 0% de comisión por venta.</p>
+          <p>Pedidos desde la mesa sobre 4G, Cocina, Barra y Mostrador separados al instante y un salón coordinado sin celulares en mano. Suscripción plana con 0% de comisión por venta.</p>
           <a class="btn btn-primary btn-sm" href="#piloto">Solicitar Piloto</a>
         </div>
         <nav class="footer-col" aria-label="Producto">
@@ -923,7 +937,7 @@
           <a href="pase.html">Estación de Mozos</a>
           <a href="cocina.html">Monitor Cocina/Barra</a>
           <a href="mozo.html">App Mozo + Pulsera</a>
-          <a href="restaurante.html">Panel Encargado</a>
+          <a href="restaurante.html?demo=1">Panel Encargado</a>
           <a href="qr.html">QRs imprimibles</a>
         </nav>
         <div class="footer-col">

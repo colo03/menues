@@ -6,6 +6,8 @@
   <title>SaleListo · Tablero operativo del local</title>
   <meta name="robots" content="noindex">
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <style>
     .wrap { max-width: 1100px; margin: 0 auto; padding: 22px 16px 60px; }
@@ -94,7 +96,7 @@
 
     <img src="logo.svg" alt="SaleListo" style="height:44px;margin-bottom:18px;display:block">
     <h1>Tablero operativo del local</h1>
-    <p class="lead">Todas las pantallas del servicio en un solo lugar: abrí la Estación de Mozos en el pase, la comandera en Cocina y Barra, y el Panel del Encargado en la caja. Todo se sincroniza en vivo.</p>
+    <p class="lead">Todas las pantallas del servicio en un solo lugar: abrí la Estación de Mozos en el pase, la comandera en Cocina, Barra y Mostrador, y el Panel del Encargado en la caja. Todo se sincroniza en vivo por SSE.</p>
 
     <section class="live-kpis" id="liveKpis" aria-live="polite" hidden></section>
 
@@ -103,35 +105,36 @@
       <a class="card" href="pase.html">
         <div class="card-top"><span class="ico">🛎️</span><span class="tag">Plan Base · Sin celulares</span></div>
         <h2>Estación de Mozos (Pase)</h2>
-        <p>Pantalla fija horizontal con una columna por mozo: retiros de Cocina y Barra, cuentas exactas, llamados de mesa y semáforo de demoras.</p>
+        <p>Pantalla fija horizontal filtrable por sector con columnas por mozo: retiros, cuentas con vuelto exacto, llamados y semáforo SLA.</p>
         <span class="go">Abrir Estación de Mozos →</span>
       </a>
       <div class="card">
-        <div class="card-top"><span class="ico">🍳</span><span class="tag ok">Semáforo SLA</span></div>
-        <h2>Comandera Cocina y Barra</h2>
-        <p>Alto contraste, campana de comandas y semáforo verde / ámbar / coral para que ninguna mesa quede olvidada en hora pico.</p>
+        <div class="card-top"><span class="ico">🍳</span><span class="tag ok">3 Estaciones + 86</span></div>
+        <h2>Comandera en Tiempo Real</h2>
+        <p>Alto contraste, cajón de platos agotados en 1 toque y semáforo verde / ámbar / coral para Cocina, Barra y Mostrador.</p>
         <div class="sub-links">
           <a class="btn btn-sm btn-primary" href="cocina.html?estacion=todas">🔥 Todo</a>
-          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=cocina">🍳 Solo Cocina</a>
-          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=barra">🍸 Solo Barra</a>
+          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=cocina">🍳 Cocina</a>
+          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=barra">🍸 Barra</a>
+          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=mostrador">🍣 Mostrador</a>
         </div>
       </div>
       <a class="card" href="restaurante.html">
         <div class="card-top"><span class="ico">🖥️</span><span class="tag">PIN de encargado</span></div>
         <h2>Panel del Encargado</h2>
-        <p>Salón por bloques, mozos en turno, carta con etiquetas dietarias, arqueo con descarga CSV y bandeja de consultas comerciales.</p>
+        <p>Salón por bloques, mozos en turno, carta con ajuste % y vista previa Antes/Después, arqueo CSV y consultas comerciales.</p>
         <span class="go">Abrir panel →</span>
       </a>
       <a class="card" href="mozo.html">
         <div class="card-top"><span class="ico">⌚</span><span class="tag">Adicional</span></div>
         <h2>App Mozo + Pulsera Vibradora</h2>
-        <p>Alertas Web Push con la pantalla apagada para la pulsera: retiros listos, llamados de mesa y toma manual de pedidos.</p>
+        <p>Alertas Web Push con el celular bloqueado en el bolsillo: retiros listos, llamados de mesa y toma manual de pedidos.</p>
         <span class="go">Abrir app del mozo →</span>
       </a>
       <a class="card" href="qr.html">
         <div class="card-top"><span class="ico">🖨️</span></div>
         <h2>QRs fijos por mesa</h2>
-        <p>Tarjetas listas para imprimir, agrupadas por bloque, con token único anti-bromas por mesa.</p>
+        <p>Tarjetas listas para imprimir en A4 o descargar en SVG vectorial, agrupadas por bloque con token único por mesa.</p>
         <span class="go">Ver e imprimir QRs →</span>
       </a>
       <a class="card hl" href="demo.html">
@@ -150,8 +153,8 @@
         <ul class="check" id="checklist">
           <li><label><input type="checkbox" data-chk="mozos"><span><b>Mozos del turno activos</b> en el Panel (los ausentes, en pausa).</span></label></li>
           <li><label><input type="checkbox" data-chk="pase"><span><b>Estación de Mozos encendida</b> en el pase con el sonido activado.</span></label></li>
-          <li><label><input type="checkbox" data-chk="kds"><span><b>Comandera abierta</b> en Cocina y en Barra (campana probada).</span></label></li>
-          <li><label><input type="checkbox" data-chk="agotados"><span><b>Platos agotados</b> marcados en Menú y Precios.</span></label></li>
+          <li><label><input type="checkbox" data-chk="kds"><span><b>Comandera abierta</b> en Cocina, Barra o Mostrador (campana probada).</span></label></li>
+          <li><label><input type="checkbox" data-chk="agotados"><span><b>Platos agotados</b> marcados en Comandera o Menú y Precios.</span></label></li>
           <li><label><input type="checkbox" data-chk="qr"><span><b>QRs visibles</b> en todas las mesas habilitadas.</span></label></li>
         </ul>
       </div>
@@ -171,10 +174,10 @@
     <h3 class="sec">Flujo punta a punta</h3>
     <div class="flow">
       <div class="step"><b>1 · Diseño por bloques</b><span>Interior, Terraza, Vereda, Barra o Sectores con QRs fijos.</span></div>
-      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente busca, filtra por Sin TACC o Veggie y pide sin Wi-Fi.</span></div>
-      <div class="step"><b>3 · Cocina + Barra</b><span>Bebidas directo a Barra y platos a Cocina, con semáforo de demora.</span></div>
+      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente filtra por dieta, pide y solicita cuenta con Vaquita o vuelto.</span></div>
+      <div class="step"><b>3 · 3 Estaciones</b><span>Cocina, Barra y Mostrador reciben cada ítem por separado con SLA.</span></div>
       <div class="step"><b>4 · Asignación de mozo</b><span>Por bloque pre-asignado o automática según carga en vivo.</span></div>
-      <div class="step"><b>5 · Pase o Pulsera</b><span>Estación fija sin celulares o vibración en la muñeca.</span></div>
+      <div class="step"><b>5 · Pase o Pulsera</b><span>Estación fija en el pase o vibración con el celular bloqueado en el bolsillo.</span></div>
     </div>
 
     <div class="foot">
@@ -183,11 +186,10 @@
     </div>
   </div>
 
+  <script src="js/store.js"></script>
   <script>
     (async () => {
       const $ = (s) => document.querySelector(s);
-      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-      const money = (n) => '$' + Math.round(Number(n) || 0).toLocaleString('es-AR');
 
       // Checklist diario persistido en este dispositivo
       const d = new Date();
@@ -205,14 +207,60 @@
         });
       });
 
+      let latestState = null;
+      let demoModeFlag = true;
+
+      function renderStrip(online) {
+        const strip = $('#statusStrip');
+        if (!strip) return;
+        const pills = [
+          online
+            ? '<span class="st-pill live"><span class="dot"></span>SSE en vivo</span>'
+            : '<span class="st-pill warn"><span class="dot"></span>Reconectando…</span>',
+          demoModeFlag
+            ? '<span class="st-pill warn"><span class="dot"></span>Modo demo activo</span>'
+            : '<span class="st-pill"><span class="dot"></span>Modo producción (PIN)</span>',
+        ];
+        strip.innerHTML = pills.join('');
+      }
+
+      function renderLiveKpis(s) {
+        if (!s) return;
+        latestState = s;
+        if (s.restaurant && typeof s.restaurant.demoMode === 'boolean') {
+          demoModeFlag = s.restaurant.demoMode;
+          renderStrip(true);
+        }
+        const open = (s.orders || []).filter((o) => o.isOpenSession && ['nuevo', 'cocina'].includes(o.status));
+        const late = open.filter((o) => Date.now() - o.createdAt >= 15 * 60000).length;
+        const ready = (s.orders || []).filter((o) => o.isOpenSession && o.status === 'listo').length;
+        const pendingCalls = (s.calls || []).filter((c) => c.status !== 'atendida').length;
+        const occupied = (s.tables || []).filter((t) => t.active && t.sessionId).length;
+        const active = (s.tables || []).filter((t) => t.active).length;
+        const newLeads = (s.leads || []).filter((l) => l.status === 'nuevo').length;
+
+        const cards = [
+          ['Mesas ocupadas', `${occupied} / ${active}`, `${(s.waiters || []).filter((w) => w.available).length} mozo(s) en turno`, false],
+          ['En preparación', String(open.length), late ? `${late} demorada(s) +15 min` : 'Todo en tiempo', late > 0],
+          ['Listos / Solicitudes', `${ready} / ${pendingCalls}`, ready || pendingCalls ? 'Atención activa en salón' : 'Pase al día', ready + pendingCalls > 0],
+          ['Cobrado hoy', money((s.kpis?.closedSalesToday || 0) + (s.kpis?.closedTipsToday || 0)), `${s.kpis?.closedTablesCount || 0} mesa(s) cerradas`, false],
+        ];
+        if (newLeads) cards.push(['Consultas nuevas', String(newLeads), 'Abrir en Panel -> Consultas', true, 'restaurante.html#consultas']);
+
+        $('#liveKpis').innerHTML = cards.map(([t, v, sub, alert, href]) => {
+          const inner = `<small>${escapeHtml(t)}</small><strong>${escapeHtml(v)}</strong><span>${escapeHtml(sub)}</span>`;
+          return href
+            ? `<a class="lk ${alert ? 'alert' : ''}" href="${escapeHtml(href)}" style="text-decoration:none;color:inherit">${inner}</a>`
+            : `<div class="lk ${alert ? 'alert' : ''}">${inner}</div>`;
+        }).join('');
+        $('#liveKpis').hidden = false;
+      }
+
       const strip = $('#statusStrip');
       try {
         const info = await fetch('api/info').then((r) => r.json());
-        const pills = ['<span class="st-pill live"><span class="dot"></span>Servidor en vivo</span>'];
-        pills.push(info.demoMode
-          ? '<span class="st-pill warn"><span class="dot"></span>Modo demo activo</span>'
-          : '<span class="st-pill"><span class="dot"></span>Modo producción (PIN)</span>');
-        strip.innerHTML = pills.join('');
+        demoModeFlag = Boolean(info.demoMode);
+        renderStrip(true);
 
         const target = (info.baseUrl || location.origin).replace(/\/$/, '') + '/operacion.html';
         $('#baseUrl').textContent = target;
@@ -221,31 +269,22 @@
           : 'Funciona desde cualquier dispositivo conectado a esta red o a internet.';
         $('#qrBox').innerHTML = `<img alt="QR del tablero" src="api/qr.svg?text=${encodeURIComponent(target)}">`;
 
-        // Resumen en vivo (solo si el estado del personal es accesible: modo demo o sesión de encargado)
-        const tok = sessionStorage.getItem('salelisto:adminToken') || '';
-        const r = await fetch('api/staff-state', { headers: tok ? { 'X-Auth-Token': tok } : {} });
-        if (r.ok) {
-          const s = await r.json();
-          const open = (s.orders || []).filter((o) => o.isOpenSession && ['nuevo', 'cocina'].includes(o.status));
-          const late = open.filter((o) => Date.now() - o.createdAt >= 15 * 60000).length;
-          const ready = (s.orders || []).filter((o) => o.isOpenSession && o.status === 'listo').length;
-          const occupied = (s.tables || []).filter((t) => t.active && t.sessionId).length;
-          const active = (s.tables || []).filter((t) => t.active).length;
-          const newLeads = (s.leads || []).filter((l) => l.status === 'nuevo').length;
-          const cards = [
-            ['Mesas ocupadas', `${occupied} / ${active}`, `${(s.waiters || []).filter((w) => w.available).length} mozo(s) en turno`, false],
-            ['En preparación', String(open.length), late ? `${late} demorada(s) +15 min` : 'Todo en tiempo', late > 0],
-            ['Listos para retirar', String(ready), ready ? 'Esperando al mozo en el pase' : 'Pase al día', ready > 0],
-            ['Cobrado hoy', money((s.kpis?.closedSalesToday || 0) + (s.kpis?.closedTipsToday || 0)), `${s.kpis?.closedTablesCount || 0} mesa(s) cerradas`, false],
-          ];
-          if (newLeads) cards.push(['Consultas nuevas', String(newLeads), 'Abrir en Panel → Consultas', true, 'restaurante.html#consultas']);
-          $('#liveKpis').innerHTML = cards.map(([t, v, sub, alert, href]) => {
-            const inner = `<small>${esc(t)}</small><strong>${esc(v)}</strong><span>${esc(sub)}</span>`;
-            return href
-              ? `<a class="lk ${alert ? 'alert' : ''}" href="${esc(href)}" style="text-decoration:none;color:inherit">${inner}</a>`
-              : `<div class="lk ${alert ? 'alert' : ''}">${inner}</div>`;
-          }).join('');
-          $('#liveKpis').hidden = false;
+        // Conexión SSE reactiva para KPIs realmente en vivo
+        const tok = sessionStorage.getItem('salelisto:adminToken')
+          || sessionStorage.getItem('salelisto:kdsToken')
+          || sessionStorage.getItem('salelisto:waiterToken')
+          || '';
+        if (tok) setAuthToken(tok);
+
+        if (demoModeFlag || tok) {
+          try {
+            const conn = await connectStream({ scope: 'staff' }, (online) => renderStrip(online));
+            renderLiveKpis(conn.state);
+            subscribe(renderLiveKpis);
+            setInterval(() => { if (latestState) renderLiveKpis(latestState); }, 30000);
+          } catch (_) {
+            // En producción sin sesión activa en este navegador: los KPIs requieren abrir primero el Panel con PIN
+          }
         }
       } catch (_) {
         strip.innerHTML = '<span class="st-pill warn"><span class="dot"></span>Sin conexión con el servidor</span>';

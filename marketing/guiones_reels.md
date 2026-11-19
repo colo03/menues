@@ -201,7 +201,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 - **Gancho (0 a 3 s):** macro de la muñeca del mozo: la pulsera vibra y se enciende (grabar el sonido real de la vibración bien cerca). Texto: **"Salió tu plato"**. Voz: *"Esto le avisa al mozo que su plato salió."*
 - **Planos:**
   1. (3 a 7 s) En la cocina: el cocinero marca el plato como listo en la pantalla de Cocina. Texto: **"Cocina marca listo"**.
-  2. (7 a 11 s) Corte a la terraza: el mozo atiende otra mesa, siente la vibración, mira la muñeca (no el celular) y gira hacia la cocina.
+  2. (7 a 11 s) Corte a la terraza: el mozo atiende otra mesa con el celular guardado y bloqueado en el bolsillo, siente la vibración, mira la muñeca y gira hacia la cocina.
   3. (11 a 16 s) Seguimiento en mano del mozo retirando el plato y llevándolo a la mesa. Texto: **"Sin mirar el celular"**.
 - **Llamado a la acción (16 a 20 s):** plano general de la terraza llena + placa con logo, `0% comisión` y (+54)1138436571.
 
@@ -209,7 +209,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 ## Checklist de publicación
 
-- Subir los MP4 tal cual (sin recomprimir en editores externos) y elegir como portada el cuadro 0, que ya muestra titular y diagrama.
-- Instagram y TikTok: activar subtítulos automáticos y revisar que digan "SaleListo" y "4G" correctamente.
+- Subir los MP4 tal cual (sin recomprimir en editores externos) y elegir como portada el cuadro 0, que ya muestra titular grande y diagrama.
+- Instagram, TikTok, LinkedIn y YouTube Shorts: **NO activar subtítulos automáticos superpuestos** ni agregar titulares o stickers de texto encima del video. Los 5 MP4 ya incluyen su gancho visual en el cuadro 0 y tipografía cinética (`<= 5 palabras` por escena) diseñada para entenderse incluso en silencio; activar subtítulos automáticos taparía el lienzo central de `720x720`.
 - YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día", "Cobrar una mesa en 1 solo viaje", "Piloto de 14 días en tu terraza").
 - WhatsApp Business: compartir como estado y en listas de difusión B2B con el texto sugerido de cada Reel.

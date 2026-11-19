@@ -10,18 +10,32 @@ Gestiona:
 from __future__ import annotations
 
 import base64
+import hmac
 import re
 import secrets
 import sqlite3
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
+
+from webpush import validate_push_endpoint
 
 
 class ActionError(Exception):
     pass
+
+
+class AuthError(ActionError):
+    def __init__(self, message: str, status: int = 401):
+        super().__init__(message)
+        self.status = status
+
+
+AR_TZ = timezone(timedelta(hours=-3), name='ART')
+SHIFT_CUTOFF_HOUR = 6
+STAFF_SESSION_TTL_MS = 24 * 3600 * 1000
 
 
 BLOCK_TEMPLATES: list[dict[str, Any]] = [
@@ -38,7 +52,9 @@ BLOCK_TEMPLATES: list[dict[str, Any]] = [
 ORDER_FLOW = ['nuevo', 'cocina', 'listo', 'entregado']
 PAYMENTS = {'Efectivo', 'Tarjeta', 'QR', 'Transferencia'}
 TIPS = {0, 5, 10, 15}
-STATIONS = {'cocina', 'barra'}
+STATIONS = {'cocina', 'barra', 'mostrador'}
+STATION_ORDER = ('barra', 'mostrador', 'cocina')
+STATION_LABELS = {'barra': 'Barra', 'mostrador': 'Mostrador', 'cocina': 'Cocina'}
 WAITER_COLORS = ['#d9412b', '#2f6bd9', '#2f8a57', '#8b5cf6', '#d97706', '#0d9488', '#db2777', '#4f46e5']
 
 # Etiquetas dietarias permitidas en la carta QR (se guardan separadas por coma)
@@ -87,10 +103,27 @@ def now_ms() -> int:
     return int(time.time() * 1000)
 
 
-def start_of_today_ms() -> int:
-    now = datetime.now()
-    midnight = datetime(now.year, now.month, now.day)
-    return int(midnight.timestamp() * 1000)
+def start_of_today_ms(now_dt: datetime | None = None) -> int:
+    """Inicio del turno operativo gastronómico en hora argentina (corte 06:00 ART, UTC-3)."""
+    now_ar = now_dt.astimezone(AR_TZ) if now_dt is not None else datetime.now(AR_TZ)
+    shift_start = now_ar.replace(hour=SHIFT_CUTOFF_HOUR, minute=0, second=0, microsecond=0)
+    if now_ar.hour < SHIFT_CUTOFF_HOUR:
+        shift_start -= timedelta(days=1)
+    return int(shift_start.timestamp() * 1000)
+
+
+def gastronomic_day_bounds_ms(ymd: str) -> tuple[int, int] | None:
+    """Convierte YYYY-MM-DD a [06:00:00.000 ART de ese día, 05:59:59.999 ART del día siguiente]."""
+    raw = str(ymd or '').strip()
+    if not raw:
+        return None
+    try:
+        d = datetime.strptime(raw, '%Y-%m-%d')
+    except ValueError:
+        return None
+    start_dt = datetime(d.year, d.month, d.day, SHIFT_CUTOFF_HOUR, 0, 0, 0, tzinfo=AR_TZ)
+    end_dt = start_dt + timedelta(days=1) - timedelta(milliseconds=1)
+    return int(start_dt.timestamp() * 1000), int(end_dt.timestamp() * 1000)
 
 
 def clean_text(payload: dict[str, Any], key: str, maxlen: int) -> str:
@@ -126,7 +159,38 @@ class Database:
         self.version = 1
         self._tx_notifications: list[dict[str, Any]] | None = None
         self._pending_push_notifications: list[dict[str, Any]] = []
+        self._demo_leads: list[dict[str, Any]] = self._default_demo_leads()
         self._init_schema()
+
+    @staticmethod
+    def _default_demo_leads() -> list[dict[str, Any]]:
+        base_ts = now_ms()
+        return [
+            {
+                'id': 'DEMO-L1',
+                'name': 'Carolina Méndez',
+                'restaurantName': 'Bistró Botánico (Ejemplo Demo)',
+                'zone': 'Palermo',
+                'tablesCount': '24',
+                'contact': 'ventas@salelisto.com',
+                'planInterest': 'Salón / Bistró',
+                'message': 'Consulta de demostración: queremos probar el piloto de 14 días en terraza.',
+                'status': 'nuevo',
+                'createdAt': base_ts - 3_600_000,
+            },
+            {
+                'id': 'DEMO-L2',
+                'name': 'Tomás Pereyra',
+                'restaurantName': 'Cervecería del Paseo (Ejemplo Demo)',
+                'zone': 'Belgrano',
+                'tablesCount': '32',
+                'contact': '(+54)1138436571',
+                'planInterest': 'Gran Salón',
+                'message': 'Consulta de demostración: nos interesa sumar estación de mostrador y pulseras.',
+                'status': 'piloto',
+                'createdAt': base_ts - 86_400_000,
+            },
+        ]
 
     def _connect(self) -> sqlite3.Connection:
         conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
@@ -134,6 +198,17 @@ class Database:
         conn.execute('PRAGMA foreign_keys = ON')
         conn.execute('PRAGMA journal_mode = WAL')
         return conn
+
+    def _bump_version(self, conn: sqlite3.Connection) -> int:
+        row = conn.execute("SELECT val FROM seqs WHERE prefix = 'state_ver'").fetchone()
+        nxt = (int(row['val']) + 1) if row else (self.version + 1)
+        conn.execute(
+            "INSERT INTO seqs (prefix, val) VALUES ('state_ver', ?) "
+            "ON CONFLICT(prefix) DO UPDATE SET val = excluded.val",
+            (nxt,),
+        )
+        self.version = nxt
+        return nxt
 
     def _init_schema(self) -> None:
         with self.lock:
@@ -163,7 +238,8 @@ class Database:
                         icon TEXT NOT NULL DEFAULT '📍',
                         columns INTEGER NOT NULL DEFAULT 4,
                         assignment_mode TEXT NOT NULL DEFAULT 'auto',
-                        sort_order INTEGER NOT NULL DEFAULT 0
+                        sort_order INTEGER NOT NULL DEFAULT 0,
+                        archived INTEGER NOT NULL DEFAULT 0
                     );
 
                     CREATE TABLE IF NOT EXISTS tables (
@@ -173,7 +249,8 @@ class Database:
                         seats INTEGER NOT NULL DEFAULT 4,
                         qr_token TEXT NOT NULL UNIQUE,
                         active INTEGER NOT NULL DEFAULT 1,
-                        sort_order INTEGER NOT NULL DEFAULT 0
+                        sort_order INTEGER NOT NULL DEFAULT 0,
+                        archived INTEGER NOT NULL DEFAULT 0
                     );
 
                     CREATE TABLE IF NOT EXISTS waiters (
@@ -226,7 +303,9 @@ class Database:
                         tip_amount INTEGER NOT NULL DEFAULT 0,
                         total INTEGER NOT NULL DEFAULT 0,
                         payment_method TEXT NOT NULL DEFAULT '',
-                        closed_waiter_name TEXT NOT NULL DEFAULT ''
+                        closed_waiter_name TEXT NOT NULL DEFAULT '',
+                        closed_table_code TEXT NOT NULL DEFAULT '',
+                        closed_block_name TEXT NOT NULL DEFAULT ''
                     );
 
                     CREATE TABLE IF NOT EXISTS orders (
@@ -263,6 +342,8 @@ class Database:
                         reason TEXT NOT NULL DEFAULT '',
                         payment TEXT NOT NULL DEFAULT 'Tarjeta',
                         tip_pct INTEGER NOT NULL DEFAULT 0,
+                        cash_amount INTEGER NOT NULL DEFAULT 0,
+                        split_ways INTEGER NOT NULL DEFAULT 1,
                         status TEXT NOT NULL DEFAULT 'pendiente',
                         created_at INTEGER NOT NULL,
                         attended_at INTEGER
@@ -289,6 +370,22 @@ class Database:
                         auth TEXT NOT NULL,
                         wristband_mode INTEGER NOT NULL DEFAULT 1,
                         created_at INTEGER NOT NULL
+                    );
+
+                    CREATE TABLE IF NOT EXISTS staff_sessions (
+                        token TEXT PRIMARY KEY,
+                        role TEXT NOT NULL,
+                        waiter_id TEXT NOT NULL DEFAULT '',
+                        created_at INTEGER NOT NULL,
+                        expires_at INTEGER NOT NULL
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_staff_sessions_expires ON staff_sessions(expires_at);
+                    CREATE INDEX IF NOT EXISTS idx_staff_sessions_waiter ON staff_sessions(waiter_id);
+
+                    CREATE TABLE IF NOT EXISTS price_backups (
+                        item_id TEXT PRIMARY KEY,
+                        prev_price INTEGER NOT NULL,
+                        updated_at INTEGER NOT NULL
                     );
 
                     CREATE TABLE IF NOT EXISTS leads (
@@ -324,9 +421,54 @@ class Database:
                 if 'short_body' not in notif_cols:
                     conn.execute("ALTER TABLE notifications ADD COLUMN short_body TEXT NOT NULL DEFAULT ''")
 
+                block_cols = {r['name'] for r in conn.execute('PRAGMA table_info(blocks)').fetchall()}
+                if 'archived' not in block_cols:
+                    conn.execute('ALTER TABLE blocks ADD COLUMN archived INTEGER NOT NULL DEFAULT 0')
+
+                table_cols = {r['name'] for r in conn.execute('PRAGMA table_info(tables)').fetchall()}
+                if 'archived' not in table_cols:
+                    conn.execute('ALTER TABLE tables ADD COLUMN archived INTEGER NOT NULL DEFAULT 0')
+
+                sess_cols = {r['name'] for r in conn.execute('PRAGMA table_info(table_sessions)').fetchall()}
+                if 'closed_table_code' not in sess_cols:
+                    conn.execute("ALTER TABLE table_sessions ADD COLUMN closed_table_code TEXT NOT NULL DEFAULT ''")
+                if 'closed_block_name' not in sess_cols:
+                    conn.execute("ALTER TABLE table_sessions ADD COLUMN closed_block_name TEXT NOT NULL DEFAULT ''")
+                conn.execute(
+                    """
+                    UPDATE table_sessions
+                    SET
+                        closed_table_code = COALESCE(
+                            NULLIF(closed_table_code, ''),
+                            (SELECT t.code FROM tables t WHERE t.id = table_sessions.table_id),
+                            ''
+                        ),
+                        closed_block_name = COALESCE(
+                            NULLIF(closed_block_name, ''),
+                            (SELECT b.name FROM tables t JOIN blocks b ON b.id = t.block_id WHERE t.id = table_sessions.table_id),
+                            ''
+                        )
+                    WHERE status = 'closed' AND (closed_table_code = '' OR closed_block_name = '')
+                    """
+                )
+
+                call_cols = {r['name'] for r in conn.execute('PRAGMA table_info(calls)').fetchall()}
+                if 'cash_amount' not in call_cols:
+                    conn.execute('ALTER TABLE calls ADD COLUMN cash_amount INTEGER NOT NULL DEFAULT 0')
+                if 'split_ways' not in call_cols:
+                    conn.execute('ALTER TABLE calls ADD COLUMN split_ways INTEGER NOT NULL DEFAULT 1')
+
                 row = conn.execute('SELECT id FROM restaurant WHERE id = 1').fetchone()
                 if not row:
                     self._seed_factory(conn)
+
+                ver_row = conn.execute("SELECT val FROM seqs WHERE prefix = 'state_ver'").fetchone()
+                if ver_row:
+                    self.version = max(1, int(ver_row['val']))
+                else:
+                    conn.execute("INSERT INTO seqs (prefix, val) VALUES ('state_ver', 1)")
+                    self.version = 1
+
                 conn.commit()
             finally:
                 conn.close()
@@ -359,12 +501,14 @@ class Database:
             DELETE FROM tables;
             DELETE FROM blocks;
             DELETE FROM waiters;
+            DELETE FROM price_backups;
             DELETE FROM items;
             DELETE FROM categories;
             DELETE FROM restaurant;
-            DELETE FROM seqs;
+            DELETE FROM seqs WHERE prefix != 'state_ver';
             """
         )
+        self._demo_leads = self._default_demo_leads()
         ts = now_ms()
         conn.execute(
             """
@@ -520,7 +664,7 @@ class Database:
             """
             SELECT t.id, t.block_id, b.assignment_mode AS block_mode
             FROM tables t JOIN blocks b ON b.id = t.block_id
-            WHERE t.id = ?
+            WHERE t.id = ? AND t.archived = 0 AND b.archived = 0
             """,
             (table_id,),
         ).fetchone()
@@ -732,7 +876,7 @@ class Database:
                 """
                 SELECT t.*, b.name AS block_name, b.icon AS block_icon
                 FROM tables t JOIN blocks b ON b.id = t.block_id
-                WHERE t.qr_token = ?
+                WHERE t.qr_token = ? AND t.archived = 0 AND b.archived = 0
                 """,
                 (qr_token,),
             ).fetchone()
@@ -741,7 +885,7 @@ class Database:
                 """
                 SELECT t.*, b.name AS block_name, b.icon AS block_icon
                 FROM tables t JOIN blocks b ON b.id = t.block_id
-                WHERE t.id = ?
+                WHERE t.id = ? AND t.archived = 0 AND b.archived = 0
                 """,
                 (table_id,),
             ).fetchone()
@@ -766,7 +910,7 @@ class Database:
         if not isinstance(raw_lines, list) or not raw_lines:
             raise ActionError('El pedido está vacío')
 
-        by_station: dict[str, list[dict[str, Any]]] = {'barra': [], 'cocina': []}
+        by_station: dict[str, list[dict[str, Any]]] = {st: [] for st in STATION_ORDER}
         for line in raw_lines:
             iid = str(line.get('itemId') or '')
             item = conn.execute(
@@ -814,7 +958,7 @@ class Database:
 
         created_ids: list[str] = []
         stations_used: list[str] = []
-        for st in ('barra', 'cocina'):
+        for st in STATION_ORDER:
             lines = by_station[st]
             if not lines:
                 continue
@@ -835,13 +979,13 @@ class Database:
                     (oid, ln['item_id'], ln['name'], ln['emoji'], ln['image_url'], ln['unit_price'], ln['qty'], ln['note']),
                 )
             created_ids.append(oid)
-            stations_used.append('Barra' if st == 'barra' else 'Cocina')
+            stations_used.append(STATION_LABELS[st])
 
         summary_items = ', '.join(
-            f"{ln['qty']}× {ln['name']}" for st in ('barra', 'cocina') for ln in by_station[st]
+            f"{ln['qty']}× {ln['name']}" for st in STATION_ORDER for ln in by_station[st]
         )[:90]
         compact_items = ', '.join(
-            f"{ln['qty']}x {ln['name']}" for st in ('barra', 'cocina') for ln in by_station[st]
+            f"{ln['qty']}x {ln['name']}" for st in STATION_ORDER for ln in by_station[st]
         )
         dest_label = ' + '.join(stations_used)
         if waiter:
@@ -871,9 +1015,16 @@ class Database:
         desc = ', '.join(f"{r['qty']}× {r['name']}" for r in items)[:90]
         compact_desc = ', '.join(f"{r['qty']}x {r['name']}" for r in items)
         tag = table_short_tag(order['table_code'])
-        is_bar = order['station'] == 'barra'
-        st_title = '🍸 BARRA' if is_bar else '🍳 COCINA'
-        short_hdr = f"🍸 {tag} · Retirar Barra" if is_bar else f"🍳 {tag} · Retirar Cocina"
+        st = order['station']
+        if st == 'barra':
+            st_title = '🍸 BARRA'
+            short_hdr = f"🍸 {tag} · Retirar Barra"
+        elif st == 'mostrador':
+            st_title = '🍣 MOSTRADOR'
+            short_hdr = f"🍣 {tag} · Retirar Mostr."
+        else:
+            st_title = '🍳 COCINA'
+            short_hdr = f"🍳 {tag} · Retirar Cocina"
         self._add_notification(
             conn,
             order['waiter_id'],
@@ -1045,39 +1196,71 @@ class Database:
         if payment not in PAYMENTS or tip_pct not in TIPS:
             raise ActionError('Medio de pago o propina inválidos')
 
+        raw_cash = p.get('cashAmount', p.get('cash_amount', 0))
+        try:
+            cash_amount = max(0, min(50_000_000, int(round(float(raw_cash or 0)))))
+        except (TypeError, ValueError):
+            cash_amount = 0
+        if payment != 'Efectivo':
+            cash_amount = 0
+
+        raw_split = p.get('splitWays', p.get('split_ways', 1))
+        try:
+            split_ways = max(1, min(30, int(raw_split or 1)))
+        except (TypeError, ValueError):
+            split_ways = 1
+
         existing = conn.execute(
             "SELECT id FROM calls WHERE session_id = ? AND type = 'cuenta' AND status != 'atendida' LIMIT 1",
             (session['id'],),
         ).fetchone()
         if existing:
             conn.execute(
-                "UPDATE calls SET payment = ?, tip_pct = ?, status = 'pendiente' WHERE id = ?",
-                (payment, tip_pct, existing['id']),
+                "UPDATE calls SET payment = ?, tip_pct = ?, cash_amount = ?, split_ways = ?, status = 'pendiente' WHERE id = ?",
+                (payment, tip_pct, cash_amount, split_ways, existing['id']),
             )
             cid = existing['id']
         else:
             cid = self._next_id(conn, 'L')
             conn.execute(
                 """
-                INSERT INTO calls (id, session_id, table_id, waiter_id, type, payment, tip_pct, status, created_at)
-                VALUES (?, ?, ?, ?, 'cuenta', ?, ?, 'pendiente', ?)
+                INSERT INTO calls (id, session_id, table_id, waiter_id, type, payment, tip_pct, cash_amount, split_ways, status, created_at)
+                VALUES (?, ?, ?, ?, 'cuenta', ?, ?, ?, ?, 'pendiente', ?)
                 """,
-                (cid, session['id'], tbl['id'], session['waiter_id'], payment, tip_pct, now_ms()),
+                (cid, session['id'], tbl['id'], session['waiter_id'], payment, tip_pct, cash_amount, split_ways, now_ms()),
             )
 
         total_est = round(sub * (1 + tip_pct / 100))
         total_fmt = f"${total_est:,}".replace(',', '.')
+        split_suffix = f" · ÷{split_ways}" if split_ways > 1 else ''
+        if payment == 'Efectivo' and cash_amount > total_est:
+            change_amt = cash_amount - total_est
+            cash_fmt = f"${cash_amount:,}".replace(',', '.')
+            change_fmt = f"${change_amt:,}".replace(',', '.')
+            full_body = f"Efectivo (abona con {cash_fmt}, vuelto {change_fmt}) · Propina {tip_pct}% · Total {total_fmt}{split_suffix}"
+            short_t = f"💵 {tag} · Efvo {cash_fmt}"
+            short_b = f"Cobrar {total_fmt} · Vuelto {change_fmt}"
+        elif payment == 'Efectivo' and cash_amount > 0:
+            cash_fmt = f"${cash_amount:,}".replace(',', '.')
+            full_body = f"Efectivo (importe justo {cash_fmt}) · Propina {tip_pct}% · Total {total_fmt}{split_suffix}"
+            short_t = f"💵 {tag} · Efectivo"
+            short_b = f"{total_fmt} (justo {cash_fmt})"
+        else:
+            full_body = f"{payment} · Propina {tip_pct}% · Total {total_fmt}{split_suffix}"
+            short_t = f"💳 {tag} · {payment}"
+            short_b = f"{total_fmt} (Propina {tip_pct}%)" + (f" ÷{split_ways}" if split_ways > 1 else '')
+
         self._add_notification(
             conn,
             session['waiter_id'],
             'call_cuenta',
             tbl['id'],
             f"💳 Mesa {tbl['code']} ({tbl['block_name']}) pide la cuenta",
-            f"{payment} · Propina {tip_pct}% · Total {total_fmt}",
-            short_title=f"💳 {tag} · {payment}",
-            short_body=f"{total_fmt} (Propina {tip_pct}%)",
+            full_body,
+            short_title=short_t,
+            short_body=short_b,
         )
-        return {'id': cid}
+        return {'id': cid, 'cashAmount': cash_amount, 'splitWays': split_ways}
 
     def act_call_status(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         cid = str(p.get('id') or p.get('callId') or '')
@@ -1143,10 +1326,10 @@ class Database:
             """
             UPDATE table_sessions
             SET status = 'closed', closed_at = ?, subtotal = ?, tip_pct = ?, tip_amount = ?, total = ?,
-                payment_method = ?, closed_waiter_name = ?
+                payment_method = ?, closed_waiter_name = ?, closed_table_code = ?, closed_block_name = ?
             WHERE id = ?
             """,
-            (ts, sub, tip_pct, tip_amt, total, payment, w_name, sess['id']),
+            (ts, sub, tip_pct, tip_amt, total, payment, w_name, tbl['code'], tbl['block_name'], sess['id']),
         )
         conn.execute(
             "UPDATE calls SET status = 'atendida', attended_at = ? WHERE session_id = ? AND status != 'atendida'",
@@ -1161,15 +1344,19 @@ class Database:
     def act_session_reassign(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         tbl = self._resolve_table(conn, p, allow_inactive=True)
         wid = str(p.get('waiterId') or '').strip()
-        w = conn.execute('SELECT * FROM waiters WHERE id = ?', (wid,)).fetchone()
-        if not w:
-            raise ActionError('Mozo inexistente')
         sess = conn.execute(
             "SELECT * FROM table_sessions WHERE table_id = ? AND status = 'open' LIMIT 1",
             (tbl['id'],),
         ).fetchone()
         if not sess:
             raise ActionError('La mesa está libre; se asignará al abrirse')
+        if not wid:
+            conn.execute('UPDATE table_sessions SET waiter_id = NULL WHERE id = ?', (sess['id'],))
+            conn.execute("UPDATE calls SET waiter_id = NULL WHERE session_id = ? AND status != 'atendida'", (sess['id'],))
+            return {'waiterId': None, 'waiterName': None}
+        w = conn.execute('SELECT * FROM waiters WHERE id = ?', (wid,)).fetchone()
+        if not w:
+            raise ActionError('Mozo inexistente')
         tag = table_short_tag(tbl['code'])
         conn.execute('UPDATE table_sessions SET waiter_id = ? WHERE id = ?', (wid, sess['id']))
         conn.execute("UPDATE calls SET waiter_id = ? WHERE session_id = ? AND status != 'atendida'", (wid, sess['id']))
@@ -1183,7 +1370,7 @@ class Database:
             short_title=f"🪑 {tag} · A tu cargo",
             short_body=f"Sector {tbl['block_name']}",
         )
-        return {'waiterName': w['name']}
+        return {'waiterId': wid, 'waiterName': w['name']}
 
     # ---------- Acciones de Bloques y Mesas ----------
 
@@ -1204,7 +1391,7 @@ class Database:
         waiter_ids = [str(x) for x in (p.get('waiterIds') or [])]
 
         if bid:
-            if not conn.execute('SELECT 1 FROM blocks WHERE id = ?', (bid,)).fetchone():
+            if not conn.execute('SELECT 1 FROM blocks WHERE id = ? AND archived = 0', (bid,)).fetchone():
                 raise ActionError('Bloque inexistente')
             conn.execute(
                 'UPDATE blocks SET name = ?, template = ?, icon = ?, columns = ?, assignment_mode = ? WHERE id = ?',
@@ -1212,7 +1399,7 @@ class Database:
             )
         else:
             bid = self._next_id(conn, 'b')
-            max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM blocks').fetchone()['m']
+            max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM blocks WHERE archived = 0').fetchone()['m']
             conn.execute(
                 'INSERT INTO blocks (id, name, template, icon, columns, assignment_mode, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
                 (bid, name, tpl_id, icon, columns, amode, max_ord + 1),
@@ -1234,9 +1421,9 @@ class Database:
 
     def _bulk_add_tables(self, conn: sqlite3.Connection, block_id: str, count: int, seats: int, prefix: str) -> list[str]:
         existing_codes = {
-            r['code'].upper() for r in conn.execute('SELECT code FROM tables').fetchall()
+            r['code'].upper() for r in conn.execute('SELECT code FROM tables WHERE archived = 0').fetchall()
         }
-        max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM tables WHERE block_id = ?', (block_id,)).fetchone()['m']
+        max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM tables WHERE block_id = ? AND archived = 0', (block_id,)).fetchone()['m']
         created: list[str] = []
         num = 1
         for i in range(count):
@@ -1258,7 +1445,7 @@ class Database:
     def act_block_move(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
         bid = str(p.get('id') or '')
         direction = int(p.get('dir') or 0)
-        rows = conn.execute('SELECT id, sort_order FROM blocks ORDER BY sort_order ASC, id ASC').fetchall()
+        rows = conn.execute('SELECT id, sort_order FROM blocks WHERE archived = 0 ORDER BY sort_order ASC, id ASC').fetchall()
         ids = [r['id'] for r in rows]
         if bid not in ids:
             raise ActionError('Bloque inexistente')
@@ -1269,8 +1456,11 @@ class Database:
             for pos, xid in enumerate(ids, start=1):
                 conn.execute('UPDATE blocks SET sort_order = ? WHERE id = ?', (pos, xid))
 
-    def act_block_delete(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
+    def act_block_delete(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         bid = str(p.get('id') or '')
+        blk = conn.execute('SELECT id, name FROM blocks WHERE id = ? AND archived = 0', (bid,)).fetchone()
+        if not blk:
+            raise ActionError('Bloque inexistente')
         open_cnt = conn.execute(
             """
             SELECT COUNT(*) AS cnt FROM table_sessions s
@@ -1281,18 +1471,53 @@ class Database:
         ).fetchone()['cnt']
         if open_cnt > 0:
             raise ActionError('No se puede eliminar un bloque que tiene mesas abiertas actualmente')
+
+        hist_cnt = conn.execute(
+            """
+            SELECT COUNT(*) AS cnt FROM table_sessions s
+            JOIN tables t ON t.id = s.table_id
+            WHERE t.block_id = ?
+            """,
+            (bid,),
+        ).fetchone()['cnt']
+
+        if hist_cnt > 0:
+            conn.execute(
+                """
+                UPDATE table_sessions
+                SET
+                    closed_table_code = COALESCE(
+                        NULLIF(closed_table_code, ''),
+                        (SELECT t.code FROM tables t WHERE t.id = table_sessions.table_id),
+                        ''
+                    ),
+                    closed_block_name = COALESCE(NULLIF(closed_block_name, ''), ?)
+                WHERE table_id IN (SELECT id FROM tables WHERE block_id = ?)
+                """,
+                (blk['name'], bid),
+            )
+            conn.execute(
+                'DELETE FROM tables WHERE block_id = ? AND id NOT IN (SELECT DISTINCT table_id FROM table_sessions)',
+                (bid,),
+            )
+            conn.execute('UPDATE tables SET active = 0, archived = 1 WHERE block_id = ?', (bid,))
+            conn.execute('DELETE FROM block_waiters WHERE block_id = ?', (bid,))
+            conn.execute('UPDATE blocks SET archived = 1 WHERE id = ?', (bid,))
+            return {'id': bid, 'archived': True}
+
         conn.execute('DELETE FROM blocks WHERE id = ?', (bid,))
+        return {'id': bid, 'archived': False}
 
     def act_table_save(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         tid = str(p.get('id') or '').strip()
         block_id = str(p.get('blockId') or '').strip()
-        if not conn.execute('SELECT 1 FROM blocks WHERE id = ?', (block_id,)).fetchone():
+        if not conn.execute('SELECT 1 FROM blocks WHERE id = ? AND archived = 0', (block_id,)).fetchone():
             raise ActionError('Bloque inválido')
         code = clean_text(p, 'code', 14)
         if not code:
             raise ActionError('La mesa necesita un código o nombre (ej: 1, T2, B1)')
         dup = conn.execute(
-            'SELECT id FROM tables WHERE UPPER(code) = UPPER(?) AND id != ?',
+            'SELECT id FROM tables WHERE archived = 0 AND UPPER(code) = UPPER(?) AND id != ?',
             (code, tid or ''),
         ).fetchone()
         if dup:
@@ -1304,7 +1529,7 @@ class Database:
         active = 1 if p.get('active', True) else 0
 
         if tid:
-            if not conn.execute('SELECT 1 FROM tables WHERE id = ?', (tid,)).fetchone():
+            if not conn.execute('SELECT 1 FROM tables WHERE id = ? AND archived = 0', (tid,)).fetchone():
                 raise ActionError('Mesa inexistente')
             conn.execute(
                 'UPDATE tables SET block_id = ?, code = ?, seats = ?, active = ? WHERE id = ?',
@@ -1314,7 +1539,7 @@ class Database:
 
         tid = self._next_id(conn, 't')
         tok = self._unique_qr_token(conn)
-        max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM tables WHERE block_id = ?', (block_id,)).fetchone()['m']
+        max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM tables WHERE block_id = ? AND archived = 0', (block_id,)).fetchone()['m']
         conn.execute(
             'INSERT INTO tables (id, block_id, code, seats, qr_token, active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)',
             (tid, block_id, code, seats, tok, active, max_ord + 1),
@@ -1323,7 +1548,7 @@ class Database:
 
     def act_table_bulk(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         block_id = str(p.get('blockId') or '').strip()
-        if not conn.execute('SELECT 1 FROM blocks WHERE id = ?', (block_id,)).fetchone():
+        if not conn.execute('SELECT 1 FROM blocks WHERE id = ? AND archived = 0', (block_id,)).fetchone():
             raise ActionError('Bloque inválido')
         count = max(1, min(30, int(p.get('count') or 4)))
         seats = max(1, min(24, int(p.get('seats') or 4)))
@@ -1333,21 +1558,51 @@ class Database:
 
     def act_table_regen_qr(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         tid = str(p.get('id') or '')
-        if not conn.execute('SELECT 1 FROM tables WHERE id = ?', (tid,)).fetchone():
+        if not conn.execute('SELECT 1 FROM tables WHERE id = ? AND archived = 0', (tid,)).fetchone():
             raise ActionError('Mesa inexistente')
         tok = self._unique_qr_token(conn)
         conn.execute('UPDATE tables SET qr_token = ? WHERE id = ?', (tok, tid))
         return {'id': tid, 'qrToken': tok}
 
-    def act_table_delete(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
+    def act_table_delete(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         tid = str(p.get('id') or '')
+        tbl = conn.execute(
+            """
+            SELECT t.id, t.code, b.name AS block_name
+            FROM tables t JOIN blocks b ON b.id = t.block_id
+            WHERE t.id = ? AND t.archived = 0
+            """,
+            (tid,),
+        ).fetchone()
+        if not tbl:
+            raise ActionError('Mesa inexistente')
         open_cnt = conn.execute(
             "SELECT COUNT(*) AS cnt FROM table_sessions WHERE table_id = ? AND status = 'open'",
             (tid,),
         ).fetchone()['cnt']
         if open_cnt > 0:
             raise ActionError('Cerrá primero la cuenta de esta mesa antes de eliminarla')
+
+        hist_cnt = conn.execute(
+            'SELECT COUNT(*) AS cnt FROM table_sessions WHERE table_id = ?',
+            (tid,),
+        ).fetchone()['cnt']
+        if hist_cnt > 0:
+            conn.execute(
+                """
+                UPDATE table_sessions
+                SET
+                    closed_table_code = COALESCE(NULLIF(closed_table_code, ''), ?),
+                    closed_block_name = COALESCE(NULLIF(closed_block_name, ''), ?)
+                WHERE table_id = ?
+                """,
+                (tbl['code'], tbl['block_name'], tid),
+            )
+            conn.execute('UPDATE tables SET active = 0, archived = 1 WHERE id = ?', (tid,))
+            return {'id': tid, 'archived': True}
+
         conn.execute('DELETE FROM tables WHERE id = ?', (tid,))
+        return {'id': tid, 'archived': False}
 
     # ---------- Acciones de Mozos ----------
 
@@ -1357,7 +1612,8 @@ class Database:
         if not name:
             raise ActionError('El mozo necesita un nombre')
         color = clean_text(p, 'color', 12) or WAITER_COLORS[0]
-        pin = re.sub(r'\D', '', str(p.get('pin') or ''))[:6]
+        pin_in = re.sub(r'\D', '', str(p.get('pin') or ''))[:6]
+        clear_pin = bool(p.get('clearPin'))
         available = 1 if p.get('available', True) else 0
         block_ids = [str(x) for x in (p.get('blockIds') or [])]
 
@@ -1366,30 +1622,39 @@ class Database:
             old = conn.execute('SELECT * FROM waiters WHERE id = ?', (wid,)).fetchone()
             if not old:
                 raise ActionError('Mozo inexistente')
+            if clear_pin:
+                final_pin = ''
+            elif pin_in == '':
+                final_pin = old['pin']
+            else:
+                final_pin = pin_in
             conn.execute(
                 'UPDATE waiters SET name = ?, color = ?, pin = ?, available = ? WHERE id = ?',
-                (name, color, pin, available, wid),
+                (name, color, final_pin, available, wid),
             )
+            if old['pin'] != final_pin:
+                conn.execute('DELETE FROM staff_sessions WHERE waiter_id = ?', (wid,))
             if old['available'] and not available:
                 transfers = self._redistribute_from_waiter(conn, wid, old['name'])
         else:
             wid = self._next_id(conn, 'w')
+            final_pin = '' if clear_pin else pin_in
             conn.execute(
                 'INSERT INTO waiters (id, name, color, pin, available, last_assigned_at, created_at) VALUES (?, ?, ?, ?, ?, 0, ?)',
-                (wid, name, color, pin, available, now_ms()),
+                (wid, name, color, final_pin, available, now_ms()),
             )
 
         if 'blockIds' in p:
             conn.execute('DELETE FROM block_waiters WHERE waiter_id = ?', (wid,))
             for bid in block_ids:
-                if conn.execute('SELECT 1 FROM blocks WHERE id = ?', (bid,)).fetchone():
+                if conn.execute('SELECT 1 FROM blocks WHERE id = ? AND archived = 0', (bid,)).fetchone():
                     conn.execute('INSERT OR IGNORE INTO block_waiters (block_id, waiter_id) VALUES (?, ?)', (bid, wid))
                     conn.execute("UPDATE blocks SET assignment_mode = 'preassigned' WHERE id = ?", (bid,))
 
         if available:
             self._adopt_orphan_sessions(conn)
 
-        return {'id': wid, 'reassigned': transfers}
+        return {'id': wid, 'reassigned': transfers, 'hasPin': bool(final_pin)}
 
     def act_waiter_toggle(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         wid = str(p.get('id') or '')
@@ -1410,6 +1675,7 @@ class Database:
         old = conn.execute('SELECT * FROM waiters WHERE id = ?', (wid,)).fetchone()
         if not old:
             raise ActionError('Mozo inexistente')
+        conn.execute('DELETE FROM staff_sessions WHERE waiter_id = ?', (wid,))
         conn.execute('UPDATE waiters SET available = 0 WHERE id = ?', (wid,))
         transfers = self._redistribute_from_waiter(conn, wid, old['name'])
         conn.execute('DELETE FROM waiters WHERE id = ?', (wid,))
@@ -1478,7 +1744,7 @@ class Database:
         desc = clean_text(p, 'desc', 140)
         emoji = clean_text(p, 'emoji', 8) or '🍽️'
         st_ov = str(p.get('stationOverride') or '')
-        if st_ov not in ('', 'cocina', 'barra'):
+        if st_ov not in ('', *STATIONS):
             st_ov = ''
         popular = 1 if p.get('popular') else 0
         available = 1 if p.get('available', True) else 0
@@ -1517,11 +1783,17 @@ class Database:
         )
         return {'id': target_id}
 
-    def act_item_toggle(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
-        iid = str(p.get('id') or '')
-        if not conn.execute('SELECT 1 FROM items WHERE id = ?', (iid,)).fetchone():
+    def act_item_toggle(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        iid = str(p.get('id') or p.get('itemId') or '').strip()
+        row = conn.execute('SELECT available FROM items WHERE id = ?', (iid,)).fetchone()
+        if not row:
             raise ActionError('Plato inexistente')
-        conn.execute('UPDATE items SET available = ? WHERE id = ?', (1 if p.get('available') else 0, iid))
+        if 'available' in p and p.get('available') is not None:
+            new_avail = 1 if p.get('available') else 0
+        else:
+            new_avail = 0 if row['available'] else 1
+        conn.execute('UPDATE items SET available = ? WHERE id = ?', (new_avail, iid))
+        return {'id': iid, 'available': bool(new_avail)}
 
     def act_item_delete(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
         iid = str(p.get('id') or '')
@@ -1542,26 +1814,78 @@ class Database:
             if cat_id
             else conn.execute('SELECT id, price FROM items').fetchall()
         )
+        ts = now_ms()
+        conn.execute('DELETE FROM price_backups')
+        for r in rows:
+            conn.execute(
+                'INSERT INTO price_backups (item_id, prev_price, updated_at) VALUES (?, ?, ?)',
+                (r['id'], int(r['price']), ts),
+            )
         factor = 1.0 + pct / 100.0
         for r in rows:
             raw_new = max(0.0, r['price'] * factor)
             rounded = int(round(raw_new / round_to) * round_to)
             conn.execute('UPDATE items SET price = ? WHERE id = ?', (rounded, r['id']))
-        return {'updated': len(rows)}
+        return {'updated': len(rows), 'canUndo': len(rows) > 0}
+
+    def act_price_undo(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        raw_prices = p.get('prices')
+        restored = 0
+        if isinstance(raw_prices, dict) and raw_prices:
+            for iid, pr in raw_prices.items():
+                cur = conn.execute('UPDATE items SET price = ? WHERE id = ?', (max(0, int(round(float(pr)))), str(iid)))
+                restored += cur.rowcount
+            conn.execute('DELETE FROM price_backups')
+            return {'restored': restored}
+        if isinstance(raw_prices, list) and raw_prices:
+            for entry in raw_prices:
+                if isinstance(entry, dict) and entry.get('id') is not None and entry.get('price') is not None:
+                    cur = conn.execute(
+                        'UPDATE items SET price = ? WHERE id = ?',
+                        (max(0, int(round(float(entry['price'])))), str(entry['id'])),
+                    )
+                    restored += cur.rowcount
+            conn.execute('DELETE FROM price_backups')
+            return {'restored': restored}
+
+        backups = conn.execute('SELECT item_id, prev_price FROM price_backups').fetchall()
+        if not backups:
+            raise ActionError('No hay ningún ajuste reciente de precios para deshacer')
+        for b in backups:
+            cur = conn.execute('UPDATE items SET price = ? WHERE id = ?', (int(b['prev_price']), b['item_id']))
+            restored += cur.rowcount
+        conn.execute('DELETE FROM price_backups')
+        return {'restored': restored}
 
     # ---------- Configuración, Notificaciones y Mantenimiento ----------
 
-    def act_restaurant_save(self, conn: sqlite3.Connection, p: dict[str, Any]) -> None:
+    def act_restaurant_save(self, conn: sqlite3.Connection, p: dict[str, Any], role: str = 'admin') -> None:
         cur = conn.execute('SELECT * FROM restaurant WHERE id = 1').fetchone()
         name = clean_text(p, 'name', 50) or cur['name']
         subtitle = clean_text(p, 'subtitle', 80) if 'subtitle' in p else cur['subtitle']
         amode = str(p.get('assignmentMode') or cur['assignment_mode'])
         if amode not in ('hybrid', 'auto'):
             amode = 'hybrid'
-        public_url = clean_text(p, 'publicUrl', 200).rstrip('/') if 'publicUrl' in p else cur['public_url']
-        demo_mode = (1 if p.get('demoMode') else 0) if 'demoMode' in p else cur['demo_mode']
+
         new_pin = re.sub(r'\s+', '', str(p.get('adminPin') or ''))[:16]
-        pin = new_pin if len(new_pin) >= 4 else cur['admin_pin']
+        if role == 'demo_admin':
+            if 'demoMode' in p and not bool(p.get('demoMode')):
+                raise ActionError('En la demo interactiva no se puede desactivar el Modo Demostración sin el PIN real')
+            if new_pin:
+                raise ActionError('En la demo interactiva no se puede modificar el PIN del local')
+            public_url = cur['public_url']
+            demo_mode = cur['demo_mode']
+            pin = cur['admin_pin']
+        else:
+            public_url = clean_text(p, 'publicUrl', 200).rstrip('/') if 'publicUrl' in p else cur['public_url']
+            demo_mode = (1 if p.get('demoMode') else 0) if 'demoMode' in p else cur['demo_mode']
+            if new_pin and len(new_pin) < 4:
+                raise ActionError('El PIN debe tener al menos 4 caracteres')
+            pin = new_pin if len(new_pin) >= 4 else cur['admin_pin']
+            if not demo_mode:
+                conn.execute("DELETE FROM staff_sessions WHERE role = 'demo_admin'")
+            if pin != cur['admin_pin']:
+                conn.execute("DELETE FROM staff_sessions WHERE role = 'kitchen'")
 
         conn.execute(
             """
@@ -1589,6 +1913,11 @@ class Database:
             DELETE FROM table_sessions;
             """
         )
+
+    def act_clear_open_turn(self, conn: sqlite3.Connection, _p: dict[str, Any]) -> dict[str, Any]:
+        conn.execute('DELETE FROM notifications')
+        cur = conn.execute("DELETE FROM table_sessions WHERE status = 'open'")
+        return {'clearedOpenSessions': int(cur.rowcount)}
 
     def act_reset_demo(self, conn: sqlite3.Connection, _p: dict[str, Any]) -> None:
         self._seed_factory(conn)
@@ -1644,7 +1973,7 @@ class Database:
         with self.lock:
             conn = self._connect()
             try:
-                lid = 'L' + datetime.now().strftime('%y%m%d') + '-' + secrets.token_hex(3)
+                lid = 'L' + datetime.now(AR_TZ).strftime('%y%m%d') + '-' + secrets.token_hex(3)
                 ts = now_ms()
                 conn.execute(
                     """
@@ -1654,8 +1983,8 @@ class Database:
                     (lid, lead['name'], lead['restaurant_name'], lead['zone'], lead['tables_count'],
                      lead['contact'], lead['plan_interest'], lead['message'], ts),
                 )
+                self._bump_version(conn)
                 conn.commit()
-                self.version += 1
                 row = conn.execute('SELECT * FROM leads WHERE id = ?', (lid,)).fetchone()
                 return self._lead_row(row)
             finally:
@@ -1674,6 +2003,10 @@ class Database:
             finally:
                 conn.close()
 
+    def get_demo_leads(self) -> list[dict[str, Any]]:
+        with self.lock:
+            return [dict(item) for item in self._demo_leads]
+
     def act_lead_status(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
         lid = str(p.get('leadId') or p.get('id') or '').strip()
         status = str(p.get('status') or '').strip()
@@ -1684,29 +2017,58 @@ class Database:
         conn.execute('UPDATE leads SET status = ? WHERE id = ?', (status, lid))
         return {'leadId': lid, 'status': status}
 
-    def get_closed_sessions_export(self) -> list[dict[str, Any]]:
-        """Todas las sesiones cerradas (más recientes primero) para el arqueo contable CSV."""
+    def act_demo_lead_status(self, _conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        lid = str(p.get('leadId') or p.get('id') or '').strip()
+        status = str(p.get('status') or '').strip()
+        if status not in LEAD_STATUSES:
+            raise ActionError('Estado de consulta inválido')
+        for item in self._demo_leads:
+            if item['id'] == lid:
+                item['status'] = status
+                break
+        return {'leadId': lid, 'status': status, 'simulated': True}
+
+    def get_closed_sessions_export(
+        self,
+        since_ms: int | None = None,
+        until_ms: int | None = None,
+    ) -> list[dict[str, Any]]:
+        """Sesiones cerradas filtradas en SQL (más recientes primero) para el arqueo contable CSV."""
         with self.lock:
             conn = self._connect()
             try:
+                clauses = ["ts.status = 'closed'"]
+                params: list[Any] = []
+                if since_ms is not None:
+                    clauses.append('ts.closed_at >= ?')
+                    params.append(int(since_ms))
+                if until_ms is not None:
+                    clauses.append('ts.closed_at <= ?')
+                    params.append(int(until_ms))
+                where_sql = ' AND '.join(clauses)
                 rows = conn.execute(
-                    """
-                    SELECT s.*, t.code AS table_code, b.name AS block_name, w.name AS live_waiter_name
-                    FROM table_sessions s
-                    LEFT JOIN tables t ON t.id = s.table_id
+                    f"""
+                    SELECT
+                        ts.*,
+                        COALESCE(NULLIF(ts.closed_table_code, ''), t.code, '?') AS resolved_table_code,
+                        COALESCE(NULLIF(ts.closed_block_name, ''), b.name, '') AS resolved_block_name,
+                        w.name AS live_waiter_name
+                    FROM table_sessions ts
+                    LEFT JOIN tables t ON t.id = ts.table_id
                     LEFT JOIN blocks b ON b.id = t.block_id
-                    LEFT JOIN waiters w ON w.id = s.waiter_id
-                    WHERE s.status = 'closed'
-                    ORDER BY s.closed_at DESC
-                    """
+                    LEFT JOIN waiters w ON w.id = ts.waiter_id
+                    WHERE {where_sql}
+                    ORDER BY ts.closed_at DESC
+                    """,
+                    params,
                 ).fetchall()
                 return [
                     {
                         'id': r['id'],
                         'openedAt': r['opened_at'],
                         'closedAt': r['closed_at'],
-                        'tableCode': r['table_code'] or '?',
-                        'blockName': r['block_name'] or '',
+                        'tableCode': r['resolved_table_code'],
+                        'blockName': r['resolved_block_name'],
                         'waiterName': r['closed_waiter_name'] or r['live_waiter_name'] or 'Sin mozo',
                         'payment': r['payment_method'] or 'Efectivo',
                         'subtotal': r['subtotal'],
@@ -1719,14 +2081,19 @@ class Database:
             finally:
                 conn.close()
 
-    # ---------- Autenticación de Encargado y Mozos ----------
+    # ---------- Autenticación de Encargado, Mozos y Sesiones Persistentes ----------
 
     def verify_admin_pin(self, pin: str) -> bool:
+        clean = str(pin or '').strip()
+        if not clean:
+            return False
         with self.lock:
             conn = self._connect()
             try:
                 row = conn.execute('SELECT admin_pin FROM restaurant WHERE id = 1').fetchone()
-                return bool(row and str(pin).strip() == row['admin_pin'])
+                if not row:
+                    return False
+                return hmac.compare_digest(clean.encode('utf-8'), str(row['admin_pin']).encode('utf-8'))
             finally:
                 conn.close()
 
@@ -1740,15 +2107,83 @@ class Database:
                 conn.close()
 
     def verify_waiter_login(self, waiter_id: str, pin: str) -> dict[str, Any]:
+        clean_pin = str(pin or '').strip()
         with self.lock:
             conn = self._connect()
             try:
                 w = conn.execute('SELECT * FROM waiters WHERE id = ?', (waiter_id,)).fetchone()
                 if not w:
                     raise ActionError('Mozo inexistente')
-                if w['pin'] and str(pin).strip() != w['pin']:
-                    raise ActionError('PIN de mozo incorrecto')
+                rest = conn.execute('SELECT demo_mode, admin_pin FROM restaurant WHERE id = 1').fetchone()
+                demo_on = bool(rest and rest['demo_mode'])
+                stored_pin = str(w['pin'] or '')
+
+                if stored_pin:
+                    if not clean_pin or not hmac.compare_digest(clean_pin.encode('utf-8'), stored_pin.encode('utf-8')):
+                        raise ActionError('PIN de mozo incorrecto')
+                elif not demo_on:
+                    admin_pin = str(rest['admin_pin'] if rest else '')
+                    if not clean_pin or not hmac.compare_digest(clean_pin.encode('utf-8'), admin_pin.encode('utf-8')):
+                        raise ActionError('En modo producción ingresá tu PIN o el PIN del local')
+
                 return {'id': w['id'], 'name': w['name'], 'color': w['color']}
+            finally:
+                conn.close()
+
+    def create_staff_session(
+        self,
+        role: str,
+        waiter_id: str = '',
+        ttl_ms: int = STAFF_SESSION_TTL_MS,
+    ) -> str:
+        prefix = 'dm_' if role == 'demo_admin' else f'{role[:3]}_'
+        tok = prefix + secrets.token_urlsafe(24)
+        now = now_ms()
+        exp = now + max(60_000, int(ttl_ms))
+        with self.lock:
+            conn = self._connect()
+            try:
+                conn.execute('DELETE FROM staff_sessions WHERE expires_at <= ?', (now,))
+                conn.execute(
+                    """
+                    INSERT INTO staff_sessions (token, role, waiter_id, created_at, expires_at)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (tok, role, str(waiter_id or ''), now, exp),
+                )
+                conn.commit()
+                return tok
+            finally:
+                conn.close()
+
+    def get_staff_session(self, token: str) -> dict[str, Any] | None:
+        tok = str(token or '').strip()
+        if not tok:
+            return None
+        now = now_ms()
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute(
+                    'SELECT token, role, waiter_id, created_at, expires_at FROM staff_sessions WHERE token = ?',
+                    (tok,),
+                ).fetchone()
+                if not row:
+                    return None
+                if int(row['expires_at']) <= now:
+                    conn.execute('DELETE FROM staff_sessions WHERE expires_at <= ?', (now,))
+                    conn.commit()
+                    return None
+                if row['role'] == 'demo_admin':
+                    rest = conn.execute('SELECT demo_mode FROM restaurant WHERE id = 1').fetchone()
+                    if not (rest and rest['demo_mode']):
+                        return None
+                if row['role'] == 'waiter' and row['waiter_id']:
+                    if not conn.execute('SELECT 1 FROM waiters WHERE id = ?', (row['waiter_id'],)).fetchone():
+                        conn.execute('DELETE FROM staff_sessions WHERE token = ?', (tok,))
+                        conn.commit()
+                        return None
+                return dict(row)
             finally:
                 conn.close()
 
@@ -1768,8 +2203,10 @@ class Database:
         k_auth = str(auth or '').strip()
         if not wid:
             raise ActionError('Mozo requerido para vincular pulsera')
-        if not ep.startswith(('https://', 'http://')) or len(ep) > 2048:
-            raise ActionError('Endpoint Web Push inválido')
+        try:
+            validate_push_endpoint(ep, resolve_dns=False)
+        except ValueError as err:
+            raise ActionError(str(err)) from err
         if not k_pub or not k_auth:
             raise ActionError('Claves criptográficas de suscripción incompletas')
 
@@ -1794,8 +2231,8 @@ class Database:
                     """,
                     (wid, ep, k_pub, k_auth, wb, ts),
                 )
+                self._bump_version(conn)
                 conn.commit()
-                self.version += 1
                 return {'waiterId': wid, 'waiterName': w['name'], 'wristbandMode': bool(wb)}
             finally:
                 conn.close()
@@ -1808,10 +2245,11 @@ class Database:
             conn = self._connect()
             try:
                 cur = conn.execute('DELETE FROM push_subscriptions WHERE endpoint = ?', (ep,))
-                conn.commit()
                 if cur.rowcount > 0:
-                    self.version += 1
+                    self._bump_version(conn)
+                    conn.commit()
                     return True
+                conn.commit()
                 return False
             finally:
                 conn.close()
@@ -1894,35 +2332,12 @@ class Database:
     # ---------- Ejecución Transaccional de Acciones ----------
 
     def execute(self, action_type: str, payload: dict[str, Any], role: str = 'client') -> Any:
-        is_staff = role in ('admin', 'waiter', 'kitchen')
-        is_admin = role == 'admin'
+        is_staff = role in ('admin', 'demo_admin', 'waiter', 'kitchen')
+        is_admin_or_demo = role in ('admin', 'demo_admin')
         demo_active = self.is_demo_mode()
 
-        client_allowed = {'order.create', 'call.create'}
-        staff_allowed = client_allowed | {
-            'order.advance', 'order.status', 'order.revert', 'order.cancel',
-            'call.status', 'call.attend', 'table.close', 'notifications.read',
-            'waiter.toggle', 'session.reassign',
-        }
-        admin_only = {
-            'restaurant.save',
-            'block.save', 'block.move', 'block.delete',
-            'table.save', 'table.bulk', 'table.regen_qr', 'table.delete',
-            'waiter.save', 'waiter.delete',
-            'category.save', 'category.move', 'category.delete',
-            'item.save', 'item.toggle', 'item.delete', 'menu.adjust_prices',
-            'data.clear_orders', 'data.reset_demo',
-        }
-
-        if action_type in admin_only and not is_admin:
-            raise ActionError('Se requiere acceso de encargado (PIN)')
-        if action_type == 'lead.status' and not (is_admin or demo_active):
-            raise ActionError('Se requiere acceso de encargado (PIN)')
-        if action_type in staff_allowed and action_type not in client_allowed and not (is_staff or demo_active):
-            raise ActionError('Acción reservada al personal del restaurante')
-
         dispatch_map = {
-            'lead.status': self.act_lead_status,
+            'lead.status': self.act_lead_status if role == 'admin' else self.act_demo_lead_status,
             'order.create': lambda c, p: self.act_order_create(c, p, is_staff=is_staff),
             'order.advance': self.act_order_advance,
             'order.status': self.act_order_status,
@@ -1933,7 +2348,7 @@ class Database:
             'call.attend': self.act_call_attend,
             'table.close': self.act_table_close,
             'session.reassign': self.act_session_reassign,
-            'restaurant.save': self.act_restaurant_save,
+            'restaurant.save': lambda c, p: self.act_restaurant_save(c, p, role=role),
             'block.save': self.act_block_save,
             'block.move': self.act_block_move,
             'block.delete': self.act_block_delete,
@@ -1951,21 +2366,54 @@ class Database:
             'item.toggle': self.act_item_toggle,
             'item.delete': self.act_item_delete,
             'menu.adjust_prices': self.act_menu_adjust_prices,
+            'price.undo': self.act_price_undo,
+            'menu.undo_prices': self.act_price_undo,
             'notifications.read': self.act_notifications_read,
             'data.clear_orders': self.act_clear_orders,
+            'data.clear_open_turn': self.act_clear_open_turn,
             'data.reset_demo': self.act_reset_demo,
         }
         fn = dispatch_map.get(action_type)
         if not fn:
             raise ActionError(f'Acción desconocida: {action_type}')
 
+        client_allowed = {'order.create', 'call.create'}
+        staff_allowed = client_allowed | {
+            'order.advance', 'order.status', 'order.revert', 'order.cancel',
+            'call.status', 'call.attend', 'table.close', 'notifications.read',
+            'waiter.toggle', 'session.reassign',
+        }
+        admin_only = {
+            'restaurant.save',
+            'block.save', 'block.move', 'block.delete',
+            'table.save', 'table.bulk', 'table.regen_qr', 'table.delete',
+            'waiter.save', 'waiter.delete',
+            'category.save', 'category.move', 'category.delete',
+            'item.save', 'item.delete', 'menu.adjust_prices', 'price.undo', 'menu.undo_prices',
+            'data.clear_orders', 'data.clear_open_turn', 'data.reset_demo',
+        }
+
+        deny_status = 401 if role == 'client' else 403
+        if action_type == 'lead.status':
+            if role not in ('admin', 'demo_admin'):
+                raise AuthError('Se requiere acceso de encargado (PIN)', status=deny_status)
+        elif action_type == 'item.toggle':
+            if role not in ('admin', 'demo_admin', 'kitchen'):
+                raise AuthError('Se requiere sesión de cocina o encargado', status=deny_status)
+        elif action_type in admin_only:
+            if not is_admin_or_demo:
+                raise AuthError('Se requiere acceso de encargado (PIN)', status=deny_status)
+        elif action_type in staff_allowed and action_type not in client_allowed:
+            if not (is_staff or demo_active):
+                raise AuthError('Acción reservada al personal del restaurante', status=deny_status)
+
         with self.lock:
             conn = self._connect()
             self._tx_notifications = []
             try:
                 result = fn(conn, payload or {})
+                self._bump_version(conn)
                 conn.commit()
-                self.version += 1
                 if self._tx_notifications:
                     self._pending_push_notifications.extend(self._tx_notifications)
                 return result
@@ -1978,7 +2426,7 @@ class Database:
 
     # ---------- Construcción de Snapshots (Staff vs Cliente Scoped) ----------
 
-    def get_staff_state(self) -> dict[str, Any]:
+    def get_staff_state(self, role: str = 'staff') -> dict[str, Any]:
         with self.lock:
             conn = self._connect()
             try:
@@ -1987,14 +2435,24 @@ class Database:
                 rest['demoMode'] = bool(rest.pop('demo_mode'))
                 rest['assignmentMode'] = rest.pop('assignment_mode')
                 rest['publicUrl'] = rest.pop('public_url')
+                rest['canUndoPrices'] = bool(conn.execute('SELECT 1 FROM price_backups LIMIT 1').fetchone())
 
-                bw_rows = conn.execute('SELECT block_id, waiter_id FROM block_waiters').fetchall()
+                bw_rows = conn.execute(
+                    """
+                    SELECT bw.block_id, bw.waiter_id
+                    FROM block_waiters bw
+                    JOIN blocks b ON b.id = bw.block_id
+                    WHERE b.archived = 0
+                    """
+                ).fetchall()
                 bw_by_block: dict[str, list[str]] = {}
                 bw_by_waiter: dict[str, list[str]] = {}
                 for r in bw_rows:
                     bw_by_block.setdefault(r['block_id'], []).append(r['waiter_id'])
                     bw_by_waiter.setdefault(r['waiter_id'], []).append(r['block_id'])
 
+                all_blocks_rows = conn.execute('SELECT * FROM blocks ORDER BY sort_order ASC, id ASC').fetchall()
+                all_block_names = {r['id']: r['name'] for r in all_blocks_rows}
                 blocks = [
                     {
                         'id': r['id'],
@@ -2006,7 +2464,8 @@ class Database:
                         'sortOrder': r['sort_order'],
                         'waiterIds': bw_by_block.get(r['id'], []),
                     }
-                    for r in conn.execute('SELECT * FROM blocks ORDER BY sort_order ASC, id ASC').fetchall()
+                    for r in all_blocks_rows
+                    if not r['archived']
                 ]
                 block_map = {b['id']: b for b in blocks}
 
@@ -2016,7 +2475,7 @@ class Database:
                 open_sessions_raw = conn.execute("SELECT * FROM table_sessions WHERE status = 'open'").fetchall()
                 open_by_table = {r['table_id']: dict(r) for r in open_sessions_raw}
 
-                # Ventas cerradas de hoy
+                # Ventas cerradas del turno gastronómico en curso
                 closed_today_rows = conn.execute(
                     "SELECT * FROM table_sessions WHERE status = 'closed' AND closed_at >= ? ORDER BY closed_at DESC",
                     (today_ms,),
@@ -2094,9 +2553,9 @@ class Database:
                             )
 
                     open_sess_set = {r['id'] for r in open_sessions_raw}
-                    sess_waiter_lookup = {r['id']: r['waiter_id'] for r in open_sessions_raw}
+                    sess_lookup = {r['id']: dict(r) for r in open_sessions_raw}
                     for cs in closed_today_rows[:40]:
-                        sess_waiter_lookup[cs['id']] = cs['waiter_id']
+                        sess_lookup[cs['id']] = dict(cs)
 
                     tbl_lookup = {
                         r['id']: r for r in conn.execute('SELECT id, code, block_id FROM tables').fetchall()
@@ -2107,9 +2566,12 @@ class Database:
                         o_sub = sum(x['price'] * x['qty'] for x in o_items)
                         if o['session_id'] in open_sess_set and o['status'] != 'cancelado':
                             open_subtotals[o['session_id']] = open_subtotals.get(o['session_id'], 0) + o_sub
+                        s_info = sess_lookup.get(o['session_id'], {})
                         t_info = tbl_lookup.get(o['table_id'])
-                        b_info = block_map.get(t_info['block_id']) if t_info else None
-                        wid = sess_waiter_lookup.get(o['session_id'])
+                        b_id = t_info['block_id'] if t_info else ''
+                        b_name = s_info.get('closed_block_name') or all_block_names.get(b_id, '')
+                        t_code = s_info.get('closed_table_code') or (t_info['code'] if t_info else '?')
+                        wid = s_info.get('waiter_id')
                         w_info = waiter_map.get(wid) if wid else None
                         orders_list.append(
                             {
@@ -2117,9 +2579,9 @@ class Database:
                                 'sessionId': o['session_id'],
                                 'isOpenSession': o['session_id'] in open_sess_set,
                                 'tableId': o['table_id'],
-                                'tableCode': t_info['code'] if t_info else '?',
-                                'blockId': b_info['id'] if b_info else '',
-                                'blockName': b_info['name'] if b_info else '',
+                                'tableCode': t_code,
+                                'blockId': b_id,
+                                'blockName': b_name,
                                 'waiterId': wid,
                                 'waiterName': w_info['name'] if w_info else None,
                                 'waiterColor': w_info['color'] if w_info else None,
@@ -2145,6 +2607,10 @@ class Database:
                     w_info = waiter_map.get(c['waiter_id']) if c['waiter_id'] else None
                     sub = open_subtotals.get(c['session_id'], 0)
                     tip_amt = round(sub * c['tip_pct'] / 100) if c['type'] == 'cuenta' else 0
+                    tot = sub + tip_amt
+                    cash_amt = int(c['cash_amount'] or 0)
+                    split_w = max(1, int(c['split_ways'] or 1))
+                    change_amt = max(0, cash_amt - tot) if (c['type'] == 'cuenta' and c['payment'] == 'Efectivo' and cash_amt > tot) else 0
                     c_obj = {
                         'id': c['id'],
                         'sessionId': c['session_id'],
@@ -2159,18 +2625,21 @@ class Database:
                         'reason': c['reason'],
                         'payment': c['payment'],
                         'tip': c['tip_pct'],
+                        'cashAmount': cash_amt,
+                        'splitWays': split_w,
+                        'changeAmount': change_amt,
                         'subtotal': sub,
                         'tipAmount': tip_amt,
-                        'total': sub + tip_amt,
+                        'total': tot,
                         'status': c['status'],
                         'createdAt': c['created_at'],
                     }
                     calls_list.append(c_obj)
                     calls_by_table.setdefault(c['table_id'], []).append(c_obj)
 
-                # Mesas enriquecidas con sesión abierta y mozo actual
+                # Mesas activas/visibles (ocultando archivadas) enriquecidas con sesión abierta y mozo actual
                 tables = []
-                for r in conn.execute('SELECT * FROM tables ORDER BY sort_order ASC, id ASC').fetchall():
+                for r in conn.execute('SELECT * FROM tables WHERE archived = 0 ORDER BY sort_order ASC, id ASC').fetchall():
                     sess = open_by_table.get(r['id'])
                     t_calls = calls_by_table.get(r['id'], [])
                     wid = sess['waiter_id'] if sess else None
@@ -2257,12 +2726,12 @@ class Database:
                 closed_history = []
                 for cs in closed_today_rows[:50]:
                     t_info = tbl_all.get(cs['table_id'], {})
-                    b_info = block_map.get(t_info.get('block_id', ''), {})
+                    b_id = t_info.get('block_id', '')
                     closed_history.append(
                         {
                             'id': cs['id'],
-                            'tableCode': t_info.get('code', '?'),
-                            'blockName': b_info.get('name', ''),
+                            'tableCode': cs['closed_table_code'] or t_info.get('code', '?'),
+                            'blockName': cs['closed_block_name'] or all_block_names.get(b_id, ''),
                             'waiterName': cs['closed_waiter_name'] or 'Sin mozo',
                             'subtotal': cs['subtotal'],
                             'tipPct': cs['tip_pct'],
@@ -2276,10 +2745,15 @@ class Database:
                 open_consumption = sum(open_subtotals.values())
                 avg_ticket = round(closed_sales_total / len(closed_today_rows)) if closed_today_rows else 0
 
-                leads = [
-                    self._lead_row(r)
-                    for r in conn.execute('SELECT * FROM leads ORDER BY created_at DESC LIMIT 50').fetchall()
-                ]
+                if role == 'admin':
+                    leads = [
+                        self._lead_row(r)
+                        for r in conn.execute('SELECT * FROM leads ORDER BY created_at DESC LIMIT 50').fetchall()
+                    ]
+                elif role == 'demo_admin':
+                    leads = [dict(item) for item in self._demo_leads]
+                else:
+                    leads = []
 
                 return {
                     'version': self.version,
@@ -2319,7 +2793,7 @@ class Database:
                         """
                         SELECT t.*, b.name AS block_name, b.icon AS block_icon
                         FROM tables t JOIN blocks b ON b.id = t.block_id
-                        WHERE t.qr_token = ?
+                        WHERE t.qr_token = ? AND t.archived = 0 AND b.archived = 0
                         """,
                         (qr_token,),
                     ).fetchone()
@@ -2328,7 +2802,8 @@ class Database:
                         """
                         SELECT t.*, b.name AS block_name, b.icon AS block_icon
                         FROM tables t JOIN blocks b ON b.id = t.block_id
-                        WHERE UPPER(t.code) = UPPER(?) LIMIT 1
+                        WHERE UPPER(t.code) = UPPER(?) AND t.archived = 0 AND b.archived = 0
+                        LIMIT 1
                         """,
                         (legacy_code,),
                     ).fetchone()
@@ -2363,7 +2838,8 @@ class Database:
                             """
                             SELECT t.code, t.qr_token, b.name AS block_name
                             FROM tables t JOIN blocks b ON b.id = t.block_id
-                            WHERE t.active = 1 ORDER BY b.sort_order ASC, t.sort_order ASC
+                            WHERE t.active = 1 AND t.archived = 0 AND b.archived = 0
+                            ORDER BY b.sort_order ASC, t.sort_order ASC
                             """
                         ).fetchall()
                     ]
@@ -2399,18 +2875,23 @@ class Database:
                         'SELECT * FROM orders WHERE session_id = ? ORDER BY created_at ASC',
                         (sess['id'],),
                     ).fetchall()
+                    items_by_order: dict[str, list[dict[str, Any]]] = {}
+                    if ord_rows:
+                        oid_list = [o['id'] for o in ord_rows]
+                        ph = ','.join('?' for _ in oid_list)
+                        for oi in conn.execute(f'SELECT * FROM order_items WHERE order_id IN ({ph})', oid_list).fetchall():
+                            items_by_order.setdefault(oi['order_id'], []).append(
+                                {
+                                    'itemId': oi['item_id'],
+                                    'name': oi['name'],
+                                    'emoji': oi['emoji'],
+                                    'price': oi['unit_price'],
+                                    'qty': oi['qty'],
+                                    'note': oi['note'],
+                                }
+                            )
                     for o in ord_rows:
-                        ois = [
-                            {
-                                'itemId': r['item_id'],
-                                'name': r['name'],
-                                'emoji': r['emoji'],
-                                'price': r['unit_price'],
-                                'qty': r['qty'],
-                                'note': r['note'],
-                            }
-                            for r in conn.execute('SELECT * FROM order_items WHERE order_id = ?', (o['id'],)).fetchall()
-                        ]
+                        ois = items_by_order.get(o['id'], [])
                         o_tot = sum(x['price'] * x['qty'] for x in ois) if o['status'] != 'cancelado' else 0
                         subtotal += o_tot
                         orders_out.append(
@@ -2433,6 +2914,8 @@ class Database:
                                 'reason': c['reason'],
                                 'payment': c['payment'],
                                 'tip': c['tip_pct'],
+                                'cashAmount': int(c['cash_amount'] or 0),
+                                'splitWays': max(1, int(c['split_ways'] or 1)),
                                 'status': c['status'],
                                 'createdAt': c['created_at'],
                             }

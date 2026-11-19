@@ -9,9 +9,52 @@ Pieza audiovisual vertical (`9:16`, `1080x1920`, `60 fps`) diseñada para Instag
 | Archivo | Descripción |
 | :--- | :--- |
 | [`SaleListo_Ad.mp4`](./SaleListo_Ad.mp4) | Spot comercial definitivo renderizado en `1080x1920` a `60 fps` (`30.19s`, H.264 High + AAC `48 kHz` estéreo normalizado a `-14 LUFS` / `-1.5 dBTP`, `11.57 MB`). Versión v5 "sin celulares en el salón": la Escena 5 (**Sin `celulares`**) muestra la estación del **Pase** con 3 columnas por mozo y la **Pulsera** vibradora que marca el tilde al salir; máximo 5 palabras por pantalla en las escenas 1 a 5. Placa final con WhatsApp `(+54)1138436571` y `ventas@salelisto.com`. |
+| [`generar_ad_omni.py`](./generar_ad_omni.py) | Pipeline **open-ended** hacia **Gemini Omni 1.2 Flash (Google Flow Ultra)** vía CDP (`9222` / `DevToolsActivePort`). Envía únicamente una breve dirección creativa abierta y la narración completa en español rioplatense, dejando la puesta visual e interpretación cinematográfica a cargo de Omni 1.2 Flash, y exporta el resultado a `video-ad/SaleListo_Ad_Omni.mp4`. |
 | [`locucion_argentina.mp3`](./locucion_argentina.mp3) | Locución comercial v5 en español rioplatense generada en una sola toma continua con ElevenLabs (`eleven_v4`, voz `Gabi`): *"Sin celulares en el salón: miran la estación del pase, o les vibra la pulsera al salir."* |
 | [`guion.md`](./guion.md) | Guion técnico v5: un diagrama vectorial grande por escena con titular de 2 o 3 palabras, escaleta de 6 escenas (`E01` a `E06`) sobre la toma única de locución. |
 | [`referencias_ads.md`](./referencias_ads.md) | Análisis de referencias publicitarias Gastro-Tech y Motion SaaS aplicadas al ritmo visual, uso de B-roll y tipografía cinética. |
+
+---
+
+## Recreación Open-Ended con Gemini Omni 1.2 Flash (Google Flow)
+
+Además del pipeline programático cuadro a cuadro en `v2/`, el repositorio incluye [`generar_ad_omni.py`](./generar_ad_omni.py) para generar una recreación generativa abierta en **Google Flow Ultra** (`https://labs.google/fx/tools/flow`) con **Gemini Omni 1.2 Flash**.
+
+En lugar de pautar cortes rígidos escena por escena, el script entrega una breve descripción conceptual y la locución rioplatense completa para que Omni resuelva con libertad creativa el encuadre, el ritmo cinematográfico y la actuación visual:
+
+```text
+Comercial vertical (9:16) cálido y cinematográfico para SaleListo, plataforma para restaurantes y bares donde los clientes piden con 4G desde el QR de su mesa, la cocina y la barra reciben cada parte al instante y los mozos trabajan tranquilos sin celular en la mano (usando pantalla fija en el pase o pulsera vibradora), con 0% comisión y contacto WhatsApp (+54)1138436571 | ventas@salelisto.com. Interpretá visualmente con total libertad creativa esta narración en voz femenina rioplatense natural: "¿Tus mozos corren a mil queriendo estar en todos lados? Bajales esa exigencia. Con SaleListo, el cliente escanea el QR con 4G, sin esperar carta ni wifi, y pide tranquilo. La comanda se separa sola entre cocina y barra, y el salón reparte bloques equilibrando al equipo en vivo. Sin celulares en el salón: miran la estación del pase, o les vibra la pulsera al salir. Simplificales la vida a ellos y al restaurante, con cero comisión. Escribinos por WhatsApp, y probalo."
+```
+
+### Ejecución en 1 línea (con Brave / Chromium en puerto `9222`)
+
+1. Tener abierto **Google Flow** (`https://labs.google/fx/tools/flow`) con sesión iniciada en Brave o Chromium y depuración remota habilitada en `chrome://inspect/#remote-debugging` (puerto `9222`).
+2. Aceptar el cartel de seguridad de depuración remota haciendo clic en **`[Allow]` / `[Permitir]`** en la ventana de Brave y correr desde la raíz del proyecto:
+
+```powershell
+python video-ad/generar_ad_omni.py
+```
+
+El script detecta automáticamente el endpoint WebSocket de `DevToolsActivePort` (`ws://127.0.0.1:9222/devtools/browser/...`, reutilizando `omni_bridge.py` si está presente localmente), verifica los selectores activos del DOM de Flow, envía el prompt y guarda el render final en `video-ad/SaleListo_Ad_Omni.mp4`.
+
+### Opciones útiles del CLI
+
+- **Dar margen para pulsar `[Allow]` en vivo al cambiar de ventana:**
+  ```powershell
+  python video-ad/generar_ad_omni.py --cdp-timeout 25
+  ```
+- **Adjuntar el isotipo oficial (`app/public/icon-512.png`) como referencia visual:**
+  ```powershell
+  python video-ad/generar_ad_omni.py --with-logo
+  ```
+- **Inspeccionar el DOM real de la pestaña activa de Flow sin disparar un render:**
+  ```powershell
+  python video-ad/generar_ad_omni.py --inspect
+  ```
+- **Imprimir el prompt open-ended oficial en consola:**
+  ```powershell
+  python video-ad/generar_ad_omni.py --print-prompt
+  ```
 
 ---
 
@@ -32,8 +75,9 @@ El spot no define estilos propios: toma colores, tipografía, radios, sombras y 
 
 ### Archivos locales excluidos de Git (`.gitignore`)
 
-Para mantener el repositorio liviano y ágil de clonar (`< 30 MB` en total), los insumos pesados e intermedios quedan excluidos del control de versiones:
+Para mantener `video-ad/` liviano y ágil de clonar (`< 15 MB` en activos versionados), los insumos pesados e intermedios quedan excluidos del control de versiones:
 
+- `omni_bridge.py` y `renders_omni/`: Puente CDP auxiliar local y carpeta temporal de descargas de Google Flow (`video-ad/generar_ad_omni.py` sí se versiona y opera de forma autónoma si `omni_bridge.py` no está presente).
 - `v2/broll/`: Clips de video stock HD de Mixkit (licencia comercial gratuita). Pueden descargarse nuevamente en cualquier momento ejecutando `python v2/tools/dl_broll.py`.
 - `v2/build/` y `v2/qa_frames/`: Secuencias temporales de cuadros JPEG y hojas de control de calidad.
 - `v2/audio/*.wav` y `v2/audio/vo/*.wav`: Pistas WAV sin comprimir generadas durante la mezcla (se versionan las fuentes livianas `.mp3` y las alineaciones `.json`).

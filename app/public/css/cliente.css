@@ -128,6 +128,7 @@ body { background: var(--bg); }
 .badge-pop { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 .badge-off { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--surface-2); color: var(--ink-2); font-weight: 700; }
 .badge-bar { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--bar-soft); color: var(--bar); font-weight: 700; }
+.badge-counter { font-size: 11px; padding: 2px 8px; border-radius: var(--radius-pill); background: var(--counter-soft); color: var(--counter); font-weight: 700; }
 .in-cart { font-size: 12px; color: var(--accent); font-weight: 700; }
 
 .spacer { height: 150px; }
@@ -231,3 +232,49 @@ body { background: var(--bg); }
 
 .done-hero { text-align: center; padding: 20px 0 6px; }
 .done-hero .big { font-size: 60px; display: block; }
+
+/* Calculadora Vaquita y Declaración de Vuelto en Efectivo */
+.vaquita-box {
+  margin-top: 12px; padding: 11px 13px; border-radius: var(--radius-control);
+  background: var(--surface-2); border: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.vaquita-row {
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+}
+.vaquita-lbl { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.vaquita-sub {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 8px;
+  padding-top: 6px; border-top: 1px dashed var(--line-strong);
+  font-size: 13.5px; color: var(--ink-2); font-weight: 600;
+}
+.vaquita-sub strong { font-size: 16px; font-weight: 800; color: var(--ok); }
+
+.cash-box {
+  margin-top: 10px; padding: 12px 13px; border-radius: var(--radius-control);
+  background: #fdf9f0; border: 1px solid #eadcc3;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.cash-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.cash-chip {
+  padding: 7px 11px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 700;
+  background: var(--surface); border: 1px solid var(--line-strong); color: var(--ink-2);
+  transition: all var(--dur-fast) var(--ease-out);
+}
+.cash-chip.selected {
+  background: var(--accent); border-color: var(--accent); color: #ffffff;
+}
+.cash-custom-row { display: flex; align-items: center; gap: 8px; }
+.cash-custom-row .input { font-size: 16px; padding: 8px 11px; }
+.cash-hint { font-size: 13px; font-weight: 700; color: var(--ok); }
+.cash-hint.warn { color: var(--accent); }
+
+.order-foot {
+  display: flex; justify-content: flex-end; margin-top: 10px; padding-top: 8px;
+  border-top: 1px dashed var(--line);
+}
+.repeat-btn {
+  min-height: 36px; padding: 6px 12px; font-size: 13px; font-weight: 700;
+  color: var(--accent); border-color: rgba(217, 65, 43, 0.32); background: var(--accent-soft);
+}
+.repeat-btn:hover { background: #f8d8d1; border-color: var(--accent); }

@@ -38,7 +38,8 @@ const I = {
   spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8"/>',
   users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18.5 20a6.5 6.5 0 0 0-3-5.5"/>',
   calendar: '<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  table: '<rect x="3" y="7" width="18" height="4" rx="1.5"/><path d="M6 11v9M18 11v9"/>'
+  table: '<rect x="3" y="7" width="18" height="4" rx="1.5"/><path d="M6 11v9M18 11v9"/>',
+  store: '<path d="M3 9l2-5h14l2 5"/><path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/><path d="M5 12v8h14v-8"/>'
 };
 const ic = (n, s = 32, c = 'currentColor', w = 2.2) =>
   `<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${I[n]}</svg>`;
@@ -340,7 +341,7 @@ P.c2s5 = { w: 1080, h: 1350, out: 'posts/carrusel_02_cero_celulares/slide_05.png
     <h2 class="h2" style="margin-top:34px">Probalo en <span class="acc">1 sector</span><br>durante 14 días.</h2>
     <p class="lead" style="margin-top:22px">Elegí el sector más difícil: vereda, patio o terraza. El salón principal no se toca.</p>
     <div style="display:flex;gap:18px;margin-top:44px">
-      ${pilotStep('24 h', 'Cargamos tu carta y el ruteo')}
+      ${pilotStep('48 h', 'Cargamos tu carta y el ruteo')}
       ${pilotStep('QR fijo', 'En cada mesa del sector')}
       ${pilotStep('2 findes', 'Medimos juntos los resultados')}
     </div>
@@ -369,7 +370,7 @@ P.p1 = { w: 1080, h: 1350, out: 'posts/post_01_cero_comision_roi.png', html: () 
     </div>
     <div class="ink-card" style="margin-top:22px;padding:30px 36px;display:flex;align-items:center;gap:30px">
       <div style="font-size:84px;font-weight:800;letter-spacing:-0.04em;color:#faf7f2;line-height:1">37x</div>
-      <div style="font-size:27px;font-weight:600;line-height:1.38;color:rgba(250,247,242,.8)">Retorno estimado en un restaurante de 25 mesas:<br><b style="color:#faf7f2">+USD 2.409/mes</b> con un abono de USD 65.</div>
+      <div style="font-size:27px;font-weight:600;line-height:1.38;color:rgba(250,247,242,.8)">Retorno estimado en un restaurante de 25 mesas:<br><b style="color:#faf7f2">+USD 2.410/mes</b> con un abono de USD 65.</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:18px;margin-top:40px">
       ${okRow('Precio fijo y previsible, facturado en pesos.', 29)}
@@ -430,21 +431,25 @@ const priceRow = (name, cat, oldp, newp) => `<div style="display:flex;align-item
   <div><div style="font-size:29px;font-weight:800">${name}</div><div style="font-size:22px;font-weight:600;color:#8a837c;margin-top:2px">${cat}</div></div>
   <div style="display:flex;align-items:center;gap:18px;white-space:nowrap"><span style="font-size:25px;font-weight:600;color:#8a837c;text-decoration:line-through">${oldp}</span>${ic('arrow', 26, '#8a837c', 2.4)}<b style="font-size:31px;font-weight:800">${newp}</b></div></div>`;
 P.p4 = { w: 1080, h: 1350, out: 'posts/post_04_precios_anti_inflacion.png', html: () => post({ body: `
-  <div style="margin-top:64px">
+  <div style="margin-top:58px">
     <div class="kicker">${ic('tag', 28)}Precios anti inflación</div>
-    <h2 class="h2" style="margin-top:30px">¿Subiste precios?<br><span class="acc">No reimprimas nada.</span></h2>
-    <div class="card" style="margin-top:40px;padding:30px 42px 28px">
-      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:30px;font-weight:800">Ajuste masivo de precios</span><span class="chip">Toda la carta</span></div>
-      <div style="display:flex;align-items:center;gap:28px;margin:22px 0 20px">
-        <div style="font-size:84px;font-weight:800;letter-spacing:-0.04em;color:#D9412B;line-height:1">+8%</div>
-        <div style="flex:1;height:14px;border-radius:99px;background:#f3eee6;position:relative"><div style="width:40%;height:100%;border-radius:99px;background:#D9412B"></div><div style="position:absolute;left:40%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:#fff;border:3px solid #D9412B;box-shadow:var(--shadow-card)"></div></div>
+    <h2 class="h2" style="margin-top:28px">¿Subiste precios?<br><span class="acc">No reimprimas nada.</span></h2>
+    <div class="card" style="margin-top:36px;padding:28px 42px 26px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:16px">
+        <span style="font-size:29px;font-weight:800">Ajuste masivo de precios</span>
+        <span class="chip ok" style="font-size:21px;padding:8px 16px">${ic('check', 21, '#2F8A57', 3)}Redondeo gastronómico limpio a $100</span>
       </div>
-      ${priceRow('Milanesa napolitana', 'Cocina', '$14.500', '$15.660')}
-      ${priceRow('Pinta IPA', 'Barra', '$5.200', '$5.616')}
-      ${priceRow('Flan casero', 'Postres', '$4.800', '$5.184')}
-      <div class="btn" style="width:100%;height:72px;font-size:29px;margin-top:10px">Aplicar a 46 platos</div>
+      <div style="display:flex;align-items:center;gap:24px;margin:20px 0 18px">
+        <div style="font-size:80px;font-weight:800;letter-spacing:-0.04em;color:#D9412B;line-height:1">+8%</div>
+        <div style="flex:1;height:14px;border-radius:99px;background:#f3eee6;position:relative"><div style="width:40%;height:100%;border-radius:99px;background:#D9412B"></div><div style="position:absolute;left:40%;top:50%;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;background:#fff;border:3px solid #D9412B;box-shadow:var(--shadow-card)"></div></div>
+        <span style="font-size:22px;font-weight:700;color:#57534e;white-space:nowrap">+8% · Redondeo a $100</span>
+      </div>
+      ${priceRow('Milanesa napolitana', 'Cocina', '$14.500', '$15.700')}
+      ${priceRow('Pinta IPA', 'Barra', '$5.200', '$5.600')}
+      ${priceRow('Flan casero', 'Postres', '$4.800', '$5.200')}
+      <div class="btn" style="width:100%;height:70px;font-size:28px;margin-top:10px">Aplicar a 46 platos (con vista previa)</div>
     </div>
-    <div style="display:flex;align-items:center;gap:18px;margin-top:32px;font-size:29px;font-weight:700;line-height:1.35">${ic('check', 34, '#2F8A57', 3)}<span>El QR de cada mesa sigue igual. La carta cambia al segundo.</span></div>
+    <div style="display:flex;align-items:center;gap:18px;margin-top:28px;font-size:29px;font-weight:700;line-height:1.35">${ic('check', 34, '#2F8A57', 3)}<span>El QR de cada mesa sigue igual. La carta cambia al segundo.</span></div>
   </div>` }) };
 
 /* ---------------- BANNERS ---------------- */
@@ -516,8 +521,8 @@ P.lip = { w: 1200, h: 627, out: 'banners/linkedin_post_1200x627.png', html: () =
     <div style="flex:1;display:flex;flex-direction:column;align-items:flex-start">
       ${logoL(42)}
       <span class="chip" style="margin-top:34px;align-self:flex-start;font-size:21px">Caso restaurante tipo · 25 mesas</span>
-      <div style="font-size:50px;font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-top:20px">El abono se paga<br>con <span class="acc">2 mesas extra</span> por mes.</div>
-      <div style="font-size:23px;font-weight:600;color:#57534e;line-height:1.45;margin-top:18px">Plan Salón USD 65/mes, sin comisión sobre ventas.<br>Más rotación, más rondas y menos errores.</div>
+      <div style="font-size:48px;font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-top:20px">El abono se paga<br>con <span class="acc">3 a 4 mesas extra</span> al mes.</div>
+      <div style="font-size:23px;font-weight:600;color:#57534e;line-height:1.45;margin-top:18px">Plan Salón USD 65/mes, sin comisión sobre ventas.<br>Más rotación, más rondas y picos sin desborde.</div>
       <div style="margin-top:auto;display:flex;gap:26px;font-size:21px;font-weight:700;color:#57534e"><span style="display:flex;align-items:center;gap:10px">${ic('chat', 24, '#D9412B')}${PHONE}</span><span style="display:flex;align-items:center;gap:10px">${ic('mail', 24, '#D9412B')}${MAIL}</span></div>
     </div>
     <div class="ink-card" style="width:380px;padding:40px 36px;display:flex;flex-direction:column;justify-content:center">
@@ -525,8 +530,8 @@ P.lip = { w: 1200, h: 627, out: 'banners/linkedin_post_1200x627.png', html: () =
       <div style="font-size:150px;font-weight:800;letter-spacing:-0.05em;line-height:.95;margin-top:10px">37<span style="color:#D9412B">x</span></div>
       <div style="font-size:22px;font-weight:600;color:rgba(250,247,242,.72);margin-top:8px">sobre el abono mensual</div>
       <div style="height:1px;background:#38322e;margin:28px 0 22px"></div>
-      <div style="font-size:36px;font-weight:800">+USD 2.409</div>
-      <div style="font-size:21px;font-weight:600;color:rgba(250,247,242,.72);margin-top:4px">beneficio generado por mes</div>
+      <div style="font-size:36px;font-weight:800">+USD 2.410</div>
+      <div style="font-size:21px;font-weight:600;color:rgba(250,247,242,.72);margin-top:4px">beneficio generado (+USD 2.345 netos)</div>
     </div>
   </div>` };
 
@@ -551,7 +556,7 @@ P.mstory = { w: 1080, h: 1920, out: 'banners/meta_ad_story_1080x1920.png', html:
       <div style="display:flex;gap:46px;align-items:center;margin-top:70px">
         ${tentCard(390)}
         <div style="flex:1;display:flex;flex-direction:column;gap:30px">
-          ${okRow('Carta cargada en 24 h', 31)}
+          ${okRow('Carta cargada en 48 h', 31)}
           ${okRow('QR fijo por mesa', 31)}
           ${okRow('Sin apps ni Wi-Fi', 31)}
           ${okRow('Cocina y Barra separadas', 31)}
@@ -705,5 +710,209 @@ P.c3s5 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_05.png
     </div>
     <div style="margin-top:40px">${ctaCard('Pedí tu piloto de 14 días<br>por WhatsApp o correo.')}</div>
   </div>` }) };
+
+/* ---------------- HISTORIAS VERTICALES (1080x1920 · zonas seguras 260px arriba / 315px abajo) ---------------- */
+const storyShell = (theme, topRight, inner) => `
+  <div class="cv story${theme === 'dark' ? ' dark' : ''}">
+    <div class="story-safe">
+      <div class="top">${theme === 'dark' ? logoD(52) : logoL(52)}${topRight}</div>
+      ${inner}
+    </div>
+  </div>`;
+
+const storyFootDark = (sub) => `
+  <div class="ink-card" style="padding:30px 38px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74)">${sub}</div>
+      <div style="font-size:38px;font-weight:800;margin-top:6px;letter-spacing:-0.01em;display:flex;align-items:center;gap:12px">${ic('chat', 34, '#D9412B')}WhatsApp ${PHONE}</div>
+    </div>
+    <div style="width:76px;height:76px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 38, '#fff', 3)}</div>
+  </div>`;
+
+const storyFootOnDark = (sub) => `
+  <div class="card-d" style="padding:30px 38px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid #3d3632">
+    <div>
+      <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74)">${sub}</div>
+      <div style="font-size:38px;font-weight:800;margin-top:6px;letter-spacing:-0.01em;display:flex;align-items:center;gap:12px">${ic('chat', 34, '#D9412B')}WhatsApp ${PHONE}</div>
+    </div>
+    <div style="width:76px;height:76px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 38, '#fff', 3)}</div>
+  </div>`;
+
+P.st1 = { w: 1080, h: 1920, out: 'stories/story_01_encuesta_cobro.png', html: () => storyShell('light',
+  `<span class="chip acc" style="font-size:24px;padding:10px 20px">${ic('clock', 24)}Hora pico</span>`, `
+  <div>
+    <div class="kicker">${ic('chat', 26)}Encuesta gastronómica</div>
+    <h1 class="h1" style="font-size:74px;line-height:1.06;margin-top:24px">¿Cuánto tarda hoy cobrar una mesa en <span class="acc">viernes lleno?</span></h1>
+  </div>
+  <div class="card-s" style="padding:26px 32px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:26px;font-weight:800;color:#57534e">Servicio tradicional</span>
+      <span style="font-size:25px;font-weight:700;color:#8a837c">4 viajes · 10 a 15 min</span>
+    </div>
+    <div style="height:1px;background:#e6dfd3"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:26px;font-weight:800;color:#1c1917">Con SaleListo (QR + posnet)</span>
+      <span class="chip ok" style="font-size:23px;padding:7px 16px">${ic('check', 22, '#2F8A57', 3)}1 solo viaje</span>
+    </div>
+  </div>
+  <div style="height:370px;border-radius:32px;background:#ffffff;border:2.5px dashed #d6cdc0;box-shadow:var(--shadow-card);padding:24px 36px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start">
+    <span style="font-size:23px;font-weight:700;color:#8a837c;background:#faf7f2;padding:8px 22px;border-radius:999px;border:1px solid #e6dfd3">Votá acá abajo en la encuesta</span>
+  </div>
+  ${storyFootDark('Pasá de 4 viajes a 1 · 0% comisión sobre tus ventas')}`) };
+
+P.st2 = { w: 1080, h: 1920, out: 'stories/story_02_estacion_pase.png', html: () => storyShell('light',
+  `<span class="chip ok" style="font-size:24px;padding:10px 20px">${ic('check', 24, '#2F8A57', 3)}Incluida de serie</span>`, `
+  <div>
+    <div class="kicker">${ic('screen', 26)}Plan Base · Sin celulares</div>
+    <h1 class="h1" style="font-size:74px;line-height:1.05;margin-top:24px">1 tablet fija en el pase.<br><span class="acc">1 columna por mozo.</span></h1>
+    <p class="lead" style="font-size:30px;margin-top:18px">Los celulares quedan guardados en el locker o en caja. Cada mozo ve a 4 metros qué retirar y qué cobrar.</p>
+  </div>
+  ${passStation(912, 410)}
+  <div style="display:flex;flex-direction:column;gap:16px">
+    ${okRow('Corre en la tablet o monitor que ya tenés (USD 0 hardware).', 28)}
+    ${okRow('Filtrable por sector (Interior, Vereda o Terraza).', 28)}
+  </div>
+  ${storyFootDark('Planes desde USD 35/mes · 0% comisión')}`) };
+
+P.st3 = { w: 1080, h: 1920, out: 'stories/story_03_kit_pulsera.png', html: () => storyShell('dark',
+  `<span class="chip dk" style="font-size:23px;padding:10px 20px">${ic('sun', 24, '#D9412B')}Terrazas y patios grandes</span>`, `
+  <div>
+    <div class="kicker">${ic('bell', 26)}Kit Pulsera Vibradora Xiaomi Band</div>
+    <h1 class="h1" style="font-size:74px;line-height:1.05;margin-top:24px">Vibra en la muñeca.<br><span class="hl">Celu bloqueado</span><br>en el bolsillo.</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:36px">
+    <div style="width:370px;display:flex;justify-content:center;position:relative">
+      <div style="position:relative">${waves('left')}${waves('right')}${bandSvg(184, bandScreen(0.95))}</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:26px">
+      ${bandStat('battery', '14 días', 'de batería real por carga')}
+      ${bandStat('phone', 'En el bolsillo', 'bloqueado por Bluetooth BLE')}
+      ${bandStat('drop', '15 g · 5 ATM', 'liviana y resiste barra')}
+    </div>
+  </div>
+  <div class="card-d" style="padding:22px 30px;display:flex;justify-content:space-between;align-items:center;font-size:25px;font-weight:700">
+    <span>Pack 3: <b style="font-weight:800">USD 145</b></span>
+    <span>Pack 5: <b style="font-weight:800">USD 230</b></span>
+    <span style="color:rgba(250,247,242,.68)">En los 3 planes</span>
+  </div>
+  ${storyFootOnDark('Tecnología invisible en patios y terrazas · 0% comisión')}`) };
+
+P.st4 = { w: 1080, h: 1920, out: 'stories/story_04_vaquita_y_vuelto.png', html: () => storyShell('light',
+  `<span class="chip solid" style="font-size:24px;padding:10px 20px">${ic('spark', 24, '#fff', 2.6)}Nuevo en el QR</span>`, `
+  <div>
+    <h1 class="h1" style="font-size:70px;line-height:1.06">Dividen entre amigos y avisan <span class="acc">con cuánto pagan.</span></h1>
+    <p class="lead" style="font-size:29px;margin-top:16px">Nuevo en el QR con 4G: calculan la vaquita y declaran efectivo para cobrar en 1 solo viaje.</p>
+  </div>
+  <div class="card" style="padding:28px 34px;display:flex;flex-direction:column;gap:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid #e6dfd3">
+      <span style="display:flex;align-items:center;gap:12px;font-size:27px;font-weight:800">${mark(34)}Mesa T4 · Total c/10% propina</span>
+      <b style="font-size:34px;font-weight:800">$52.800</b>
+    </div>
+    <div style="background:#faf7f2;border:1px solid #e6dfd3;border-radius:18px;padding:18px 22px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:22px;font-weight:700;color:#57534e">Calculadora Vaquita</div>
+        <div style="font-size:27px;font-weight:800;margin-top:4px">Dividir entre 4 personas</div>
+      </div>
+      <span class="chip ok" style="font-size:26px;padding:10px 20px;font-weight:800">$13.200 c/u</span>
+    </div>
+    <div>
+      <div style="font-size:22px;font-weight:700;color:#57534e;margin-bottom:10px">Pago en Efectivo · ¿Con cuánto abonás?</div>
+      <div style="display:flex;gap:10px">
+        <span style="font-size:22px;font-weight:700;padding:10px 18px;border-radius:999px;background:#faf7f2;border:1.5px solid #e6dfd3;color:#57534e">Justo</span>
+        <span style="font-size:22px;font-weight:700;padding:10px 18px;border-radius:999px;background:#faf7f2;border:1.5px solid #e6dfd3;color:#57534e">$20.000</span>
+        <span style="font-size:22px;font-weight:800;padding:10px 20px;border-radius:999px;background:#D9412B;color:#fff">$60.000</span>
+        <span style="font-size:22px;font-weight:700;padding:10px 18px;border-radius:999px;background:#faf7f2;border:1.5px solid #e6dfd3;color:#57534e">$100.000</span>
+      </div>
+    </div>
+  </div>
+  <div class="card-s" style="padding:22px 30px;border-left:8px solid #2F8A57;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:22px;font-weight:700;color:#2F8A57">Alerta instantánea en Estación de Pase</div>
+      <div style="font-size:28px;font-weight:800;margin-top:4px">T4 · Abona $60.000 · Llevar $7.200 de vuelto</div>
+    </div>
+    ${ic('check', 38, '#2F8A57', 3)}
+  </div>
+  ${storyFootDark('Cero idas y vueltas con la caja · 0% comisión')}`) };
+
+const stMiniCard = (title, color, soft, icn, item, tag) => `
+  <div style="flex:1;background:#fff;border-radius:20px;overflow:hidden;color:#1c1917">
+    <div style="background:${soft};padding:16px 18px;display:flex;align-items:center;gap:10px;border-bottom:4px solid ${color}">${ic(icn, 28, color, 2.4)}<span style="font-size:25px;font-weight:800">${title}</span></div>
+    <div style="padding:18px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:23px;font-weight:800;line-height:1.2">${item}</div>
+      <span style="align-self:flex-start;font-size:19px;font-weight:700;padding:4px 12px;border-radius:999px;background:${soft};color:${color === '#D97706' ? '#b45309' : color}">${tag}</span>
+    </div>
+  </div>`;
+
+P.st5 = { w: 1080, h: 1920, out: 'stories/story_05_3_estaciones_sla.png', html: () => storyShell('dark',
+  `<span class="chip solid" style="font-size:24px;padding:10px 20px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span>`, `
+  <div>
+    <div class="kicker">${ic('route', 26)}Cero papelitos · Semáforo de demoras</div>
+    <h1 class="h1" style="font-size:68px;line-height:1.06;margin-top:22px">Cocina, Barra y<br>Sushi/Mostrador<br><span class="hl">en 0 segundos.</span></h1>
+  </div>
+  <div>
+    <div style="margin:0 auto;width:720px;background:#fff;border-radius:20px;padding:18px 26px;color:#1c1917;display:flex;align-items:center;justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:12px;font-size:25px;font-weight:800">${mark(32)}Mesa T6 · Pedido por QR 4G</span>
+      <span style="font-size:21px;font-weight:700;color:#57534e">Bife · 2 IPA · Roll x8</span>
+    </div>
+    <svg width="912" height="72" viewBox="0 0 912 72" style="display:block">
+      <path d="M456 0 C456 38 146 32 146 72" stroke="#D97706" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M456 0 L456 72" stroke="#8B5CF6" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <path d="M456 0 C456 38 766 32 766 72" stroke="#2F8A57" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <circle cx="456" cy="6" r="8" fill="#D9412B"/>
+    </svg>
+    <div style="display:flex;gap:18px">
+      ${stMiniCard('Cocina', '#D97706', '#fef1dc', 'cloche', '1x Ojo de bife', 'Jugoso · Sin TACC')}
+      ${stMiniCard('Barra', '#6D28D9', '#efeafe', 'glass', '2x Pintas IPA', 'Tirada bien fría')}
+      ${stMiniCard('Mostrador', '#2F8A57', '#e3f3ea', 'store', '1x Roll salmón', 'Sushi · Sin queso')}
+    </div>
+  </div>
+  <div class="card-d" style="padding:24px 28px;display:flex;flex-direction:column;gap:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:25px;font-weight:800">Semáforo SLA en vivo</span>
+      <span style="font-size:20px;font-weight:700;color:#D9412B;background:rgba(217,65,43,.16);padding:5px 14px;border-radius:999px">Agotados en 1 clic</span>
+    </div>
+    <div style="display:flex;gap:12px">
+      <div style="flex:1;background:rgba(47,138,87,.16);border:1px solid rgba(47,138,87,.4);border-radius:14px;padding:12px 14px;font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;border-radius:50%;background:#2F8A57;flex:none"></span>&lt; 8m En tiempo</div>
+      <div style="flex:1;background:rgba(217,119,6,.16);border:1px solid rgba(217,119,6,.4);border-radius:14px;padding:12px 14px;font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;border-radius:50%;background:#D97706;flex:none"></span>8-14m Atención</div>
+      <div style="flex:1;background:rgba(217,65,43,.16);border:1px solid rgba(217,65,43,.4);border-radius:14px;padding:12px 14px;font-size:21px;font-weight:700;display:flex;align-items:center;gap:10px"><span style="width:14px;height:14px;border-radius:50%;background:#D9412B;flex:none"></span>15+m Alerta</div>
+    </div>
+  </div>
+  ${storyFootOnDark('Ordená Cocina, Barra y Mostrador en 48 h')}`) };
+
+P.st6 = { w: 1080, h: 1920, out: 'stories/story_06_piloto_14_dias.png', html: () => storyShell('light',
+  `<span class="chip solid" style="font-size:24px;padding:10px 20px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span>`, `
+  <div>
+    <div class="kicker">${ic('shield', 26)}Piloto quirúrgico sin riesgo</div>
+    <h1 class="h1" style="font-size:76px;line-height:1.04;margin-top:24px">Probá <span class="acc">14 días</span> en<br>1 solo sector.</h1>
+    <p class="lead" style="font-size:30px;margin-top:18px">Vereda, patio o terraza. Tu salón principal sigue operando exactamente igual.</p>
+  </div>
+  <div class="card" style="padding:28px 32px;display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;gap:16px">
+      <div style="flex:1;background:#f3eee6;border:1.5px solid #e6dfd3;border-radius:18px;padding:20px;color:#8a837c">
+        <div style="font-size:23px;font-weight:800">Salón Interior</div>
+        <div style="font-size:20px;font-weight:600;margin-top:4px">Sigue igual</div>
+      </div>
+      <div style="flex:1.25;background:#e3f3ea;border:2.5px solid #2F8A57;border-radius:18px;padding:20px;color:#1c1917">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:24px;font-weight:800;color:#2F8A57">Terraza / Vereda</span>
+          ${ic('check', 26, '#2F8A57', 3)}
+        </div>
+        <div style="font-size:21px;font-weight:700;margin-top:4px">Piloto activo · QR con 4G</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:16px">
+      ${pilotStep('48 h', 'Listo con tu carta y QR fijos')}
+      ${pilotStep('2 findes', 'Medimos rondas y cobro')}
+      ${pilotStep('0%', 'Comisión y sin permanencia')}
+    </div>
+  </div>
+  <div class="ink-card" style="padding:36px 42px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="font-size:27px;font-weight:700;color:rgba(250,247,242,.78)">Pedí tu piloto hoy mismo</div>
+      <div style="font-size:42px;font-weight:800;letter-spacing:-0.01em;display:flex;align-items:center;gap:14px">${ic('chat', 38, '#D9412B')}WhatsApp ${PHONE}</div>
+      <div style="font-size:26px;font-weight:600;color:rgba(250,247,242,.74);display:flex;align-items:center;gap:12px">${ic('mail', 28, '#D9412B')}${MAIL}</div>
+    </div>
+    <div style="width:84px;height:84px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 42, '#fff', 3)}</div>
+  </div>`) };
 
 window.PIECES = P;

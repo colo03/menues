@@ -4,7 +4,7 @@ No requiere librerías externas ni conexión a internet (CDN), permitiendo
 generar e imprimir los QR fijos de cada mesa tanto en modo local como en la nube.
 """
 
-# Versiones 1 a 6 en nivel de corrección L: (total_data_codewords, ec_per_block, num_blocks, align_centers)
+# Versiones 1 a 10 en nivel de corrección L: (total_data_codewords, ec_per_block, num_blocks, align_centers)
 _VERSIONS_L = {
     1: (19, 7, 1, ()),
     2: (34, 10, 1, (6, 18)),
@@ -12,6 +12,10 @@ _VERSIONS_L = {
     4: (80, 20, 1, (6, 26)),
     5: (108, 26, 1, (6, 30)),
     6: (136, 18, 2, (6, 34)),
+    7: (156, 20, 2, (6, 22, 38)),
+    8: (194, 24, 2, (6, 24, 42)),
+    9: (232, 30, 2, (6, 26, 46)),
+    10: (274, 18, 4, (6, 28, 50)),
 }
 
 # Tablas log/exp para GF(256) con polinomio primitivo 0x11D
@@ -65,6 +69,14 @@ def _format_bits(ecl_bits: int, mask_id: int) -> int:
         if (rem >> i) & 1:
             rem ^= 0x537 << (i - 10)
     return ((data << 10) | rem) ^ 0x5412
+
+
+def _version_bits(version: int) -> int:
+    rem = version << 12
+    for i in range(17, 11, -1):
+        if (rem >> i) & 1:
+            rem ^= 0x1F25 << (i - 12)
+    return (version << 12) | rem
 
 
 def _mask_fn(mask_id: int, r: int, c: int) -> bool:
@@ -122,17 +134,19 @@ def build_qr_matrix(text: str) -> list[list[int]]:
     raw = text.encode('utf-8')
     version = None
     for v, (cap, _, _, _) in _VERSIONS_L.items():
-        if len(raw) + 2 <= cap:
+        overhead = 3 if v >= 10 else 2
+        if len(raw) + overhead <= cap:
             version = v
             break
     if version is None:
-        raise ValueError('Texto demasiado largo para generar QR (máx. 134 bytes)')
+        raise ValueError('Texto demasiado largo para generar QR (máx. 271 bytes)')
 
     data_cap, ec_len, num_blocks, align_pos = _VERSIONS_L[version]
 
-    # Armar flujo de bits: Modo Byte (0100) + longitud (8 bits) + bytes + terminador
+    # Armar flujo de bits: Modo Byte (0100) + longitud (8 bits en V1-9, 16 bits en V10+) + bytes + terminador
+    count_bits = 16 if version >= 10 else 8
     bits: list[int] = [0, 1, 0, 0]
-    for i in range(7, -1, -1):
+    for i in range(count_bits - 1, -1, -1):
         bits.append((len(raw) >> i) & 1)
     for b in raw:
         for i in range(7, -1, -1):
@@ -156,15 +170,24 @@ def build_qr_matrix(text: str) -> list[list[int]]:
         codewords.append(pads[idx % 2])
         idx += 1
 
-    # Dividir en bloques Reed-Solomon e intercalar
-    block_size = data_cap // num_blocks
-    data_blocks = [codewords[i * block_size:(i + 1) * block_size] for i in range(num_blocks)]
+    # Dividir en bloques Reed-Solomon (soporta 1 o 2 tamaños de bloque según ISO/IEC 18004) e intercalar
+    short_len = data_cap // num_blocks
+    num_long = data_cap % num_blocks
+    num_short = num_blocks - num_long
+    data_blocks: list[list[int]] = []
+    offset = 0
+    for b in range(num_blocks):
+        blk_len = short_len + (1 if b >= num_short else 0)
+        data_blocks.append(codewords[offset:offset + blk_len])
+        offset += blk_len
     ec_blocks = [_rs_encode(blk, ec_len) for blk in data_blocks]
 
     final_bytes: list[int] = []
-    for col in range(block_size):
+    for col in range(short_len):
         for b in range(num_blocks):
             final_bytes.append(data_blocks[b][col])
+    for b in range(num_short, num_blocks):
+        final_bytes.append(data_blocks[b][short_len])
     for col in range(ec_len):
         for b in range(num_blocks):
             final_bytes.append(ec_blocks[b][col])
@@ -224,6 +247,15 @@ def build_qr_matrix(text: str) -> list[list[int]]:
     for i in range(7):
         if not reserved[n - 1 - i][8]:
             set_fn(n - 1 - i, 8, 0)
+
+    # Bloques de información de versión (6x3) obligatorios a partir de Versión 7
+    if version >= 7:
+        vbits = _version_bits(version)
+        for i in range(18):
+            vbit = (vbits >> i) & 1
+            va, vb = i // 3, i % 3
+            set_fn(n - 11 + vb, va, vbit)
+            set_fn(va, n - 11 + vb, vbit)
 
     # Ubicar bits de datos en zig-zag de derecha a izquierda
     bit_idx = 0

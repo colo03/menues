@@ -28,6 +28,9 @@
   --kitchen: #d97706;
   --kitchen-soft: #fef1dc;
 
+  --counter: #0f766e;
+  --counter-soft: #dff6f3;
+
   --warn: #d97706;
   --warn-soft: #fef1dc;
   --info: #2563eb;
@@ -110,6 +113,7 @@ p { margin: 0; }
 .chip.cancelado { background: var(--surface-2); color: var(--ink-3); text-decoration: line-through; }
 .chip.barra { background: var(--bar-soft); color: var(--bar); }
 .chip.est-cocina { background: var(--kitchen-soft); color: var(--kitchen); }
+.chip.est-mostrador { background: var(--counter-soft); color: var(--counter); }
 
 .waiter-pill {
   display: inline-flex; align-items: center; gap: 6px;

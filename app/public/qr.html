@@ -5,8 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SaleListo · Estudio de Impresión QR</title>
   <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <style>
+    .qr-pin-gate {
+      min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--dark-bg);
+    }
+    .qr-pin-box {
+      background: var(--surface); color: var(--ink); width: min(400px, 100%);
+      padding: 30px 26px; border-radius: var(--radius-card); border: 1px solid var(--line);
+      box-shadow: var(--shadow-float); text-align: center;
+    }
+    .qr-pin-box h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .qr-pin-box p { font-size: 14px; color: var(--ink-2); margin-bottom: 14px; }
     .wrap { max-width: 1180px; margin: 0 auto; padding: 28px 18px 64px; }
 
     /* Cabecera del estudio */
@@ -302,7 +314,17 @@
   </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="qr-pin-gate no-print" id="qrPinGate" hidden>
+    <form class="qr-pin-box" id="qrPinForm">
+      <img src="logo.svg" alt="SaleListo" style="height:38px;display:block;margin:0 auto 16px">
+      <h2>Estudio de Impresión QR</h2>
+      <p>Modo producción activo. Ingresá el PIN del local para ver e imprimir los tokens QR fijos de tus mesas.</p>
+      <input class="input" type="password" id="qrPinInput" inputmode="numeric" placeholder="PIN del local" required autocomplete="off" style="text-align:center;font-size:20px;font-weight:800;letter-spacing:0.2em;margin-bottom:12px">
+      <button class="btn btn-primary" type="submit" style="width:100%">Abrir Estudio QR</button>
+    </form>
+  </div>
+
+  <div class="wrap" id="qrApp">
     <header class="top-head no-print">
       <div class="top-brand">
         <span class="eyebrow">🖨️ Kit Físico · Acrílicos UV y Stickers</span>
@@ -432,8 +454,82 @@
           + `</svg>`;
       }
 
-      const data = await fetch('api/qrs').then((r) => r.json());
       const $ = (sel) => document.querySelector(sel);
+      const qrPinGate = $('#qrPinGate');
+      const qrPinForm = $('#qrPinForm');
+      const qrPinInput = $('#qrPinInput');
+      const qrApp = $('#qrApp');
+
+      let qrToken = sessionStorage.getItem('salelisto:adminToken')
+        || sessionStorage.getItem('salelisto:kdsToken')
+        || sessionStorage.getItem('salelisto:waiterToken')
+        || '';
+
+      function fetchQrs(tok) {
+        const headers = tok ? { 'X-Auth-Token': tok } : {};
+        return fetch('api/qrs', { headers });
+      }
+
+      async function loadQrsData() {
+        let res = await fetchQrs(qrToken);
+        if (res.status === 401 && qrToken) {
+          qrToken = '';
+          res = await fetchQrs('');
+        }
+        if (res.status === 401) {
+          qrApp.hidden = true;
+          qrPinGate.hidden = false;
+          setTimeout(() => qrPinInput?.focus(), 40);
+          return new Promise((resolve) => {
+            qrPinForm.onsubmit = async (ev) => {
+              ev.preventDefault();
+              const pin = qrPinInput.value.trim();
+              if (!pin) return;
+              try {
+                let authRes = await fetch('api/auth/admin', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ pin }),
+                });
+                let authBody = await authRes.json().catch(() => ({}));
+                if (!authRes.ok || !authBody.token) {
+                  authRes = await fetch('api/auth/kitchen', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pin }),
+                  });
+                  authBody = await authRes.json().catch(() => ({}));
+                }
+                if (!authRes.ok || !authBody.token) {
+                  throw new Error(authBody.error || 'PIN incorrecto');
+                }
+                qrToken = authBody.token;
+                if (authBody.role === 'admin') {
+                  sessionStorage.setItem('salelisto:adminToken', qrToken);
+                } else {
+                  sessionStorage.setItem('salelisto:kdsToken', qrToken);
+                }
+                const retry = await fetchQrs(qrToken);
+                if (!retry.ok) throw new Error('No se pudieron cargar los códigos QR');
+                const payload = await retry.json();
+                qrPinGate.hidden = true;
+                qrApp.hidden = false;
+                resolve(payload);
+              } catch (err) {
+                toast(err.message || 'PIN incorrecto');
+                qrPinInput.select();
+              }
+            };
+          });
+        }
+        if (!res.ok) {
+          toast('No se pudieron obtener los códigos QR del servidor.');
+          throw new Error('Error al cargar QRs');
+        }
+        return res.json();
+      }
+
+      const data = await loadQrsData();
 
       // Estado interactivo del estudio
       let fmt = 'tent';           // 'tent' | 'sticker' | 'compact'

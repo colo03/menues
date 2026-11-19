@@ -8,11 +8,16 @@ venv/
 env/
 *.egg-info/
 
-# SaleListo runtime data (SQLite & uploaded dish photos)
+# SaleListo runtime data (SQLite, secrets & uploaded dish photos)
 app/data/*.db*
 app/data/uploads/*
 app/data/vapid_keys.json
+app/data/server_secret.key
 !app/data/.gitkeep
+
+# Local bridge & render scratch artifacts
+omni_bridge.py
+renders_omni/
 
 # Node.js
 node_modules/

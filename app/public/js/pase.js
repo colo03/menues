@@ -1,5 +1,6 @@
 (async () => {
   const $ = (sel) => document.querySelector(sel);
+  const urlParams = new URLSearchParams(location.search);
 
   const PAY_ICONS = {
     Tarjeta: '💳',
@@ -10,8 +11,9 @@
 
   let state = null;
   let theme = localStorage.getItem('salelisto:paseTheme') === 'light' ? 'light' : 'dark';
-  let soundMuted = localStorage.getItem('salelisto:paseMuted') === '1';
-  let audioReady = false;
+  let sectorParamRaw = (urlParams.get('bloque') || '').trim();
+  let sectorFilter = 'all';
+  let expandIdleCols = false;
 
   let knownReadyIds = new Set();
   let knownPendingCalls = new Set();
@@ -24,6 +26,9 @@
   let orderCatId = 'all';
   let orderSearch = '';
   let counterCart = []; // [{ key, itemId, qty, note }]
+
+  // Activar Screen Wake Lock con reintento en visibilitychange
+  enableScreenWakeLock();
 
   // ---------- Tema Oscuro / Claro en 1 clic ----------
   function applyTheme(nextTheme) {
@@ -74,40 +79,23 @@
     }
   };
 
-  // ---------- Sonido (unlockAudio + ding de ui.js) ----------
-  function syncAudioBtn() {
+  // ---------- Sonido (estado global compartido de ui.js) ----------
+  onAudioState((active, detail) => {
     const btn = $('#pAudioBtn');
     if (!btn) return;
-    const active = audioReady && !soundMuted;
     btn.className = `audio-pill ${active ? 'on' : 'off'}`;
     if (active) {
       btn.textContent = '🔔 Activo';
-    } else if (soundMuted && audioReady) {
+    } else if (detail && detail.muted) {
       btn.textContent = '🔇 Silenciado';
     } else {
       btn.textContent = '🔇 Activar sonido';
     }
-  }
-
-  onAudioState((unlocked) => {
-    audioReady = unlocked;
-    syncAudioBtn();
   });
 
-  $('#pAudioBtn').onclick = () => {
-    if (!audioReady || soundMuted) {
-      soundMuted = false;
-      localStorage.removeItem('salelisto:paseMuted');
-      unlockAudio();
-      ding(1, false);
-      syncAudioBtn();
-      toast('🔔 Sonido de retiros y llamados activo');
-    } else {
-      soundMuted = true;
-      localStorage.setItem('salelisto:paseMuted', '1');
-      syncAudioBtn();
-      toast('🔇 Campana silenciada en esta pantalla');
-    }
+  $('#pAudioBtn').onclick = async () => {
+    const nowMuted = await toggleSoundMute();
+    toast(nowMuted ? '🔇 Campana silenciada en esta pantalla' : '🔔 Sonido de retiros y llamados activo');
   };
 
   // ---------- Wrapper API hacia POST api/action ----------
@@ -116,7 +104,7 @@
   }
 
   // ---------- Autenticación igual a cocina.html ----------
-  let token = sessionStorage.getItem('salelisto:kdsToken') || '';
+  let token = sessionStorage.getItem('salelisto:kdsToken') || sessionStorage.getItem('salelisto:adminToken') || '';
   if (token) setAuthToken(token);
 
   function askPinViaGate() {
@@ -170,39 +158,103 @@
   }
 
   let conn;
-  try {
-    conn = await connectStream({ scope: 'staff' }, connectionBanner);
-  } catch (_) {
-    sessionStorage.removeItem('salelisto:kdsToken');
-    setAuthToken('');
-    await ensureKitchenAuth();
-    conn = await connectStream({ scope: 'staff' }, connectionBanner);
+  async function openStaffStream() {
+    try {
+      conn = await connectStream({ scope: 'staff' }, connectionBanner);
+    } catch (_) {
+      sessionStorage.removeItem('salelisto:kdsToken');
+      setAuthToken('');
+      await ensureKitchenAuth();
+      conn = await connectStream({ scope: 'staff' }, connectionBanner);
+    }
+    return conn;
   }
 
+  await openStaffStream();
   state = conn.state;
 
+  window.addEventListener('salelisto:auth-expired', async () => {
+    toast('🔒 La sesión del local expiró o cambió el PIN. Ingresá nuevamente.');
+    sessionStorage.removeItem('salelisto:kdsToken');
+    setAuthToken('');
+    await askPinViaGate();
+    await openStaffStream();
+    state = conn.state;
+    seedKnownAlerts(state);
+    renderBoard();
+  });
+
+  // Resolver ?bloque= inicial (por ID o por nombre normalizado)
+  function resolveInitialSector(s) {
+    const blocks = s?.blocks || [];
+    if (!blocks.length) return 'all';
+    if (sectorParamRaw) {
+      const normParam = normalizeSearch(sectorParamRaw);
+      const match = blocks.find((b) => b.id === sectorParamRaw || normalizeSearch(b.name) === normParam);
+      if (match) return match.id;
+    }
+    const saved = localStorage.getItem('salelisto:paseBlock') || 'all';
+    if (saved !== 'all' && blocks.some((b) => b.id === saved)) return saved;
+    return 'all';
+  }
+  sectorFilter = resolveInitialSector(state);
+
+  function setSectorFilter(nextBlockId) {
+    sectorFilter = nextBlockId || 'all';
+    try {
+      if (sectorFilter === 'all') localStorage.removeItem('salelisto:paseBlock');
+      else localStorage.setItem('salelisto:paseBlock', sectorFilter);
+      const u = new URL(location.href);
+      if (sectorFilter === 'all') u.searchParams.delete('bloque');
+      else u.searchParams.set('bloque', sectorFilter);
+      history.replaceState(null, '', `${u.pathname}${u.search}${u.hash}`);
+    } catch (_) {}
+    renderBoard();
+  }
+
   // ---------- Helpers de asignación y cálculo ----------
-  function getReadyOrders(s) {
+  function matchesSector(blockId, tableId, tableMap) {
+    if (sectorFilter === 'all') return true;
+    const bid = blockId || tableMap.get(tableId)?.blockId || '';
+    return bid === sectorFilter;
+  }
+
+  function getReadyOrders(s, filterBySector = false, tableMap = null) {
+    const tMap = tableMap || new Map((s.tables || []).map((t) => [t.id, t]));
     return (s.orders || [])
-      .filter((o) => o.isOpenSession && o.status === 'listo')
+      .filter((o) => o.isOpenSession && o.status === 'listo' && (!filterBySector || matchesSector(o.blockId, o.tableId, tMap)))
       .slice()
       .sort((a, b) => (a.updatedAt || a.createdAt) - (b.updatedAt || b.createdAt));
   }
 
-  function getPendingCalls(s, callType) {
+  // Incluye tanto 'pendiente' como 'en_camino' para mantener tarjetas compactas visibles en columna
+  function getActiveCalls(s, callType, filterBySector = false, tableMap = null) {
+    const tMap = tableMap || new Map((s.tables || []).map((t) => [t.id, t]));
     return (s.calls || [])
-      .filter((c) => c.status === 'pendiente' && (!callType || c.type === callType))
+      .filter((c) => c.status !== 'atendida'
+        && (!callType || c.type === callType)
+        && (!filterBySector || matchesSector(c.blockId, c.tableId, tMap)))
       .slice()
-      .sort((a, b) => a.createdAt - b.createdAt);
+      .sort((a, b) => {
+        // Las pendientes primero, las en_camino debajo
+        if ((a.status === 'pendiente') !== (b.status === 'pendiente')) {
+          return a.status === 'pendiente' ? -1 : 1;
+        }
+        return a.createdAt - b.createdAt;
+      });
+  }
+
+  function getPendingOnlyCalls(s) {
+    return (s.calls || []).filter((c) => c.status === 'pendiente');
   }
 
   function callSignature(c) {
-    return `${c.id}:${c.type}:${c.status}:${c.payment || ''}:${c.tip ?? ''}:${c.reason || ''}`;
+    return `${c.id}:${c.type}:${c.payment || ''}:${c.tip ?? ''}:${c.cashAmount ?? 0}:${c.splitWays ?? 1}:${c.reason || ''}`;
   }
 
   function seedKnownAlerts(s) {
     knownReadyIds = new Set(getReadyOrders(s).map((o) => o.id));
-    knownPendingCalls = new Set(getPendingCalls(s).map(callSignature));
+    knownPendingCalls = new Set(getPendingOnlyCalls(s).map(callSignature));
   }
 
   function resolveColumnWaiterId(entity, s, activeWaiterIds, tableMap, blockMap) {
@@ -234,12 +286,12 @@
     const tipPct = Number(call.tip ?? 0);
     const tipAmount = Math.round((sub * tipPct) / 100);
     const total = sub + tipAmount;
-    return { sub, tipPct, tipAmount, total };
+    const cashAmount = Math.max(0, Math.round(Number(call.cashAmount) || 0));
+    const splitWays = Math.max(1, Math.round(Number(call.splitWays) || 1));
+    return { sub, tipPct, tipAmount, total, cashAmount, splitWays };
   }
 
   // ---------- Semáforo SLA de demora ----------
-  // Comandas: verde < 8 min, ámbar 8 a 14 min, coral >= 15 min desde que la mesa pidió.
-  // Llamados y cuentas: umbral más corto (la mesa está esperando a una persona, no a un plato).
   const SLA_ORDER = { warn: 8, late: 15 };
   const SLA_CALL = { warn: 3, late: 6 };
 
@@ -257,27 +309,99 @@
 
   function countLate(readyOrders, bills, calls) {
     return readyOrders.filter((o) => slaInfo(o.createdAt).level === 'late').length
-      + bills.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length
-      + calls.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length;
+      + bills.filter((c) => c.status === 'pendiente' && slaInfo(c.createdAt, SLA_CALL).level === 'late').length
+      + calls.filter((c) => c.status === 'pendiente' && slaInfo(c.createdAt, SLA_CALL).level === 'late').length;
+  }
+
+  function updateHeaderSummary() {
+    if (!state) return;
+    const tableMap = new Map((state.tables || []).map((t) => [t.id, t]));
+    const activeWaiters = (state.waiters || []).filter((w) => w.available);
+    const readyOrders = getReadyOrders(state, true, tableMap);
+    const activeBills = getActiveCalls(state, 'cuenta', true, tableMap);
+    const activeCalls = getActiveCalls(state, 'mozo', true, tableMap);
+    const inPrepCount = (state.orders || []).filter(
+      (o) => o.isOpenSession && (o.status === 'nuevo' || o.status === 'cocina') && matchesSector(o.blockId, o.tableId, tableMap)
+    ).length;
+
+    const totalUrgent = readyOrders.length + activeBills.length + activeCalls.length;
+    const secName = sectorFilter !== 'all'
+      ? (state.blocks || []).find((b) => b.id === sectorFilter)?.name
+      : '';
+    const summaryParts = [];
+    if (secName) summaryParts.push(`Sector: ${secName}`);
+    summaryParts.push(`${activeWaiters.length} mozo${activeWaiters.length === 1 ? '' : 's'} en turno`);
+    summaryParts.push(
+      totalUrgent > 0
+        ? `${readyOrders.length} retiro${readyOrders.length === 1 ? '' : 's'} listo${readyOrders.length === 1 ? '' : 's'} · ${activeBills.length + activeCalls.length} solicitud${activeBills.length + activeCalls.length === 1 ? '' : 'es'}`
+        : 'Salón al día'
+    );
+    if (inPrepCount > 0) summaryParts.push(`${inPrepCount} en preparación`);
+    const lateCount = countLate(readyOrders, activeBills, activeCalls);
+    if (lateCount > 0) summaryParts.push(`🔴 ${lateCount} demorado${lateCount === 1 ? '' : 's'}`);
+    const sumEl = $('#pSummary');
+    if (sumEl) {
+      sumEl.textContent = summaryParts.join(' · ');
+      sumEl.classList.toggle('has-late', lateCount > 0);
+    }
+  }
+
+  // Refresco in-place cada 15 s: actualiza solo textos/clases de minutos sin destruir nodos DOM ni cortar toques
+  function tickSla() {
+    if (!state) return;
+    document.querySelectorAll('.p-card[data-sla-ts]').forEach((card) => {
+      const ts = Number(card.dataset.slaTs || 0);
+      if (!ts) return;
+      const kind = card.dataset.slaKind;
+      const isInFlight = card.dataset.slaInflight === '1';
+      if (!isInFlight) {
+        const th = kind === 'call' ? SLA_CALL : SLA_ORDER;
+        const sla = slaInfo(ts, th);
+        card.classList.remove('sla-card-ok', 'sla-card-warn', 'sla-card-late');
+        card.classList.add(`sla-card-${sla.level}`);
+        const waitEl = card.querySelector('.p-wait');
+        if (waitEl) {
+          waitEl.className = `p-wait sla-${sla.level}`;
+          waitEl.textContent = sla.text;
+        }
+      }
+      const readyTs = Number(card.dataset.readyTs || 0);
+      if (readyTs) {
+        const readyEl = card.querySelector('.p-ready-ago');
+        if (readyEl) {
+          const mins = Math.max(0, Math.floor((Date.now() - readyTs) / 60000));
+          readyEl.textContent = mins >= 1 ? ` · listo hace ${mins} min` : ' · recién listo';
+        }
+      }
+    });
+    updateHeaderSummary();
   }
 
   // ---------- Renderizado de tarjetas ----------
   function renderReadyCard(o) {
-    const isBarra = o.station === 'barra';
-    const cardCls = isBarra ? 'card-barra' : 'card-cocina';
-    const pillLabel = isBarra ? '🍸 RETIRAR EN BARRA' : '🍳 RETIRAR EN COCINA';
+    const cardCls = o.station === 'barra'
+      ? 'card-barra'
+      : o.station === 'mostrador'
+      ? 'card-mostrador'
+      : 'card-cocina';
+    const pillLabel = o.station === 'barra'
+      ? '🍸 RETIRAR EN BARRA'
+      : o.station === 'mostrador'
+      ? '🍣 RETIRAR EN MOSTRADOR'
+      : '🍳 RETIRAR EN COCINA';
     const freshCls = freshCardIds.has(o.id) ? 'fresh' : '';
     const sla = slaInfo(o.createdAt);
-    const readyMins = Math.max(0, Math.floor((Date.now() - (o.updatedAt || o.createdAt)) / 60000));
+    const updatedTs = o.updatedAt || o.createdAt;
+    const readyMins = Math.max(0, Math.floor((Date.now() - updatedTs) / 60000));
 
-    return `<article class="p-card ${cardCls} ${freshCls} sla-card-${sla.level}">
+    return `<article class="p-card ${cardCls} ${freshCls} sla-card-${sla.level}" data-sla-ts="${o.createdAt}" data-ready-ts="${updatedTs}" data-sla-kind="order">
       <div class="p-card-top">
         <span class="p-kind-pill">${pillLabel}</span>
         ${formatWaitBadge(o.createdAt)}
       </div>
       <div class="p-mesa-row">
         <div class="p-mesa-code">MESA ${escapeHtml(o.tableCode)}</div>
-        <div class="p-mesa-block">${escapeHtml(o.blockName || '')}${readyMins >= 1 ? ` · listo hace ${readyMins} min` : ' · recién listo'}</div>
+        <div class="p-mesa-block">${escapeHtml(o.blockName || '')}<span class="p-ready-ago">${readyMins >= 1 ? ` · listo hace ${readyMins} min` : ' · recién listo'}</span></div>
       </div>
       <div class="p-items">
         ${(o.items || []).map((i) => `
@@ -296,12 +420,55 @@
     </article>`;
   }
 
+  function renderCashChangeHtml(payment, cashAmount, total) {
+    if (payment !== 'Efectivo' || cashAmount <= 0) return '';
+    if (cashAmount > total) {
+      const change = cashAmount - total;
+      return `<div class="p-change-box">💵 Abona con ${money(cashAmount)} -&gt; <strong>Llevar ${money(change)} de vuelto</strong></div>`;
+    }
+    if (cashAmount === total && total > 0) {
+      return `<div class="p-change-box is-exact">💵 Abona con importe justo (${money(total)})</div>`;
+    }
+    return '';
+  }
+
   function renderBillCard(c, s, tableMap) {
-    const { sub, tipPct, tipAmount, total } = calcExactBill(c, s, tableMap);
+    const { sub, tipPct, tipAmount, total, cashAmount, splitWays } = calcExactBill(c, s, tableMap);
     const payIcon = PAY_ICONS[c.payment] || '💳';
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
+    const inFlight = c.status === 'en_camino';
+    const splitHtml = splitWays > 1
+      ? `<span class="p-split-tag">÷ ${splitWays} pers. (${money(Math.ceil(total / splitWays))} c/u)</span>`
+      : '';
+    const changeHtml = renderCashChangeHtml(c.payment || 'Tarjeta', cashAmount, total);
 
-    return `<article class="p-card card-cuenta ${freshCls} sla-card-${slaInfo(c.createdAt, SLA_CALL).level}">
+    if (inFlight) {
+      return `<article class="p-card card-cuenta is-compact" data-sla-ts="${c.createdAt}" data-sla-kind="call" data-sla-inflight="1">
+        <div class="p-card-top">
+          <span class="p-kind-pill">💳 Llevando cobro</span>
+          <span class="p-mesa-block">${escapeHtml(c.blockName || '')}</span>
+        </div>
+        <div class="p-mesa-row">
+          <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
+          <strong class="p-bill-total" style="font-size:26px">${money(total)}</strong>
+        </div>
+        <div class="p-bill-box">
+          <div class="p-bill-tags">
+            <span class="p-pay-tag">${payIcon} ${escapeHtml(c.payment || 'Tarjeta')}</span>
+            <span class="p-tip-tag">${tipPct > 0 ? `Propina ${tipPct}%` : 'Sin propina (0%)'}</span>
+            ${splitHtml}
+          </div>
+          ${tipPct > 0 ? `<div class="p-bill-sub">Consumo ${money(sub)} + Propina ${money(tipAmount)}</div>` : ''}
+          ${changeHtml}
+        </div>
+        <button class="p-act-btn" type="button" data-act="close-bill" data-tid="${escapeHtml(c.tableId)}" data-pay="${escapeHtml(c.payment || 'Tarjeta')}" data-tip="${tipPct}">
+          ✔ Cobrada y cerrar
+        </button>
+      </article>`;
+    }
+
+    const sla = slaInfo(c.createdAt, SLA_CALL);
+    return `<article class="p-card card-cuenta ${freshCls} sla-card-${sla.level}" data-sla-ts="${c.createdAt}" data-sla-kind="call">
       <div class="p-card-top">
         <span class="p-kind-pill">💳 CUENTA PEDIDA</span>
         ${formatWaitBadge(c.createdAt, SLA_CALL)}
@@ -314,14 +481,16 @@
         <div class="p-bill-tags">
           <span class="p-pay-tag">${payIcon} ${escapeHtml(c.payment || 'Tarjeta')}</span>
           <span class="p-tip-tag">${tipPct > 0 ? `Propina ${tipPct}%` : 'Sin propina (0%)'}</span>
+          ${splitHtml}
         </div>
         <div class="p-bill-total-row">
           <span class="p-bill-total-lbl">Total a cobrar</span>
           <strong class="p-bill-total">${money(total)}</strong>
         </div>
         ${tipPct > 0 ? `<div class="p-bill-sub">Consumo ${money(sub)} + Propina ${money(tipAmount)}</div>` : ''}
+        ${changeHtml}
       </div>
-      <button class="p-act-btn" type="button" data-act="attend-bill" data-cid="${escapeHtml(c.id)}">
+      <button class="p-act-btn" type="button" data-act="onway-bill" data-cid="${escapeHtml(c.id)}">
         ✔ Llevando cobro
       </button>
     </article>`;
@@ -329,7 +498,24 @@
 
   function renderMozoCallCard(c) {
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
-    return `<article class="p-card card-llama ${freshCls} sla-card-${slaInfo(c.createdAt, SLA_CALL).level}">
+    if (c.status === 'en_camino') {
+      return `<article class="p-card card-llama is-compact" data-sla-ts="${c.createdAt}" data-sla-kind="call" data-sla-inflight="1">
+        <div class="p-card-top">
+          <span class="p-kind-pill">🏃 En camino</span>
+          <span class="p-mesa-block">${escapeHtml(c.blockName || '')}</span>
+        </div>
+        <div class="p-mesa-row">
+          <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
+          <span style="font-size:15px;font-weight:800;color:var(--p-card-muted)">${escapeHtml(c.reason || 'Consulta en mesa')}</span>
+        </div>
+        <button class="p-act-btn" type="button" data-act="attend-call" data-cid="${escapeHtml(c.id)}">
+          ✔ Atendido
+        </button>
+      </article>`;
+    }
+
+    const sla = slaInfo(c.createdAt, SLA_CALL);
+    return `<article class="p-card card-llama ${freshCls} sla-card-${sla.level}" data-sla-ts="${c.createdAt}" data-sla-kind="call">
       <div class="p-card-top">
         <span class="p-kind-pill">🙋 MESA LLAMA</span>
         ${formatWaitBadge(c.createdAt, SLA_CALL)}
@@ -341,13 +527,13 @@
       <div class="p-reason-box">
         ${escapeHtml(c.reason || 'Consulta en mesa')}
       </div>
-      <button class="p-act-btn" type="button" data-act="attend-call" data-cid="${escapeHtml(c.id)}">
+      <button class="p-act-btn" type="button" data-act="onway-call" data-cid="${escapeHtml(c.id)}">
         ✔ Voy
       </button>
     </article>`;
   }
 
-  function renderWaiterColumn(col) {
+  function renderWaiterColumn(col, tableMap) {
     const { id, name, color, isOrphan, sectorNames, openTables, ready, bills, calls, inFlightBillTableIds } = col;
     const urgentCount = ready.length + bills.length + calls.length;
 
@@ -360,7 +546,7 @@
     }
 
     const cardsHtml = urgentCount > 0
-      ? `${ready.map(renderReadyCard).join('')}${bills.map((c) => renderBillCard(c, state, new Map(state.tables.map((t) => [t.id, t])))).join('')}${calls.map(renderMozoCallCard).join('')}`
+      ? `${ready.map(renderReadyCard).join('')}${bills.map((c) => renderBillCard(c, state, tableMap)).join('')}${calls.map(renderMozoCallCard).join('')}`
       : `<div class="p-all-clear">
           <span class="p-clear-ico">✔</span>
           <h3>Todo al día</h3>
@@ -407,54 +593,103 @@
     </section>`;
   }
 
+  function renderSectorBar(blocks, tableMap) {
+    const bar = $('#pSectorBar');
+    if (!bar) return;
+    if (!blocks || blocks.length <= 1) {
+      bar.hidden = true;
+      return;
+    }
+    if (sectorFilter !== 'all' && !blocks.some((b) => b.id === sectorFilter)) {
+      sectorFilter = 'all';
+    }
+
+    const allReady = getReadyOrders(state, false, tableMap);
+    const allCalls = getActiveCalls(state, null, false, tableMap);
+    const countForBlock = (bid) => {
+      const r = allReady.filter((o) => (o.blockId || tableMap.get(o.tableId)?.blockId) === bid).length;
+      const c = allCalls.filter((x) => (x.blockId || tableMap.get(x.tableId)?.blockId) === bid).length;
+      return r + c;
+    };
+    const totalPending = allReady.length + allCalls.length;
+
+    bar.hidden = false;
+    bar.innerHTML = `<span class="p-sec-lbl">Sector:</span>`
+      + `<button type="button" class="p-sec-pill ${sectorFilter === 'all' ? 'active' : ''}" data-sec="all">
+          Todos los sectores${totalPending ? `<span class="p-sec-count">${totalPending}</span>` : ''}
+        </button>`
+      + blocks.map((b) => {
+        const cnt = countForBlock(b.id);
+        return `<button type="button" class="p-sec-pill ${sectorFilter === b.id ? 'active' : ''}" data-sec="${escapeHtml(b.id)}">
+          <span>${b.icon || ''} ${escapeHtml(b.name)}</span>
+          ${cnt ? `<span class="p-sec-count">${cnt}</span>` : ''}
+        </button>`;
+      }).join('');
+  }
+
+  function renderIdleStrip(idleCols, totalColsCount) {
+    const strip = $('#pIdleStrip');
+    if (!strip) return;
+    if (!idleCols.length) {
+      strip.hidden = true;
+      strip.innerHTML = '';
+      return;
+    }
+    strip.hidden = false;
+    strip.innerHTML = `
+      <span class="p-idle-title">✔ Todo al día (${idleCols.length}/${totalColsCount}):</span>
+      ${idleCols.map((col) => `
+        <div class="p-idle-card" style="--w-color:${escapeHtml(col.color)}">
+          <span class="p-idle-who"><span class="p-idle-dot"></span>${escapeHtml(col.name)}</span>
+          <span class="p-idle-ok">✔ Todo al día</span>
+          ${col.openTables.map((t) => `
+            <button class="p-tbl-chip ${col.inFlightBillTableIds.has(t.id) ? 'cobrando' : ''}" type="button" data-open-tbl="${escapeHtml(t.id)}" data-wid="${escapeHtml(col.id)}">
+              <span>Mesa ${escapeHtml(t.code)}</span>
+              <small>${money(t.subtotal)}</small>
+            </button>
+          `).join('')}
+        </div>
+      `).join('')}
+      <button type="button" class="p-ctrl-btn p-idle-toggle" id="pToggleIdleBtn">
+        ${expandIdleCols ? 'Compactar columnas al día' : 'Ver todas las columnas'}
+      </button>
+    `;
+  }
+
   function renderBoard() {
     if (!state) return;
 
     $('#pRestName').textContent = state.restaurant?.name || 'SaleListo';
 
-    const activeWaiters = (state.waiters || []).filter((w) => w.available);
-    const activeWaiterIds = new Set(activeWaiters.map((w) => w.id));
     const tableMap = new Map((state.tables || []).map((t) => [t.id, t]));
     const blockMap = new Map((state.blocks || []).map((b) => [b.id, b]));
+    renderSectorBar(state.blocks || [], tableMap);
+    updateHeaderSummary();
 
-    const readyOrders = getReadyOrders(state);
-    const pendingBills = getPendingCalls(state, 'cuenta');
-    const pendingCalls = getPendingCalls(state, 'mozo');
-    const inPrepCount = (state.orders || []).filter((o) => o.isOpenSession && (o.status === 'nuevo' || o.status === 'cocina')).length;
+    const allActiveWaiters = (state.waiters || []).filter((w) => w.available);
+    const activeWaiterIds = new Set(allActiveWaiters.map((w) => w.id));
+
+    const readyOrders = getReadyOrders(state, true, tableMap);
+    const activeBills = getActiveCalls(state, 'cuenta', true, tableMap);
+    const activeCalls = getActiveCalls(state, 'mozo', true, tableMap);
 
     const inFlightBillTableIds = new Set(
-      (state.calls || [])
-        .filter((c) => c.type === 'cuenta' && c.status === 'en_camino')
-        .map((c) => c.tableId)
+      activeBills.filter((c) => c.status === 'en_camino').map((c) => c.tableId)
     );
 
-    const totalUrgent = readyOrders.length + pendingBills.length + pendingCalls.length;
-    const summaryParts = [
-      `${activeWaiters.length} mozo${activeWaiters.length === 1 ? '' : 's'} en turno`,
-      totalUrgent > 0
-        ? `${readyOrders.length} retiro${readyOrders.length === 1 ? '' : 's'} listo${readyOrders.length === 1 ? '' : 's'} · ${pendingBills.length + pendingCalls.length} llamado${pendingBills.length + pendingCalls.length === 1 ? '' : 's'}`
-        : 'Salón al día',
-    ];
-    if (inPrepCount > 0) {
-      summaryParts.push(`${inPrepCount} en preparación`);
-    }
-    const lateCount = countLate(readyOrders, pendingBills, pendingCalls);
-    if (lateCount > 0) {
-      summaryParts.push(`🔴 ${lateCount} demorado${lateCount === 1 ? '' : 's'}`);
-    }
-    $('#pSummary').textContent = summaryParts.join(' · ');
-    $('#pSummary').classList.toggle('has-late', lateCount > 0);
-
     const buckets = new Map();
-    activeWaiters.forEach((w) => {
+    allActiveWaiters.forEach((w) => {
       const sectorNames = (w.blockIds || [])
         .map((bid) => blockMap.get(bid)?.name)
         .filter(Boolean);
-      const openTables = (state.tables || []).filter((t) => t.active && t.sessionId && t.waiterId === w.id);
+      const openTables = (state.tables || []).filter(
+        (t) => t.active && t.sessionId && t.waiterId === w.id && matchesSector(t.blockId, t.id, tableMap)
+      );
       buckets.set(w.id, {
         id: w.id,
         name: w.name,
         color: w.color || '#d9412b',
+        blockIds: w.blockIds || [],
         isOrphan: false,
         sectorNames,
         openTables,
@@ -469,6 +704,7 @@
       id: '__orphan__',
       name: 'Apoyo / Sin asignar',
       color: '#d97706',
+      blockIds: [],
       isOrphan: true,
       sectorNames: [],
       openTables: [],
@@ -482,22 +718,36 @@
       const wid = resolveColumnWaiterId(o, state, activeWaiterIds, tableMap, blockMap);
       (buckets.get(wid) || orphanCol).ready.push(o);
     });
-    pendingBills.forEach((c) => {
+    activeBills.forEach((c) => {
       const wid = resolveColumnWaiterId(c, state, activeWaiterIds, tableMap, blockMap);
       (buckets.get(wid) || orphanCol).bills.push(c);
     });
-    pendingCalls.forEach((c) => {
+    activeCalls.forEach((c) => {
       const wid = resolveColumnWaiterId(c, state, activeWaiterIds, tableMap, blockMap);
       (buckets.get(wid) || orphanCol).calls.push(c);
     });
 
-    const columns = Array.from(buckets.values());
+    let columns = Array.from(buckets.values());
+    if (sectorFilter !== 'all') {
+      const blk = blockMap.get(sectorFilter);
+      const preSet = new Set(blk?.waiterIds || []);
+      const filteredCols = columns.filter((col) => (
+        col.ready.length + col.bills.length + col.calls.length > 0
+        || col.openTables.length > 0
+        || col.blockIds.includes(sectorFilter)
+        || preSet.has(col.id)
+      ));
+      if (filteredCols.length > 0) columns = filteredCols;
+    }
+
     if (orphanCol.ready.length + orphanCol.bills.length + orphanCol.calls.length > 0) {
       columns.push(orphanCol);
     }
 
     const board = $('#pBoard');
+    const strip = $('#pIdleStrip');
     if (!columns.length) {
+      if (strip) strip.hidden = true;
       board.style.setProperty('--cols', '1');
       board.innerHTML = `<div class="p-board-empty">
         <h2>Sin mozos activos en turno</h2>
@@ -507,9 +757,64 @@
       return;
     }
 
-    board.style.setProperty('--cols', String(columns.length));
-    board.innerHTML = columns.map(renderWaiterColumn).join('');
+    // Compactación automática cuando hay 4 o más columnas activas:
+    // los mozos "Todo al día" (0 retiros/llamados) pasan a la barra compacta para evitar desborde horizontal a 4 m
+    const shouldCompactIdle = columns.length >= 4 && !expandIdleCols;
+    const busyCols = shouldCompactIdle
+      ? columns.filter((c) => c.ready.length + c.bills.length + c.calls.length > 0)
+      : columns;
+    const idleCols = shouldCompactIdle
+      ? columns.filter((c) => c.ready.length + c.bills.length + c.calls.length === 0)
+      : [];
+
+    if (columns.length >= 4 && expandIdleCols) {
+      // Mostrar botón para volver a compactar si el usuario expandió manualmente
+      const anyIdle = columns.filter((c) => c.ready.length + c.bills.length + c.calls.length === 0);
+      if (anyIdle.length && strip) {
+        strip.hidden = false;
+        strip.innerHTML = `
+          <span class="p-idle-title">Mostrando las ${columns.length} columnas completas</span>
+          <button type="button" class="p-ctrl-btn p-idle-toggle" id="pToggleIdleBtn">Compactar mozos al día (${anyIdle.length})</button>
+        `;
+      } else if (strip) {
+        strip.hidden = true;
+      }
+    } else {
+      renderIdleStrip(idleCols, columns.length);
+    }
+
+    if (!busyCols.length && idleCols.length) {
+      board.style.setProperty('--cols', '1');
+      board.innerHTML = `<div class="p-calm-banner">
+        <span class="p-clear-ico">✔</span>
+        <h2>Todo el salón al día</h2>
+        <p>Ningún mozo tiene retiros ni llamados pendientes. Los ${idleCols.length} mozos activos y sus mesas figuran abajo.</p>
+      </div>`;
+      return;
+    }
+
+    board.style.setProperty('--cols', String(busyCols.length));
+    board.innerHTML = busyCols.map((col) => renderWaiterColumn(col, tableMap)).join('');
   }
+
+  // ---------- Eventos de filtro por sector y barra compacta ----------
+  $('#pSectorBar').onclick = (e) => {
+    const b = e.target.closest('[data-sec]');
+    if (!b) return;
+    setSectorFilter(b.dataset.sec);
+  };
+
+  $('#pIdleStrip').onclick = (e) => {
+    if (e.target.closest('#pToggleIdleBtn')) {
+      expandIdleCols = !expandIdleCols;
+      renderBoard();
+      return;
+    }
+    const tblChip = e.target.closest('[data-open-tbl]');
+    if (tblChip) {
+      openTableQuickModal(tblChip.dataset.openTbl, tblChip.dataset.wid || '');
+    }
+  };
 
   // ---------- Acciones en las tarjetas de las columnas ----------
   $('#pBoard').onclick = async (e) => {
@@ -521,12 +826,36 @@
         if (act === 'deliver') {
           await apiAction('order.status', { orderId: btn.dataset.oid, status: 'entregado' });
           toast('✔ Retiro marcado como entregado en mesa');
-        } else if (act === 'attend-bill') {
+        } else if (act === 'onway-bill') {
           await apiAction('call.attend', { callId: btn.dataset.cid, status: 'en_camino' });
-          toast('💳 Llevando cobro a la mesa');
+          toast('💳 Llevando cobro a la mesa · importe visible en tu columna');
+        } else if (act === 'close-bill') {
+          const tid = btn.dataset.tid;
+          const tbl = (state.tables || []).find((t) => t.id === tid);
+          const pendingCnt = (state.orders || []).filter(
+            (o) => o.isOpenSession && o.tableId === tid && o.status !== 'cancelado' && o.status !== 'entregado'
+          ).length;
+          let force = false;
+          if (pendingCnt > 0) {
+            if (!confirm(`Quedan ${pendingCnt} pedido(s) sin marcar entregados en Mesa ${tbl?.code || ''}. ¿Marcarlos entregados y cerrar la cuenta?`)) {
+              btn.disabled = false;
+              return;
+            }
+            force = true;
+          }
+          await apiAction('table.close', {
+            tableId: tid,
+            payment: btn.dataset.pay || 'Tarjeta',
+            tip: Number(btn.dataset.tip || 0),
+            force,
+          });
+          toast(`✔ Mesa ${tbl?.code || ''} cobrada y cerrada`);
+        } else if (act === 'onway-call') {
+          await apiAction('call.attend', { callId: btn.dataset.cid, status: 'en_camino' });
+          toast('🏃 Avisamos al comensal que ya vas en camino');
         } else if (act === 'attend-call') {
-          await apiAction('call.attend', { callId: btn.dataset.cid });
-          toast('🙋 Llamado de mesa atendido');
+          await apiAction('call.attend', { callId: btn.dataset.cid, status: 'atendida' });
+          toast('✔ Llamado de mesa atendido');
         }
       } catch (err) {
         btn.disabled = false;
@@ -580,9 +909,13 @@
     }
 
     modalOpen = true;
+    const sectorTables = sectorFilter !== 'all'
+      ? activeTables.filter((t) => t.blockId === sectorFilter)
+      : activeTables;
+    const defaultTbl = (sectorTables[0] || activeTables[0]).id;
     orderTableId = preTableId && activeTables.some((t) => t.id === preTableId)
       ? preTableId
-      : activeTables[0].id;
+      : defaultTbl;
     orderWaiterId = preWaiterId || pickDefaultWaiterForTable(orderTableId);
     orderCatId = 'all';
     orderSearch = '';
@@ -604,11 +937,11 @@
       inCartQty[l.itemId] = (inCartQty[l.itemId] || 0) + l.qty;
     });
 
-    const q = orderSearch.trim().toLowerCase();
+    const q = normalizeSearch(orderSearch);
     const visibleItems = (state.items || []).filter((i) => {
       if (!i.available) return false;
       if (orderCatId !== 'all' && i.cat !== orderCatId) return false;
-      if (q && !i.name.toLowerCase().includes(q)) return false;
+      if (q && !normalizeSearch(`${i.name} ${i.desc || ''}`).includes(q)) return false;
       return true;
     });
 
@@ -622,7 +955,7 @@
       <div class="pm-head">
         <div>
           <h2>+ Pedido en mostrador</h2>
-          <small style="color:var(--ink-2);font-weight:600">Cargá mesa e ítems en segundos sin usar celular · separa solo a Cocina y Barra</small>
+          <small style="color:var(--ink-2);font-weight:600">Cargá mesa e ítems en segundos sin usar celular · separa solo a Cocina, Barra y Mostrador</small>
         </div>
         <button class="pm-close" type="button" data-pclose aria-label="Cerrar">✕</button>
       </div>
@@ -674,7 +1007,7 @@
                 <button class="pm-item-tile ${inCartQty[i.id] ? 'in-cart' : ''}" type="button" data-pitem="${escapeHtml(i.id)}">
                   ${inCartQty[i.id] ? `<span class="pm-qty-badge">${inCartQty[i.id]}×</span>` : ''}
                   <strong>${escapeHtml(i.emoji || '🍽️')} ${escapeHtml(i.name)}</strong>
-                  <small>${money(i.price)} · ${i.effectiveStation === 'barra' ? '🍸 Barra' : '🍳 Cocina'}</small>
+                  <small>${money(i.price)} · ${stationLabel(i.effectiveStation)}</small>
                 </button>
               `).join('') || '<div class="empty">Sin productos coincidentes.</div>'}
             </div>
@@ -709,7 +1042,7 @@
               <span>${money(cartSubtotal)}</span>
             </div>
             <button class="btn btn-primary pm-send-btn" type="button" id="pmSendBtn" ${counterCart.length === 0 ? 'disabled' : ''}>
-              Enviar comanda a Cocina / Barra
+              Enviar comanda a estaciones
             </button>
           </div>
         </div>
@@ -801,7 +1134,7 @@
           toast(`✅ Comanda enviada · Mesa ${selectedTbl.code}`);
         } catch (err) {
           sendBtn.disabled = false;
-          sendBtn.textContent = 'Enviar comanda a Cocina / Barra';
+          sendBtn.textContent = 'Enviar comanda a estaciones';
           toast(`⚠️ ${err.message}`);
         }
       };
@@ -818,8 +1151,10 @@
     const pendingCnt = tOrders.filter((o) => o.status !== 'entregado').length;
 
     let pay = billCall?.payment || 'Tarjeta';
-    let tip = billCall?.tip ?? 10;
+    let tip = billCall?.tip ?? 0;
     const sub = tbl.subtotal || 0;
+    const cashAmount = Math.max(0, Math.round(Number(billCall?.cashAmount) || 0));
+    const splitWays = Math.max(1, Math.round(Number(billCall?.splitWays) || 1));
 
     modalOpen = true;
     $('#pModalBackdrop').hidden = false;
@@ -828,9 +1163,16 @@
 
     const renderSummaryTotal = () => {
       const tipAmt = Math.round((sub * tip) / 100);
+      const grand = sub + tipAmt;
       const totEl = modal.querySelector('#pqGrand');
-      if (totEl) totEl.textContent = money(sub + tipAmt);
+      if (totEl) totEl.textContent = money(grand);
+      const chgEl = modal.querySelector('#pqChangeBox');
+      if (chgEl) {
+        chgEl.innerHTML = renderCashChangeHtml(pay, cashAmount, grand);
+      }
     };
+
+    const initTotal = sub + Math.round((sub * tip) / 100);
 
     modal.innerHTML = `
       <div class="pm-head">
@@ -870,9 +1212,10 @@
             </div>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:baseline;padding:10px 12px;border-radius:var(--radius-control);background:var(--ok-soft);color:#165934">
-            <span style="font-weight:700">Total con propina</span>
-            <strong id="pqGrand" style="font-size:22px;font-weight:800">${money(sub + Math.round((sub * tip) / 100))}</strong>
+            <span style="font-weight:700">Total con propina${splitWays > 1 ? ` · ÷ ${splitWays} pers.` : ''}</span>
+            <strong id="pqGrand" style="font-size:22px;font-weight:800">${money(initTotal)}</strong>
           </div>
+          <div id="pqChangeBox">${renderCashChangeHtml(pay, cashAmount, initTotal)}</div>
         ` : '<p style="color:var(--ink-3)">Esta mesa no tiene consumos abiertos.</p>'}
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px">
           <button class="btn btn-ghost" type="button" id="pqAddItems" style="flex:1;min-height:48px;font-weight:800">+ Sumar pedido</button>
@@ -881,7 +1224,7 @@
       </div>
     `;
 
-    modal.querySelector('#pqPay')?.addEventListener('change', (ev) => { pay = ev.target.value; });
+    modal.querySelector('#pqPay')?.addEventListener('change', (ev) => { pay = ev.target.value; renderSummaryTotal(); });
     modal.querySelector('#pqTip')?.addEventListener('change', (ev) => { tip = Number(ev.target.value); renderSummaryTotal(); });
 
     modal.querySelector('#pqAddItems').onclick = () => {
@@ -923,31 +1266,35 @@
   subscribe((s) => {
     state = s;
 
+    const tableMap = new Map((s.tables || []).map((t) => [t.id, t]));
     const curReady = getReadyOrders(s);
-    const curCalls = getPendingCalls(s);
+    const curPendingCalls = getPendingOnlyCalls(s);
     let playAlert = false;
 
     curReady.forEach((o) => {
       if (!knownReadyIds.has(o.id)) {
-        playAlert = true;
         freshCardIds.add(o.id);
         setTimeout(() => freshCardIds.delete(o.id), 4500);
-        const st = o.station === 'barra' ? '🍸 Barra' : '🍳 Cocina';
-        toast(`🔔 Listo en ${st} · Mesa ${o.tableCode}`);
+        if (matchesSector(o.blockId, o.tableId, tableMap)) {
+          playAlert = true;
+          toast(`🔔 Listo en ${stationLabel(o.station)} · Mesa ${o.tableCode}`);
+        }
       }
     });
 
-    curCalls.forEach((c) => {
+    curPendingCalls.forEach((c) => {
       const sig = callSignature(c);
       if (!knownPendingCalls.has(sig)) {
-        playAlert = true;
         freshCardIds.add(c.id);
         setTimeout(() => freshCardIds.delete(c.id), 4500);
-        toast(c.type === 'cuenta' ? `💳 Mesa ${c.tableCode} pidió la cuenta` : `🙋 Mesa ${c.tableCode} llama (${c.reason})`);
+        if (matchesSector(c.blockId, c.tableId, tableMap)) {
+          playAlert = true;
+          toast(c.type === 'cuenta' ? `💳 Mesa ${c.tableCode} pidió la cuenta` : `🙋 Mesa ${c.tableCode} llama (${c.reason})`);
+        }
       }
     });
 
-    if (playAlert && !soundMuted) {
+    if (playAlert && !isSoundMuted()) {
       ding(2, true);
     }
 
@@ -955,8 +1302,6 @@
     renderBoard();
   });
 
-  // Refrescar semáforos de demora cada 15 segundos (sin interrumpir un modal abierto)
-  setInterval(() => {
-    if (state) renderBoard();
-  }, 15000);
+  // Refrescar semáforos de demora in-place cada 15 segundos (sin destruir nodos DOM ni cortar toques)
+  setInterval(tickSla, 15000);
 })();

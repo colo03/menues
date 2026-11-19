@@ -1,12 +1,12 @@
 # Sistema de Marca y Diseño Unificado · SaleListo
 
-Este documento establece la **única línea de diseño, identidad visual y movimiento** para todo el ecosistema **SaleListo**: Aplicación Web y Landing Comercial (`app/public/`), Kit de Marketing y Reels (`marketing/`), Documentación Técnica (`docs/`) y Spot Audiovisual (`video-ad/`). Ninguna pieza del proyecto puede introducir tipografías, paletas, estilos de tarjeta o físicas de animación por fuera de este sistema.
+Este documento establece la **única línea de diseño, identidad visual y movimiento** para todo el ecosistema **SaleListo**: Aplicación Web y Landing Comercial (`app/public/`), Dossier y Acuerdos Comerciales (`comercial/`), Kit de Marketing y Reels (`marketing/`), Documentación Técnica (`docs/`) y Spot Audiovisual (`video-ad/`). Ninguna pieza del proyecto puede introducir tipografías, paletas, estilos de tarjeta o físicas de animación por fuera de este sistema.
 
 ---
 
 ## 1. Esencia y Posicionamiento Visual
 
-**SaleListo** es una plataforma gastronómica B2B/B2C que alivia la exigencia operativa de los mozos y ordena el salón en tiempo real: el cliente escanea el QR fijo de su mesa con su propio 4G/5G (sin pedir clave de Wi-Fi), la comanda viaja separada y automática a **Cocina** y **Barra**, el restaurante equilibra bloques y mesas en vivo, y el celular del mozo avisa recién cuando hay algo listo para llevar o cuando una mesa solicita atención.
+**SaleListo** es una plataforma gastronómica B2B/B2C que alivia la exigencia operativa de los mozos y ordena el salón en tiempo real: el cliente escanea el QR fijo de su mesa con su propio 4G/5G (sin pedir clave de Wi-Fi), la comanda viaja separada y automática hacia **Cocina**, **Barra** y **Mostrador**, el restaurante equilibra bloques y mesas en vivo, y el plantel se coordina **100% sin celulares en la mano**: ya sea desde la **Estación de Mozos fija en el pase** (con los teléfonos guardados en locker o caja) o mediante vibración háptica en **pulsera Xiaomi Smart Band por Bluetooth BLE** (con el teléfono guardado y bloqueado en el bolsillo del mozo, sin sacarlo jamás en el salón), avisando recién cuando hay algo listo para llevar o cuando una mesa solicita atención.
 
 ### Principio Rector: "Calma Operativa y Hospitalidad Editorial"
 En un salón gastronómico en hora pico ya existe movimiento físico constante. Por eso, la identidad visual y cinética de **SaleListo** actúa como **ancla de serenidad, claridad y control** (inspirada en referentes globales como *Toast*, *Square for Restaurants*, *Linear* y *Stripe*):

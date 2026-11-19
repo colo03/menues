@@ -57,7 +57,7 @@
     width: 210mm;
     height: 296.6mm;
     background: var(--bg);
-    padding: 11.5mm 13.5mm 9.5mm;
+    padding: 11mm 13.5mm 9mm;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -68,13 +68,13 @@
   .sheet.p2 { page-break-after: avoid; break-after: avoid; }
 
   /* Cabecera y pie */
-  .hdr { display: flex; align-items: center; justify-content: space-between; padding-bottom: 3.2mm; border-bottom: 1px solid var(--line); }
-  .hdr-meta { display: flex; align-items: center; gap: 8px; font-size: 8.5pt; font-weight: 700; color: var(--ink-2); }
-  .ftr { display: flex; align-items: center; justify-content: space-between; padding-top: 2.6mm; border-top: 1px solid var(--line); font-size: 7.8pt; font-weight: 600; color: var(--ink-3); }
+  .hdr { display: flex; align-items: center; justify-content: space-between; padding-bottom: 3mm; border-bottom: 1px solid var(--line); }
+  .hdr-meta { display: flex; align-items: center; gap: 8px; font-size: 8.4pt; font-weight: 700; color: var(--ink-2); }
+  .ftr { display: flex; align-items: center; justify-content: space-between; padding-top: 2.4mm; border-top: 1px solid var(--line); font-size: 7.5pt; font-weight: 600; color: var(--ink-3); }
   .ftr b { color: var(--ink-2); font-weight: 700; }
 
   /* Píldoras */
-  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3.5px 10px; border-radius: 999px; font-size: 8pt; font-weight: 700; white-space: nowrap; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3.5px 9.5px; border-radius: 999px; font-size: 7.8pt; font-weight: 700; white-space: nowrap; }
   .pill.acc { background: var(--accent-soft); color: var(--accent); }
   .pill.solid { background: var(--accent); color: #fff; }
   .pill.ok { background: var(--ok-soft); color: var(--ok); }
@@ -84,59 +84,60 @@
   .pill.dk { background: var(--dark-surface); color: var(--dark-ink); border: 1px solid var(--dark-line); }
 
   /* Títulos */
-  .sec-lbl { font-size: 7.6pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 1.5mm; }
-  .hero-h1 { font-size: 20.5pt; font-weight: 800; line-height: 1.1; letter-spacing: -0.028em; color: var(--ink); }
+  .sec-lbl { font-size: 7.5pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 1.4mm; }
+  .hero-h1 { font-size: 20.2pt; font-weight: 800; line-height: 1.1; letter-spacing: -0.028em; color: var(--ink); }
   .hero-h1 span { color: var(--accent); }
-  .hero-p { font-size: 9.4pt; font-weight: 500; line-height: 1.42; color: var(--ink-2); margin-top: 2mm; }
-  .h2 { font-size: 12.2pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.18; color: var(--ink); }
+  .hero-p { font-size: 9.2pt; font-weight: 500; line-height: 1.4; color: var(--ink-2); margin-top: 1.8mm; }
+  .h2 { font-size: 11.8pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.18; color: var(--ink); }
 
   /* Tarjetas */
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3.8mm 4.4mm; }
-  .dark-box { background: var(--dark-bg); color: var(--dark-ink); border-radius: 13px; padding: 4.4mm 5mm; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3.6mm 4.2mm; }
+  .dark-box { background: var(--dark-bg); color: var(--dark-ink); border-radius: 13px; padding: 4.2mm 4.8mm; }
 
   /* Tablas */
-  table { width: 100%; border-collapse: collapse; font-size: 8.3pt; }
-  th { text-align: left; font-size: 7.4pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); padding: 2mm 2.4mm; border-bottom: 1.5px solid var(--line); }
-  td { padding: 2.1mm 2.4mm; border-bottom: 1px solid var(--surface-2); font-weight: 600; color: var(--ink); vertical-align: middle; }
+  table { width: 100%; border-collapse: collapse; font-size: 8.1pt; }
+  th { text-align: left; font-size: 7.2pt; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-3); padding: 1.8mm 2.2mm; border-bottom: 1.5px solid var(--line); }
+  td { padding: 1.9mm 2.2mm; border-bottom: 1px solid var(--surface-2); font-weight: 600; color: var(--ink); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .ctr { text-align: center; white-space: nowrap; }
 
   /* Grillas */
-  .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.8mm; }
-  .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3.2mm; }
+  .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2.6mm; }
+  .g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; }
   .g2 { display: grid; grid-template-columns: 1.12fr 0.88fr; gap: 3.6mm; }
 
-  .step-card { background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 3mm 3.2mm; }
-  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--bg); font-size: 7.4pt; font-weight: 800; margin-bottom: 1.6mm; }
-  .step-t { font-size: 8.8pt; font-weight: 800; line-height: 1.2; color: var(--ink); }
-  .step-p { font-size: 7.7pt; font-weight: 500; line-height: 1.35; color: var(--ink-2); margin-top: 1mm; }
+  .step-card { background: var(--surface); border: 1px solid var(--line); border-radius: 11px; padding: 2.8mm 3mm; }
+  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; background: var(--ink); color: var(--bg); font-size: 7.4pt; font-weight: 800; margin-bottom: 1.4mm; }
+  .step-t { font-size: 8.6pt; font-weight: 800; line-height: 1.2; color: var(--ink); }
+  .step-p { font-size: 7.5pt; font-weight: 500; line-height: 1.34; color: var(--ink-2); margin-top: 0.9mm; }
 
   /* Planes */
-  .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3.6mm 3.8mm; display: flex; flex-direction: column; position: relative; }
+  .plan { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 3.2mm 3.5mm; display: flex; flex-direction: column; position: relative; }
   .plan.hot { border: 2px solid var(--accent); background: #fff; }
-  .plan-tag { position: absolute; top: -9px; right: 12px; background: var(--accent); color: #fff; font-size: 6.9pt; font-weight: 800; padding: 2px 9px; border-radius: 999px; letter-spacing: 0.02em; }
-  .plan-name { font-size: 9.8pt; font-weight: 800; color: var(--ink); }
-  .plan-target { font-size: 7.4pt; font-weight: 600; color: var(--ink-3); margin-top: 0.6mm; }
-  .plan-price { margin-top: 2.2mm; display: flex; align-items: baseline; gap: 4px; }
-  .plan-price b { font-size: 16pt; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); }
-  .plan-price span { font-size: 8pt; font-weight: 700; color: var(--ink-2); }
-  .plan-ars { font-size: 7.8pt; font-weight: 700; color: var(--accent); margin-top: 0.4mm; padding-bottom: 2.2mm; border-bottom: 1px solid var(--surface-2); }
-  .plan ul { list-style: none; margin-top: 2.2mm; display: flex; flex-direction: column; gap: 1.3mm; font-size: 7.6pt; font-weight: 600; color: var(--ink-2); line-height: 1.3; }
+  .plan-tag { position: absolute; top: -9px; right: 12px; background: var(--accent); color: #fff; font-size: 6.8pt; font-weight: 800; padding: 2px 9px; border-radius: 999px; letter-spacing: 0.02em; }
+  .plan-name { font-size: 9.6pt; font-weight: 800; color: var(--ink); }
+  .plan-target { font-size: 7.2pt; font-weight: 600; color: var(--ink-3); margin-top: 0.5mm; }
+  .plan-price { margin-top: 1.8mm; display: flex; align-items: baseline; gap: 4px; }
+  .plan-price b { font-size: 15.4pt; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); }
+  .plan-price span { font-size: 7.8pt; font-weight: 700; color: var(--ink-2); }
+  .plan-ars { font-size: 7.6pt; font-weight: 700; color: var(--accent); margin-top: 0.3mm; padding-bottom: 1.8mm; border-bottom: 1px solid var(--surface-2); }
+  .plan ul { list-style: none; margin-top: 1.8mm; display: flex; flex-direction: column; gap: 1.05mm; font-size: 7.35pt; font-weight: 600; color: var(--ink-2); line-height: 1.28; }
   .plan li { display: flex; align-items: flex-start; gap: 5px; }
   .plan li i { color: var(--ok); font-style: normal; font-weight: 800; flex: none; }
+  .plan li i.rm { color: var(--kitchen); }
 
-  .kit-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 2.8mm 3.4mm; }
+  .kit-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 2.5mm 3.2mm; }
   .kit-top { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
-  .kit-name { font-size: 8.5pt; font-weight: 800; color: var(--ink); }
-  .kit-price { font-size: 8.8pt; font-weight: 800; color: var(--accent); white-space: nowrap; }
-  .kit-p { font-size: 7.4pt; font-weight: 500; color: var(--ink-2); line-height: 1.34; margin-top: 1mm; }
-  .p2 td { padding: 1.55mm 2.2mm; }
-  .p2 th { padding: 1.5mm 2.2mm; }
-  .p2 .card { padding: 3.1mm 4mm; }
-  .p2 .plan { padding: 3mm 3.4mm; }
-  .p2 .plan ul { gap: 0.9mm; margin-top: 1.8mm; }
-  .p2 .kit-card { padding: 2.4mm 3.2mm; }
+  .kit-name { font-size: 8.3pt; font-weight: 800; color: var(--ink); }
+  .kit-price { font-size: 8.6pt; font-weight: 800; color: var(--accent); white-space: nowrap; }
+  .kit-p { font-size: 7.25pt; font-weight: 500; color: var(--ink-2); line-height: 1.32; margin-top: 0.8mm; }
+  .p2 td { padding: 1.3mm 2mm; }
+  .p2 th { padding: 1.3mm 2mm; }
+  .p2 .card { padding: 2.8mm 3.8mm; }
+  .p2 .plan { padding: 2.7mm 3.2mm; }
+  .p2 .plan ul { gap: 0.85mm; margin-top: 1.5mm; }
+  .p2 .kit-card { padding: 2.2mm 3mm; }
 </style>
 </head>
 <body>
@@ -145,7 +146,7 @@
 <section class="sheet p1">
   <header class="hdr">
     <!-- Logo oficial SaleListo (Propuesta 01 · Pase Limpio) -->
-    <svg height="30" viewBox="0 0 239 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SaleListo">
+    <svg height="29" viewBox="0 0 239 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="SaleListo">
       <path d="M20 0H44C55.8 0 64 8.2 64 20V44C64 55.8 55.8 64 44 64H20C8.2 64 0 55.8 0 44V20C0 8.2 8.2 0 20 0Z" fill="#D9412B"/>
       <path d="M28.9 13H35.1A2.1 2.1 0 0 1 35.1 17.2H28.9A2.1 2.1 0 0 1 28.9 13Z" fill="#FAF7F2"/>
       <path d="M49.7 41.6H14.3A1.5 1.5 0 0 1 12.8 40.09A19.2 19.2 0 0 1 39.14 22.38L29.2 32.31L25.14 28.26A2.75 2.75 0 0 0 21.26 32.14L27.26 38.14A2.75 2.75 0 0 0 31.14 38.14L44.04 25.25A19.2 19.2 0 0 1 51.2 40.09A1.5 1.5 0 0 1 49.7 41.6Z" fill="#FAF7F2"/>
@@ -162,30 +163,30 @@
   <!-- Hero -->
   <div>
     <h1 class="hero-h1">Tu salón en orden y sin corridas.<br><span>Más rotación, más consumo y 0% comisión.</span></h1>
-    <p class="hero-p">SaleListo digitaliza el servicio de salón de punta a punta sin pedir claves de Wi-Fi, sin descargar apps y <b>sin obligar a tus mozos a caminar mirando un celular frente a los clientes</b>.</p>
-    <div style="display:flex;gap:6px;margin-top:2.8mm;flex-wrap:nowrap">
-      <span class="pill solid">0% comisión sobre ventas</span>
+    <p class="hero-p">SaleListo digitaliza el servicio de salón de punta a punta sin pedir claves de Wi-Fi, sin descargar apps, conviviendo con tu caja fiscal actual y <b>sin obligar a tus mozos a caminar mirando un celular frente a los clientes</b>.</p>
+    <div style="display:flex;gap:6px;margin-top:2.5mm;flex-wrap:nowrap">
+      <span class="pill solid">0% comisión · Sin permanencia</span>
       <span class="pill ok">QR fijo con 4G del cliente (sin Wi-Fi)</span>
-      <span class="pill kit">Cocina y Barra en 0 seg</span>
-      <span class="pill bar">Ajuste % masivo en 1 clic</span>
+      <span class="pill kit">Cocina, Barra y Mostrador en 0 seg</span>
+      <span class="pill bar">Ajuste % con vista previa</span>
     </div>
   </div>
 
   <!-- Comparativa de Tiempos Recuperados -->
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2mm">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.8mm">
       <div>
-        <div class="sec-lbl" style="margin-bottom:0.5mm">1 · El problema operativo en hora pico</div>
-        <div class="h2" style="font-size:11.4pt">De 4 viajes a 1 para cobrar · +18 a 25 min recuperados por mesa</div>
+        <div class="sec-lbl" style="margin-bottom:0.4mm">1 · El problema operativo en hora pico</div>
+        <div class="h2" style="font-size:11.2pt">De 4 viajes a 1 para cobrar · +18 a 25 min recuperados por mesa</div>
       </div>
       <span class="pill acc">+25% capacidad vie/sáb</span>
     </div>
     <table>
       <thead>
         <tr>
-          <th style="width:43%">Etapa del ciclo de mesa</th>
-          <th class="ctr" style="width:18%">Servicio tradicional</th>
-          <th class="ctr" style="width:20%">Con SaleListo</th>
+          <th style="width:45%">Etapa del ciclo de mesa</th>
+          <th class="ctr" style="width:17%">Servicio tradicional</th>
+          <th class="ctr" style="width:19%">Con SaleListo</th>
           <th class="num" style="width:19%">Tiempo ahorrado</th>
         </tr>
       </thead>
@@ -197,13 +198,13 @@
           <td class="num" style="color:var(--ok);font-weight:800">8 a 10 min</td>
         </tr>
         <tr>
-          <td>Despacho interno hacia Cocina y Barra</td>
+          <td>Despacho interno hacia Cocina, Barra y Mostrador</td>
           <td class="ctr" style="color:var(--ink-2)">3 a 5 min</td>
           <td class="ctr"><b>Instantáneo (0 min)</b></td>
           <td class="num" style="color:var(--ok);font-weight:800">3 a 5 min</td>
         </tr>
         <tr>
-          <td>Pedir cuenta, definir pago/propina y cobrar</td>
+          <td>Pedir cuenta, dividir ("Vaquita"), vuelto y cobrar</td>
           <td class="ctr" style="color:var(--ink-2)">4 viajes (10 a 15 min)</td>
           <td class="ctr"><b>1 viaje (3 a 5 min)</b></td>
           <td class="num" style="color:var(--ok);font-weight:800">7 a 10 min</td>
@@ -212,12 +213,12 @@
           <td><b>Tiempo muerto total por sesión de mesa</b></td>
           <td class="ctr" style="color:var(--ink-2)"><b>23 a 34 min</b></td>
           <td class="ctr" style="color:var(--accent)"><b>5 a 9 min</b></td>
-          <td class="num" style="color:var(--accent);font-size:9pt"><b>18 a 25 min ganados</b></td>
+          <td class="num" style="color:var(--accent);font-size:8.8pt"><b>18 a 25 min ganados</b></td>
         </tr>
       </tbody>
     </table>
-    <div style="font-size:7.6pt;font-weight:600;color:var(--ink-2);margin-top:2mm">
-      <b>Impacto directo en facturación:</b> bajar la estadía promedio de 90 a 72 min un viernes o sábado eleva el giro de <b>3,0 a 3,75 rotaciones por mesa</b> sin sumar alquiler ni personal eventual, y dispara <b>+20% a +30% las segundas rondas</b> en Barra.
+    <div style="font-size:7.5pt;font-weight:600;color:var(--ink-2);margin-top:1.8mm">
+      <b>Impacto directo y 100% pro-equipo:</b> bajar la estadía media de 90 a 72 min un viernes o sábado eleva el giro de <b>3,0 a 3,75 rotaciones por mesa</b> absorbiendo picos sin desborde del personal, y dispara <b>+20% a +30% las segundas rondas</b> en Barra.
     </div>
   </div>
 
@@ -228,62 +229,62 @@
       <div class="step-card">
         <div class="step-num">01</div>
         <div class="step-t">Escaneo con 4G</div>
-        <div class="step-p">El cliente abre el QR fijo de su mesa con su cámara y datos móviles. Buscador instantáneo, fotos reales y filtros <i>Sin TACC / Veggie</i>.</div>
+        <div class="step-p">QR seguro anti-spoofing sin pedir Wi-Fi. Buscador instantáneo, fotos reales, repetir ronda y filtros <i>Sin TACC / Veggie</i>.</div>
       </div>
       <div class="step-card">
         <div class="step-num" style="background:var(--kitchen)">02</div>
-        <div class="step-t">Cocina y Barra solas</div>
-        <div class="step-p">Platos viajan a <b>Cocina</b> y bebidas a <b>Barra</b> en simultáneo con las notas exactas del comensal y semáforo SLA de demora.</div>
+        <div class="step-t">3 estaciones solas</div>
+        <div class="step-p">Ruteo paralelo a <b>Cocina</b>, <b>Barra</b> y <b>Mostrador</b> (sushi/parrilla/dulce) con semáforo SLA y pausa de agotados (86).</div>
       </div>
       <div class="step-card">
         <div class="step-num" style="background:var(--ok)">03</div>
         <div class="step-t">Aviso justo a tiempo</div>
-        <div class="step-p">El mozo asignado se entera recién cuando hay platos o tragos listos para llevar, o cuando una mesa solicita atención.</div>
+        <div class="step-p">El mozo asignado se entera recién cuando hay platos o bebidas listos para retirar, o cuando una mesa llama con motivo.</div>
       </div>
       <div class="step-card">
         <div class="step-num" style="background:var(--accent)">04</div>
-        <div class="step-t">Cobro en 1 solo viaje</div>
-        <div class="step-p">La mesa pide la cuenta en el QR eligiendo <i>Efectivo, Tarjeta, QR o Transferencia</i> y propina. Cierre con arqueo CSV para Excel.</div>
+        <div class="step-t">Cobro en 1 viaje</div>
+        <div class="step-p">Calculadora <i>Vaquita</i> por persona, propina y medio de pago (con declaración de efectivo para llevar el vuelto exacto).</div>
       </div>
     </div>
   </div>
 
   <!-- Bloque Oscuro: Cero Celulares en el Salón -->
   <div class="dark-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2.8mm">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2.6mm">
       <div>
-        <div style="font-size:7.5pt;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#f87171">3 · Tecnología invisible · Cero celulares en la mano</div>
-        <div style="font-size:12.4pt;font-weight:800;letter-spacing:-0.02em;color:var(--dark-ink);margin-top:0.6mm">Dos modalidades diseñadas para cuidar la estética y hospitalidad del salón</div>
+        <div style="font-size:7.4pt;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;color:#f87171">3 · Tecnología invisible · Cero celulares en la mano</div>
+        <div style="font-size:12pt;font-weight:800;letter-spacing:-0.02em;color:var(--dark-ink);margin-top:0.5mm">Dos modalidades precisas diseñadas para cuidar la presencia y hospitalidad del salón</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1.08fr 0.92fr;gap:3.6mm">
+    <div style="display:grid;grid-template-columns:1.08fr 0.92fr;gap:3.4mm">
       <!-- Modalidad 1: Estación de Pase -->
-      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:3.4mm 3.8mm;display:flex;flex-direction:column;gap:2.2mm">
+      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:3.2mm 3.6mm;display:flex;flex-direction:column;gap:2mm">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:6px">
-          <span style="font-size:9.2pt;font-weight:800;color:#fff">Plan Base · Estación de Mozos fija</span>
-          <span style="font-size:7pt;font-weight:800;background:rgba(47,138,87,.24);color:#6ee7b7;padding:2.5px 8px;border-radius:999px;white-space:nowrap">Incluida de serie · USD 0 hardware</span>
+          <span style="font-size:9pt;font-weight:800;color:#fff">Plan Base · Estación de Mozos fija</span>
+          <span style="font-size:6.8pt;font-weight:800;background:rgba(47,138,87,.24);color:#6ee7b7;padding:2.5px 8px;border-radius:999px;white-space:nowrap">De serie · USD 0 hardware</span>
         </div>
-        <p style="font-size:7.6pt;font-weight:500;color:rgba(250,247,242,.78);line-height:1.36">Una única tablet o monitor que el local ya tenga en el mostrador del pase o la barra, dividida en columnas en vivo por cada mozo y legible a 3 o 4 metros.</p>
+        <p style="font-size:7.4pt;font-weight:500;color:rgba(250,247,242,.8);line-height:1.35">Una única tablet o monitor en el mostrador del pase o la barra (filtrable por sector y legible a 3 o 4 metros). <b>Los celulares del personal quedan guardados en locker o caja.</b></p>
         <!-- Mini diagrama Estación de Pase -->
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:auto">
           <div style="background:#1c1917;border:1px solid #38322e;border-top:3px solid #d97706;border-radius:7px;padding:5px 7px">
-            <div style="font-size:7pt;font-weight:800;color:#faf7f2">● Lucía</div>
-            <div style="font-size:6.8pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">T4 · Retirar Cocina</div>
+            <div style="font-size:6.9pt;font-weight:800;color:#faf7f2">● Lucía</div>
+            <div style="font-size:6.6pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">T4 · Retirar Cocina</div>
           </div>
           <div style="background:#1c1917;border:1px solid #38322e;border-top:3px solid #8b5cf6;border-radius:7px;padding:5px 7px">
-            <div style="font-size:7pt;font-weight:800;color:#faf7f2">● Martín</div>
-            <div style="font-size:6.8pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">T2 · Retirar Barra</div>
+            <div style="font-size:6.9pt;font-weight:800;color:#faf7f2">● Martín</div>
+            <div style="font-size:6.6pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">T2 · Retirar Barra</div>
           </div>
-          <div style="background:#1c1917;border:1px solid #38322e;border-top:3px solid #d9412b;border-radius:7px;padding:5px 7px">
-            <div style="font-size:7pt;font-weight:800;color:#faf7f2">● Sofía</div>
-            <div style="font-size:6.8pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">M8 · Tarjeta 10%</div>
+          <div style="background:#1c1917;border:1px solid #38322e;border-top:3px solid #2f8a57;border-radius:7px;padding:5px 7px">
+            <div style="font-size:6.9pt;font-weight:800;color:#faf7f2">● Sofía</div>
+            <div style="font-size:6.6pt;font-weight:600;color:rgba(250,247,242,.72);margin-top:2px">M8 · Vuelto $15.8k</div>
           </div>
         </div>
       </div>
 
       <!-- Modalidad 2: Kit Pulseras Vibradoras -->
-      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:3.4mm 3.8mm;display:flex;gap:3.2mm;align-items:center">
-        <svg width="46" height="78" viewBox="0 0 54 90" style="flex:none">
+      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:3.2mm 3.6mm;display:flex;gap:3mm;align-items:center">
+        <svg width="45" height="76" viewBox="0 0 54 90" style="flex:none">
           <rect x="16" y="2" width="22" height="18" rx="6" fill="#38322e"/>
           <rect x="16" y="70" width="22" height="18" rx="6" fill="#38322e"/>
           <rect x="6" y="15" width="42" height="60" rx="21" fill="#0b0a09" stroke="#faf7f2" stroke-width="2.2"/>
@@ -292,16 +293,16 @@
           <path d="M2 34a18 18 0 0 0 0 22" stroke="#d9412b" stroke-width="2.4" fill="none" stroke-linecap="round"/>
           <path d="M52 34a18 18 0 0 1 0 22" stroke="#d9412b" stroke-width="2.4" fill="none" stroke-linecap="round"/>
         </svg>
-        <div style="display:flex;flex-direction:column;gap:1.6mm">
+        <div style="display:flex;flex-direction:column;gap:1.5mm">
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:9pt;font-weight:800;color:#fff">Kit Pulsera Xiaomi Band</span>
-            <span style="font-size:6.8pt;font-weight:800;background:rgba(217,119,6,.22);color:#fcd34d;padding:2px 7px;border-radius:999px">Adicional patios y terrazas</span>
+            <span style="font-size:8.9pt;font-weight:800;color:#fff">Kit Pulsera Xiaomi Band</span>
+            <span style="font-size:6.6pt;font-weight:800;background:rgba(217,119,6,.22);color:#fcd34d;padding:2px 7px;border-radius:999px">Compatible en los 3 planes</span>
           </div>
-          <p style="font-size:7.5pt;font-weight:500;color:rgba(250,247,242,.78);line-height:1.35">El celular queda bloqueado en el bolsillo o locker; el mozo siente el pulso en su muñeca recién cuando hay algo listo.</p>
-          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:0.5mm">
-            <span style="font-size:7pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 7px;border-radius:999px">10 a 14 días batería</span>
-            <span style="font-size:7pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 7px;border-radius:999px">5 ATM agua</span>
-            <span style="font-size:7pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 7px;border-radius:999px">15 g</span>
+          <p style="font-size:7.35pt;font-weight:500;color:rgba(250,247,242,.8);line-height:1.34">Por Bluetooth BLE, el teléfono va <b>guardado y bloqueado en el bolsillo del mozo</b> (jamás se saca en el salón) y la muñeca vibra al salir el pedido.</p>
+          <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:0.4mm">
+            <span style="font-size:6.8pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 6.5px;border-radius:999px">10 a 14 días batería</span>
+            <span style="font-size:6.8pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 6.5px;border-radius:999px">5 ATM agua</span>
+            <span style="font-size:6.8pt;font-weight:700;color:#faf7f2;background:#1c1917;border:1px solid #38322e;padding:2px 6.5px;border-radius:999px">15 g</span>
           </div>
         </div>
       </div>
@@ -309,7 +310,7 @@
   </div>
 
   <footer class="ftr">
-    <span><b>SaleListo</b> · Plataforma operativa de pedidos en mesa, Cocina, Barra y salón sin celulares</span>
+    <span><b>SaleListo</b> · Pedidos QR 4G, 3 estaciones en vivo y salón sin celulares · Simón Martínez de Guereñu (<b>simonguerenu@gmail.com</b>)</span>
     <span>Página <b>01 / 02</b></span>
   </footer>
 </section>
@@ -324,34 +325,34 @@
         <path d="M49.7 41.6H14.3A1.5 1.5 0 0 1 12.8 40.09A19.2 19.2 0 0 1 39.14 22.38L29.2 32.31L25.14 28.26A2.75 2.75 0 0 0 21.26 32.14L27.26 38.14A2.75 2.75 0 0 0 31.14 38.14L44.04 25.25A19.2 19.2 0 0 1 51.2 40.09A1.5 1.5 0 0 1 49.7 41.6Z" fill="#FAF7F2"/>
         <path d="M13.8 45.4H50.2A2.6 2.6 0 0 1 50.2 50.6H13.8A2.6 2.6 0 0 1 13.8 45.4Z" fill="#FAF7F2"/>
       </svg>
-      <span style="font-size:10.5pt;font-weight:800;letter-spacing:-0.015em">SaleListo · Retorno Económico, Planes y Piloto</span>
+      <span style="font-size:10.3pt;font-weight:800;letter-spacing:-0.015em">SaleListo · Retorno Económico, Planes y Piloto de 14 Días</span>
     </div>
-    <span class="pill solid">Suscripción plana · 0% comisión en salón</span>
+    <span class="pill solid">0% comisión · Sin permanencia mínima</span>
   </header>
 
   <!-- Caso ROI 25 mesas -->
   <div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.4mm">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2mm">
       <div>
-        <div class="sec-lbl" style="margin-bottom:0.4mm">4 · Caso numérico conservador · Local tipo de 25 mesas (100 cubiertos)</div>
-        <div class="h2" style="font-size:11.5pt">Menos del 0,20% de tu venta: se paga con 2 mesas extra al mes</div>
+        <div class="sec-lbl" style="margin-bottom:0.3mm">4 · Caso numérico conservador · Local tipo de 25 mesas (100 cubiertos)</div>
+        <div class="h2" style="font-size:10.9pt">Menos del 0,20% de tu venta: se paga solo con 3 a 4 mesas extra o ~25 pintas al mes</div>
       </div>
-      <span class="pill ok">ROI estimado: 37x</span>
+      <span class="pill ok">Retorno: 37x bruto (36x neto)</span>
     </div>
-    <div style="font-size:7.5pt;font-weight:500;color:var(--ink-2);margin-bottom:1.8mm">
-      Supuestos base: facturación mensual de <b>ARS 55.125.000</b> (USD 35.000/mes a Dólar Oficial Venta BNA <b>1 USD = ARS 1.575</b>), 26 días operativos y CMV del 33%.
+    <div style="font-size:7.3pt;font-weight:500;color:var(--ink-2);margin-bottom:1.4mm">
+      Supuestos base: facturación mensual de <b>ARS 55.125.000</b> (USD 35.000/mes a Dólar Oficial Venta BNA <b>1 USD = ARS 1.575</b>), 26 días operativos y CMV del 33% (ARS 18.191.250).
     </div>
     <table>
       <thead>
         <tr>
-          <th style="width:49%">Palanca de valor medible con SaleListo</th>
-          <th class="num" style="width:23%">Facturación / ahorro bruto</th>
+          <th style="width:51%">Palanca de valor medible con SaleListo</th>
+          <th class="num" style="width:21%">Facturación / ahorro bruto</th>
           <th class="num" style="width:28%">Contribución neta dueño</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td><b>1. Mayor rotación en hora pico</b> <span style="color:var(--ink-2);font-weight:500">(vie/sáb +12% = +3,5% venta total)</span></td>
+          <td><b>1. Mayor rotación en hora pico</b> <span style="color:var(--ink-2);font-weight:500">(vie/sáb +12% = +3,5% venta total, 67% margen)</span></td>
           <td class="num">+ ARS 1.929.375</td>
           <td class="num"><b>+ ARS 1.292.681</b> <span style="color:var(--ink-3)">(USD 821)</span></td>
         </tr>
@@ -361,14 +362,19 @@
           <td class="num"><b>+ ARS 1.846.688</b> <span style="color:var(--ink-3)">(USD 1.173)</span></td>
         </tr>
         <tr>
-          <td><b>3. Menos errores de comanda</b> <span style="color:var(--ink-2);font-weight:500">(baja de merma del 1,5% al 0,2% s/CMV)</span></td>
+          <td><b>3. Menos errores de comanda</b> <span style="color:var(--ink-2);font-weight:500">(30 platos/bebidas rehechos menos x ARS 7.875 insumo)</span></td>
           <td class="num">+ ARS 236.250</td>
           <td class="num"><b>+ ARS 236.250</b> <span style="color:var(--ink-3)">(USD 150)</span></td>
         </tr>
         <tr>
-          <td><b>4. Optimización de turnos</b> <span style="color:var(--ink-2);font-weight:500">(2 jornadas eventuales menos por fin de semana)</span></td>
+          <td><b>4. Picos vie/sáb sin desborde</b> <span style="color:var(--ink-2);font-weight:500">(fluidez pro-equipo sin recargos: 7 guardias x ARS 59.850)</span></td>
           <td class="num">+ ARS 418.950</td>
           <td class="num"><b>+ ARS 418.950</b> <span style="color:var(--ink-3)">(USD 266)</span></td>
+        </tr>
+        <tr style="background:var(--surface-2)">
+          <td><b>Beneficio económico mensual generado</b></td>
+          <td class="num"><b>+ ARS 5.340.825</b></td>
+          <td class="num"><b>+ ARS 3.794.569</b> <span style="color:var(--ink-2)">(USD 2.410)</span></td>
         </tr>
         <tr>
           <td style="color:var(--ink-2)">Costo mensual <b>Plan Salón SaleListo</b> (tarifa fija, 0% comisión)</td>
@@ -376,9 +382,9 @@
           <td class="num" style="color:var(--ink-2)">- ARS 102.375 <span style="color:var(--ink-3)">(- USD 65)</span></td>
         </tr>
         <tr style="background:var(--accent-soft)">
-          <td><b style="color:var(--accent)">Ganancia neta limpia mensual para el restaurante (ROI 37x)</b></td>
-          <td class="num"><b style="color:var(--ink)">+ ARS 5.238.450</b></td>
-          <td class="num"><b style="color:var(--accent);font-size:8.9pt">+ ARS 3.692.194 / mes (USD 2.344)</b></td>
+          <td><b style="color:var(--accent)">Ganancia neta limpia mensual para el restaurante</b></td>
+          <td class="num"></td>
+          <td class="num"><b style="color:var(--accent);font-size:8.8pt">+ ARS 3.692.194 / mes (USD 2.345)</b></td>
         </tr>
       </tbody>
     </table>
@@ -386,12 +392,12 @@
 
   <!-- Planes Mensuales -->
   <div>
-    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.2mm">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2.8mm">
       <div>
-        <div class="sec-lbl" style="margin-bottom:0.3mm">5 · Planes mensuales escalonados · Sin comisiones ni porcentajes ocultos</div>
-        <div class="h2">Elegí según el tamaño de tu salón (facturación local en ARS)</div>
+        <div class="sec-lbl" style="margin-bottom:0.2mm">5 · Planes mensuales escalonados · Convive con tu facturador ARCA (Maxirest, Fudo, Bistrosoft)</div>
+        <div class="h2" style="font-size:11.2pt">Facturación local en ARS · Sin permanencia ni penalidad de baja</div>
       </div>
-      <span style="font-size:7.4pt;font-weight:700;color:var(--ink-2)">Plan anual: 2 meses bonificados</span>
+      <span style="font-size:7.3pt;font-weight:700;color:var(--ink-2);white-space:nowrap">Plan anual: 2 meses bonificados</span>
     </div>
     <div class="g3">
       <div class="plan">
@@ -401,10 +407,10 @@
         <div class="plan-ars">ARS 55.125 / mes ref.</div>
         <ul>
           <li><i>✓</i><span>Hasta <b>12 mesas</b> con QR fijo y <b>2 sectores</b></span></li>
-          <li><i>✓</i><span>Carta con fotos y agotados en vivo</span></li>
-          <li><i>✓</i><span>Ajuste masivo % anti inflación</span></li>
-          <li><i>✓</i><span>Ruteo separado Cocina y Barra</span></li>
-          <li><i>✓</i><span><b>Estación de Mozos fija</b> + hasta 3 mozos</span></li>
+          <li><i>✓</i><span>Carta con fotos, filtros dietarios y agotados 86</span></li>
+          <li><i>✓</i><span>Ruteo en <b>3 estaciones</b> (<i>Cocina, Barra, Mostrador</i>)</span></li>
+          <li><i>✓</i><span><b>Pase fijo</b> + <b>Modo Pulsera BLE</b> (hasta 3 mozos)</span></li>
+          <li><i>✓</i><span>División <i>Vaquita</i>, vuelto exacto y ajuste %</span></li>
         </ul>
       </div>
 
@@ -416,9 +422,9 @@
         <div class="plan-ars">ARS 102.375 / mes ref.</div>
         <ul>
           <li><i>✓</i><span>Hasta <b>30 mesas</b> y <b>5 sectores</b> (Salón, Vereda, Terraza, Barra, VIP)</span></li>
-          <li><i>✓</i><span><b>Estación de Pase ilimitada</b> + <b>Modo Pulsera Web Push</b></span></li>
-          <li><i>✓</i><span>Mozos ilimitados y balanceo automático</span></li>
-          <li><i>✓</i><span>Arqueo por turno, propinas y <b>CSV Excel</b></span></li>
+          <li><i>✓</i><span><b>Pase ilimitado filtrable por bloque</b> + <b>Pulsera BLE</b></span></li>
+          <li><i>✓</i><span>Mozos ilimitados, balanceo y reasignación</span></li>
+          <li><i>✓</i><span>Arqueo por turno (06:00 AM), propinas y <b>CSV Excel</b></span></li>
           <li><i>✓</i><span>Soporte prioritario vie/sáb hasta 00:00 hs</span></li>
         </ul>
       </div>
@@ -429,11 +435,11 @@
         <div class="plan-price"><b>USD 110</b><span>/ mes</span></div>
         <div class="plan-ars">ARS 173.250 / mes por sucursal</div>
         <ul>
-          <li><i>✓</i><span><b>Mesas, sectores y pantallas ilimitados</b></span></li>
-          <li><i>✓</i><span>Listas horarias (<i>Happy Hour / Ejecutivo</i>)</span></li>
-          <li><i>✓</i><span>Sincronización de precios entre sedes</span></li>
-          <li><i>✓</i><span>Auditoría histórica y métricas por mozo</span></li>
-          <li><i>✓</i><span>Ejecutivo dedicado (<b>-15%</b> desde 3.ª sede)</span></li>
+          <li><i>✓</i><span><b>Mesas, sectores y pantallas KDS/Pase ilimitados</b></span></li>
+          <li><i>✓</i><span>Múltiples Estaciones de Pase por planta o bloque</span></li>
+          <li><i>✓</i><span>Arqueo histórico por fechas y propinas por mozo</span></li>
+          <li><i>✓</i><span>Ejecutivo dedicado (<b>-15%</b> desde 3.ª sucursal)</span></li>
+          <li><i class="rm">◷</i><span><b>Roadmap Fase 2</b> (<i>Próximamente</i>): listas horarias, sync multisede y cobro QR</span></li>
         </ul>
       </div>
     </div>
@@ -441,41 +447,42 @@
 
   <!-- Kits Iniciales Llave en Mano -->
   <div>
-    <div class="sec-lbl">6 · Implementación llave en mano en 48 horas (opcionales de pago único)</div>
+    <div class="sec-lbl">6 · Puesta en marcha llave en mano en 48 horas (opcionales de pago único)</div>
     <div class="g3">
       <div class="kit-card">
-        <div class="kit-top"><span class="kit-name">Onboarding Digital</span><span class="kit-price">USD 40</span></div>
-        <div class="kit-p"><b>ARS 63.000</b> · Carga completa de tu menú, plano de bloques, configuración de Cocina/Barra/Pase y entrega de QRs vectoriales SVG.</div>
+        <div class="kit-top"><span class="kit-name">Onboarding Digital 48 h</span><span class="kit-price">USD 40</span></div>
+        <div class="kit-p"><b>ARS 63.000</b> · Carga completa de carta (3 estaciones + tags), plano de bloques, Pase y QRs vectoriales SVG.</div>
       </div>
       <div class="kit-card">
         <div class="kit-top"><span class="kit-name">Kit Acrílicos QR UV</span><span class="kit-price">desde USD 95</span></div>
-        <div class="kit-p"><b>ARS 149.625</b> (15 mesas; 30 mesas USD 135; 50 mesas USD 160) · Incluye Onboarding + displays resistentes a sol, lluvia y alcohol + capacitación.</div>
+        <div class="kit-p"><b>ARS 149.625</b> (15 mesas; 30 mesas USD 135; 50 mesas USD 160) · Incluye Onboarding 48 h + displays resistentes + capacitación.</div>
       </div>
       <div class="kit-card">
         <div class="kit-top"><span class="kit-name">Kit Pulseras Xiaomi Band</span><span class="kit-price">USD 145 / 230</span></div>
-        <div class="kit-p"><b>Pack 3 (ARS 228.375)</b> o <b>Pack 5 (ARS 362.250)</b> · Pulseras configuradas y vinculadas en Modo Pulsera, listas para vibrar en el turno.</div>
+        <div class="kit-p"><b>Pack 3 (ARS 228.375)</b> o <b>Pack 5 (ARS 362.250)</b> · Configuradas por Bluetooth BLE (celular bloqueado en bolsillo).</div>
       </div>
     </div>
   </div>
 
   <!-- CTA Piloto 14 días -->
-  <div class="dark-box" style="padding:3.6mm 4.6mm">
-    <div style="display:grid;grid-template-columns:1.22fr 0.78fr;gap:4mm;align-items:center">
+  <div class="dark-box" style="padding:3.3mm 4.4mm">
+    <div style="display:grid;grid-template-columns:1.22fr 0.78fr;gap:3.8mm;align-items:center">
       <div>
-        <span style="display:inline-block;font-size:7pt;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;margin-bottom:1.2mm">Oferta de entrada sin riesgo</span>
-        <div style="font-size:12.4pt;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:#fff">Probá SaleListo 14 días en 1 solo sector.</div>
-        <p style="font-size:7.6pt;font-weight:500;color:rgba(250,247,242,.8);line-height:1.36;margin-top:1mm">No cambies tu salón principal de golpe: activamos tu <b>vereda, patio o terraza</b> en 48 horas con tu carta real y revisamos juntos los números tras <b>2 fines de semana</b>.</p>
+        <span style="display:inline-block;font-size:6.8pt;font-weight:800;text-transform:uppercase;letter-spacing:0.06em;background:var(--accent);color:#fff;padding:2px 8px;border-radius:999px;margin-bottom:1mm">Oferta canónica sin riesgo</span>
+        <div style="font-size:12pt;font-weight:800;letter-spacing:-0.02em;line-height:1.15;color:#fff">Probá SaleListo 14 días en 1 solo sector.</div>
+        <p style="font-size:7.4pt;font-weight:500;color:rgba(250,247,242,.82);line-height:1.34;margin-top:0.9mm">Sin tocar tu salón principal ni tu caja fiscal: activamos tu <b>vereda, patio o terraza</b> llave en mano en <b>48 horas</b> y evaluamos juntos tras <b>2 fines de semana completos</b>.</p>
       </div>
-      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:2.8mm 3.4mm;display:flex;flex-direction:column;gap:1.4mm">
-        <div style="font-size:7.6pt;font-weight:700;color:rgba(250,247,242,.68)">Coordiná una demo de 10 min en tu mesa:</div>
-        <div style="font-size:10.6pt;font-weight:800;color:#fff;white-space:nowrap">WhatsApp (+54)1138436571</div>
-        <div style="font-size:9.2pt;font-weight:700;color:#fca5a5;white-space:nowrap">ventas@salelisto.com</div>
+      <div style="background:var(--dark-surface);border:1px solid var(--dark-line);border-radius:10px;padding:2.5mm 3.2mm;display:flex;flex-direction:column;gap:1.1mm">
+        <div style="font-size:7.3pt;font-weight:700;color:rgba(250,247,242,.68)">Coordiná una demo de 10 min en tu mesa:</div>
+        <div style="font-size:10.3pt;font-weight:800;color:#fff;white-space:nowrap">WhatsApp (+54)1138436571</div>
+        <div style="font-size:8.6pt;font-weight:700;color:#fca5a5;white-space:nowrap">ventas@salelisto.com</div>
+        <div style="font-size:7.2pt;font-weight:600;color:rgba(250,247,242,.68);white-space:nowrap">simonguerenu@gmail.com</div>
       </div>
     </div>
   </div>
 
   <footer class="ftr">
-    <span>Valores netos expresados en USD de referencia comercial y ARS a pizarra oficial BNA (1 USD = ARS 1.575).</span>
+    <span>Valores netos en USD ref. y ARS a pizarra oficial BNA (1 USD = ARS 1.575). Ajuste trimestral topeado por IPC/BNA.</span>
     <span>Página <b>02 / 02</b></span>
   </footer>
 </section>
