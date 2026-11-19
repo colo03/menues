@@ -41,6 +41,47 @@ TIPS = {0, 5, 10, 15}
 STATIONS = {'cocina', 'barra'}
 WAITER_COLORS = ['#d9412b', '#2f6bd9', '#2f8a57', '#8b5cf6', '#d97706', '#0d9488', '#db2777', '#4f46e5']
 
+# Etiquetas dietarias permitidas en la carta QR (se guardan separadas por coma)
+ITEM_TAGS = ('sin_tacc', 'veggie', 'vegano', 'picante', 'sin_alcohol')
+DEFAULT_ITEM_TAGS: dict[str, str] = {
+    'Edamame al wok': 'sin_tacc,veggie,vegano',
+    'Karaage crujiente': 'picante',
+    'Ramen Tonkotsu': 'picante',
+    'Ramen Miso Veggie': 'veggie',
+    'Okonomiyaki': 'veggie',
+    'Roll Philadelphia': 'sin_tacc',
+    'Temaki de salmón': 'sin_tacc',
+    'Mochi artesanal': 'sin_tacc,veggie',
+    'Cheesecake de matcha': 'veggie',
+    'Gin Tonic de Yuzu': 'sin_tacc,veggie,vegano',
+    'Ramune Original': 'sin_tacc,veggie,vegano,sin_alcohol',
+    'Limonada con Jengibre y Menta': 'sin_tacc,veggie,vegano,sin_alcohol',
+    'Té Verde Sencha': 'sin_tacc,veggie,vegano,sin_alcohol',
+}
+
+LEAD_STATUSES = ('nuevo', 'contactado', 'piloto', 'descartado')
+
+
+def normalize_tags(raw: Any) -> str:
+    """Acepta lista o texto separado por comas y devuelve solo etiquetas válidas, sin duplicados."""
+    if isinstance(raw, (list, tuple, set)):
+        parts = [str(x) for x in raw]
+    else:
+        parts = str(raw or '').split(',')
+    out: list[str] = []
+    for p in parts:
+        tag = p.strip().lower().replace(' ', '_').replace('-', '_')
+        if tag in ITEM_TAGS and tag not in out:
+            out.append(tag)
+    # vegano implica veggie para que el filtro rápido lo encuentre siempre
+    if 'vegano' in out and 'veggie' not in out:
+        out.append('veggie')
+    return ','.join(t for t in ITEM_TAGS if t in out)
+
+
+def split_tags(stored: str) -> list[str]:
+    return [t for t in str(stored or '').split(',') if t]
+
 
 def now_ms() -> int:
     return int(time.time() * 1000)
@@ -249,8 +290,32 @@ class Database:
                         wristband_mode INTEGER NOT NULL DEFAULT 1,
                         created_at INTEGER NOT NULL
                     );
+
+                    CREATE TABLE IF NOT EXISTS leads (
+                        id TEXT PRIMARY KEY,
+                        name TEXT,
+                        restaurant_name TEXT,
+                        zone TEXT,
+                        tables_count TEXT,
+                        contact TEXT,
+                        plan_interest TEXT,
+                        message TEXT,
+                        status TEXT NOT NULL DEFAULT 'nuevo',
+                        created_at INTEGER NOT NULL
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at DESC);
+                    CREATE INDEX IF NOT EXISTS idx_sessions_status_closed ON table_sessions(status, closed_at);
                     """
                 )
+                item_cols = {r['name'] for r in conn.execute('PRAGMA table_info(items)').fetchall()}
+                if 'tags' not in item_cols:
+                    conn.execute("ALTER TABLE items ADD COLUMN tags TEXT NOT NULL DEFAULT ''")
+                    # Base existente: etiquetamos sutilmente los platos clásicos de la carta demo
+                    for item_name, tags in DEFAULT_ITEM_TAGS.items():
+                        conn.execute(
+                            "UPDATE items SET tags = ? WHERE name = ? AND tags = ''",
+                            (tags, item_name),
+                        )
                 notif_cols = {
                     r['name'] for r in conn.execute('PRAGMA table_info(notifications)').fetchall()
                 }
@@ -372,8 +437,8 @@ class Database:
         items_seed = [
             ('c1', 'Gyozas de cerdo', '6 unidades doradas a la plancha con salsa ponzu.', 6500, '🥟', 1, 1),
             ('c1', 'Edamame al wok', 'Vainas de soja con sal marina y ralladura de lima.', 4200, '🫛', 0, 1),
-            ('c1', 'Karaage crujiente', 'Pollo frito estilo japonés con mayo de yuzu.', 7800, '🍗', 0, 1),
-            ('c2', 'Ramen Tonkotsu', 'Caldo de cerdo 12 h, chashu, ajitama y verdeo.', 14500, '🍜', 1, 1),
+            ('c1', 'Karaage crujiente', 'Pollo frito estilo japonés con mayo picante de yuzu.', 7800, '🍗', 0, 1),
+            ('c2', 'Ramen Tonkotsu', 'Caldo de cerdo 12 h, chashu, ajitama, verdeo y aceite de chile.', 14500, '🍜', 1, 1),
             ('c2', 'Ramen Miso Veggie', 'Caldo cremoso de miso, tofu grillado, maíz y hongos.', 13200, '🥢', 0, 1),
             ('c2', 'Katsudon', 'Milanesa de cerdo panko, huevo y cebolla sobre arroz.', 12800, '🍛', 0, 1),
             ('c2', 'Okonomiyaki', 'Panqueque japonés de repollo con salsa okonomi.', 11500, '🥞', 0, 0),
@@ -392,10 +457,10 @@ class Database:
             iid = self._next_id(conn, 'i')
             conn.execute(
                 """
-                INSERT INTO items (id, category_id, name, description, price, emoji, image_url, station_override, popular, available, sort_order)
-                VALUES (?, ?, ?, ?, ?, ?, '', '', ?, ?, ?)
+                INSERT INTO items (id, category_id, name, description, price, emoji, image_url, station_override, popular, available, sort_order, tags)
+                VALUES (?, ?, ?, ?, ?, ?, '', '', ?, ?, ?, ?)
                 """,
-                (iid, cid, name, desc, price, emoji, pop, avail, idx),
+                (iid, cid, name, desc, price, emoji, pop, avail, idx, DEFAULT_ITEM_TAGS.get(name, '')),
             )
 
     # ---------- Motor de Asignación y Reasignación de Mozos ----------
@@ -1417,6 +1482,7 @@ class Database:
             st_ov = ''
         popular = 1 if p.get('popular') else 0
         available = 1 if p.get('available', True) else 0
+        tags_in = p.get('tags') if 'tags' in p else None
 
         target_id = iid or self._next_id(conn, 'i')
         image_url = clean_text(p, 'imageUrl', 300)
@@ -1425,26 +1491,29 @@ class Database:
             image_url = self._save_uploaded_image(target_id, image_data)
 
         if iid:
-            if not conn.execute('SELECT 1 FROM items WHERE id = ?', (iid,)).fetchone():
+            cur_item = conn.execute('SELECT tags FROM items WHERE id = ?', (iid,)).fetchone()
+            if not cur_item:
                 raise ActionError('Plato inexistente')
+            tags = normalize_tags(tags_in) if tags_in is not None else cur_item['tags']
             conn.execute(
                 """
                 UPDATE items
                 SET category_id = ?, name = ?, description = ?, price = ?, emoji = ?,
-                    image_url = ?, station_override = ?, popular = ?, available = ?
+                    image_url = ?, station_override = ?, popular = ?, available = ?, tags = ?
                 WHERE id = ?
                 """,
-                (cat_id, name, desc, price, emoji, image_url, st_ov, popular, available, iid),
+                (cat_id, name, desc, price, emoji, image_url, st_ov, popular, available, tags, iid),
             )
             return {'id': iid}
 
+        tags = normalize_tags(tags_in) if tags_in is not None else ''
         max_ord = conn.execute('SELECT COALESCE(MAX(sort_order), 0) AS m FROM items WHERE category_id = ?', (cat_id,)).fetchone()['m']
         conn.execute(
             """
-            INSERT INTO items (id, category_id, name, description, price, emoji, image_url, station_override, popular, available, sort_order)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO items (id, category_id, name, description, price, emoji, image_url, station_override, popular, available, sort_order, tags)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
-            (target_id, cat_id, name, desc, price, emoji, image_url, st_ov, popular, available, max_ord + 1),
+            (target_id, cat_id, name, desc, price, emoji, image_url, st_ov, popular, available, max_ord + 1, tags),
         )
         return {'id': target_id}
 
@@ -1523,6 +1592,132 @@ class Database:
 
     def act_reset_demo(self, conn: sqlite3.Connection, _p: dict[str, Any]) -> None:
         self._seed_factory(conn)
+
+    # ---------- Consultas comerciales (Leads de la Landing) y Exportación contable ----------
+
+    @staticmethod
+    def _lead_row(r: sqlite3.Row) -> dict[str, Any]:
+        return {
+            'id': r['id'],
+            'name': r['name'] or '',
+            'restaurantName': r['restaurant_name'] or '',
+            'zone': r['zone'] or '',
+            'tablesCount': r['tables_count'] or '',
+            'contact': r['contact'] or '',
+            'planInterest': r['plan_interest'] or '',
+            'message': r['message'] or '',
+            'status': r['status'],
+            'createdAt': r['created_at'],
+        }
+
+    def create_lead(self, p: dict[str, Any]) -> dict[str, Any]:
+        """Alta pública de una consulta comercial enviada desde la Landing Page."""
+        if not isinstance(p, dict):
+            raise ActionError('Datos inválidos')
+
+        def field(key: str, maxlen: int) -> str:
+            # Texto plano, compacto y sin caracteres de control
+            raw = p.get(key)
+            if raw is None:
+                return ''
+            txt = re.sub(r'[\x00-\x08\x0b-\x1f\x7f]', '', str(raw)).strip()
+            return txt[:maxlen]
+
+        name = field('name', 80)
+        restaurant_name = field('restaurantName', 100)
+        contact = field('contact', 120)
+        if not (name or restaurant_name):
+            raise ActionError('Contanos tu nombre o el de tu restaurante')
+        if not contact:
+            raise ActionError('Dejanos un WhatsApp o correo para responderte')
+        tables_raw = field('tablesCount', 12)
+        tables_digits = re.sub(r'[^0-9]', '', tables_raw)[:4]
+        lead = {
+            'name': name,
+            'restaurant_name': restaurant_name,
+            'zone': field('zone', 80),
+            'tables_count': tables_digits or tables_raw,
+            'contact': contact,
+            'plan_interest': field('planInterest', 60),
+            'message': field('message', 1200),
+        }
+        with self.lock:
+            conn = self._connect()
+            try:
+                lid = 'L' + datetime.now().strftime('%y%m%d') + '-' + secrets.token_hex(3)
+                ts = now_ms()
+                conn.execute(
+                    """
+                    INSERT INTO leads (id, name, restaurant_name, zone, tables_count, contact, plan_interest, message, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'nuevo', ?)
+                    """,
+                    (lid, lead['name'], lead['restaurant_name'], lead['zone'], lead['tables_count'],
+                     lead['contact'], lead['plan_interest'], lead['message'], ts),
+                )
+                conn.commit()
+                self.version += 1
+                row = conn.execute('SELECT * FROM leads WHERE id = ?', (lid,)).fetchone()
+                return self._lead_row(row)
+            finally:
+                conn.close()
+
+    def get_leads(self, limit: int = 50) -> list[dict[str, Any]]:
+        with self.lock:
+            conn = self._connect()
+            try:
+                return [
+                    self._lead_row(r)
+                    for r in conn.execute(
+                        'SELECT * FROM leads ORDER BY created_at DESC LIMIT ?', (max(1, min(500, int(limit))),)
+                    ).fetchall()
+                ]
+            finally:
+                conn.close()
+
+    def act_lead_status(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
+        lid = str(p.get('leadId') or p.get('id') or '').strip()
+        status = str(p.get('status') or '').strip()
+        if status not in LEAD_STATUSES:
+            raise ActionError('Estado de consulta inválido')
+        if not conn.execute('SELECT 1 FROM leads WHERE id = ?', (lid,)).fetchone():
+            raise ActionError('Consulta inexistente')
+        conn.execute('UPDATE leads SET status = ? WHERE id = ?', (status, lid))
+        return {'leadId': lid, 'status': status}
+
+    def get_closed_sessions_export(self) -> list[dict[str, Any]]:
+        """Todas las sesiones cerradas (más recientes primero) para el arqueo contable CSV."""
+        with self.lock:
+            conn = self._connect()
+            try:
+                rows = conn.execute(
+                    """
+                    SELECT s.*, t.code AS table_code, b.name AS block_name, w.name AS live_waiter_name
+                    FROM table_sessions s
+                    LEFT JOIN tables t ON t.id = s.table_id
+                    LEFT JOIN blocks b ON b.id = t.block_id
+                    LEFT JOIN waiters w ON w.id = s.waiter_id
+                    WHERE s.status = 'closed'
+                    ORDER BY s.closed_at DESC
+                    """
+                ).fetchall()
+                return [
+                    {
+                        'id': r['id'],
+                        'openedAt': r['opened_at'],
+                        'closedAt': r['closed_at'],
+                        'tableCode': r['table_code'] or '?',
+                        'blockName': r['block_name'] or '',
+                        'waiterName': r['closed_waiter_name'] or r['live_waiter_name'] or 'Sin mozo',
+                        'payment': r['payment_method'] or 'Efectivo',
+                        'subtotal': r['subtotal'],
+                        'tipPct': r['tip_pct'],
+                        'tipAmount': r['tip_amount'],
+                        'total': r['total'],
+                    }
+                    for r in rows
+                ]
+            finally:
+                conn.close()
 
     # ---------- Autenticación de Encargado y Mozos ----------
 
@@ -1721,10 +1916,13 @@ class Database:
 
         if action_type in admin_only and not is_admin:
             raise ActionError('Se requiere acceso de encargado (PIN)')
+        if action_type == 'lead.status' and not (is_admin or demo_active):
+            raise ActionError('Se requiere acceso de encargado (PIN)')
         if action_type in staff_allowed and action_type not in client_allowed and not (is_staff or demo_active):
             raise ActionError('Acción reservada al personal del restaurante')
 
         dispatch_map = {
+            'lead.status': self.act_lead_status,
             'order.create': lambda c, p: self.act_order_create(c, p, is_staff=is_staff),
             'order.advance': self.act_order_advance,
             'order.status': self.act_order_status,
@@ -2035,6 +2233,7 @@ class Database:
                         'effectiveStation': r['station_override'] or cat_station.get(r['category_id'], 'cocina'),
                         'popular': bool(r['popular']),
                         'available': bool(r['available']),
+                        'tags': split_tags(r['tags']),
                     }
                     for r in conn.execute('SELECT * FROM items ORDER BY sort_order ASC, id ASC').fetchall()
                 ]
@@ -2077,6 +2276,11 @@ class Database:
                 open_consumption = sum(open_subtotals.values())
                 avg_ticket = round(closed_sales_total / len(closed_today_rows)) if closed_today_rows else 0
 
+                leads = [
+                    self._lead_row(r)
+                    for r in conn.execute('SELECT * FROM leads ORDER BY created_at DESC LIMIT 50').fetchall()
+                ]
+
                 return {
                     'version': self.version,
                     'blockTemplates': BLOCK_TEMPLATES,
@@ -2098,6 +2302,7 @@ class Database:
                         'byPayment': by_payment,
                     },
                     'closedHistory': closed_history,
+                    'leads': leads,
                 }
             finally:
                 conn.close()
@@ -2145,6 +2350,7 @@ class Database:
                         'station': r['station_override'] or cat_station.get(r['category_id'], 'cocina'),
                         'popular': bool(r['popular']),
                         'available': bool(r['available']),
+                        'tags': split_tags(r['tags']),
                     }
                     for r in conn.execute('SELECT * FROM items ORDER BY sort_order ASC, id ASC').fetchall()
                 ]

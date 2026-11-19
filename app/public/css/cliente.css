@@ -23,10 +23,69 @@ body { background: var(--bg); }
 .invalid-card p { color: var(--ink-2); font-size: 14px; margin-bottom: 16px; }
 .demo-links { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
 
-.cats {
-  position: sticky; top: 0; z-index: 5; display: flex; gap: 8px; overflow-x: auto;
-  padding: 10px 16px; background: var(--bg); scrollbar-width: none;
+.menu-sticky {
+  position: sticky; top: 0; z-index: 5; background: var(--bg);
   border-bottom: 1px solid var(--line);
+  padding-top: 8px;
+}
+.search-row {
+  position: relative; margin: 0 16px; display: flex; align-items: center;
+}
+.search-ico {
+  position: absolute; left: 13px; font-size: 15px; pointer-events: none; opacity: 0.6; filter: grayscale(1);
+}
+.search-input {
+  width: 100%; padding: 11px 40px 11px 38px; border-radius: var(--radius-pill);
+  border: 1px solid var(--line); background: var(--surface); font-size: 16px; /* 16px evita el zoom automático en iPhone */
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+  -webkit-appearance: none; appearance: none;
+}
+.search-input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.search-input::placeholder { color: var(--ink-3); }
+.search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.14); }
+.search-clear {
+  position: absolute; right: 6px; width: 30px; height: 30px; border-radius: 50%;
+  background: var(--surface-2); color: var(--ink-2); font-size: 13px; font-weight: 800;
+  display: grid; place-items: center;
+}
+.filters {
+  display: flex; gap: 6px; overflow-x: auto; padding: 9px 16px 2px; scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.filter-chip {
+  flex: none; padding: 6px 10px; border-radius: var(--radius-pill); font-size: 12.5px; font-weight: 700;
+  background: var(--surface-2); color: var(--ink-2); border: 1px solid transparent; white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.filter-chip.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.result-hint {
+  padding: 10px 16px 0; font-size: 13px; color: var(--ink-2); font-weight: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.link-btn { color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+.cat-n {
+  display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 2px; border-radius: var(--radius-pill);
+  background: rgba(28, 25, 23, 0.08); font-size: 11px; font-weight: 800; text-align: center;
+}
+.cat.active .cat-n { background: rgba(255, 255, 255, 0.24); }
+
+.item-tags { display: flex; flex-wrap: wrap; gap: 4px; margin: 0 0 6px; }
+.item-tags.big { margin: 10px 0 2px; gap: 6px; }
+.tag-pill {
+  display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: var(--radius-pill);
+  font-size: 11px; font-weight: 700; line-height: 1.5; white-space: nowrap;
+  background: var(--surface-2); color: var(--ink-2);
+}
+.item-tags.big .tag-pill { font-size: 12.5px; padding: 3px 10px; }
+.tag-pill.tag-tacc { background: #fdf3d8; color: #92610a; }
+.tag-pill.tag-veggie { background: var(--ok-soft); color: var(--ok); }
+.tag-pill.tag-vegano { background: #dcf2e4; color: #1f6b41; }
+.tag-pill.tag-picante { background: var(--accent-soft); color: var(--accent-hover); }
+.tag-pill.tag-noalc { background: var(--info-soft); color: var(--info); }
+
+.cats {
+  display: flex; gap: 8px; overflow-x: auto;
+  padding: 9px 16px 10px; background: var(--bg); scrollbar-width: none;
 }
 .cats::-webkit-scrollbar { display: none; }
 .cat {
@@ -36,7 +95,7 @@ body { background: var(--bg); }
 }
 .cat.active { background: var(--ink); color: #ffffff; border-color: var(--ink); }
 
-.section { padding: 18px 16px 4px; scroll-margin-top: 60px; }
+.section { padding: 18px 16px 4px; scroll-margin-top: 150px; }
 .section-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .section h2 { font-size: 18px; font-weight: 800; }
 

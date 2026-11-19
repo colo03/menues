@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>SaleListo · Galería del Pack Gráfico</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { padding: 40px; background: #e9e4dc; font-family: 'PJS', sans-serif; }
+  h1 { font-size: 28px; font-weight: 800; margin-bottom: 24px; color: #1c1917; }
+  .grid { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+  figure { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 8px 24px -4px rgba(28,25,23,.08); }
+  figcaption { font-size: 14px; font-weight: 700; color: #57534e; margin-top: 10px; }
+  .frame { overflow: hidden; }
+  .frame > .scale { transform-origin: 0 0; }
+</style>
+</head>
+<body>
+<h1>SaleListo · Pack Gráfico de Redes y Banners (vista previa escalada)</h1>
+<div class="grid" id="grid"></div>
+<script src="pieces.js"></script>
+<script>
+  // Vista previa de todas las piezas a escala reducida para revisar el set completo.
+  const grid = document.getElementById('grid');
+  Object.entries(window.PIECES).forEach(([id, p]) => {
+    const s = Math.min(1, 360 / p.w, 460 / p.h);
+    const f = document.createElement('figure');
+    f.innerHTML = `<div class="frame" style="width:${p.w * s}px;height:${p.h * s}px"><div class="scale" style="transform:scale(${s})">${p.html()}</div></div>
+      <figcaption>${id} · ${p.w}x${p.h} · ${p.out}</figcaption>`;
+    grid.appendChild(f);
+  });
+</script>
+</body>
+</html>

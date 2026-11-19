@@ -26,7 +26,27 @@
 
     <!-- Vista: Menú -->
     <main class="view" id="view-menu">
-      <nav class="cats" id="cats"></nav>
+      <div class="menu-sticky" id="menuSticky">
+        <div class="search-row">
+          <span class="search-ico" aria-hidden="true">🔍</span>
+          <input
+            class="search-input"
+            id="menuSearch"
+            type="search"
+            placeholder="Buscar plato o bebida..."
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="false"
+            enterkeyhint="search"
+            aria-label="Buscar plato o bebida"
+            maxlength="40"
+          >
+          <button class="search-clear" id="searchClear" type="button" aria-label="Borrar búsqueda" hidden>✕</button>
+        </div>
+        <div class="filters" id="filters" role="group" aria-label="Filtros rápidos"></div>
+        <nav class="cats" id="cats"></nav>
+      </div>
+      <p class="result-hint" id="resultHint" hidden></p>
       <div id="menuList"></div>
       <div class="spacer"></div>
     </main>

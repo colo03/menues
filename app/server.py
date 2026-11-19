@@ -6,8 +6,10 @@ clientes escaneen con sus propios datos 4G/5G sin pedir Wi-Fi.
 """
 from __future__ import annotations
 
+import csv
 import hashlib
 import hmac
+import io
 import json
 import mimetypes
 import os
@@ -17,9 +19,10 @@ import socket
 import sys
 import threading
 import time
+from datetime import datetime
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from db import ActionError, Database
 from qrgen import qr_svg
@@ -35,9 +38,13 @@ mimetypes.add_type('application/manifest+json; charset=utf-8', '.webmanifest')
 mimetypes.add_type('application/json; charset=utf-8', '.json')
 mimetypes.add_type('image/svg+xml', '.svg')
 mimetypes.add_type('text/css; charset=utf-8', '.css')
+mimetypes.add_type('video/mp4', '.mp4')
+mimetypes.add_type('video/webm', '.webm')
+mimetypes.add_type('image/webp', '.webp')
 
 ROOT = Path(__file__).resolve().parent
 PUBLIC = ROOT / 'public'
+MEDIA_DIR = PUBLIC / 'media'
 DATA_DIR = Path(os.environ.get('DATA_DIR') or (ROOT / 'data')).resolve()
 DB_PATH = DATA_DIR / 'salelisto.db'
 UPLOADS_DIR = DATA_DIR / 'uploads'
@@ -50,6 +57,12 @@ VAPID_KEYS = ensure_vapid_keys(DATA_DIR)
 # Sesiones ligeras en memoria para mozos y cocina
 staff_tokens: dict[str, str] = {}
 tokens_lock = threading.Lock()
+
+# Anti-spam liviano para el formulario público de la Landing (por IP)
+LEAD_WINDOW_S = 600
+LEAD_MAX_PER_WINDOW = 6
+leads_rate: dict[str, list[float]] = {}
+leads_rate_lock = threading.Lock()
 
 
 def make_admin_token() -> str:
@@ -144,9 +157,11 @@ class Handler(SimpleHTTPRequestHandler):
         super().__init__(*args, directory=str(PUBLIC), **kwargs)
 
     def end_headers(self) -> None:
-        if self.path.split('?', 1)[0] == '/sw.js':
+        req_path = self.path.split('?', 1)[0]
+        if req_path == '/sw.js':
             self.send_header('Service-Worker-Allowed', '/')
-        if not self.path.startswith('/uploads/'):
+        # /uploads/ y /media/ gestionan su propio Cache-Control (caché pública de 24 h)
+        if not (req_path.startswith('/uploads/') or req_path.startswith('/media/')):
             self.send_header('Cache-Control', 'no-store')
         super().end_headers()
 
@@ -193,6 +208,179 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(raw)
 
+    # ---------- Multimedia de la Landing (/media/...) con caché y Range ----------
+
+    def _serve_media(self, rel_path: str, head_only: bool = False) -> None:
+        media_root = MEDIA_DIR.resolve()
+        try:
+            target = (media_root / unquote(rel_path)).resolve()
+        except (OSError, ValueError):
+            self.send_error(404, 'Archivo no encontrado')
+            return
+        if media_root not in target.parents or not target.is_file():
+            self.send_error(404, 'Archivo no encontrado')
+            return
+
+        st = target.stat()
+        size = st.st_size
+        etag = f'"{size:x}-{int(st.st_mtime):x}"'
+        mime, _ = mimetypes.guess_type(str(target))
+        mime = mime or 'application/octet-stream'
+
+        if self.headers.get('If-None-Match') == etag:
+            self.send_response(304)
+            self.send_header('ETag', etag)
+            self.send_header('Cache-Control', 'public, max-age=86400')
+            self.end_headers()
+            return
+
+        start, end = 0, size - 1
+        status = 200
+        range_hdr = (self.headers.get('Range') or '').strip()
+        if range_hdr.startswith('bytes=') and ',' not in range_hdr and size > 0:
+            spec = range_hdr[len('bytes='):].strip()
+            try:
+                first, _, last = spec.partition('-')
+                if first == '':
+                    suffix = int(last)
+                    if suffix <= 0:
+                        raise ValueError
+                    start = max(0, size - suffix)
+                else:
+                    start = int(first)
+                    end = min(int(last), size - 1) if last else size - 1
+                if start >= size or start > end:
+                    raise ValueError
+                status = 206
+            except ValueError:
+                self.send_response(416)
+                self.send_header('Content-Range', f'bytes */{size}')
+                self.send_header('Content-Length', '0')
+                self.end_headers()
+                return
+
+        length = end - start + 1 if size else 0
+        self.send_response(status)
+        self.send_header('Content-Type', mime)
+        self.send_header('Accept-Ranges', 'bytes')
+        self.send_header('Cache-Control', 'public, max-age=86400')
+        self.send_header('ETag', etag)
+        self.send_header('Last-Modified', self.date_time_string(int(st.st_mtime)))
+        self.send_header('Content-Length', str(length))
+        if status == 206:
+            self.send_header('Content-Range', f'bytes {start}-{end}/{size}')
+        self.end_headers()
+        if head_only or length <= 0:
+            return
+        try:
+            with target.open('rb') as fh:
+                fh.seek(start)
+                remaining = length
+                while remaining > 0:
+                    chunk = fh.read(min(256 * 1024, remaining))
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+                    remaining -= len(chunk)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            # El navegador corta el stream de video al buscar otra posición: es normal
+            pass
+
+    def do_HEAD(self) -> None:
+        path = urlparse(self.path).path
+        if path.startswith('/media/'):
+            return self._serve_media(path[len('/media/'):], head_only=True)
+        return super().do_HEAD()
+
+    # ---------- Autorización de encargado para endpoints de lectura ----------
+
+    def _request_role(self, qs: dict[str, list[str]] | None = None) -> str:
+        auth = self.headers.get('X-Auth-Token') or ((qs or {}).get('token') or [''])[0]
+        return resolve_role(auth)
+
+    def _admin_or_demo(self, qs: dict[str, list[str]] | None = None) -> bool:
+        return self._request_role(qs) == 'admin' or db.is_demo_mode()
+
+    # ---------- Exportación contable CSV (arqueo) ----------
+
+    @staticmethod
+    def _csv_safe(value) -> str:
+        txt = str(value if value is not None else '')
+        # Evita inyección de fórmulas al abrir el archivo en Excel / Google Sheets
+        if txt and txt[0] in ('=', '+', '-', '@', '\t', '\r'):
+            txt = "'" + txt
+        return txt
+
+    def _send_sessions_csv(self, qs: dict[str, list[str]]) -> None:
+        def parse_day(key: str, end_of_day: bool) -> int | None:
+            raw = (qs.get(key) or [''])[0].strip()
+            if not raw:
+                return None
+            try:
+                d = datetime.strptime(raw, '%Y-%m-%d')
+            except ValueError:
+                return None
+            if end_of_day:
+                d = d.replace(hour=23, minute=59, second=59, microsecond=999000)
+            return int(d.timestamp() * 1000)
+
+        since = parse_day('desde', False)
+        until = parse_day('hasta', True)
+        rows = db.get_closed_sessions_export()
+        if since is not None:
+            rows = [r for r in rows if (r['closedAt'] or 0) >= since]
+        if until is not None:
+            rows = [r for r in rows if (r['closedAt'] or 0) <= until]
+
+        def fmt(ts) -> tuple[str, str]:
+            if not ts:
+                return '', ''
+            dt = datetime.fromtimestamp(ts / 1000)
+            return dt.strftime('%d/%m/%Y'), dt.strftime('%H:%M')
+
+        buf = io.StringIO()
+        # Punto y coma: separador de listas de Excel en Windows con configuración regional Argentina
+        writer = csv.writer(buf, delimiter=';', quoting=csv.QUOTE_MINIMAL, lineterminator='\r\n')
+        writer.writerow([
+            'Fecha apertura', 'Hora apertura', 'Fecha cierre', 'Hora cierre',
+            'Mesa', 'Bloque', 'Mozo', 'Medio de pago',
+            'Subtotal', '% Propina', 'Monto propina', 'Total', 'ID sesión',
+        ])
+        for r in rows:
+            d_open, h_open = fmt(r['openedAt'])
+            d_close, h_close = fmt(r['closedAt'])
+            writer.writerow([
+                d_open, h_open, d_close, h_close,
+                self._csv_safe(r['tableCode']), self._csv_safe(r['blockName']),
+                self._csv_safe(r['waiterName']), self._csv_safe(r['payment']),
+                int(r['subtotal'] or 0), int(r['tipPct'] or 0), int(r['tipAmount'] or 0), int(r['total'] or 0),
+                r['id'],
+            ])
+        raw = ('\ufeff' + buf.getvalue()).encode('utf-8')
+        fname = f"arqueo_salelisto_{datetime.now().strftime('%Y%m%d-%H%M')}.csv"
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/csv; charset=utf-8')
+        self.send_header('Content-Disposition', f'attachment; filename="{fname}"')
+        self.send_header('X-Rows', str(len(rows)))
+        self.send_header('Content-Length', str(len(raw)))
+        self.end_headers()
+        self.wfile.write(raw)
+
+    def _lead_rate_limited(self) -> bool:
+        ip = (self.headers.get('X-Forwarded-For') or self.client_address[0] or '').split(',')[0].strip()
+        now = time.time()
+        with leads_rate_lock:
+            hits = [t for t in leads_rate.get(ip, []) if now - t < LEAD_WINDOW_S]
+            if len(hits) >= LEAD_MAX_PER_WINDOW:
+                leads_rate[ip] = hits
+                return True
+            hits.append(now)
+            leads_rate[ip] = hits
+            if len(leads_rate) > 2000:
+                for k in [k for k, v in leads_rate.items() if not v or now - v[-1] > LEAD_WINDOW_S]:
+                    leads_rate.pop(k, None)
+        return False
+
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         path = parsed.path
@@ -200,6 +388,23 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path.startswith('/uploads/'):
             return self._serve_upload(path[len('/uploads/'):])
+
+        if path.startswith('/media/'):
+            return self._serve_media(path[len('/media/'):])
+
+        if path == '/api/leads':
+            if not self._admin_or_demo(qs):
+                return self.send_json(401, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
+            try:
+                limit = int((qs.get('limit') or ['50'])[0])
+            except ValueError:
+                limit = 50
+            return self.send_json(200, {'ok': True, 'leads': db.get_leads(limit)})
+
+        if path == '/api/export/sessions.csv':
+            if not self._admin_or_demo(qs):
+                return self.send_json(401, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
+            return self._send_sessions_csv(qs)
 
         if path == '/api/info':
             return self.send_json(
@@ -325,6 +530,21 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_json(400, {'ok': False, 'error': str(e)})
         except (ValueError, TypeError):
             return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
+
+        if path == '/api/leads':
+            if not isinstance(body, dict):
+                return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
+            if self._lead_rate_limited():
+                return self.send_json(
+                    429,
+                    {'ok': False, 'error': 'Recibimos varias consultas seguidas. Probá de nuevo en unos minutos.'},
+                )
+            try:
+                lead = db.create_lead(body)
+            except ActionError as e:
+                return self.send_json(400, {'ok': False, 'error': str(e)})
+            broadcast_updates()
+            return self.send_json(200, {'ok': True, 'lead': lead})
 
         if path == '/api/auth/admin':
             if body.get('demo') and db.is_demo_mode():
@@ -493,6 +713,7 @@ def main() -> None:
     base = f'http://{lan_ip()}:{PORT}'
     print('\n  SaleListo está corriendo\n')
     print(f'  Inicio / Portada:       {base}/')
+    print(f'  Tablero operativo:      {base}/operacion.html')
     print(f'  Demo 4 pantallas:       {base}/demo.html')
     print(f'  Panel Encargado (PIN):  {base}/restaurante.html   (PIN inicial: 1234)')
     print(f'  Estación de Mozos:      {base}/pase.html')

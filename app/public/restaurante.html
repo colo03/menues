@@ -36,6 +36,7 @@
         <button class="nav-item" data-view="mozos">🏃 <span class="lbl">Mozos</span> <span class="count soft" id="navWaiters"></span></button>
         <button class="nav-item" data-view="menu">📖 <span class="lbl">Menú y Precios</span></button>
         <button class="nav-item" data-view="caja">💰 <span class="lbl">Caja y Ajustes</span></button>
+        <button class="nav-item" data-view="leads">📨 <span class="lbl">Consultas</span> <span class="count" id="navLeads" hidden></span></button>
       </nav>
 
       <div class="side-foot">
@@ -130,11 +131,36 @@
 
         <!-- 5. Caja y Configuración -->
         <section class="view" id="view-caja" hidden>
-          <div class="view-head">
-            <h1>Caja del día y Configuración</h1>
-            <p class="muted">Arqueo por medio de pago, propinas por mozo y ajustes generales del restaurante.</p>
+          <div class="view-head row">
+            <div>
+              <h1>Caja del día y Configuración</h1>
+              <p class="muted">Arqueo por medio de pago, propinas por mozo y ajustes generales del restaurante.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-ghost" id="csvTodayBtn" type="button" title="Solo las mesas cerradas hoy">📅 CSV de hoy</button>
+              <button class="btn btn-primary" id="csvAllBtn" type="button" title="Todas las mesas cerradas, listo para Excel">📥 Descargar Arqueo CSV</button>
+            </div>
           </div>
           <div id="cajaAdmin"></div>
+        </section>
+
+        <!-- 6. Consultas comerciales (Leads de la portada) -->
+        <section class="view" id="view-leads" hidden>
+          <div class="view-head row">
+            <div>
+              <h1>Consultas comerciales</h1>
+              <p class="muted">Pedidos de demo y piloto que llegan desde la portada comercial, en tiempo real.</p>
+            </div>
+            <div class="pill-group" id="leadFilter">
+              <button class="pill active" data-lf="activas">Activas</button>
+              <button class="pill" data-lf="nuevo">Nuevas</button>
+              <button class="pill" data-lf="contactado">Contactadas</button>
+              <button class="pill" data-lf="piloto">En piloto</button>
+              <button class="pill" data-lf="descartado">Descartadas</button>
+              <button class="pill" data-lf="todas">Todas</button>
+            </div>
+          </div>
+          <div id="leadsAdmin"></div>
         </section>
       </div>
     </div>

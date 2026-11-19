@@ -15,7 +15,7 @@ if (-not $AudioOnly) {
 }
 & $FF -y -hide_banner -loglevel error -i $VID -i "$V2\audio\mix_v2.wav" -map 0:v:0 -map 1:a:0 -c:v copy `
   -c:a aac -b:a 192k -ar 48000 -ac 2 -shortest -movflags +faststart `
-  -metadata title="SaleListo: Spot v4" -metadata comment="Musica: Gimme that Groove! (Mixkit Stock Music Free License). B-roll: Mixkit Free License." $OUT
+  -metadata title="SaleListo: Spot Oficial" -metadata comment="Musica: Gimme that Groove! (Mixkit Stock Music Free License). B-roll: Mixkit Free License." $OUT
 if ($LASTEXITCODE -ne 0) { throw "fallo muxeando" }
 $ErrorActionPreference = "Continue"; & $FF -hide_banner -i $OUT 2>&1 | Out-String -Stream | Select-String "Duration|Stream"
 "{0:N2} MB" -f ((Get-Item $OUT).Length / 1MB)

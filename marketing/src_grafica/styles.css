@@ -1,0 +1,113 @@
+/* SaleListo · Pack Gráfico de Redes y Banners
+   Tokens tomados de branding/tokens.css (fuente única de verdad).
+   Tipografía única: Plus Jakarta Sans (500 a 800) desde assets/fonts. */
+
+@font-face { font-family: 'PJS'; src: url('assets/fonts/PJS-500.ttf'); font-weight: 400 500; }
+@font-face { font-family: 'PJS'; src: url('assets/fonts/PJS-600.ttf'); font-weight: 600; }
+@font-face { font-family: 'PJS'; src: url('assets/fonts/PJS-700.ttf'); font-weight: 700; }
+@font-face { font-family: 'PJS'; src: url('assets/fonts/PJS-800.ttf'); font-weight: 800; }
+
+:root {
+  --bg: #faf7f2; --surface: #ffffff; --surface-2: #f3eee6; --surface-3: #e8e0d4;
+  --line: #e6dfd3; --line-strong: #d6cdc0;
+  --ink: #1c1917; --ink-2: #57534e; --ink-3: #8a837c;
+  --accent: #d9412b; --accent-soft: #fceae6;
+  --ok: #2f8a57; --ok-soft: #e3f3ea;
+  --bar: #6d28d9; --bar-soft: #efeafe;
+  --kitchen: #d97706; --kitchen-soft: #fef1dc;
+  --dark-bg: #1c1917; --dark-surface: #26221f; --dark-line: #38322e;
+  --dark-ink: #faf7f2; --dark-ink-2: rgba(250, 247, 242, 0.72);
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.06);
+  --shadow-float: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 48px -8px rgba(28, 25, 23, 0.14);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: #e9e4dc; }
+body { font-family: 'PJS', system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: geometricPrecision; }
+
+/* ---------- Lienzo ---------- */
+.cv { position: relative; overflow: hidden; background: var(--bg); color: var(--ink); font-family: 'PJS', sans-serif; }
+.cv.dark { background: var(--dark-bg); color: var(--dark-ink); }
+.post { width: 1080px; height: 1350px; padding: 84px 84px 0; }
+
+.top { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+.logo { display: block; }
+.count { font-size: 26px; font-weight: 800; letter-spacing: 0.04em; color: var(--ink); padding: 11px 22px; border: 1.5px solid var(--line); border-radius: 999px; background: var(--surface); font-variant-numeric: tabular-nums; }
+.count span { color: var(--ink-3); font-weight: 700; }
+.dark .count { color: var(--dark-ink); border-color: var(--dark-line); background: var(--dark-surface); }
+.dark .count span { color: rgba(250, 247, 242, 0.5); }
+
+.foot { position: absolute; left: 84px; right: 84px; bottom: 64px; height: 44px; display: flex; align-items: center; justify-content: space-between; }
+.prog { display: flex; gap: 10px; }
+.prog i { display: block; width: 44px; height: 6px; border-radius: 999px; background: var(--line); }
+.prog i.on { background: var(--accent); }
+.dark .prog i { background: var(--dark-line); }
+.dark .prog i.on { background: var(--accent); }
+.swipe { font-size: 26px; font-weight: 700; color: var(--ink-2); display: flex; align-items: center; gap: 12px; }
+.swipe b { font-size: 34px; color: var(--accent); font-weight: 800; line-height: 1; }
+.dark .swipe { color: var(--dark-ink-2); }
+
+/* ---------- Tipografía ---------- */
+.h1 { font-size: 96px; font-weight: 800; line-height: 1.03; letter-spacing: -0.035em; }
+.h2 { font-size: 72px; font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; }
+.h3 { font-size: 44px; font-weight: 800; line-height: 1.15; letter-spacing: -0.02em; }
+.lead { font-size: 34px; font-weight: 500; line-height: 1.4; color: var(--ink-2); }
+.dark .lead { color: var(--dark-ink-2); }
+.acc { color: var(--accent); }
+.hl { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 0.085em; text-underline-offset: 0.14em; text-decoration-skip-ink: auto; }
+.dark .hl { color: var(--dark-ink); }
+.strike { text-decoration: line-through; text-decoration-color: var(--accent); text-decoration-thickness: 9px; color: var(--ink-3); }
+.muted { color: var(--ink-2); }
+.dark .muted { color: var(--dark-ink-2); }
+
+.kicker { display: inline-flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 700; color: var(--accent); background: var(--accent-soft); padding: 12px 24px 12px 20px; border-radius: 999px; white-space: nowrap; }
+.dark .kicker { color: var(--dark-ink); background: var(--dark-surface); border: 1.5px solid var(--dark-line); }
+.dark .kicker .ic { color: var(--accent); }
+
+/* ---------- Componentes ---------- */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-float); color: var(--ink); }
+.card-s { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow-card); color: var(--ink); }
+.card-d { background: var(--dark-surface); border: 1px solid var(--dark-line); border-radius: 24px; color: var(--dark-ink); }
+.ink-card { background: var(--ink); color: var(--dark-ink); border-radius: 24px; }
+
+.chip { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; line-height: 1.2; padding: 10px 20px; border-radius: 999px; white-space: nowrap; background: var(--surface-2); color: var(--ink-2); }
+.chip .dot { width: 12px; height: 12px; border-radius: 50%; background: currentColor; flex: none; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.acc { background: var(--accent-soft); color: var(--accent); }
+.chip.bar { background: var(--bar-soft); color: var(--bar); }
+.chip.kit { background: var(--kitchen-soft); color: var(--ink); }
+.chip.kit .dot, .chip.kit .ic { color: var(--kitchen); background: none; }
+.chip.kit .dot { background: var(--kitchen); }
+.chip.solid { background: var(--accent); color: #fff; }
+.chip.dk { background: var(--dark-surface); color: var(--dark-ink); border: 1.5px solid var(--dark-line); }
+
+.badge0 { display: inline-flex; align-items: baseline; gap: 14px; background: var(--accent); color: #fff; border-radius: 999px; padding: 14px 34px 16px; font-weight: 800; white-space: nowrap; }
+.badge0 b { font-size: 1.5em; letter-spacing: -0.03em; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 12px; background: var(--accent); color: #fff; font-weight: 800; border-radius: 14px; white-space: nowrap; }
+
+.ic { display: inline-block; flex: none; vertical-align: middle; }
+
+/* Contacto */
+.contact { display: flex; flex-direction: column; gap: 14px; }
+.contact div { display: flex; align-items: center; gap: 16px; font-weight: 700; white-space: nowrap; }
+
+/* Pie de posts individuales */
+.pfoot { position: absolute; left: 84px; right: 84px; bottom: 56px; padding-top: 26px; border-top: 1.5px solid var(--line); display: flex; justify-content: space-between; align-items: center; font-size: 26px; font-weight: 700; color: var(--ink-2); }
+.pfoot span { display: inline-flex; align-items: center; gap: 12px; white-space: nowrap; }
+.dark .pfoot { border-color: var(--dark-line); color: var(--dark-ink-2); }
+
+/* ---------- Mockups ---------- */
+.phone { background: #0f0d0c; border: 2px solid #38322e; border-radius: 62px; padding: 14px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.55); }
+.phone .scr { background: var(--bg); border-radius: 48px; overflow: hidden; height: 100%; color: var(--ink); position: relative; }
+.tablet { background: #0f0d0c; border: 2px solid #38322e; border-radius: 36px; padding: 18px; box-shadow: var(--shadow-float); }
+.tablet .scr { background: var(--dark-bg); border-radius: 20px; overflow: hidden; height: 100%; color: var(--dark-ink); }
+
+/* Pulsera Xiaomi Smart Band (silueta minimalista) */
+.band { position: relative; display: flex; flex-direction: column; align-items: center; }
+.band .strap { width: 62%; background: #2b2724; border: 1.5px solid #3d3632; }
+.band .strap.t { border-radius: 40px 40px 14px 14px; border-bottom: none; }
+.band .strap.b { border-radius: 14px 14px 40px 40px; border-top: none; }
+.band .pod { width: 100%; background: #0b0a09; border: 3px solid #4a423c; border-radius: 999px; padding: 14px; position: relative; z-index: 2; box-shadow: 0 24px 50px -16px rgba(0, 0, 0, 0.7); }
+.band .pod .scr { background: #000; border-radius: 999px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #faf7f2; text-align: center; }
+.band .wave { position: absolute; top: 50%; border: 4px solid var(--accent); border-radius: 50%; opacity: 0.0; }

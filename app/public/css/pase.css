@@ -414,6 +414,39 @@ body {
   border-radius: var(--radius-pill);
 }
 
+/* ---------- Semáforo SLA de demora (legible a 3-4 metros) ---------- */
+.p-wait.sla-ok,
+.p-wait.sla-warn,
+.p-wait.sla-late {
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+.p-wait.sla-ok { background: #e3f3ea; color: #2f8a57; }
+.p-wait.sla-warn { background: #fdecc8; color: #9a5a00; }
+.p-wait.sla-late {
+  background: #f0644c;
+  color: #ffffff;
+  font-size: 15px;
+  animation: p-sla-pulse 1.6s var(--ease-out) infinite;
+}
+.p-card.sla-card-warn {
+  box-shadow: 0 0 0 2px #f2a93b, var(--p-card-shadow);
+}
+.p-card.sla-card-late {
+  background: #fff6f3;
+  box-shadow: 0 0 0 3px #f0644c, 0 12px 32px rgba(240, 100, 76, 0.3);
+}
+#pSummary.has-late { color: #f0644c; font-weight: 800; }
+body[data-theme="light"] #pSummary.has-late { color: #c2412b; }
+@keyframes p-sla-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.78; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-wait.sla-late { animation: none; }
+}
+
 .p-mesa-row {
   display: flex;
   align-items: baseline;

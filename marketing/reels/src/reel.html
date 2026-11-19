@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SaleListo Reels · motor de composición 1080x1920</title>
+<style>
+@font-face { font-family: 'PJS'; src: url('../../../video-ad/v2/assets/fonts/PJS-700.ttf'); font-weight: 700; }
+@font-face { font-family: 'PJS'; src: url('../../../video-ad/v2/assets/fonts/PJS-800.ttf'); font-weight: 800; }
+/* Tokens oficiales: branding/tokens.css (Propuesta 01 · Pase Limpio) */
+:root {
+  --bg: #faf7f2; --surface: #ffffff; --line: #e6dfd3; --ink: #1c1917; --accent: #d9412b; --accent-soft: #fceae6;
+  --ok: #2f8a57; --ok-soft: #e3f3ea;
+  --shadow-float: 0 4px 12px rgba(28, 25, 23, 0.06), 0 20px 48px -8px rgba(28, 25, 23, 0.14);
+  --shadow-card: 0 1px 2px rgba(28, 25, 23, 0.04), 0 8px 24px -4px rgba(28, 25, 23, 0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: #1c1917; }
+body { font-family: 'PJS', sans-serif; -webkit-font-smoothing: antialiased; color: var(--ink); }
+#vp { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; background: #1c1917; }
+.abs { position: absolute; }
+.layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+.layer img { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 50% 50%; }
+.layer .veil { position: absolute; inset: 0; background: rgba(28, 25, 23, 0.46); }
+.layer .cream { position: absolute; inset: 0; background: rgba(250, 247, 242, 0.90); }
+/* Titular: maximo 5 palabras, una linea, se ajusta solo al ancho util */
+.title { position: absolute; left: 60px; top: 486px; width: 960px; text-align: center; color: #faf7f2; font-weight: 800; font-size: 88px; line-height: 1.1; letter-spacing: -0.03em; white-space: nowrap; text-shadow: 0 2px 22px rgba(28,25,23,0.35); }
+.title .k { background: #d9412b; color: #faf7f2; border-radius: 16px; padding: 0 0.16em 0.04em; text-shadow: none; }
+/* Lienzo blanco persistente 720x720 */
+#card { position: absolute; left: 180px; top: 660px; width: 720px; height: 720px; background: var(--surface); border-radius: 36px; box-shadow: var(--shadow-float); overflow: hidden; }
+#stage { position: absolute; left: 0; top: 0; }
+#stage text { font-family: 'PJS', sans-serif; }
+/* Cierre */
+#closing { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; display: none; }
+#closing .kicker { top: 456px; font-size: 76px; color: var(--ink); text-shadow: none; }
+#closing .logo { position: absolute; left: 170px; top: 610px; width: 740px; height: 198px; object-fit: contain; }
+#closing .badge { position: absolute; left: 0; top: 880px; width: 1080px; display: flex; justify-content: center; }
+#closing .badge span { display: inline-flex; align-items: center; height: 84px; padding: 0 42px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); border: 2px solid #f5c9bf; font-size: 42px; font-weight: 800; letter-spacing: -0.01em; }
+#closing .ccard { position: absolute; left: 150px; top: 1030px; width: 780px; height: 260px; background: var(--surface); border: 1px solid var(--line); border-radius: 32px; box-shadow: var(--shadow-card); }
+#closing .row { position: absolute; left: 44px; height: 80px; display: flex; align-items: center; gap: 24px; }
+#closing .row .ic { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+#closing .row .v { font-size: 44px; font-weight: 800; color: var(--ink); letter-spacing: -0.015em; white-space: nowrap; }
+</style>
+</head>
+<body>
+<div id="vp">
+  <div id="bg">
+    <div class="layer" id="L0"><img alt=""><div class="veil"></div><div class="cream"></div></div>
+    <div class="layer" id="L1"><img alt=""><div class="veil"></div><div class="cream"></div></div>
+  </div>
+  <div id="titles"></div>
+  <div id="card"><svg id="stage" width="720" height="720" viewBox="0 0 720 720"></svg></div>
+
+  <div id="closing">
+    <img class="logo" id="cLogo" src="../../../video-ad/v2/assets/logo.svg" alt="SaleListo">
+    <div class="badge" id="cBadge"><span>0% comisión</span></div>
+    <div class="ccard" id="cCta">
+      <div class="row" style="top:40px">
+        <div class="ic" style="background:#e3f3ea"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2f8a57" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.4 18.5z"/></svg></div>
+        <div class="v">(+54)1138436571</div>
+      </div>
+      <div class="abs" style="left:44px;top:129px;width:692px;height:2px;background:#e6dfd3"></div>
+      <div class="row" style="top:140px">
+        <div class="ic" style="background:#fceae6"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d9412b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></div>
+        <div class="v">ventas@salelisto.com</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================ helpers compartidos (usados por scenes_rNN.js)
+const ASSETS = '../../../video-ad/v2/assets/';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+// Curva maestra unica: cubic-bezier(0.22, 1, 0.36, 1), sin rebote
+function bezier(x1, y1, x2, y2) {
+  const bx = t => 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
+  const by = t => 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
+  return x => {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    let lo = 0, hi = 1, t = x;
+    for (let i = 0; i < 40; i++) { t = (lo + hi) / 2; if (bx(t) < x) lo = t; else hi = t; }
+    return clamp(by(t));
+  };
+}
+const ease = bezier(0.22, 1, 0.36, 1);
+const inout = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+const A = (t, t0, d = 0.5) => ease(clamp((t - t0) / d));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const $ = id => document.getElementById(id);
+const hex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+const mix = (a, b, p) => { const x = hex(a), y = hex(b); return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * clamp(p))).join(',')})`; };
+function op(e, o) { o = clamp(o); e.style.opacity = o.toFixed(4); e.style.visibility = o <= 0.002 ? 'hidden' : 'visible'; }
+function show(e, o, dy = 0) { op(e, o); e.style.transform = `translateY(${dy.toFixed(2)}px)`; }
+function vis(g, o, dy = 0) { op(g, o); g.setAttribute('transform', `translate(0 ${dy.toFixed(2)})`); }
+function place(g, x, y, s = 1, o = 1) { g.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)}) scale(${s.toFixed(4)})`); op(g, o); }
+// trazo que se dibuja: prepara dasharray y devuelve setter p (0..1)
+function drawable(id) { const p = $(id), L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; return pr => { p.style.strokeDashoffset = (L * (1 - clamp(pr))).toFixed(2); op(p, pr > 0 ? 1 : 0); }; }
+const fmtARS = v => '$' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+const INK = '#1c1917', MUTE = '#d6cdc0', ACC = '#d9412b', OK = '#2f8a57', KIT = '#d97706', BAR = '#6d28d9', CREAM = '#faf7f2', LINE = '#e6dfd3';
+const ST = `fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"`;
+
+// ============================================================ iconos vectoriales propios (centrados en 0,0)
+const ICON = {
+  cloche: `<g ${ST} stroke="${INK}">
+    <path d="M-72 28 A72 72 0 0 1 72 28 Z" fill="#ffffff"/>
+    <path d="M-92 46 H92"/>
+    <circle cx="0" cy="-54" r="9" fill="#ffffff"/>
+    <path d="M-40 4 A46 46 0 0 1 -16 -22" stroke="${MUTE}"/></g>`,
+  burger: `<g ${ST} stroke="${INK}">
+    <path d="M-64 -8 C-64 -50 -36 -64 0 -64 C36 -64 64 -50 64 -8 Z" fill="#fef1dc"/>
+    <path d="M-68 8 Q-57 -2 -45 8 T-22 8 T0 8 T22 8 T45 8 T68 8" stroke="${OK}"/>
+    <rect x="-64" y="18" width="128" height="22" rx="11" fill="#57534e"/>
+    <path d="M-62 48 H62 V52 C62 62 54 66 42 66 H-42 C-54 66 -62 62 -62 52 Z" fill="#fef1dc"/></g>
+    <g fill="${INK}"><circle cx="-22" cy="-38" r="3.5"/><circle cx="0" cy="-47" r="3.5"/><circle cx="22" cy="-38" r="3.5"/></g>`,
+  glass: `<path d="M-41 -36 H41 C37 -8 22 2 0 2 C-22 2 -37 -8 -41 -36 Z" fill="#efeafe"/>
+    <g ${ST} stroke="${INK}">
+    <path d="M-46 -62 H46 C46 -12 26 6 0 6 C-26 6 -46 -12 -46 -62 Z"/>
+    <path d="M0 6 V54"/><path d="M-32 60 H32"/>
+    <circle cx="38" cy="-64" r="16" fill="#fef1dc"/><path d="M38 -64 L38 -78 M38 -64 L50 -56 M38 -64 L26 -56"/></g>`,
+  cup: `<g ${ST} stroke="currentColor">
+    <path d="M-34 -46 H34 C34 -8 20 4 0 4 C-20 4 -34 -8 -34 -46 Z"/>
+    <path d="M-30 -26 H30" stroke-width="3.5"/>
+    <path d="M0 4 V38"/><path d="M-24 44 H24"/></g>`,
+  // pinta llena (~120 x 176 px)
+  pint: `<path d="M-50 -66 L-40 74 Q-39 86 -27 86 H27 Q39 86 40 74 L50 -66 Z" fill="#f4b53f"/>
+    <path d="M-52 -66 C-56 -92 -30 -98 -18 -88 C-8 -102 18 -102 26 -88 C40 -98 60 -86 52 -66 Z" fill="#ffffff" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M-50 -66 L-40 74 Q-39 86 -27 86 H27 Q39 86 40 74 L50 -66" ${ST} stroke="${INK}"/>
+    <path d="M-24 -40 L-18 52" stroke="#fff6dc" stroke-width="7" stroke-linecap="round" opacity="0.75"/>`,
+  ticket: `<g ${ST} stroke="#ffffff" stroke-width="3.5"><path d="M-17 -22 H17 V22 L11 17 L5 22 L0 17 L-5 22 L-11 17 L-17 22 Z"/><path d="M-8 -9 H8 M-8 2 H8"/></g>`,
+  person: `<g fill="#ffffff"><circle cx="0" cy="-9" r="10"/><path d="M-19 21 C-19 6 -10 1 0 1 C10 1 19 6 19 21 Z"/></g>`,
+  check: (s, w, c = '#ffffff') => `<path d="M${-0.42 * s} ${0.02 * s} L${-0.12 * s} ${0.32 * s} L${0.44 * s} ${-0.3 * s}" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/>`,
+  // pulsera inteligente de frente (malla + capsula), con ids prefijados
+  band: p => `<g id="${p}waves">
+      ${[0, 1].map(k => [1, -1].map(sd => `<path class="${p}w${k}" d="M${sd * (88 + k * 30)} ${-48 - k * 22} Q${sd * (110 + k * 36)} 0 ${sd * (88 + k * 30)} ${48 + k * 22}" fill="none" stroke="${OK}" stroke-width="4" stroke-linecap="round"/>`).join('')).join('')}
+    </g>
+    <g id="${p}band">
+      <path d="M-38 -90 L-33 -186 Q-32 -194 -24 -194 H24 Q32 -194 33 -186 L38 -90 Z" fill="#ece6dc" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-38 90 L-33 186 Q-32 194 -24 194 H24 Q32 194 33 186 L38 90 Z" fill="#ece6dc" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
+      <path d="M-24 -116 H24 M-23 -138 H23 M-22 -160 H22" stroke="${MUTE}" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      ${[118, 142, 166].map(y => `<circle cx="0" cy="${y}" r="5" fill="${MUTE}"/>`).join('')}
+      <rect x="-62" y="-98" width="124" height="196" rx="62" fill="${INK}"/>
+      <rect id="${p}scr" x="-47" y="-80" width="94" height="160" rx="47" fill="#2b2623"/>
+      <g id="${p}dots">${[-18, 0, 18].map(x => `<circle cx="${x}" cy="0" r="6" fill="#6b625b"/>`).join('')}</g>
+      <path id="${p}chk" d="M-23 2 L-7 18 L24 -16" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>`,
+};
+// senal de prohibido (circulo + diagonal) que se dibuja: ids p+'c' y p+'s'
+function prohibSVG(p, cx, cy, r, w) {
+  const d = r * Math.SQRT1_2;
+  return `<circle id="${p}c" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${ACC}" stroke-width="${w}" stroke-linecap="round" transform="rotate(-135 ${cx} ${cy})"/>
+    <path id="${p}s" d="M${(cx - d).toFixed(1)} ${(cy - d).toFixed(1)} L${(cx + d).toFixed(1)} ${(cy + d).toFixed(1)}" fill="none" stroke="${ACC}" stroke-width="${w}" stroke-linecap="round"/>`;
+}
+// QR ilustrativo (sin URL)
+function fakeQR(n = 25, px = 300, seed0 = 7) {
+  let seed = seed0; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const m = px / n; let s = '';
+  const finder = (x, y) => { s += `<rect x="${x * m}" y="${y * m}" width="${7 * m}" height="${7 * m}" rx="${m * 1.6}" fill="${INK}"/><rect x="${(x + 1) * m}" y="${(y + 1) * m}" width="${5 * m}" height="${5 * m}" rx="${m}" fill="#ffffff"/><rect x="${(x + 2) * m}" y="${(y + 2) * m}" width="${3 * m}" height="${3 * m}" rx="${m * 0.7}" fill="${INK}"/>`; };
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const inF = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
+    const inC = x >= 9 && x <= 15 && y >= 9 && y <= 15;
+    if (!inF && !inC && rnd() < 0.5) s += `<rect x="${(x * m + 0.8).toFixed(2)}" y="${(y * m + 0.8).toFixed(2)}" width="${(m - 1.6).toFixed(2)}" height="${(m - 1.6).toFixed(2)}" rx="2.4" fill="${INK}"/>`;
+  }
+  finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+  return s;
+}
+// pulsera: vibracion (ondas + temblor) y tilde verde al confirmar
+function bandAnim(p, t, vb, ok, dy = 0, o = 1) {
+  [0, 1].forEach(k => {
+    let w = 0, dx = 0;
+    for (let c = 0; c < 2; c++) {
+      const u = lin(t, vb + c * 0.55 + k * 0.16, vb + c * 0.55 + k * 0.16 + 0.85);
+      if (u > 0 && u < 1) { w = Math.max(w, 0.9 * Math.sin(Math.PI * u)); dx = 12 * ease(u); }
+    }
+    document.querySelectorAll('.' + p + 'w' + k).forEach((e, j) => { e.style.opacity = w.toFixed(3); e.setAttribute('transform', `translate(${(j ? -dx : dx).toFixed(2)} 0)`); });
+  });
+  const vz = lin(t, vb, vb + 1.0);
+  const shake = (vz > 0 && vz < 1) ? 2.2 * Math.sin(vz * Math.PI * 2 * 9) * Math.sin(Math.PI * vz) : 0;
+  $(p + 'band').setAttribute('transform', `translate(${shake.toFixed(2)} ${dy.toFixed(2)})`); op($(p + 'band'), o);
+  const pg = A(t, ok - 0.10, 0.45);
+  $(p + 'scr').setAttribute('fill', mix('#2b2623', OK, pg));
+  op($(p + 'dots'), 1 - A(t, ok - 0.10, 0.25));
+  const ck = $(p + 'chk'); if (!ck.dataset.L) { ck.dataset.L = ck.getTotalLength(); ck.style.strokeDasharray = `${ck.dataset.L} ${ck.dataset.L}`; }
+  const pk = A(t, ok + 0.10, 0.45); ck.style.strokeDashoffset = (ck.dataset.L * (1 - pk)).toFixed(2); op(ck, pk > 0 ? 1 : 0);
+}
+
+window.REELS = {};
+
+// ============================================================ motor
+let TL = null, FC = {}, S = {}, M = {}, MOD = null;
+const R = {};
+const IN_D = 0.48, OUT_D = 0.30;
+function sceneVis(s, t, opts = {}) {
+  const pin = opts.noIn ? 1 : A(t, s.start + 0.02, IN_D);
+  const pout = opts.noOut ? 0 : A(t, s.end - OUT_D - 0.02, OUT_D);
+  const o = (t < s.end - 0.02 || opts.noOut) ? pin * (1 - pout) : 0;
+  return { o: t < s.start && !opts.noIn ? 0 : o, dy: (1 - pin) * 14 - pout * 10 };
+}
+function titleVis(ti, t) {
+  const pin = ti.first ? 1 : A(t, ti.start + 0.02, IN_D);
+  const pout = A(t, ti.end - OUT_D - 0.02, OUT_D);
+  const o = (t >= ti.start && t < ti.end - 0.02) ? pin * (1 - pout) : 0;
+  return { o, dy: (1 - pin) * 14 - pout * 10 };
+}
+function build() {
+  const tw = $('titles');
+  TL.titles.forEach((ti, k) => {
+    const d = document.createElement('div'); d.className = 'title'; d.id = 'tt' + k;
+    d.innerHTML = ti.text.split('|').map((p, i) => i % 2 ? `<span class="k">${p}</span>` : p).join('');
+    tw.appendChild(d);
+  });
+  if (TL.kicker) {   // bajada opcional del cierre, sincronizada con la locucion
+    const d = document.createElement('div'); d.className = 'title kicker'; d.id = 'cKick';
+    d.innerHTML = TL.kicker.split('|').map((p, i) => i % 2 ? `<span class="k">${p}</span>` : p).join('');
+    $('closing').appendChild(d);
+  }
+  const parts = MOD.build();
+  $('stage').innerHTML = Object.keys(parts).map(id => `<g id="g${id}">${parts[id]}</g>`).join('');
+  if (MOD.init) MOD.init();
+  R.L = [$('L0'), $('L1')].map(l => ({ el: l, img: l.querySelector('img'), veil: l.querySelector('.veil'), cream: l.querySelector('.cream') }));
+}
+function fitTitles() {
+  document.querySelectorAll('.title').forEach(d => {
+    const base = d.classList.contains('kicker') ? 76 : 88;
+    d.style.fontSize = base + 'px';
+    const w = d.scrollWidth; if (w > 940) d.style.fontSize = (base * 940 / w).toFixed(1) + 'px';
+  });
+}
+const pending = [];
+function setImg(img, src) {
+  if (img.dataset.src !== src) { img.dataset.src = src; img.src = src; }
+  pending.push(img.decode().catch(() => {}));
+}
+function paintLayer(L, k, t) {
+  const s = TL.scenes[k];
+  const n = FC[s.id] || 1;
+  const i = Math.max(1, Math.min(n, Math.floor((t - s.start + TL.pre) * TL.srcFps) + 1));
+  setImg(L.img, `${TL.frameBase}/${s.id}/f_${String(i).padStart(4, '0')}.jpg`);
+  const nx = TL.scenes[k + 1];
+  const a = s.start - (k > 0 ? s.xfade / 2 : 0), b = s.end + (nx ? nx.xfade / 2 : 0);
+  const q = lin(t, a, b);                                  // deriva lineal 3 %
+  const closing = !!s.closing;
+  const base = closing ? 1.08 : 1.0;
+  L.img.style.transform = `scale(${(base * (1 + 0.03 * q)).toFixed(5)})`;
+  L.img.style.filter = closing ? 'blur(12px)' : 'none';
+  L.veil.style.display = closing ? 'none' : 'block';
+  L.veil.style.background = `rgba(28, 25, 23, ${s.veil || 0.46})`;
+  L.cream.style.display = closing ? 'block' : 'none';
+}
+window.renderFrame = async function (f) {
+  pending.length = 0;
+  const t = f / TL.fps;
+  const sc = TL.scenes;
+  let i = 0; for (let k = 0; k < sc.length; k++) if (t >= sc[k].start) i = k;
+  // fondo: crossfade entre B-rolls
+  let tr = null;
+  for (let k = 1; k < sc.length; k++) {
+    const a = sc[k].start - sc[k].xfade / 2, b = sc[k].start + sc[k].xfade / 2;
+    if (t >= a && t < b) tr = { from: k - 1, to: k, p: (t - a) / (b - a) };
+  }
+  if (tr) {
+    paintLayer(R.L[0], tr.from, t); paintLayer(R.L[1], tr.to, t);
+    R.L[0].el.style.opacity = 1; R.L[1].el.style.opacity = tr.p.toFixed(4); R.L[1].el.style.display = 'block';
+  } else {
+    paintLayer(R.L[0], i, t); R.L[0].el.style.opacity = 1; R.L[1].el.style.display = 'none';
+  }
+  // titulares (relevo secuencial, nunca dos a la vez)
+  TL.titles.forEach((ti, k) => { const v = titleVis(ti, t); show($('tt' + k), v.o, v.dy); });
+  // lienzo blanco: visible desde el cuadro 0 (gancho inmediato), sale hacia el cierre
+  const END = sc[sc.length - 1], e6 = END.start;
+  const cfade = lin(t, e6 - END.xfade / 2, e6 + END.xfade / 2), cout = A(t, e6 - END.xfade / 2, 0.60);
+  show($('card'), 1 - cfade, -cout * 10);
+  const diag = sc.filter(s => !s.closing);
+  diag.forEach((s, k) => {
+    const v = sceneVis(s, t, { noIn: k === 0, noOut: k === diag.length - 1 });
+    vis($('g' + s.id), v.o, v.dy);
+  });
+  MOD.render(t);
+  // cierre institucional
+  const pl = A(t, M.logo, 0.60), pbg = A(t, M.badge, 0.55), pc = A(t, M.contact, 0.60);
+  $('closing').style.display = t >= e6 - 0.3 ? 'block' : 'none';
+  show($('cLogo'), pl, (1 - pl) * 14); show($('cBadge'), pbg, (1 - pbg) * 14); show($('cCta'), pc, (1 - pc) * 14);
+  if (TL.kicker) { const pk = A(t, M.logo + 0.18, 0.60); show($('cKick'), pk, (1 - pk) * 14); }
+  await Promise.all(pending);
+  return true;
+};
+window.init = async function (tl, fc) {
+  TL = tl; FC = fc; M = tl.marks;
+  tl.scenes.forEach(s => { S[s.id] = s; });
+  MOD = window.REELS[tl.reel];
+  build();
+  await document.fonts.ready;
+  await Promise.all([700, 800].map(w => document.fonts.load(`${w} 40px PJS`)));
+  fitTitles();
+  await Promise.all([...document.querySelectorAll('img')].filter(i => i.src).map(i => i.decode().catch(() => {})));
+  const pre = new Image(); pre.src = ASSETS + 'mark.svg'; await pre.decode().catch(() => {});
+  await new Promise(r => setTimeout(r, 300));
+  return true;
+};
+</script>
+<script src="scenes_r01.js"></script>
+<script src="scenes_r02.js"></script>
+<script src="scenes_r03.js"></script>
+</body>
+</html>

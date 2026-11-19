@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SaleListo · Tablero operativo del local</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 22px 16px 60px; }
+    .topnav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 30px; }
+    .back {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; color: var(--ink-2);
+      text-decoration: none; padding: 7px 12px; border-radius: var(--radius-pill); border: 1px solid var(--line); background: var(--surface);
+      transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .back:hover { border-color: var(--accent); color: var(--accent); }
+    .status-strip { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .st-pill {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700;
+      padding: 5px 11px; border-radius: var(--radius-pill); background: var(--surface-2); color: var(--ink-2);
+    }
+    .st-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+    .st-pill.live { background: var(--ok-soft); color: var(--ok); }
+    .st-pill.live .dot { background: var(--ok); box-shadow: 0 0 0 3px rgba(47, 138, 87, 0.18); }
+    .st-pill.warn { background: var(--warn-soft); color: var(--warn); }
+    .st-pill.warn .dot { background: var(--warn); }
+
+    h1 { font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; max-width: 760px; }
+    .lead { font-size: 17px; color: var(--ink-2); max-width: 760px; margin: 12px 0 26px; line-height: 1.5; }
+
+    .live-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 26px; }
+    .lk { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 14px 16px; }
+    .lk small { display: block; font-size: 12px; font-weight: 700; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.04em; }
+    .lk strong { display: block; font-size: 24px; font-weight: 800; margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .lk span { font-size: 12.5px; color: var(--ink-2); }
+    .lk.alert strong { color: var(--accent); }
+
+    h3.sec { margin: 34px 0 12px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+    .card {
+      background: var(--surface); border-radius: var(--radius-card); padding: 20px; box-shadow: var(--shadow-card);
+      display: flex; flex-direction: column; gap: 9px; color: inherit; border: 1px solid var(--line); text-decoration: none;
+      transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+    }
+    a.card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: var(--shadow-float); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .card .ico { font-size: 28px; line-height: 1; }
+    .card .tag {
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+      padding: 3px 9px; border-radius: var(--radius-pill); background: var(--accent-soft); color: var(--accent);
+    }
+    .card .tag.ok { background: var(--ok-soft); color: var(--ok); }
+    .card h2 { font-size: 18px; font-weight: 800; }
+    .card p { color: var(--ink-2); font-size: 13.5px; line-height: 1.45; }
+    .card .go { margin-top: auto; font-weight: 700; color: var(--accent); font-size: 14px; }
+    .card .sub-links { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; }
+    .card.hl { background: var(--ink); border-color: var(--ink); color: var(--dark-ink); }
+    .card.hl p { color: rgba(250, 247, 242, 0.72); }
+    .card.hl .go { color: #ffb4a6; }
+
+    .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card); padding: 20px; }
+    .panel h2 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+    .panel .muted { color: var(--ink-2); font-size: 13.5px; }
+    .check { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+    .check li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--ink-2); }
+    .check label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+    .check input { width: 18px; height: 18px; accent-color: var(--ok); margin-top: 1px; flex: none; }
+    .check input:checked + span { color: var(--ink-3); text-decoration: line-through; }
+    .check b { color: var(--ink); }
+    .qr-box { display: flex; gap: 14px; align-items: center; margin-top: 12px; }
+    .qr-box .qr { width: 132px; height: 132px; flex: none; border-radius: var(--radius-control); border: 1px solid var(--line); background: #fff; padding: 6px; display: grid; place-items: center; }
+    .qr-box .qr img, .qr-box .qr svg { width: 100%; height: 100%; display: block; }
+    .qr-box code { display: block; font-size: 13px; font-weight: 700; word-break: break-all; color: var(--ink); background: var(--surface-2); padding: 6px 9px; border-radius: var(--radius-sm); margin: 6px 0; }
+    .flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+    .step { padding: 15px; border-radius: var(--radius-card); background: var(--surface-2); border: 1px solid var(--line); }
+    .step b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 4px; }
+    .step span { font-size: 13.5px; color: var(--ink-2); }
+    .foot { margin-top: 40px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .foot a { color: var(--ink-2); font-weight: 700; }
+    @media (max-width: 820px) { .grid-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="topnav">
+      <a class="back" href="/">← Volver a la portada comercial</a>
+      <div class="status-strip" id="statusStrip">
+        <span class="st-pill" id="pillConn"><span class="dot"></span>Conectando con el local…</span>
+      </div>
+    </nav>
+
+    <img src="logo.svg" alt="SaleListo" style="height:44px;margin-bottom:18px;display:block">
+    <h1>Tablero operativo del local</h1>
+    <p class="lead">Todas las pantallas del servicio en un solo lugar: abrí la Estación de Mozos en el pase, la comandera en Cocina y Barra, y el Panel del Encargado en la caja. Todo se sincroniza en vivo.</p>
+
+    <section class="live-kpis" id="liveKpis" aria-live="polite" hidden></section>
+
+    <h3 class="sec">Pantallas del servicio</h3>
+    <div class="cards">
+      <a class="card" href="pase.html">
+        <div class="card-top"><span class="ico">🛎️</span><span class="tag">Plan Base · Sin celulares</span></div>
+        <h2>Estación de Mozos (Pase)</h2>
+        <p>Pantalla fija horizontal con una columna por mozo: retiros de Cocina y Barra, cuentas exactas, llamados de mesa y semáforo de demoras.</p>
+        <span class="go">Abrir Estación de Mozos →</span>
+      </a>
+      <div class="card">
+        <div class="card-top"><span class="ico">🍳</span><span class="tag ok">Semáforo SLA</span></div>
+        <h2>Comandera Cocina y Barra</h2>
+        <p>Alto contraste, campana de comandas y semáforo verde / ámbar / coral para que ninguna mesa quede olvidada en hora pico.</p>
+        <div class="sub-links">
+          <a class="btn btn-sm btn-primary" href="cocina.html?estacion=todas">🔥 Todo</a>
+          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=cocina">🍳 Solo Cocina</a>
+          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=barra">🍸 Solo Barra</a>
+        </div>
+      </div>
+      <a class="card" href="restaurante.html">
+        <div class="card-top"><span class="ico">🖥️</span><span class="tag">PIN de encargado</span></div>
+        <h2>Panel del Encargado</h2>
+        <p>Salón por bloques, mozos en turno, carta con etiquetas dietarias, arqueo con descarga CSV y bandeja de consultas comerciales.</p>
+        <span class="go">Abrir panel →</span>
+      </a>
+      <a class="card" href="mozo.html">
+        <div class="card-top"><span class="ico">⌚</span><span class="tag">Adicional</span></div>
+        <h2>App Mozo + Pulsera Vibradora</h2>
+        <p>Alertas Web Push con la pantalla apagada para la pulsera: retiros listos, llamados de mesa y toma manual de pedidos.</p>
+        <span class="go">Abrir app del mozo →</span>
+      </a>
+      <a class="card" href="qr.html">
+        <div class="card-top"><span class="ico">🖨️</span></div>
+        <h2>QRs fijos por mesa</h2>
+        <p>Tarjetas listas para imprimir, agrupadas por bloque, con token único anti-bromas por mesa.</p>
+        <span class="go">Ver e imprimir QRs →</span>
+      </a>
+      <a class="card hl" href="demo.html">
+        <div class="card-top"><span class="ico">▶</span></div>
+        <h2>Demo circuito completo</h2>
+        <p>Cliente, Estación de Mozos, Cocina, Barra y Panel en simultáneo para mostrar o capacitar al equipo.</p>
+        <span class="go">Abrir demo interactiva →</span>
+      </a>
+    </div>
+
+    <h3 class="sec">Apertura de turno</h3>
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Checklist de 2 minutos</h2>
+        <p class="muted">Se guarda en este dispositivo y se reinicia cada día.</p>
+        <ul class="check" id="checklist">
+          <li><label><input type="checkbox" data-chk="mozos"><span><b>Mozos del turno activos</b> en el Panel (los ausentes, en pausa).</span></label></li>
+          <li><label><input type="checkbox" data-chk="pase"><span><b>Estación de Mozos encendida</b> en el pase con el sonido activado.</span></label></li>
+          <li><label><input type="checkbox" data-chk="kds"><span><b>Comandera abierta</b> en Cocina y en Barra (campana probada).</span></label></li>
+          <li><label><input type="checkbox" data-chk="agotados"><span><b>Platos agotados</b> marcados en Menú y Precios.</span></label></li>
+          <li><label><input type="checkbox" data-chk="qr"><span><b>QRs visibles</b> en todas las mesas habilitadas.</span></label></li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h2>Abrir en otra pantalla</h2>
+        <p class="muted">Escaneá con la tablet o TV del pase para abrir este tablero sin tipear la dirección.</p>
+        <div class="qr-box">
+          <div class="qr" id="qrBox" aria-label="Código QR de acceso"></div>
+          <div style="min-width:0">
+            <code id="baseUrl">…</code>
+            <span class="muted" id="netHint" style="font-size:12.5px"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="sec">Flujo punta a punta</h3>
+    <div class="flow">
+      <div class="step"><b>1 · Diseño por bloques</b><span>Interior, Terraza, Vereda, Barra o Sectores con QRs fijos.</span></div>
+      <div class="step"><b>2 · Escaneo 4G / 5G</b><span>El cliente busca, filtra por Sin TACC o Veggie y pide sin Wi-Fi.</span></div>
+      <div class="step"><b>3 · Cocina + Barra</b><span>Bebidas directo a Barra y platos a Cocina, con semáforo de demora.</span></div>
+      <div class="step"><b>4 · Asignación de mozo</b><span>Por bloque pre-asignado o automática según carga en vivo.</span></div>
+      <div class="step"><b>5 · Pase o Pulsera</b><span>Estación fija sin celulares o vibración en la muñeca.</span></div>
+    </div>
+
+    <div class="foot">
+      <span>SaleListo · Tablero de uso interno del local</span>
+      <a href="/">← Volver a la portada comercial</a>
+    </div>
+  </div>
+
+  <script>
+    (async () => {
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const money = (n) => '$' + Math.round(Number(n) || 0).toLocaleString('es-AR');
+
+      // Checklist diario persistido en este dispositivo
+      const d = new Date();
+      const dayKey = `salelisto:checklist:${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      let saved = {};
+      try {
+        Object.keys(localStorage).filter((k) => k.startsWith('salelisto:checklist:') && k !== dayKey).forEach((k) => localStorage.removeItem(k));
+        saved = JSON.parse(localStorage.getItem(dayKey) || '{}');
+      } catch (_) {}
+      document.querySelectorAll('[data-chk]').forEach((cb) => {
+        cb.checked = Boolean(saved[cb.dataset.chk]);
+        cb.addEventListener('change', () => {
+          saved[cb.dataset.chk] = cb.checked;
+          try { localStorage.setItem(dayKey, JSON.stringify(saved)); } catch (_) {}
+        });
+      });
+
+      const strip = $('#statusStrip');
+      try {
+        const info = await fetch('api/info').then((r) => r.json());
+        const pills = ['<span class="st-pill live"><span class="dot"></span>Servidor en vivo</span>'];
+        pills.push(info.demoMode
+          ? '<span class="st-pill warn"><span class="dot"></span>Modo demo activo</span>'
+          : '<span class="st-pill"><span class="dot"></span>Modo producción (PIN)</span>');
+        strip.innerHTML = pills.join('');
+
+        const target = (info.baseUrl || location.origin).replace(/\/$/, '') + '/operacion.html';
+        $('#baseUrl').textContent = target;
+        $('#netHint').textContent = /127\.0\.0\.1|localhost/.test(target)
+          ? 'Dirección local: configurá el link público en Caja y Ajustes para abrirlo desde otra red.'
+          : 'Funciona desde cualquier dispositivo conectado a esta red o a internet.';
+        $('#qrBox').innerHTML = `<img alt="QR del tablero" src="api/qr.svg?text=${encodeURIComponent(target)}">`;
+
+        // Resumen en vivo (solo si el estado del personal es accesible: modo demo o sesión de encargado)
+        const tok = sessionStorage.getItem('salelisto:adminToken') || '';
+        const r = await fetch('api/staff-state', { headers: tok ? { 'X-Auth-Token': tok } : {} });
+        if (r.ok) {
+          const s = await r.json();
+          const open = (s.orders || []).filter((o) => o.isOpenSession && ['nuevo', 'cocina'].includes(o.status));
+          const late = open.filter((o) => Date.now() - o.createdAt >= 15 * 60000).length;
+          const ready = (s.orders || []).filter((o) => o.isOpenSession && o.status === 'listo').length;
+          const occupied = (s.tables || []).filter((t) => t.active && t.sessionId).length;
+          const active = (s.tables || []).filter((t) => t.active).length;
+          const newLeads = (s.leads || []).filter((l) => l.status === 'nuevo').length;
+          const cards = [
+            ['Mesas ocupadas', `${occupied} / ${active}`, `${(s.waiters || []).filter((w) => w.available).length} mozo(s) en turno`, false],
+            ['En preparación', String(open.length), late ? `${late} demorada(s) +15 min` : 'Todo en tiempo', late > 0],
+            ['Listos para retirar', String(ready), ready ? 'Esperando al mozo en el pase' : 'Pase al día', ready > 0],
+            ['Cobrado hoy', money((s.kpis?.closedSalesToday || 0) + (s.kpis?.closedTipsToday || 0)), `${s.kpis?.closedTablesCount || 0} mesa(s) cerradas`, false],
+          ];
+          if (newLeads) cards.push(['Consultas nuevas', String(newLeads), 'Abrir en Panel → Consultas', true, 'restaurante.html#consultas']);
+          $('#liveKpis').innerHTML = cards.map(([t, v, sub, alert, href]) => {
+            const inner = `<small>${esc(t)}</small><strong>${esc(v)}</strong><span>${esc(sub)}</span>`;
+            return href
+              ? `<a class="lk ${alert ? 'alert' : ''}" href="${esc(href)}" style="text-decoration:none;color:inherit">${inner}</a>`
+              : `<div class="lk ${alert ? 'alert' : ''}">${inner}</div>`;
+          }).join('');
+          $('#liveKpis').hidden = false;
+        }
+      } catch (_) {
+        strip.innerHTML = '<span class="st-pill warn"><span class="dot"></span>Sin conexión con el servidor</span>';
+      }
+    })();
+  </script>
+</body>
+</html>

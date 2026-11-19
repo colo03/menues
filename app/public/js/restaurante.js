@@ -16,6 +16,23 @@
   let knownOrders = new Set();
   let knownCalls = new Set();
   let freshIds = new Set();
+  let knownLeads = new Set();
+  let leadFilter = 'activas';
+  let cajaConfigDirty = false;
+
+  const ITEM_TAG_OPTIONS = [
+    ['sin_tacc', '🌾 Sin TACC'],
+    ['veggie', '🌱 Veggie'],
+    ['vegano', '🌿 Vegano'],
+    ['picante', '🌶️ Picante'],
+    ['sin_alcohol', '🧃 Sin alcohol'],
+  ];
+  const LEAD_STATUS = {
+    nuevo: { label: 'Nuevo', cls: 'nuevo' },
+    contactado: { label: 'Contactado', cls: 'cocina' },
+    piloto: { label: 'En piloto', cls: 'listo' },
+    descartado: { label: 'Descartado', cls: 'cancelado' },
+  };
 
   // ---------- Autenticación del Panel ----------
   let savedToken = sessionStorage.getItem('salelisto:adminToken') || '';
@@ -60,7 +77,8 @@
     }
   };
 
-  await tryBoot();
+  // tryBoot() se invoca al final del archivo: así todas las constantes (NEXT_FLOW, VIEW_HASH...)
+  // ya están inicializadas cuando el panel arranca solo con una sesión guardada o ?demo=1.
 
   async function act(type, payload) {
     try {
@@ -82,6 +100,7 @@
 
     knownOrders = new Set(state.orders.filter((o) => o.isOpenSession).map((o) => o.id));
     knownCalls = new Set(state.calls.map((c) => c.id));
+    knownLeads = new Set((state.leads || []).map((l) => l.id));
 
     onAudioState((on) => {
       const b = $('#adminAudioBtn');
@@ -112,6 +131,11 @@
         toast(c.type === 'mozo' ? `🙋 Mesa ${c.tableCode} llama a ${c.waiterName || 'mozo'}` : `💳 Mesa ${c.tableCode} pide la cuenta`);
       });
       if (newOrders.length || newCalls.length) ding(newCalls.length ? 2 : 1, newCalls.length > 0);
+
+      const newLeads = (s.leads || []).filter((l) => !knownLeads.has(l.id));
+      newLeads.forEach((l) => toast(`📨 Nueva consulta comercial: ${l.restaurantName || l.name}`, 5000));
+      if (newLeads.length && !newOrders.length && !newCalls.length) ding(1);
+      knownLeads = new Set((s.leads || []).map((l) => l.id));
 
       knownOrders = new Set(openOrds.map((o) => o.id));
       knownCalls = new Set(s.calls.map((c) => c.id));
@@ -150,13 +174,21 @@
     listo: { label: 'Entregado', cls: 'btn-ghost' },
   };
 
+  function slaChip(o) {
+    if (['entregado', 'cancelado'].includes(o.status)) return '';
+    const mins = Math.max(0, Math.floor((Date.now() - o.createdAt) / 60000));
+    if (mins >= 15) return `<span class="sla-chip sla-late">Demorado · ${mins} min</span>`;
+    if (mins >= 8) return `<span class="sla-chip sla-warn">Atención · ${mins} min</span>`;
+    return `<span class="sla-chip sla-ok">En tiempo</span>`;
+  }
+
   function ticketHtml(o) {
     const mins = Math.floor((Date.now() - o.createdAt) / 60000);
     const late = !['entregado', 'cancelado'].includes(o.status) && mins >= 15;
     const nxt = NEXT_FLOW[o.status];
     const isCancel = o.status === 'cancelado';
 
-    return `<article class="ticket ${o.status} ${freshIds.has(o.id) ? 'fresh' : ''}">
+    return `<article class="ticket ${o.status} ${freshIds.has(o.id) ? 'fresh' : ''} ${late ? 'sla-late-card' : ''}">
       <div class="ticket-head">
         <strong>Mesa ${escapeHtml(o.tableCode)} <small style="font-weight:600;color:var(--ink-2)">(${escapeHtml(o.blockName)})</small></strong>
         <small class="${late ? 'late' : ''}">#${o.id.slice(1)} · ${timeAgo(o.createdAt)}</small>
@@ -167,6 +199,7 @@
           ? `<span class="waiter-pill"><span class="waiter-dot" style="background:${escapeHtml(o.waiterColor)}"></span>${escapeHtml(o.waiterName)}</span>`
           : '<span class="chip">Sin mozo</span>'}
         ${isCancel ? `<span class="chip cancelado">Anulado</span>` : ''}
+        ${o.isOpenSession ? slaChip(o) : ''}
       </div>
       ${o.items.map((i) => `<div class="t-line"><b>${i.qty}×</b>${escapeHtml(i.name)}${i.note ? `<span class="t-note">↳ ${escapeHtml(i.note)}</span>` : ''}</div>`).join('')}
       ${isCancel && o.cancelReason ? `<p class="muted" style="margin-top:4px;font-size:12px">Motivo: ${escapeHtml(o.cancelReason)}</p>` : ''}
@@ -383,6 +416,10 @@
                 ${escapeHtml(i.name)}
                 ${i.popular ? '<span class="chip nuevo">Popular</span>' : ''}
                 ${i.stationOverride ? `<span class="chip ${i.stationOverride === 'barra' ? 'barra' : 'est-cocina'}">${stationLabel(i.stationOverride)}</span>` : ''}
+                ${(i.tags || []).filter((t) => !(t === 'veggie' && (i.tags || []).includes('vegano'))).map((t) => {
+                  const opt = ITEM_TAG_OPTIONS.find(([id]) => id === t);
+                  return opt ? `<span class="chip diet-chip">${opt[1]}</span>` : '';
+                }).join('')}
               </div>
               <div class="desc">${escapeHtml(i.desc)}</div>
             </div>
@@ -403,63 +440,102 @@
   }
 
   // ---------- 5. Caja y Configuración ----------
+  // El resumen se refresca en vivo; el formulario de configuración NO se re-dibuja
+  // mientras el encargado está escribiendo (antes cada pedido nuevo borraba lo tipeado).
   function renderCaja() {
     const k = state.kpis;
-    const r = state.restaurant;
     const payEntries = Object.entries(k.byPayment || {});
+    const tipsByWaiter = (state.waiters || []).filter((w) => w.todayTips > 0 || w.todayClosedTables > 0);
 
-    $('#cajaAdmin').innerHTML = `
-      <div class="caja-grid">
-        <div class="caja-card">
-          <h3>💵 Resumen de cobros del día</h3>
-          <div class="bill-line"><span>Facturación neta (sin propinas)</span><strong>${money(k.closedSalesToday)}</strong></div>
-          <div class="bill-line"><span>Propinas registradas</span><strong>${money(k.closedTipsToday)}</strong></div>
-          <div class="bill-total"><span>Total cobrado hoy (${k.closedTablesCount} mesas)</span><span>${money(k.closedSalesToday + k.closedTipsToday)}</span></div>
-          <h4 style="margin:16px 0 8px;font-size:13px;color:var(--ink-2);text-transform:uppercase">Por medio de pago</h4>
-          ${payEntries.length
-            ? payEntries.map(([m, amt]) => `<div class="bill-line"><span>${escapeHtml(m)}</span><strong>${money(amt)}</strong></div>`).join('')
-            : '<p class="muted">Todavía no se cerraron mesas hoy.</p>'}
+    if (!$('#cajaSummary')) {
+      $('#cajaAdmin').innerHTML = `
+        <div class="caja-grid">
+          <div class="caja-card" id="cajaSummary"></div>
+          <div class="caja-card" id="cajaConfig"></div>
         </div>
+        <div id="cajaHistory"></div>`;
+      cajaConfigDirty = false;
+    }
 
-        <div class="caja-card">
-          <h3>⚙️ Configuración del Restaurante</h3>
-          <form class="form" id="restConfigForm">
-            <div class="field"><label>Nombre del restaurante</label><input class="input" name="name" required value="${escapeHtml(r.name)}"></div>
-            <div class="field"><label>Subtítulo / especialidad</label><input class="input" name="subtitle" value="${escapeHtml(r.subtitle || '')}"></div>
-            <div class="field">
-              <label>Link público en internet (opcional, para QRs 4G/5G)</label>
-              <input class="input" name="publicUrl" placeholder="Automático según el dominio donde se abra" value="${escapeHtml(r.publicUrl || '')}">
-            </div>
-            <div class="field">
-              <label>Cambiar PIN de Encargado (dejar vacío para mantener el actual)</label>
-              <input class="input" type="password" name="adminPin" placeholder="Nuevo PIN (mínimo 4 caracteres)">
-            </div>
-            <label class="switch">
-              <input type="checkbox" name="demoMode" ${r.demoMode ? 'checked' : ''}>
-              <span class="track"></span>
-              Permitir Modo Demo (desactivalo al abrir al público real)
-            </label>
-            <button class="btn btn-primary">Guardar configuración</button>
-          </form>
-
-          <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-sm btn-ghost" id="clearOrdersBtn">🧹 Limpiar solo pedidos/sesiones</button>
-            <button class="btn btn-sm btn-danger" id="factoryResetBtn">↺ Restaurar demo de fábrica</button>
-          </div>
+    $('#cajaSummary').innerHTML = `
+      <h3>💵 Resumen de cobros del día</h3>
+      <div class="bill-line"><span>Facturación neta (sin propinas)</span><strong>${money(k.closedSalesToday)}</strong></div>
+      <div class="bill-line"><span>Propinas registradas</span><strong>${money(k.closedTipsToday)}</strong></div>
+      <div class="bill-total"><span>Total cobrado hoy (${k.closedTablesCount} mesas)</span><span>${money(k.closedSalesToday + k.closedTipsToday)}</span></div>
+      <h4 class="caja-sub">Por medio de pago</h4>
+      ${payEntries.length
+        ? payEntries.map(([m, amt]) => `<div class="bill-line"><span>${escapeHtml(m)}</span><strong>${money(amt)}</strong></div>`).join('')
+        : '<p class="muted">Todavía no se cerraron mesas hoy.</p>'}
+      ${tipsByWaiter.length ? `
+        <h4 class="caja-sub">Propinas por mozo</h4>
+        ${tipsByWaiter.map((w) => `<div class="bill-line"><span><span class="waiter-dot" style="display:inline-block;margin-right:6px;background:${escapeHtml(w.color)}"></span>${escapeHtml(w.name)} <small class="muted">(${w.todayClosedTables} mesa${w.todayClosedTables === 1 ? '' : 's'})</small></span><strong>${money(w.todayTips)}</strong></div>`).join('')}` : ''}
+      <div class="csv-box">
+        <div>
+          <strong>Arqueo para Excel</strong>
+          <p class="muted">Fecha y hora de apertura y cierre, mesa, bloque, mozo, medio de pago, subtotal, propina y total.</p>
         </div>
-      </div>
+        <button class="btn btn-sm btn-primary" type="button" data-csv="all">📥 Descargar Arqueo CSV</button>
+      </div>`;
 
-      ${state.closedHistory.length ? `
-        <div class="caja-card" style="margin-top:16px">
-          <h3>🧾 Últimas mesas cerradas hoy</h3>
-          ${state.closedHistory.slice(0, 15).map((h) => `
-            <div class="bill-line" style="border-bottom:1px solid var(--line);padding:7px 0">
-              <span><strong>Mesa ${escapeHtml(h.tableCode)}</strong> (${escapeHtml(h.blockName)}) · Mozo: ${escapeHtml(h.waiterName)} · ${escapeHtml(h.payment)}</span>
-              <strong>${money(h.total)} <small class="muted">(prop. ${h.tipPct}%)</small></strong>
-            </div>`).join('')}
-        </div>` : ''}`;
+    if (!cajaConfigDirty) renderCajaConfig();
 
-    $('#restConfigForm').onsubmit = async (e) => {
+    $('#cajaHistory').innerHTML = state.closedHistory.length ? `
+      <div class="caja-card" style="margin-top:16px">
+        <h3>🧾 Últimas mesas cerradas hoy</h3>
+        ${state.closedHistory.slice(0, 15).map((h) => `
+          <div class="bill-line" style="border-bottom:1px solid var(--line);padding:7px 0">
+            <span><strong>Mesa ${escapeHtml(h.tableCode)}</strong> (${escapeHtml(h.blockName)}) · ${new Date(h.closedAt).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })} · Mozo: ${escapeHtml(h.waiterName)} · ${escapeHtml(h.payment)}</span>
+            <strong>${money(h.total)} <small class="muted">(prop. ${h.tipPct}%)</small></strong>
+          </div>`).join('')}
+      </div>` : '';
+  }
+
+  function renderCajaConfig() {
+    const r = state.restaurant;
+    $('#cajaConfig').innerHTML = `
+      <h3>⚙️ Configuración del Restaurante</h3>
+      <form class="form" id="restConfigForm">
+        <div class="field"><label>Nombre del restaurante</label><input class="input" name="name" required value="${escapeHtml(r.name)}"></div>
+        <div class="field"><label>Subtítulo / especialidad</label><input class="input" name="subtitle" value="${escapeHtml(r.subtitle || '')}"></div>
+        <div class="field">
+          <label>Link público en internet (opcional, para QRs 4G/5G)</label>
+          <input class="input" name="publicUrl" placeholder="Automático según el dominio donde se abra" value="${escapeHtml(r.publicUrl || '')}">
+        </div>
+        <div class="field">
+          <label>Cambiar PIN de Encargado (dejar vacío para mantener el actual)</label>
+          <input class="input" type="password" name="adminPin" placeholder="Nuevo PIN (mínimo 4 caracteres)" autocomplete="new-password">
+        </div>
+        <label class="switch">
+          <input type="checkbox" name="demoMode" ${r.demoMode ? 'checked' : ''}>
+          <span class="track"></span>
+          Permitir Modo Demo (desactivalo al abrir al público real)
+        </label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <button class="btn btn-primary">Guardar configuración</button>
+          <button class="btn btn-ghost btn-sm" type="button" id="discardConfigBtn" hidden>Descartar cambios</button>
+          <span class="muted" id="configDirtyHint" hidden>Cambios sin guardar</span>
+        </div>
+      </form>
+
+      <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-sm btn-ghost" id="clearOrdersBtn">🧹 Limpiar solo pedidos/sesiones</button>
+        <button class="btn btn-sm btn-danger" id="factoryResetBtn">↺ Restaurar demo de fábrica</button>
+      </div>`;
+
+    const form = $('#restConfigForm');
+    const markDirty = () => {
+      cajaConfigDirty = true;
+      $('#configDirtyHint').hidden = false;
+      $('#discardConfigBtn').hidden = false;
+    };
+    form.addEventListener('input', markDirty);
+    form.addEventListener('change', markDirty);
+    $('#discardConfigBtn').onclick = () => {
+      cajaConfigDirty = false;
+      renderCajaConfig();
+    };
+
+    form.onsubmit = async (e) => {
       e.preventDefault();
       const f = new FormData(e.target);
       const pin = f.get('adminPin').trim();
@@ -477,18 +553,167 @@
           setAuthToken(r2.token);
           sessionStorage.setItem('salelisto:adminToken', r2.token);
         }
+        cajaConfigDirty = false;
+        renderCajaConfig();
         toast('✔ Configuración guardada');
       }
     };
 
     $('#clearOrdersBtn').onclick = async () => {
-      if (!confirm('¿Limpiar todos los pedidos y cuentas del día conservando intactos tus bloques, mesas, mozos y menú?')) return;
+      if (!confirm('¿Limpiar todos los pedidos y cuentas del día conservando intactos tus bloques, mesas, mozos y menú? Te recomendamos descargar antes el Arqueo CSV.')) return;
       if (await act('data.clear_orders')) toast('🧹 Pedidos limpiados; tu configuración sigue intacta');
     };
     $('#factoryResetBtn').onclick = async () => {
       if (!confirm('⚠️ Atención: esto borrará tu menú personalizado, bloques y mozos y restaurará los datos de demostración originales. ¿Continuar?')) return;
       if (await act('data.reset_demo')) toast('↺ Datos de demostración restaurados');
     };
+  }
+
+  // ---------- Exportación contable CSV ----------
+  function localDay(d = new Date()) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
+
+  async function downloadSessionsCsv(scope = 'all', btn = null) {
+    const qs = new URLSearchParams();
+    if (scope === 'today') {
+      qs.set('desde', localDay());
+      qs.set('hasta', localDay());
+    }
+    if (btn) btn.disabled = true;
+    try {
+      const tok = getAuthToken();
+      const res = await fetch(`api/export/sessions.csv${qs.toString() ? `?${qs}` : ''}`, {
+        headers: tok ? { 'X-Auth-Token': tok } : {},
+      });
+      if (res.status === 401) {
+        sessionStorage.removeItem('salelisto:adminToken');
+        setAuthToken('');
+        showPinGate();
+        throw new Error('Tu sesión de encargado venció. Ingresá el PIN de nuevo.');
+      }
+      if (!res.ok) throw new Error('No se pudo generar el archivo');
+      const rows = Number(res.headers.get('X-Rows') || 0);
+      const blob = await res.blob();
+      const cd = res.headers.get('Content-Disposition') || '';
+      const fname = (cd.match(/filename="([^"]+)"/) || [])[1] || `arqueo_salelisto_${localDay()}.csv`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast(rows
+        ? `📥 Arqueo descargado · ${rows} mesa${rows === 1 ? '' : 's'} cerrada${rows === 1 ? '' : 's'}`
+        : '📥 Archivo descargado (todavía sin mesas cerradas en ese período)');
+    } catch (err) {
+      toast(`⚠️ ${err.message}`);
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  // ---------- 6. Consultas comerciales (Leads) ----------
+  function waLink(lead) {
+    const raw = String(lead.contact || '');
+    if (raw.includes('@')) return '';
+    let digits = raw.replace(/\D/g, '');
+    if (digits.length < 8) return '';
+    if (digits.startsWith('00')) digits = digits.slice(2);
+    if (digits.startsWith('0')) digits = digits.slice(1);
+    // Celulares argentinos: wa.me requiere 54 9 + característica sin 0 ni 15
+    if (digits.length === 10) digits = `549${digits}`;
+    else if (digits.startsWith('54') && !digits.startsWith('549') && digits.length === 12) digits = `549${digits.slice(2)}`;
+    const who = lead.name ? ` ${lead.name.split(' ')[0]}` : '';
+    const rest = lead.restaurantName ? ` para ${lead.restaurantName}` : '';
+    const text = `Hola${who}, ¿cómo estás? Gracias por tu consulta sobre SaleListo${rest}. ¿Te queda bien que coordinemos una demo corta esta semana?`;
+    return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+  }
+
+  function mailLink(lead) {
+    const m = String(lead.contact || '').match(/[^\s<>()]+@[^\s<>()]+\.[^\s<>()]+/);
+    if (!m) return '';
+    const subject = `SaleListo${lead.restaurantName ? ` para ${lead.restaurantName}` : ''}`;
+    const body = `Hola${lead.name ? ` ${lead.name.split(' ')[0]}` : ''},\n\nGracias por tu consulta. ¿Te queda bien coordinar una demo corta esta semana?\n\nSaludos,\nEquipo SaleListo\nventas@salelisto.com`;
+    return `mailto:${m[0]}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  function leadDate(ts) {
+    const d = new Date(ts);
+    const today = localDay();
+    const isToday = localDay(d) === today;
+    const time = d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    return isToday ? `Hoy ${time}` : `${d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' })} ${time}`;
+  }
+
+  function renderLeads() {
+    const leads = state.leads || [];
+    const newCount = leads.filter((l) => l.status === 'nuevo').length;
+    $('#navLeads').hidden = !newCount;
+    $('#navLeads').textContent = newCount;
+    document.querySelectorAll('[data-lf]').forEach((b) => b.classList.toggle('active', b.dataset.lf === leadFilter));
+
+    const list = leads.filter((l) => {
+      if (leadFilter === 'todas') return true;
+      if (leadFilter === 'activas') return l.status !== 'descartado';
+      return l.status === leadFilter;
+    });
+
+    if (!leads.length) {
+      $('#leadsAdmin').innerHTML = `<div class="empty"><span class="big">📨</span>Todavía no llegaron consultas desde la portada.<br>Cuando alguien complete el formulario de demo, aparece acá al instante.</div>`;
+      return;
+    }
+    if (!list.length) {
+      $('#leadsAdmin').innerHTML = '<div class="empty"><span class="big">🗂️</span>No hay consultas en este estado.</div>';
+      return;
+    }
+
+    $('#leadsAdmin').innerHTML = `<div class="leads-grid">${list.map((l) => {
+      const st = LEAD_STATUS[l.status] || LEAD_STATUS.nuevo;
+      const wa = waLink(l);
+      const mail = mailLink(l);
+      const meta = [
+        l.zone ? `📍 ${escapeHtml(l.zone)}` : '',
+        l.tablesCount ? `🪑 ${escapeHtml(l.tablesCount)} mesas` : '',
+        l.planInterest ? `🎯 ${escapeHtml(l.planInterest)}` : '',
+      ].filter(Boolean);
+      return `<article class="lead-card st-${escapeHtml(l.status)}">
+        <div class="lead-head">
+          <div style="min-width:0">
+            <strong class="lead-title">${escapeHtml(l.restaurantName || l.name)}</strong>
+            ${l.restaurantName && l.name ? `<div class="muted">${escapeHtml(l.name)}</div>` : ''}
+          </div>
+          <div style="text-align:right;flex:none">
+            <span class="chip ${st.cls}">${st.label}</span>
+            <div class="lead-time">${leadDate(l.createdAt)}</div>
+          </div>
+        </div>
+        ${meta.length ? `<div class="lead-meta">${meta.map((m) => `<span>${m}</span>`).join('')}</div>` : ''}
+        ${l.message ? `<p class="lead-msg">${escapeHtml(l.message)}</p>` : ''}
+        <div class="lead-contact">
+          <code>${escapeHtml(l.contact)}</code>
+          <button class="btn btn-xs btn-ghost" type="button" data-lead-copy="${escapeHtml(l.id)}" title="Copiar contacto">📋 Copiar</button>
+        </div>
+        <div class="lead-actions">
+          ${wa ? `<a class="btn btn-sm btn-ok" href="${escapeHtml(wa)}" target="_blank" rel="noopener" data-lead-reply="${escapeHtml(l.id)}">💬 Responder por WhatsApp</a>` : ''}
+          ${mail ? `<a class="btn btn-sm btn-ghost" href="${escapeHtml(mail)}" data-lead-reply="${escapeHtml(l.id)}">✉️ Responder por correo</a>` : ''}
+          <div class="pill-group lead-status" role="group" aria-label="Estado de la consulta">
+            ${['nuevo', 'contactado', 'piloto'].map((s) => `<button type="button" class="pill ${l.status === s ? 'active' : ''}" data-lead-status="${s}" data-lid="${escapeHtml(l.id)}">${LEAD_STATUS[s].label}</button>`).join('')}
+          </div>
+          ${l.status === 'descartado'
+            ? `<button class="btn btn-xs btn-ghost" type="button" data-lead-status="nuevo" data-lid="${escapeHtml(l.id)}">↺ Reabrir</button>`
+            : `<button class="btn btn-xs btn-ghost" type="button" data-lead-status="descartado" data-lid="${escapeHtml(l.id)}" title="Descartar consulta">Descartar</button>`}
+        </div>
+      </article>`;
+    }).join('')}</div>`;
+  }
+
+  async function setLeadStatus(leadId, status, quiet = false) {
+    const res = await act('lead.status', { leadId, status });
+    if (res && !quiet) toast(`✔ Consulta marcada como ${LEAD_STATUS[status]?.label || status}`);
+    return res;
   }
 
   // ---------- Barra derecha: Solicitudes en vivo ----------
@@ -933,7 +1158,8 @@
   function openItemModal(item) {
     openTableModalId = null;
     if (!state.categories.length) return toast('Creá primero una categoría');
-    const it = item || { name: '', desc: '', price: '', cat: state.categories[0].id, emoji: '🍜', imageUrl: '', stationOverride: '', available: true, popular: false };
+    const it = item || { name: '', desc: '', price: '', cat: state.categories[0].id, emoji: '🍜', imageUrl: '', stationOverride: '', available: true, popular: false, tags: [] };
+    const itTags = Array.isArray(it.tags) ? it.tags : [];
     let emoji = it.emoji;
     let uploadedDataUrl = '';
 
@@ -964,6 +1190,12 @@
             <option value="cocina" ${it.stationOverride === 'cocina' ? 'selected' : ''}>🍳 Forzar Cocina</option>
             <option value="barra" ${it.stationOverride === 'barra' ? 'selected' : ''}>🍸 Forzar Barra</option>
           </select>
+        </div>
+        <div class="field">
+          <label>Etiquetas dietarias (se muestran y filtran en la carta QR)</label>
+          <div class="tag-checks">
+            ${ITEM_TAG_OPTIONS.map(([id, label]) => `<label class="tag-check"><input type="checkbox" name="tags" value="${id}" ${itTags.includes(id) ? 'checked' : ''}><span>${label}</span></label>`).join('')}
+          </div>
         </div>
         <label class="switch"><input type="checkbox" name="popular" ${it.popular ? 'checked' : ''}><span class="track"></span>Destacar como “Popular”</label>
         <label class="switch"><input type="checkbox" name="available" ${it.available ? 'checked' : ''}><span class="track"></span>Disponible hoy</label>
@@ -1001,6 +1233,7 @@
           stationOverride: f.get('stationOverride'),
           popular: f.has('popular'),
           available: f.has('available'),
+          tags: f.getAll('tags'),
         });
         if (ok) {
           closeModal();
@@ -1056,14 +1289,24 @@
   }
 
   // ---------- Eventos delegados ----------
+  const VIEW_HASH = { pedidos: '#comandas', mesas: '#salon', mozos: '#mozos', menu: '#menu', caja: '#caja', leads: '#consultas' };
+
+  function setView(next) {
+    if (!document.getElementById(`view-${next}`)) return;
+    view = next;
+    document.querySelectorAll('.nav-item').forEach((x) => x.classList.toggle('active', x.dataset.view === view));
+    document.querySelectorAll('.view').forEach((v) => { v.hidden = v.id !== `view-${view}`; });
+    try { history.replaceState(null, '', `${location.pathname}${location.search}${VIEW_HASH[view] || ''}`); } catch (_) {}
+  }
+
   function bindPanelEvents() {
     document.querySelector('.nav').onclick = (e) => {
       const b = e.target.closest('[data-view]');
       if (!b) return;
-      view = b.dataset.view;
-      document.querySelectorAll('.nav-item').forEach((x) => x.classList.toggle('active', x === b));
-      document.querySelectorAll('.view').forEach((v) => { v.hidden = v.id !== `view-${view}`; });
+      setView(b.dataset.view);
     };
+    const hashView = { '#comandas': 'pedidos', '#salon': 'mesas', '#mozos': 'mozos', '#menu': 'menu', '#caja': 'caja', '#consultas': 'leads' }[location.hash];
+    if (hashView) setView(hashView);
 
     $('#boardStationFilter').onclick = (e) => {
       const b = e.target.closest('[data-bst]');
@@ -1194,6 +1437,51 @@
       if (e.target.id === 'modalBackdrop' || e.target.closest('[data-cancel]')) closeModal();
     };
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // Arqueo CSV
+    $('#csvAllBtn').onclick = (e) => downloadSessionsCsv('all', e.currentTarget);
+    $('#csvTodayBtn').onclick = (e) => downloadSessionsCsv('today', e.currentTarget);
+    $('#cajaAdmin').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-csv]');
+      if (b) downloadSessionsCsv(b.dataset.csv, b);
+    });
+
+    // Consultas comerciales
+    $('#leadFilter').onclick = (e) => {
+      const b = e.target.closest('[data-lf]');
+      if (!b) return;
+      leadFilter = b.dataset.lf;
+      renderLeads();
+    };
+    $('#leadsAdmin').onclick = async (e) => {
+      const stBtn = e.target.closest('[data-lead-status]');
+      if (stBtn) {
+        if (stBtn.classList.contains('active')) return;
+        stBtn.disabled = true;
+        await setLeadStatus(stBtn.dataset.lid, stBtn.dataset.leadStatus);
+        return;
+      }
+      const copy = e.target.closest('[data-lead-copy]');
+      if (copy) {
+        const lead = (state.leads || []).find((l) => l.id === copy.dataset.leadCopy);
+        if (!lead) return;
+        try {
+          await navigator.clipboard.writeText(lead.contact);
+          toast('📋 Contacto copiado');
+        } catch (_) {
+          prompt('Copiá el contacto:', lead.contact);
+        }
+        return;
+      }
+      const reply = e.target.closest('[data-lead-reply]');
+      if (reply) {
+        const lead = (state.leads || []).find((l) => l.id === reply.dataset.leadReply);
+        // Al responder, la consulta pasa sola a "Contactado" (sin frenar la apertura del link)
+        if (lead && lead.status === 'nuevo') {
+          setLeadStatus(lead.id, 'contactado', true).then((r) => { if (r) toast('✔ Marcada como Contactado'); });
+        }
+      }
+    };
   }
 
   function renderAll() {
@@ -1204,6 +1492,9 @@
     renderWaiters();
     renderMenuAdmin();
     renderCaja();
+    renderLeads();
     renderCalls();
   }
+
+  await tryBoot();
 })();

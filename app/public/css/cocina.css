@@ -47,7 +47,35 @@ body { background: var(--dark-bg); color: var(--dark-ink); min-height: 100vh; }
 .k-ticket.cocina { border-left-color: var(--kitchen); }
 .k-ticket.listo { border-left-color: var(--ok); }
 .k-ticket.st-barra { border-top: 3px solid var(--bar); }
-.k-ticket.late { outline: 2px solid var(--accent); }
+
+/* ---------- Semáforo SLA de demora (verde < 8 min · ámbar 8 a 14 · coral >= 15) ---------- */
+.k-ticket { transition: box-shadow var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out); }
+.k-ticket.sla-warn { box-shadow: 0 0 0 2px #f2a93b, 0 8px 24px rgba(0, 0, 0, 0.24); }
+.k-ticket.sla-late {
+  background: #fff6f3;
+  box-shadow: 0 0 0 3px #f0644c, 0 10px 30px rgba(240, 100, 76, 0.28);
+}
+.kt-sla {
+  display: flex; align-items: center; gap: 6px; width: 100%;
+  margin: 2px 0 8px; padding: 6px 10px; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 800; letter-spacing: 0.01em; font-variant-numeric: tabular-nums;
+}
+.kt-sla.sla-ok { background: var(--ok-soft); color: var(--ok); }
+.kt-sla.sla-warn { background: #fdecc8; color: #9a5a00; }
+.kt-sla.sla-late { background: #f0644c; color: #ffffff; font-size: 15px; animation: k-sla-pulse 1.6s var(--ease-out) infinite; }
+@keyframes k-sla-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.78; } }
+
+.k-sla-summary { display: flex; gap: 6px; align-items: center; }
+.k-sla-pill {
+  padding: 5px 10px; border-radius: var(--radius-pill); font-size: 13px; font-weight: 800;
+  background: rgba(250, 247, 242, 0.08); color: var(--dark-ink); font-variant-numeric: tabular-nums;
+  border: 1px solid var(--dark-line);
+}
+.k-sla-pill.sla-late.pulse { background: #f0644c; border-color: #f0644c; color: #ffffff; animation: k-sla-pulse 1.6s var(--ease-out) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kt-sla.sla-late, .k-sla-pill.sla-late.pulse { animation: none; }
+}
 
 .kt-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
 .kt-mesa { font-size: 20px; font-weight: 800; }

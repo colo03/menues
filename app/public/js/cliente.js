@@ -112,24 +112,107 @@
     }
   }
 
+  // ---------- Menú: búsqueda instantánea, filtros rápidos y etiquetas dietarias ----------
+  const TAG_META = {
+    sin_tacc: { label: 'Sin TACC', ico: '🌾', cls: 'tag-tacc' },
+    veggie: { label: 'Veggie', ico: '🌱', cls: 'tag-veggie' },
+    vegano: { label: 'Vegano', ico: '🌿', cls: 'tag-vegano' },
+    picante: { label: 'Picante', ico: '🌶️', cls: 'tag-picante' },
+    sin_alcohol: { label: 'Sin alcohol', ico: '🧃', cls: 'tag-noalc' },
+  };
+  const QUICK_FILTERS = [
+    { id: 'popular', label: '⭐ Populares', test: (i) => i.popular },
+    { id: 'sin_tacc', label: '🌾 Sin TACC', test: (i) => hasTag(i, 'sin_tacc') },
+    { id: 'veggie', label: '🌱 Veggie', test: (i) => hasTag(i, 'veggie') || hasTag(i, 'vegano') },
+    { id: 'picante', label: '🌶️ Picante', test: (i) => hasTag(i, 'picante') },
+  ];
+  let searchQuery = '';
+  const activeFilters = new Set();
+
+  function hasTag(item, tag) {
+    return Array.isArray(item.tags) && item.tags.includes(tag);
+  }
+
+  const normalize = (s) => String(s || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim();
+
+  function itemTagsHtml(item, big = false) {
+    const tags = Array.isArray(item.tags) ? item.tags : [];
+    // Si es vegano no repetimos la pastilla Veggie
+    const shown = tags.filter((t) => TAG_META[t] && !(t === 'veggie' && tags.includes('vegano')));
+    if (!shown.length) return '';
+    return `<div class="item-tags ${big ? 'big' : ''}">${shown.map((t) => `<span class="tag-pill ${TAG_META[t].cls}">${TAG_META[t].ico} ${TAG_META[t].label}</span>`).join('')}</div>`;
+  }
+
+  function isFiltering() {
+    return Boolean(searchQuery) || activeFilters.size > 0;
+  }
+
+  function matchesFilters(item, catName) {
+    for (const fid of activeFilters) {
+      const f = QUICK_FILTERS.find((x) => x.id === fid);
+      if (f && !f.test(item)) return false;
+    }
+    if (!searchQuery) return true;
+    const hay = normalize(`${item.name} ${item.desc} ${catName} ${(item.tags || []).map((t) => TAG_META[t]?.label || '').join(' ')}`);
+    return searchQuery.split(/\s+/).every((w) => hay.includes(w));
+  }
+
+  function visibleItemsByCat() {
+    const out = new Map();
+    state.categories.forEach((c) => {
+      const items = state.items.filter((i) => i.cat === c.id && matchesFilters(i, c.name));
+      if (items.length) out.set(c.id, items);
+    });
+    return out;
+  }
+
+  function renderFilters() {
+    const available = QUICK_FILTERS.filter((f) => state.items.some((i) => f.test(i)) || activeFilters.has(f.id));
+    $('#filters').innerHTML = available
+      .map((f) => `<button type="button" class="filter-chip ${activeFilters.has(f.id) ? 'on' : ''}" data-filter="${f.id}" aria-pressed="${activeFilters.has(f.id)}">${f.label}</button>`)
+      .join('');
+    $('#filters').hidden = !available.length;
+  }
+
   // ---------- Menú ----------
-  function renderCats() {
-    const visibleCats = state.categories.filter((c) => state.items.some((i) => i.cat === c.id));
+  function renderCats(byCat = visibleItemsByCat()) {
+    const visibleCats = state.categories.filter((c) => byCat.has(c.id));
     if (visibleCats.length && !visibleCats.some((c) => c.id === activeCat)) {
       activeCat = visibleCats[0].id;
     }
+    $('#cats').hidden = !visibleCats.length;
     $('#cats').innerHTML = visibleCats
-      .map((c) => `<button class="cat ${c.id === activeCat ? 'active' : ''}" data-cat="${c.id}">${c.icon} ${escapeHtml(c.name)}</button>`)
+      .map((c) => `<button class="cat ${c.id === activeCat ? 'active' : ''}" data-cat="${c.id}">${c.icon} ${escapeHtml(c.name)}${isFiltering() ? ` <span class="cat-n">${byCat.get(c.id).length}</span>` : ''}</button>`)
       .join('');
   }
 
-  function renderMenu() {
+  function renderMenu(byCat = visibleItemsByCat()) {
     const inCart = {};
     cart.forEach((l) => { inCart[l.itemId] = (inCart[l.itemId] || 0) + l.qty; });
 
+    const total = Array.from(byCat.values()).reduce((t, arr) => t + arr.length, 0);
+    const hint = $('#resultHint');
+    if (isFiltering() && total) {
+      hint.hidden = false;
+      hint.innerHTML = `${total} resultado${total === 1 ? '' : 's'} <button type="button" class="link-btn" data-clear-filters>Limpiar filtros</button>`;
+    } else {
+      hint.hidden = true;
+    }
+
+    if (!total) {
+      $('#menuList').innerHTML = isFiltering()
+        ? `<div class="empty"><span class="big">🔎</span>No encontramos platos o bebidas${searchQuery ? ` para “${escapeHtml($('#menuSearch').value.trim())}”` : ''} con esos filtros.<br><button type="button" class="btn btn-ghost btn-sm" style="margin-top:12px" data-clear-filters>Ver toda la carta</button></div>`
+        : '<div class="empty"><span class="big">📖</span>La carta se está actualizando. Volvé a intentar en un momento.</div>';
+      return;
+    }
+
     $('#menuList').innerHTML = state.categories.map((c) => {
-      const items = state.items.filter((i) => i.cat === c.id);
-      if (!items.length) return '';
+      const items = byCat.get(c.id);
+      if (!items) return '';
       const stBadge = c.station === 'barra' ? '<span class="badge-bar">🍸 Sale de Barra</span>' : '';
       return `<section class="section" id="sec-${c.id}">
         <div class="section-head"><h2>${c.icon} ${escapeHtml(c.name)}</h2>${stBadge}</div>
@@ -142,6 +225,7 @@
                 ${!i.available ? '<span class="badge-off">Agotado</span>' : ''}
               </div>
               <p class="item-desc">${escapeHtml(i.desc)}</p>
+              ${itemTagsHtml(i)}
               <div class="item-price">
                 <span>${money(i.price)}</span>
                 ${inCart[i.id] ? `<span class="in-cart">· ${inCart[i.id]} en tu carrito</span>` : ''}
@@ -152,6 +236,51 @@
       </section>`;
     }).join('');
   }
+
+  function renderMenuArea() {
+    const byCat = visibleItemsByCat();
+    renderFilters();
+    renderCats(byCat);
+    renderMenu(byCat);
+  }
+
+  function clearFilters() {
+    searchQuery = '';
+    activeFilters.clear();
+    activeCat = '';
+    $('#menuSearch').value = '';
+    $('#searchClear').hidden = true;
+    renderMenuArea();
+  }
+
+  $('#menuSearch').addEventListener('input', (e) => {
+    searchQuery = normalize(e.target.value);
+    activeCat = '';
+    $('#searchClear').hidden = !e.target.value;
+    renderMenuArea();
+  });
+  $('#menuSearch').addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { clearFilters(); e.target.blur(); }
+    if (e.key === 'Enter') e.target.blur();
+  });
+  $('#searchClear').addEventListener('click', () => {
+    clearFilters();
+    $('#menuSearch').focus();
+  });
+  $('#filters').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-filter]');
+    if (!b) return;
+    const fid = b.dataset.filter;
+    if (activeFilters.has(fid)) activeFilters.delete(fid);
+    else activeFilters.add(fid);
+    activeCat = '';
+    renderMenuArea();
+    const top = $('#view-menu').offsetTop;
+    if (window.scrollY > top) window.scrollTo({ top, behavior: 'smooth' });
+  });
+  $('#view-menu').addEventListener('click', (e) => {
+    if (e.target.closest('[data-clear-filters]')) clearFilters();
+  });
 
   $('#cats').addEventListener('click', (e) => {
     const b = e.target.closest('[data-cat]');
@@ -196,6 +325,7 @@
         <span class="chip ${item.station === 'barra' ? 'barra' : 'est-cocina'}">${stationLabel(item.station)}</span>
       </div>
       <p class="muted" style="margin-top:4px">${escapeHtml(item.desc)}</p>
+      ${itemTagsHtml(item, true)}
       <div class="sheet-row">
         <strong style="font-size:20px">${money(item.price)}</strong>
         <div class="stepper"><button data-q="-1">−</button><span id="qty">1</span><button data-q="1">+</button></div>
@@ -560,8 +690,7 @@
 
   function renderAll() {
     renderHeader();
-    renderCats();
-    renderMenu();
+    renderMenuArea();
     renderOrders();
     renderCartBar();
     renderCallStatus();

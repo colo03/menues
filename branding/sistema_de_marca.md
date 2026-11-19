@@ -1,6 +1,6 @@
 # Sistema de Marca y Diseño Unificado · SaleListo
 
-Este documento establece la **única línea de diseño, identidad visual y movimiento** para todo el ecosistema **SaleListo**: Aplicación Web (`app/public/`), Documentación Técnica y Spot Audiovisual (`video-ad/`). Ninguna pieza del proyecto puede introducir tipografías, paletas, estilos de tarjeta o físicas de animación por fuera de este sistema.
+Este documento establece la **única línea de diseño, identidad visual y movimiento** para todo el ecosistema **SaleListo**: Aplicación Web y Landing Comercial (`app/public/`), Kit de Marketing y Reels (`marketing/`), Documentación Técnica (`docs/`) y Spot Audiovisual (`video-ad/`). Ninguna pieza del proyecto puede introducir tipografías, paletas, estilos de tarjeta o físicas de animación por fuera de este sistema.
 
 ---
 
@@ -144,8 +144,10 @@ El lenguaje de movimiento de **SaleListo** refleja calma profesional, precisión
 
 ## 7. Integridad Editorial y Datos Oficiales de Contacto
 
-En todas las pantallas, documentos, tarjetas y cierres de video rigen sin excepción las siguientes normas editoriales:
-1. **Teléfono único e inalterable**: `(+54)1138436571` (escrito exactamente carácter por carácter: sin espacios, sin guiones y sin el dígito `9`).
-2. **Correo electrónico único**: `simonguerenu@gmail.com`.
+En todas las pantallas, documentos, piezas gráficas, tarjetas y cierres de video rigen sin excepción las siguientes normas editoriales:
+1. **Teléfono y WhatsApp único e inalterable**: `(+54)1138436571` (escrito exactamente carácter por carácter: sin espacios, sin guiones y sin el dígito `9`; en enlaces `wa.me` se emplea únicamente `541138436571`).
+2. **Correos electrónicos oficiales según contexto**:
+   - **Piezas públicas comerciales de la marca SaleListo** (Landing Page B2B, Spot Oficial, Reels, Carruseles, Posts y Banners): se utiliza junto al WhatsApp `(+54)1138436571` el correo comercial **`ventas@salelisto.com`**.
+   - **Firma personal de autor y prospección directa**: se mantiene **`simonguerenu@gmail.com`**.
 3. **Cero enlaces inventados**: no incluir dominios web ficticios, perfiles sociales no verificados ni URLs externas inventadas.
 4. **Puntuación limpia**: no utilizar el carácter de raya larga (`U+2014`); emplear dos puntos, punto y coma, coma o paréntesis según corresponda.

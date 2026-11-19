@@ -1,0 +1,162 @@
+# SaleListo · Guiones de Reels
+
+Documento maestro de los **3 Reels verticales renderizados** (Instagram Reels, TikTok, YouTube Shorts y estados de WhatsApp B2B) y de **5 guiones listos para grabar con cámara en mano** en restaurantes reales.
+
+- Archivos finales: [`reels/`](reels/) · código reproducible en [`reels/src/`](reels/src/) (ver [`reels/src/README.md`](reels/src/README.md)).
+- Línea gráfica: Propuesta 01 `Pase Limpio`, `Plus Jakarta Sans`, lienzo blanco redondeado de 720x720 sobre B-roll cálido con deriva lineal del 3 %, curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote, crossfades de 0.48 s y **máximo 5 palabras en pantalla por escena**.
+- Locución: ElevenLabs `eleven_v4`, voz argentina **Gabi** (`8jv0VaaN6d7mWZAeGj79`), una toma continua por Reel con alineación por palabra (`convert_with_timestamps`), `atempo 1.05`. Verificada con Scribe: transcripción idéntica al guion.
+- Contacto en todos los cierres: **(+54)1138436571** · **ventas@salelisto.com**.
+
+| Reel | Duración | Peso | Audio |
+|---|---|---|---|
+| Reel 01 · Sin celulares en el salón | 18.94 s | 6.25 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 02 · Segundas rondas en la terraza | 20.01 s | 6.18 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 03 · Cero comisión y precios al día | 18.40 s | 6.96 MB | -14.0 LUFS · -1.5 dBTP |
+
+Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movflags +faststart`.
+
+---
+
+## Reel 01 · Sin celulares en el salón
+
+**Archivo:** [`Reel_01_Sin_Celulares_En_Salon.mp4`](reels/Reel_01_Sin_Celulares_En_Salon.mp4) · **Ángulo:** Objeción #1, estética del salón.
+
+**Locución (40 palabras):**
+> ¿Mozos mirando el celular frente al cliente? En tu salón, jamás. Con SaleListo, cada mozo tiene su columna en la estación fija del pase. Y cuando sale el plato, le vibra la pulsera. Tecnología invisible, cero comisión. Escribinos y probalo.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 2.62 s | **¿Mozos con `celular?`** | Celular con 3 notificaciones que entran y lo hacen vibrar (visible desde el cuadro 0) | Cliente con el celular en la mesa |
+| 2.62 a 4.75 s | **En tu salón, `jamás`** | Señal de prohibido roja que se dibuja sobre el celular (3.76 s), el teléfono se apaga | Mismo plano |
+| 4.75 a 8.82 s | **Estación `del pase`** | Pantalla fija horizontal en Modo Pase Oscuro: 3 columnas de mozos que se encienden en sus colores (6.73 s), comandas que caen (7.16 s) y destello verde de "listo" (8.15 s) | Emplatado en la cocina |
+| 8.82 a 11.49 s | **Sale el plato, `vibra`** | Campana de servicio que sale (9.17 s) → la pulsera vibra con ondas verdes (10.23 s) → cápsula verde con tilde (10.81 s) | Pizza saliendo al salón |
+| 11.49 a 18.94 s | **Tecnología `invisible`** + logo, `0% comisión`, contacto | Cierre crema: logo (11.85 s), bajada (12.03 s), insignia `0% comisión` (12.99 s), tarjeta de contacto (14.08 s) | Salón desenfocado |
+
+**SFX:** pop suave al tachar el celular, pop al encender las columnas, ding al salir el plato, vibración de la pulsera, acento de éxito en `0% comisión`.
+
+**Copy sugerido (Instagram / TikTok):**
+> Tu salón no es una oficina. Con SaleListo los mozos no sacan el celular frente al cliente: cada uno tiene su columna en la Estación del Pase y, si trabajan en patio o terraza, la pulsera les vibra cuando sale el plato. Tecnología invisible, 0% comisión por pedido.
+> Escribinos al (+54)1138436571 o a ventas@salelisto.com y lo probás en un sector.
+> #gastronomia #restaurantes #mozos #salon #cartadigital #SaleListo
+
+**Estado de WhatsApp B2B:** "Mozos sin celular en el salón y platos que salen a tiempo. ¿Te muestro cómo? (+54)1138436571"
+
+---
+
+## Reel 02 · Segundas rondas en la terraza
+
+**Archivo:** [`Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4) · **Ángulo:** cervecerías, patios y terrazas.
+
+**Locución (49 palabras):**
+> ¿Cuántas segundas pintas perdés un viernes porque nadie ve al mozo en la terraza? Con SaleListo, escanean el QR con su 4G, sin pedir wifi, y piden otra ronda. Va directo a la barra, se prende la luz verde, y sale a la mesa. Más consumo, sin correr. Escribinos.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 4.75 s | **¿Y la `segunda` pinta?** | Pinta vacía dentro de un anillo rojo de tiempo que se va completando; una mano llama (2.74 s) y queda sin respuesta (3.78 s) | Barra cálida de noche, mozo de espaldas |
+| 4.75 a 10.54 s | **QR con `4G`** | Escaneo del QR (6.35 s), píldora `4G` (7.03 s), wifi tachado (8.43 s), dos pintas y botón `Pedir` con toque (9.80 s) | Manos con celular |
+| 10.54 a 14.16 s | **Directo a `Barra`** | La comanda baja directo a la caja `Barra` (11.27 s), se prende la luz verde (12.39 s) y las pintas llegan a la mesa (13.05 s) | Canilla sirviendo una pinta |
+| 14.16 a 16.06 s | **Más `consumo`** | Cuatro pintas-barra que crecen + flecha de tendencia verde | Amigas brindando |
+| 16.06 a 20.01 s | Logo, `0% comisión`, contacto | Cierre crema: logo (16.42 s), insignia (16.82 s), contacto (17.17 s) | Canilla desenfocada |
+
+**SFX:** escaneo, pop en `4G`, pop al tocar `Pedir`, pop al llegar a Barra, ding con la luz verde, pop en el gráfico, acento de éxito en el cierre.
+
+**Copy sugerido (Instagram / TikTok):**
+> Viernes, terraza llena y nadie encuentra al mozo. Cada ronda que no se pide es plata que no entra. Con SaleListo escanean el QR con sus datos móviles, piden otra ronda y el pedido va directo a la barra. Luz verde, a la mesa, y tu equipo deja de correr.
+> Escribinos al (+54)1138436571 o a ventas@salelisto.com.
+> #cerveceria #terraza #patiocervecero #barra #gastronomia #SaleListo
+
+**Estado de WhatsApp B2B:** "Más segundas rondas en el patio sin sumar mozos. Escribime y te cuento: (+54)1138436571"
+
+---
+
+## Reel 03 · Cero comisión y precios al día
+
+**Archivo:** [`Reel_03_Cero_Comision_Precios_Al_Dia.mp4`](reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4) · **Ángulo:** rentabilidad del dueño + anti inflación.
+
+**Locución (41 palabras):**
+> En tu propio salón, la ganancia tiene que ser cien por ciento tuya. Con SaleListo pagás cero comisión por pedido. ¿Subieron los costos? Tocás un botón y actualizás toda la carta al instante, sin reimprimir un solo QR. Escribinos y probalo.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 4.21 s | **Ganancia `100%` tuya** | Moneda grande en el cuadro 0 que sube; anillo verde que se llena con contador de 0 a 100 % y tilde (3.43 s) | Salón con clientes, vista cenital |
+| 4.21 a 7.24 s | **`0%` comisión** | Dos tickets: el tradicional pierde su recorte `%` rojo (5.59 s); el de SaleListo queda entero, verde, con `0%` y tilde | Cóctel servido en barra |
+| 7.24 a 11.79 s | **Precios `al día`** | Carta con 3 ítems; toque en `+10%` (9.01 s) y los precios se actualizan en cascada: $8.500 → $9.350, $4.200 → $4.620, $3.900 → $4.290 | Sartén en el fuego |
+| 11.79 a 13.93 s | **Sin `reimprimir`** | Impresora con señal de prohibido (12.19 s) junto al mismo QR con tilde verde (13.13 s) | Clienta usando el celular |
+| 13.93 a 18.40 s | Logo, `0% comisión`, contacto | Cierre crema: logo (14.28 s), insignia (14.68 s), contacto (15.03 s) | Barra desenfocada |
+
+**SFX:** pop al completar el 100 %, pop del recorte, pop del botón, tres ticks suaves al actualizar cada precio, pop de la impresora tachada, ding del QR, acento de éxito en el cierre.
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> En tu salón, cada peso que entra es tuyo. SaleListo no cobra comisión por pedido. Y cuando suben los costos, actualizás toda la carta con un toque y el mismo QR de siempre muestra los precios nuevos: nada de reimprimir.
+> Escribinos al (+54)1138436571 o a ventas@salelisto.com y lo configuramos con tu carta.
+> #duenosgastronomicos #restaurantes #inflacion #cartadigital #rentabilidad #SaleListo
+
+**Estado de WhatsApp B2B:** "0% comisión y precios actualizados en un toque, sin reimprimir QR. Hablemos: (+54)1138436571"
+
+---
+
+## 5 guiones para grabar con cámara en mano en restaurantes reales
+
+**Criterios comunes:** celular en vertical `4K 60 fps` (o `1080p 60 fps`), lente principal, exposición y foco bloqueados por plano, luz cálida del local (sin flash), audio ambiente real del salón y locución o voz en off grabada aparte en un lugar silencioso. Texto en pantalla de **máximo 5 palabras** por plano, en `Plus Jakarta Sans` blanca con la palabra clave sobre bermellón `#d9412b`. Duración objetivo: 15 a 25 s. Antes de grabar, pedir consentimiento a clientes y equipo que aparezcan en cámara, y no mostrar pantallas con datos reales de clientes.
+
+### Guion 1 · "Acá los mozos no usan celular" (Estación del Pase)
+
+- **Locación:** salón en servicio de mediodía, con la Estación del Pase (`pase.html`) en una tablet o monitor fijo junto a la cocina.
+- **Gancho (0 a 3 s):** primer plano de un mozo guardando su celular en un casillero y cerrándolo. Texto: **"Celular guardado"**. Voz: *"Acá los mozos no usan el celular."*
+- **Planos:**
+  1. (3 a 7 s) Plano medio, cámara al hombro detrás del mozo que mira la pantalla del pase: su columna se ilumina con una mesa lista. Texto: **"Su columna, su mesa"**.
+  2. (7 a 11 s) Detalle de la mano tocando `✔ Ya lo llevé` en la pantalla. Texto: **"Un toque"**.
+  3. (11 a 16 s) Seguimiento en mano (paso firme, rodillas flexionadas) del mozo llevando el plato hasta la mesa; el cliente sonríe sin interrupciones.
+  4. (16 a 20 s) Plano general del salón prolijo, sin pantallas en las manos. Texto: **"Tecnología invisible"**.
+- **Llamado a la acción (20 a 23 s):** placa crema con logo, `0% comisión` y "Escribinos: (+54)1138436571".
+
+### Guion 2 · "Viernes en el patio cervecero" (segundas rondas)
+
+- **Locación:** patio o terraza de cervecería un viernes después de las 20 h, con QR en cada mesa.
+- **Gancho (0 a 3 s):** primer plano a la altura de la mesa: una pinta vacía apoyada con un golpe seco. Texto: **"¿Y la segunda?"**. Voz: *"¿Cuánto tarda la segunda pinta en tu patio?"*
+- **Planos:**
+  1. (3 a 7 s) Sobre el hombro del cliente: escanea el QR con sus datos móviles y aparece la carta. Texto: **"QR con 4G"**.
+  2. (7 a 10 s) Detalle del dedo tocando `Pedir` con 2 pintas en el carrito.
+  3. (10 a 14 s) Corte a la barra: la tablet muestra la comanda nueva y el bartender empieza a tirar las pintas. Texto: **"Directo a Barra"**.
+  4. (14 a 18 s) Las pintas llegan a la mesa; brindis en cámara lenta (grabar a 60 fps y bajar a 50 %). Texto: **"Más consumo"**.
+- **Llamado a la acción (18 a 22 s):** voz *"Probalo un viernes en un sector."* + placa con (+54)1138436571 y ventas@salelisto.com.
+
+### Guion 3 · "Hacé la cuenta" (0 % comisión)
+
+- **Locación:** mostrador o caja, con el dueño o encargado a cámara, fuera del horario pico.
+- **Gancho (0 a 3 s):** el dueño rompe un ticket impreso por la mitad mirando a cámara. Texto: **"¿Comisión por pedido?"**. Voz del dueño: *"¿Por qué pagaría comisión por vender en mi propio salón?"*
+- **Planos:**
+  1. (3 a 8 s) Plano medio fijo (celular sobre un trípode chico en el mostrador): el dueño explica en una frase que con SaleListo paga un plan fijo y **0 % de comisión por pedido**. Texto: **"0% comisión"**.
+  2. (8 a 12 s) Detalle de sus manos anotando en una libreta su facturación del mes, sin cifras legibles. Texto: **"Todo queda acá"**.
+  3. (12 a 16 s) Plano general del salón lleno, travelling lento en mano desde la caja hacia las mesas.
+- **Llamado a la acción (16 a 20 s):** el dueño a cámara: *"Si tenés un local, escribiles."* + placa con (+54)1138436571.
+- **Nota:** no inventar porcentajes de la competencia ni cifras de ahorro; que el dueño hable de su experiencia propia.
+
+### Guion 4 · "Subieron los costos: 10 segundos" (precios al día)
+
+- **Locación:** oficina o barra del local; luego una mesa con QR.
+- **Gancho (0 a 3 s):** una pila de cartas impresas cae dentro de un tacho. Texto: **"Basta de reimprimir"**. Voz: *"¿Cuánto gastaste reimprimiendo la carta este año?"*
+- **Planos:**
+  1. (3 a 7 s) Pantalla del panel del restaurante grabada de frente (brillo al máximo, sin reflejos): el dueño toca `+ %` y la lista de precios se actualiza. Texto: **"Toda la carta"**.
+  2. (7 a 11 s) Corte a una mesa: un cliente escanea **el mismo QR de siempre** y ve los precios nuevos. Texto: **"Mismo QR"**.
+  3. (11 a 15 s) Detalle del QR pegado en la mesa con el logo SaleListo, foco suave hacia el salón.
+- **Llamado a la acción (15 a 19 s):** voz *"Precios al día en un toque, cero comisión."* + placa con (+54)1138436571 y ventas@salelisto.com.
+
+### Guion 5 · "La pulsera que avisa" (Kit Pulsera Vibradora)
+
+- **Locación:** cocina abierta o pase y una terraza amplia donde el mozo no ve la cocina.
+- **Gancho (0 a 3 s):** macro de la muñeca del mozo: la pulsera vibra y se enciende (grabar el sonido real de la vibración bien cerca). Texto: **"Salió tu plato"**. Voz: *"Esto le avisa al mozo que su plato salió."*
+- **Planos:**
+  1. (3 a 7 s) En la cocina: el cocinero marca el plato como listo en la pantalla de Cocina. Texto: **"Cocina marca listo"**.
+  2. (7 a 11 s) Corte a la terraza: el mozo atiende otra mesa, siente la vibración, mira la muñeca (no el celular) y gira hacia la cocina.
+  3. (11 a 16 s) Seguimiento en mano del mozo retirando el plato y llevándolo a la mesa. Texto: **"Sin mirar el celular"**.
+- **Llamado a la acción (16 a 20 s):** plano general de la terraza llena + placa con logo, `0% comisión` y (+54)1138436571.
+
+---
+
+## Checklist de publicación
+
+- Subir los MP4 tal cual (sin recomprimir en editores externos) y elegir como portada el cuadro 0, que ya muestra titular y diagrama.
+- Instagram y TikTok: activar subtítulos automáticos y revisar que digan "SaleListo" y "4G" correctamente.
+- YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día").
+- WhatsApp Business: compartir como estado y en listas de difusión B2B con el texto sugerido de cada Reel.

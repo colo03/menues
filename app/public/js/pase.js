@@ -237,11 +237,28 @@
     return { sub, tipPct, tipAmount, total };
   }
 
-  function formatWaitBadge(ts, lateThresholdMin = 5) {
+  // ---------- Semáforo SLA de demora ----------
+  // Comandas: verde < 8 min, ámbar 8 a 14 min, coral >= 15 min desde que la mesa pidió.
+  // Llamados y cuentas: umbral más corto (la mesa está esperando a una persona, no a un plato).
+  const SLA_ORDER = { warn: 8, late: 15 };
+  const SLA_CALL = { warn: 3, late: 6 };
+
+  function slaInfo(ts, th = SLA_ORDER) {
     const mins = Math.max(0, Math.floor((Date.now() - (ts || Date.now())) / 60000));
-    const late = mins >= lateThresholdMin;
-    const text = mins < 1 ? 'Recién' : `${mins} min`;
-    return `<span class="p-wait ${late ? 'late' : ''}">${late ? `⏱️ ${text}` : text}</span>`;
+    if (mins >= th.late) return { level: 'late', mins, text: `Demorado · ${mins} min` };
+    if (mins >= th.warn) return { level: 'warn', mins, text: `Atención · ${mins} min` };
+    return { level: 'ok', mins, text: mins < 1 ? 'En tiempo · recién' : `En tiempo · ${mins} min` };
+  }
+
+  function formatWaitBadge(ts, th = SLA_ORDER) {
+    const sla = slaInfo(ts, th);
+    return `<span class="p-wait sla-${sla.level}" title="Semáforo de demora">${sla.text}</span>`;
+  }
+
+  function countLate(readyOrders, bills, calls) {
+    return readyOrders.filter((o) => slaInfo(o.createdAt).level === 'late').length
+      + bills.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length
+      + calls.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length;
   }
 
   // ---------- Renderizado de tarjetas ----------
@@ -250,15 +267,17 @@
     const cardCls = isBarra ? 'card-barra' : 'card-cocina';
     const pillLabel = isBarra ? '🍸 RETIRAR EN BARRA' : '🍳 RETIRAR EN COCINA';
     const freshCls = freshCardIds.has(o.id) ? 'fresh' : '';
+    const sla = slaInfo(o.createdAt);
+    const readyMins = Math.max(0, Math.floor((Date.now() - (o.updatedAt || o.createdAt)) / 60000));
 
-    return `<article class="p-card ${cardCls} ${freshCls}">
+    return `<article class="p-card ${cardCls} ${freshCls} sla-card-${sla.level}">
       <div class="p-card-top">
         <span class="p-kind-pill">${pillLabel}</span>
-        ${formatWaitBadge(o.updatedAt || o.createdAt, 5)}
+        ${formatWaitBadge(o.createdAt)}
       </div>
       <div class="p-mesa-row">
         <div class="p-mesa-code">MESA ${escapeHtml(o.tableCode)}</div>
-        <div class="p-mesa-block">${escapeHtml(o.blockName || '')}</div>
+        <div class="p-mesa-block">${escapeHtml(o.blockName || '')}${readyMins >= 1 ? ` · listo hace ${readyMins} min` : ' · recién listo'}</div>
       </div>
       <div class="p-items">
         ${(o.items || []).map((i) => `
@@ -282,10 +301,10 @@
     const payIcon = PAY_ICONS[c.payment] || '💳';
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
 
-    return `<article class="p-card card-cuenta ${freshCls}">
+    return `<article class="p-card card-cuenta ${freshCls} sla-card-${slaInfo(c.createdAt, SLA_CALL).level}">
       <div class="p-card-top">
         <span class="p-kind-pill">💳 CUENTA PEDIDA</span>
-        ${formatWaitBadge(c.createdAt, 4)}
+        ${formatWaitBadge(c.createdAt, SLA_CALL)}
       </div>
       <div class="p-mesa-row">
         <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
@@ -310,10 +329,10 @@
 
   function renderMozoCallCard(c) {
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
-    return `<article class="p-card card-llama ${freshCls}">
+    return `<article class="p-card card-llama ${freshCls} sla-card-${slaInfo(c.createdAt, SLA_CALL).level}">
       <div class="p-card-top">
         <span class="p-kind-pill">🙋 MESA LLAMA</span>
-        ${formatWaitBadge(c.createdAt, 3)}
+        ${formatWaitBadge(c.createdAt, SLA_CALL)}
       </div>
       <div class="p-mesa-row">
         <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
@@ -419,7 +438,12 @@
     if (inPrepCount > 0) {
       summaryParts.push(`${inPrepCount} en preparación`);
     }
+    const lateCount = countLate(readyOrders, pendingBills, pendingCalls);
+    if (lateCount > 0) {
+      summaryParts.push(`🔴 ${lateCount} demorado${lateCount === 1 ? '' : 's'}`);
+    }
     $('#pSummary').textContent = summaryParts.join(' · ');
+    $('#pSummary').classList.toggle('has-late', lateCount > 0);
 
     const buckets = new Map();
     activeWaiters.forEach((w) => {
@@ -931,8 +955,8 @@
     renderBoard();
   });
 
-  // Refrescar minutos de espera cada 20 segundos
+  // Refrescar semáforos de demora cada 15 segundos (sin interrumpir un modal abierto)
   setInterval(() => {
     if (state) renderBoard();
-  }, 20000);
+  }, 15000);
 })();
