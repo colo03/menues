@@ -26,10 +26,10 @@ En lugar de pautar cortes rígidos escena por escena, el script entrega una brev
 Comercial vertical (9:16) cálido y cinematográfico para SaleListo, plataforma para restaurantes y bares donde los clientes piden con 4G desde el QR de su mesa, la cocina y la barra reciben cada parte al instante y los mozos trabajan tranquilos sin celular en la mano (usando pantalla fija en el pase o pulsera vibradora), con 0% comisión y contacto WhatsApp (+54)1138436571 | ventas@salelisto.com. Interpretá visualmente con total libertad creativa esta narración en voz femenina rioplatense natural: "¿Tus mozos corren a mil queriendo estar en todos lados? Bajales esa exigencia. Con SaleListo, el cliente escanea el QR con 4G, sin esperar carta ni wifi, y pide tranquilo. La comanda se separa sola entre cocina y barra, y el salón reparte bloques equilibrando al equipo en vivo. Sin celulares en el salón: miran la estación del pase, o les vibra la pulsera al salir. Simplificales la vida a ellos y al restaurante, con cero comisión. Escribinos por WhatsApp, y probalo."
 ```
 
-### Ejecución en 1 línea (con Brave / Chromium en puerto `9222`)
+### Ejecución en 1 línea (con Google Chrome)
 
-1. Tener abierto **Google Flow** (`https://labs.google/fx/tools/flow`) con sesión iniciada en Brave o Chromium y depuración remota habilitada en `chrome://inspect/#remote-debugging` (puerto `9222`).
-2. Aceptar el cartel de seguridad de depuración remota haciendo clic en **`[Allow]` / `[Permitir]`** en la ventana de Brave y correr desde la raíz del proyecto:
+1. Tener abierto **Google Flow** (`https://labs.google/fx/tools/flow`) con sesión iniciada en **Google Chrome** y depuración remota habilitada en `chrome://inspect/#remote-debugging` (o iniciado con `--remote-debugging-port=9222`).
+2. Aceptar el cartel de seguridad de depuración remota haciendo clic en **`[Allow]` / `[Permitir]`** en la ventana de Google Chrome y correr desde la raíz del proyecto:
 
 ```powershell
 python video-ad/generar_ad_omni.py

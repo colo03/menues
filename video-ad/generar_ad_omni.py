@@ -91,49 +91,12 @@ def load_omni_bridge():
 
 
 def resolve_cdp_endpoint(explicit_cdp: str | None = None, bridge_mod=None) -> str:
-    """Detecta el endpoint CDP activo (ws://127.0.0.1:9222/... o http://127.0.0.1:9222)."""
+    """Detecta el endpoint CDP activo de Google Chrome (9222 o DevToolsActivePort)."""
     if explicit_cdp:
         return explicit_cdp.strip()
     env_cdp = os.environ.get("OMNI_CDP_URL", "").strip()
     if env_cdp:
         return env_cdp
-
-    if bridge_mod and hasattr(bridge_mod, "resolve_cdp_endpoint"):
-        try:
-            candidate = bridge_mod.resolve_cdp_endpoint()
-            if candidate and candidate.startswith("ws://"):
-                return candidate
-        except Exception:
-            pass
-
-    search_roots = []
-    local_app_data = os.environ.get("LOCALAPPDATA", "")
-    if local_app_data:
-        search_roots.append(Path(local_app_data))
-    home = Path.home()
-    for rel in (".config", "Library/Application Support"):
-        cand_dir = home / rel
-        if cand_dir.is_dir():
-            search_roots.append(cand_dir)
-
-    patterns = (
-        "*/*/User Data/DevToolsActivePort",
-        "*/User Data/DevToolsActivePort",
-        "*/DevToolsActivePort",
-    )
-    for root in search_roots:
-        for pattern in patterns:
-            for port_file in root.glob(pattern):
-                try:
-                    lines = [
-                        ln.strip()
-                        for ln in port_file.read_text(encoding="utf-8", errors="ignore").splitlines()
-                        if ln.strip()
-                    ]
-                    if len(lines) >= 2 and lines[0] == "9222":
-                        return f"ws://127.0.0.1:9222{lines[1]}"
-                except OSError:
-                    continue
 
     try:
         with urllib.request.urlopen(f"{DEFAULT_CDP_HTTP}/json/version", timeout=1.5) as resp:
@@ -144,29 +107,37 @@ def resolve_cdp_endpoint(explicit_cdp: str | None = None, bridge_mod=None) -> st
     except Exception:
         pass
 
+    local_app_data = os.environ.get("LOCALAPPDATA", "")
+    if local_app_data:
+        chrome_port_file = Path(local_app_data) / "Google" / "Chrome" / "User Data" / "DevToolsActivePort"
+        if chrome_port_file.is_file():
+            try:
+                lines = [
+                    ln.strip()
+                    for ln in chrome_port_file.read_text(encoding="utf-8", errors="ignore").splitlines()
+                    if ln.strip()
+                ]
+                if len(lines) >= 2 and lines[0].isdigit():
+                    return f"ws://127.0.0.1:{lines[0]}{lines[1]}"
+            except OSError:
+                pass
+
     return DEFAULT_CDP_HTTP
 
 
-def print_brave_allow_guide(endpoint: str, cdp_timeout: int) -> None:
-    """Muestra una guia amigable de 3 pasos sin traza rota cuando CDP espera aprobacion."""
+def print_chrome_allow_guide(endpoint: str, cdp_timeout: int) -> None:
+    """Muestra una guia amigable de 3 pasos para conectar con Google Chrome."""
     print(
         "\n========================================================================\n"
-        "[SaleListo Omni] Conexion CDP en espera de aprobacion en el navegador\n"
+        "[SaleListo Omni] Esperando conexion CDP con Google Chrome\n"
         "========================================================================\n"
-        f"Endpoint detectado: {endpoint} (timeout={cdp_timeout}s)\n"
-        "El navegador recibio la solicitud de conexion, pero todavia espera clic\n"
-        "en el cartel de seguridad de depuracion remota o no tiene puerto 9222.\n\n"
-        "Segui estos 3 pasos para generar el spot:\n"
-        "  1. Pasa a la ventana de Brave donde tenes abierto Google Flow\n"
-        f"     ({FLOW_URL}) con tu cuenta iniciada.\n"
-        "  2. En el cartel de seguridad de depuracion remota de Brave, hace clic\n"
-        "     en [Allow] / [Permitir] (si no aparece, verifica que siga activo\n"
-        "     chrome://inspect/#remote-debugging).\n"
-        "  3. Ejecuta nuevamente en esta terminal:\n"
-        "       python video-ad/generar_ad_omni.py\n"
-        "     (Consejo: usa --cdp-timeout 25 si queres 25 s de margen para pasar\n"
-        "     a Brave y pulsar [Allow] en vivo, o --with-logo para adjuntar el\n"
-        "     isotipo app/public/icon-512.png).\n"
+        f"Endpoint intentado: {endpoint} (timeout={cdp_timeout}s)\n\n"
+        "Segui estos pasos en Google Chrome:\n"
+        "  1. En Google Chrome (donde tenes abierto Google Flow),\n"
+        "     abri una pestaña nueva en: chrome://inspect/#remote-debugging\n"
+        "     y marca la casilla 'Enable remote debugging' / 'Discover network targets'.\n"
+        "  2. Cuando corramos el script y Chrome muestre el cartel de permiso,\n"
+        "     hace clic en [Allow] / [Permitir].\n"
         "========================================================================"
     )
 
@@ -388,12 +359,12 @@ def run_pipeline(args: argparse.Namespace) -> int:
                     timeout=max(1, int(args.cdp_timeout * 1000)),
                 )
             except (PlaywrightTimeoutError, TimeoutError):
-                print_brave_allow_guide(endpoint, args.cdp_timeout)
+                print_chrome_allow_guide(endpoint, args.cdp_timeout)
                 return 2
             except PlaywrightError as exc:
                 msg = str(exc)
                 if "Timeout" in msg or "ECONNREFUSED" in msg or "404" in msg or "WebSocket" in msg:
-                    print_brave_allow_guide(endpoint, args.cdp_timeout)
+                    print_chrome_allow_guide(endpoint, args.cdp_timeout)
                     return 2
                 print(f"[SaleListo Omni] Error al conectar por CDP: {msg}")
                 return 1
@@ -408,7 +379,7 @@ def run_pipeline(args: argparse.Namespace) -> int:
             selectors_info = ensure_project_editor_open(page)
             if not selectors_info["ready_for_prompt"]:
                 print(
-                    "[SaleListo Omni] Conectado a Brave, pero no se encontro la caja de prompt en Google Flow.\n"
+                    "[SaleListo Omni] Conectado a Google Chrome, pero no se encontro la caja de prompt en Google Flow.\n"
                     f"URL actual de la pestaña: {selectors_info['url']}\n"
                     "Verifica que tu sesion de Google Labs Flow este iniciada y dentro de un proyecto,\n"
                     "o ejecuta `python video-ad/generar_ad_omni.py --inspect` para diagnosticar el DOM."
