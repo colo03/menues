@@ -536,24 +536,6 @@ body[data-theme="light"] .p-sec-count {
   --card-soft: #fceae6;
 }
 
-.p-card.is-compact {
-  padding: 12px 14px;
-  gap: 9px;
-  border-left-width: 6px;
-}
-.p-card.is-compact .p-mesa-code {
-  font-size: 24px;
-}
-.p-card.is-compact .p-act-btn {
-  min-height: 48px;
-  padding: 9px 14px;
-  font-size: 16px;
-}
-.p-card.card-llama.is-compact {
-  --card-accent: #2f8a57;
-  --card-soft: #e3f3ea;
-}
-
 .p-change-box {
   margin-top: 4px;
   padding: 8px 11px;
@@ -903,11 +885,6 @@ body[data-theme="light"] #pSummary.has-late { color: #c2412b; }
   font-size: 12.5px;
   font-weight: 700;
   color: var(--p-ink-muted);
-}
-
-.p-tbl-chip.cobrando {
-  border-color: var(--ok);
-  background: rgba(47, 138, 87, 0.16);
 }
 
 .p-no-tables {

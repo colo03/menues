@@ -19,7 +19,7 @@ const I = {
   bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/>',
   card: '<rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6 15h4"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
-  wifiOff: '<path d="M2.5 8.5a14 14 0 0 1 19 0M5.5 12a9.5 9.5 0 0 1 13 0M9 15.5a4.5 4.5 0 0 1 6 0"/><path d="M3 3l18 18"/>',
+  repeat: '<path d="M17 2l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>',
   signal: '<path d="M5 19v-3M10 19v-6M15 19v-9M20 19V6"/>',
   screen: '<rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 21h8M12 17v4"/>',
   battery: '<rect x="2.5" y="7" width="17" height="10" rx="2.5"/><path d="M22 10.5v3M6 10v4M9.5 10v4M13 10v4"/>',
@@ -144,7 +144,7 @@ const bandScreen = (s = 1) => `
 function billPhone(w = 420, h = 640) {
   const pill = (t, sel) => `<span style="font-size:22px;font-weight:700;padding:9px 16px;border-radius:999px;white-space:nowrap;${sel ? 'background:#D9412B;color:#fff' : 'background:#fff;border:1.5px solid #e6dfd3;color:#57534e'}">${t}</span>`;
   return `<div class="phone" style="width:${w}px;height:${h}px"><div class="scr" style="padding:34px 26px 26px;display:flex;flex-direction:column;gap:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800">${mark(34)}Mesa T4</div><span class="chip ok" style="font-size:20px;padding:6px 12px">${ic('signal', 20, '#2F8A57', 2.6)}4G</span></div>
+    <div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800">${mark(34)}Mesa T4</div><span class="chip ok" style="font-size:20px;padding:6px 12px">${ic('check', 20, '#2F8A57', 2.8)}Carta QR</span></div>
     <div style="font-size:34px;font-weight:800;letter-spacing:-0.02em;margin-top:4px">Pedir la cuenta</div>
     <div style="display:flex;justify-content:space-between;align-items:baseline;background:#fff;border:1px solid #e6dfd3;border-radius:15px;padding:14px 18px"><span style="font-size:22px;font-weight:600;color:#57534e">Total</span><b style="font-size:32px;font-weight:800">$48.600</b></div>
     <div style="font-size:21px;font-weight:700;color:#57534e">Medio de pago</div>
@@ -409,22 +409,36 @@ function tentCard(w = 360) {
       <div style="font-size:24px;font-weight:700;color:#57534e;text-align:center;line-height:1.3">Escaneá con tu cámara<br>y pedí directo</div>
     </div>
     <div style="width:${w - 60}px;height:22px;margin:0 auto;background:#e6dfd3;border-radius:0 0 18px 18px"></div>
-    <span class="chip ok" style="position:absolute;top:-24px;right:-34px;font-size:26px;padding:12px 22px;box-shadow:var(--shadow-card);border:1.5px solid #c7e6d4">${ic('signal', 26, '#2F8A57', 2.8)}4G sin Wi-Fi</span>
+    <span class="chip ok" style="position:absolute;top:-24px;right:-34px;font-size:25px;padding:12px 22px;box-shadow:var(--shadow-card);border:1.5px solid #c7e6d4">${ic('check', 25, '#2F8A57', 3)}Sin bajar apps</span>
   </div>`;
 }
-P.p3 = { w: 1080, h: 1350, out: 'posts/post_03_qr_4g_patios_veredas.png', html: () => post({ body: `
-  <div style="margin-top:64px">
-    <div class="kicker">${ic('sun', 28)}Veredas, patios y terrazas</div>
-    <h2 class="h2" style="margin-top:34px">Tu vereda pide sola, <span class="acc">aunque el Wi-Fi no llegue.</span></h2>
-    <div style="display:flex;gap:56px;align-items:center;margin-top:62px">
-      ${tentCard(380)}
-      <div style="flex:1;display:flex;flex-direction:column;gap:34px">
-        ${featRow('signal', 'Usa el 4G del cliente', 'Sin pedir la clave del Wi-Fi.')}
-        ${featRow('noapp', 'Sin descargar apps', 'Abre con la cámara del celular.')}
-        ${featRow('shield', 'Acrílico para exterior', 'Resiste sol, lluvia y alcohol.')}
+function patioRoundCard(w = 384) {
+  return `<div style="width:${w}px;flex:none">
+    <div style="background:#fff;border:1px solid #e6dfd3;border-radius:26px;box-shadow:var(--shadow-float);padding:24px 26px 24px;display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%"><span style="font-size:25px;font-weight:800">Terraza · T6</span>${mark(38)}</div>
+      <div style="padding:12px;border:1px solid #e6dfd3;border-radius:16px">${qr(188, '#1C1917', '#FFFFFF', 23)}</div>
+      <span class="chip solid" style="font-size:22px;padding:9px 20px">${ic('repeat', 22, '#fff', 2.6)}Repetir ronda</span>
+    </div>
+    <svg width="${w}" height="44" viewBox="0 0 ${w} 44" style="display:block"><path d="M${w / 2} 0 V44" stroke="#6D28D9" stroke-width="5" stroke-linecap="round"/><circle cx="${w / 2}" cy="6" r="7" fill="#D9412B"/></svg>
+    <div style="background:#fff;border:1.5px solid #d8ccf8;border-left:8px solid #6D28D9;border-radius:20px;box-shadow:var(--shadow-card);padding:18px 22px;display:flex;align-items:center;justify-content:space-between">
+      <span style="display:flex;align-items:center;gap:10px;font-size:26px;font-weight:800">${ic('glass', 30, '#6D28D9', 2.4)}Barra</span>
+      <span style="font-size:21px;font-weight:800;color:#6D28D9;background:#efeafe;padding:6px 14px;border-radius:999px;white-space:nowrap">2x Pintas IPA</span>
+    </div>
+  </div>`;
+}
+P.p3 = { w: 1080, h: 1350, out: 'posts/post_03_segundas_rondas_patios.png', html: () => post({ body: `
+  <div style="margin-top:56px">
+    <div class="kicker">${ic('sun', 28)}Patios, terrazas y veredas</div>
+    <h2 class="h2" style="margin-top:28px;font-size:64px">Segundas rondas en patios y veredas <span class="acc">sin esperar al mozo.</span></h2>
+    <div style="display:flex;gap:46px;align-items:center;margin-top:46px">
+      ${patioRoundCard(384)}
+      <div style="flex:1;display:flex;flex-direction:column;gap:30px">
+        ${featRow('noapp', 'Escaneo directo en mesa', 'Abren con la cámara y piden en 10 seg.')}
+        ${featRow('glass', 'Trago directo a Barra', 'Entra al instante sin buscar al mozo.')}
+        ${featRow('spark', 'Más rotación en terraza', 'El mozo va recién cuando sale listo.')}
       </div>
     </div>
-    <div class="card-s" style="margin-top:58px;padding:26px 32px;display:flex;align-items:center;gap:18px;font-size:29px;font-weight:700">${ic('check', 34, '#2F8A57', 3)}Un QR fijo por mesa. Nunca se reimprime.</div>
+    <div class="card-s" style="margin-top:40px;padding:24px 32px;display:flex;align-items:center;gap:18px;font-size:28px;font-weight:700">${ic('check', 34, '#2F8A57', 3)}+20% a +30% en segundas rondas en sectores exteriores.</div>
   </div>` }) };
 
 const priceRow = (name, cat, oldp, newp) => `<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-top:1px solid #e6dfd3">
@@ -468,10 +482,10 @@ P.web = { w: 1920, h: 600, out: 'banners/banner_web_1920x600.png', html: () => `
     <div style="width:980px">
       ${logoL(50)}
       <div style="font-size:76px;font-weight:800;letter-spacing:-0.035em;line-height:1.04;margin-top:36px">Tu salón en orden,<br><span class="acc">sin comisiones.</span></div>
-      <div style="font-size:28px;font-weight:500;color:#57534e;line-height:1.45;margin-top:22px;max-width:900px">Pedidos por QR con el 4G del cliente, comanda directa a Cocina y Barra, y mozos coordinados sin celular en el salón.</div>
+      <div style="font-size:28px;font-weight:500;color:#57534e;line-height:1.45;margin-top:22px;max-width:900px">Escaneo directo con la cámara sin bajar apps, comanda separada a Cocina y Barra, y mozos coordinados sin celular en el salón.</div>
       <div style="display:flex;gap:14px;margin-top:34px;align-items:center">
         <span class="chip solid" style="font-size:24px;padding:12px 22px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span>
-        <span class="chip ok" style="font-size:24px;padding:12px 22px">${ic('signal', 24, '#2F8A57', 2.8)}4G sin Wi-Fi</span>
+        <span class="chip ok" style="font-size:24px;padding:12px 22px">${ic('check', 24, '#2F8A57', 2.8)}Sin bajar apps</span>
         <span style="font-size:24px;font-weight:700;color:#57534e;margin-left:16px;display:flex;align-items:center;gap:10px">${ic('chat', 28, '#D9412B')}${PHONE}</span>
       </div>
     </div>
@@ -485,7 +499,7 @@ P.d728 = { w: 728, h: 90, out: 'banners/banner_display_728x90.png', html: () => 
       <div style="font-size:21px;font-weight:800;letter-spacing:-0.015em;line-height:1.15;white-space:nowrap">Pedidos por QR directo a Cocina y Barra</div>
       <div style="display:flex;gap:8px;margin-top:7px">
         <span style="font-size:14px;font-weight:800;color:#D9412B;background:#fceae6;padding:4px 10px;border-radius:99px">0% comisión</span>
-        <span style="font-size:14px;font-weight:800;color:#2F8A57;background:#e3f3ea;padding:4px 10px;border-radius:99px">4G sin Wi-Fi</span>
+        <span style="font-size:14px;font-weight:800;color:#2F8A57;background:#e3f3ea;padding:4px 10px;border-radius:99px">Sin bajar apps</span>
       </div>
     </div>
     <div class="btn" style="height:50px;padding:0 20px;font-size:17px;border-radius:10px">Pedí tu demo ${ic('arrow', 18, '#fff', 2.8)}</div>
@@ -506,11 +520,11 @@ P.lic = { w: 1584, h: 396, out: 'banners/linkedin_portada_1584x396.png', html: (
       <div style="width:640px">
         ${logoD(40)}
         <div style="font-size:54px;font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-top:24px">Calma operativa<br>para tu salón.</div>
-        <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74);margin-top:16px;line-height:1.4;white-space:nowrap">QR con 4G · Cocina y Barra · Mozos sin celular</div>
+        <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74);margin-top:16px;line-height:1.4;white-space:nowrap">Carta QR sin apps · Cocina y Barra · Mozos sin celular</div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start">
         <span class="chip solid" style="font-size:24px;padding:12px 22px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span>
-        <span class="chip dk" style="font-size:24px;padding:12px 22px">${ic('signal', 24, '#2F8A57', 2.8)}4G sin Wi-Fi</span>
+        <span class="chip dk" style="font-size:24px;padding:12px 22px">${ic('check', 24, '#2F8A57', 2.8)}Cierre en 1 toque</span>
         <span class="chip dk" style="font-size:24px;padding:12px 22px">${ic('screen', 24, '#D97706', 2.4)}Estación de Pase</span>
       </div>
     </div>
@@ -558,7 +572,7 @@ P.mstory = { w: 1080, h: 1920, out: 'banners/meta_ad_story_1080x1920.png', html:
         <div style="flex:1;display:flex;flex-direction:column;gap:30px">
           ${okRow('Carta cargada en 48 h', 31)}
           ${okRow('QR fijo por mesa', 31)}
-          ${okRow('Sin apps ni Wi-Fi', 31)}
+          ${okRow('Sin apps ni registros', 31)}
           ${okRow('Cocina y Barra separadas', 31)}
         </div>
       </div>
@@ -576,7 +590,7 @@ P.wa = { w: 1080, h: 1080, out: 'banners/whatsapp_catalogo_1080x1080.png', html:
   <div class="cv" style="width:1080px;height:1080px;padding:72px 84px">
     <div class="top">${logoL(52)}<span class="chip solid" style="font-size:24px;padding:11px 20px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span></div>
     <div class="h2" style="margin-top:50px;font-size:70px">Planes SaleListo</div>
-    <div style="font-size:29px;font-weight:600;color:#57534e;margin-top:14px">Todos incluyen QR con 4G, ruteo a Cocina y Barra<br>y Estación de Mozos en el pase.</div>
+    <div style="font-size:29px;font-weight:600;color:#57534e;margin-top:14px">Todos incluyen QR fijo por mesa, ruteo a Cocina y Barra<br>y Estación de Mozos en el pase.</div>
     <div style="display:flex;flex-direction:column;gap:18px;margin-top:44px">
       ${catRow('Barra / Café', 'USD 35', 'Hasta 12 mesas · 2 sectores')}
       ${catRow('Salón / Bistró', 'USD 65', 'Hasta 30 mesas · 5 sectores', 1)}
@@ -605,7 +619,7 @@ P.c3s1 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_01.png
       <div style="display:flex;align-items:center;gap:22px">
         <div style="background:#faf7f2;border:1.5px solid #e6dfd3;border-radius:18px;padding:20px 24px;display:flex;align-items:center;gap:14px;flex:none">
           ${mark(44)}
-          <div><div style="font-size:28px;font-weight:800;line-height:1.1">Mesa T6</div><div style="font-size:21px;font-weight:700;color:#57534e;margin-top:4px">QR · 4G</div></div>
+          <div><div style="font-size:28px;font-weight:800;line-height:1.1">Mesa T6</div><div style="font-size:21px;font-weight:700;color:#57534e;margin-top:4px">Carta QR</div></div>
         </div>
         <svg width="96" height="128" viewBox="0 0 96 128" style="flex:none"><path d="M4 64 C48 64 44 26 92 26" stroke="#D97706" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M4 64 C48 64 44 102 92 102" stroke="#6D28D9" stroke-width="4.5" fill="none" stroke-linecap="round"/><circle cx="6" cy="64" r="6" fill="#D9412B"/></svg>
         <div style="flex:1;display:flex;flex-direction:column;gap:14px">
@@ -649,7 +663,7 @@ P.c3s3 = { w: 1080, h: 1350, out: 'posts/carrusel_03_cocina_y_barra/slide_03.png
     <div style="margin:36px auto 0;width:720px;background:#fff;border-radius:22px;padding:22px 28px;color:#1c1917;box-shadow:0 24px 50px -16px rgba(0,0,0,.6)">
       <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #e6dfd3;margin-bottom:12px">
         <span style="display:flex;align-items:center;gap:12px;font-size:27px;font-weight:800">${mark(34)}Mesa T6 · Confirmado</span>
-        <span class="chip ok" style="font-size:20px;padding:6px 14px">${ic('signal', 20, '#2F8A57', 2.6)}4G directo</span>
+        <span class="chip ok" style="font-size:20px;padding:6px 14px">${ic('check', 20, '#2F8A57', 2.8)}En 0 seg</span>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;font-size:24px;font-weight:700">
         <div>1x Ojo de bife <span style="color:#D97706">(Sin TACC)</span></div>
@@ -801,7 +815,7 @@ P.st4 = { w: 1080, h: 1920, out: 'stories/story_04_vaquita_y_vuelto.png', html: 
   `<span class="chip solid" style="font-size:24px;padding:10px 20px">${ic('spark', 24, '#fff', 2.6)}Nuevo en el QR</span>`, `
   <div>
     <h1 class="h1" style="font-size:70px;line-height:1.06">Dividen entre amigos y avisan <span class="acc">con cuánto pagan.</span></h1>
-    <p class="lead" style="font-size:29px;margin-top:16px">Nuevo en el QR con 4G: calculan la vaquita y declaran efectivo para cobrar en 1 solo viaje.</p>
+    <p class="lead" style="font-size:29px;margin-top:16px">Desde el QR de la mesa: calculan la vaquita y declaran efectivo para cobrar en 1 solo viaje.</p>
   </div>
   <div class="card" style="padding:28px 34px;display:flex;flex-direction:column;gap:18px">
     <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid #e6dfd3">
@@ -851,7 +865,7 @@ P.st5 = { w: 1080, h: 1920, out: 'stories/story_05_3_estaciones_sla.png', html: 
   </div>
   <div>
     <div style="margin:0 auto;width:720px;background:#fff;border-radius:20px;padding:18px 26px;color:#1c1917;display:flex;align-items:center;justify-content:space-between">
-      <span style="display:flex;align-items:center;gap:12px;font-size:25px;font-weight:800">${mark(32)}Mesa T6 · Pedido por QR 4G</span>
+      <span style="display:flex;align-items:center;gap:12px;font-size:25px;font-weight:800">${mark(32)}Mesa T6 · Pedido por QR</span>
       <span style="font-size:21px;font-weight:700;color:#57534e">Bife · 2 IPA · Roll x8</span>
     </div>
     <svg width="912" height="72" viewBox="0 0 912 72" style="display:block">
@@ -897,7 +911,7 @@ P.st6 = { w: 1080, h: 1920, out: 'stories/story_06_piloto_14_dias.png', html: ()
           <span style="font-size:24px;font-weight:800;color:#2F8A57">Terraza / Vereda</span>
           ${ic('check', 26, '#2F8A57', 3)}
         </div>
-        <div style="font-size:21px;font-weight:700;margin-top:4px">Piloto activo · QR con 4G</div>
+        <div style="font-size:21px;font-weight:700;margin-top:4px">Piloto activo · QR fijo</div>
       </div>
     </div>
     <div style="display:flex;gap:16px">

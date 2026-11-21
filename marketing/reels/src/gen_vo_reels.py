@@ -16,7 +16,7 @@ TEXTS = {
             "Y cuando sale el plato, le vibra la pulsera. "
             "Tecnología invisible, cero comisión. Escribinos y probalo."),
     "r02": ("¿Cuántas segundas pintas perdés un viernes porque nadie ve al mozo en la terraza? "
-            "Con SaleListo, escanean el QR con su 4G, sin pedir wifi, y piden otra ronda. "
+            "Con SaleListo, escanean el QR directo con la cámara, sin bajar apps, y piden otra ronda. "
             "Va directo a la barra, se prende la luz verde, y sale a la mesa. "
             "Más consumo, sin correr. Escribinos."),
     "r03": ("En tu propio salón, la ganancia tiene que ser cien por ciento tuya. "

@@ -26,7 +26,7 @@ La beta original (internamente llamada **Pedio**, evolucionada luego en [`app/`]
 | **Restaurante carga menú con precios** | 🟡 **Parcial** | Permitía crear, editar, agotar y borrar platos en [`server.py`](../app/server.py), pero **no dejaba crear/editar categorías** (estaban fijas en comida japonesa), ni admitía fotos reales (solo 24 emojis fijos) ni ajustes masivos de precios. |
 | **Restaurante carga las mesas** | 🔴 **No implementado** | El número `12` estaba fijo en [`server.py`](../app/server.py) y [`demo.html`](../app/public/demo.html). No existía pantalla ni endpoint para agregar/quitar mesas, nombrarlas (`Terraza 2`, `Barra 1`), definir capacidad o agrupar por sectores. |
 | **Restaurante asigna mozos** | 🔴 **No implementado** | No existía la entidad `mozo` en el estado, ni ABM de personal, ni asignación de mesas o bloques a mozos. |
-| **Cliente escanea QR y pide comida** | 🟢 **Funcionaba (solo LAN)** | Funcionaba en red Wi-Fi local: carrito por mesa, aclaraciones por plato, validación de precios en servidor y seguimiento en vivo de 4 etapas. |
+| **Cliente escanea QR y pide comida** | 🟢 **Funcionaba (solo LAN)** | Funcionaba únicamente en red interna local (`192.168.x.x`): carrito por mesa, aclaraciones por plato, validación de precios en servidor y seguimiento en vivo de 4 etapas. |
 | **Se carga directo en sistema** | 🟢 **Funcionaba** | Impactaba al instante por SSE en el tablero Kanban (`Nuevos` -> `En cocina` -> `Listos` -> `Entregados`) y sobrevivía a reinicios del servidor. |
 | **Avisa a los mozos correspondientes** | 🔴 **Muy incompleto** | Solo disparaba un `ding` global en la PC del mostrador ([`restaurante.js`](../app/public/js/restaurante.js)). **No existía vista móvil para el mozo**, no filtraba avisos según quién atendía cada mesa, y cuando cocina marcaba un plato `"Listo"` le avisaba al cliente pero **no al mozo** que debía llevarlo. |
 
@@ -92,7 +92,7 @@ La beta original (internamente llamada **Pedio**, evolucionada luego en [`app/`]
 > 1. **Panel del restaurante abierto sin autenticación:** Cualquier usuario en la red podía abrir `/restaurante.html`, alterar precios, cerrar su propia mesa o reiniciar la base.
 > 2. **Pedidos falsos entre mesas (QR secuencial predecible):** Cambiando `?mesa=4` a `?mesa=8` en la URL, cualquiera podía cargar pedidos o pedir la cuenta en otra mesa.
 > 3. **Exposición global de estado por SSE:** `/api/events` enviaba el estado íntegro del local a todos los navegadores conectados.
-> 4. **Dependencia del Wi-Fi local y de CDNs externos:** Con datos móviles 4G/5G la IP local `192.168.x.x` no era accesible; a la inversa, sin salida a internet [`qr.html`](../app/public/qr.html) fallaba porque descargaba `qrcode.min.js` desde un CDN externo (reemplazado en SaleListo por [`qrgen.py`](../app/qrgen.py) en Python puro).
+> 4. **Aislamiento en red privada local y dependencia de CDNs externos:** Desde internet pública la IP privada `192.168.x.x` no era accesible; a la inversa, sin salida a internet [`qr.html`](../app/public/qr.html) fallaba porque descargaba `qrcode.min.js` desde un CDN externo (reemplazado en SaleListo por [`qrgen.py`](../app/qrgen.py) en Python puro).
 
 ---
 
@@ -103,7 +103,7 @@ Para cubrir de punta a punta la operación gastronómica real, la aplicación se
 ```mermaid
 flowchart LR
     subgraph Cliente["📱 Vista Cliente (QR + Token)"]
-        C1["Escanea QR de Mesa"] --> C2["Arma pedido en 4G/5G"]
+        C1["Escanea QR de Mesa"] --> C2["Arma pedido desde la carta"]
         C2 --> C3["Sigue estado + Llama Mozo / Cuenta"]
     end
 

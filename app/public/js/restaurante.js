@@ -233,17 +233,17 @@
     }
   }, 30000);
 
-  // ---------- Estado 4G/5G Sin Wi-Fi y Túnel HTTPS ----------
+  // ---------- Enlace público y Túnel HTTPS ----------
   function urlSourceLabel(src) {
     return {
       restaurant_public_url: 'Dominio fijo guardado',
       env_public_url: 'Variable PUBLIC_URL',
-      tunnel: 'Túnel HTTPS Cloudflare',
+      tunnel: 'Túnel HTTPS público',
       forwarded_proxy: 'Proxy HTTPS confiable',
       cloud_env: 'Servidor Cloud HTTPS',
-      lan_host: 'Red local Wi-Fi',
-      lan: 'Red local Wi-Fi',
-    }[src] || 'Red local';
+      lan_host: 'Modo red local',
+      lan: 'Modo red local',
+    }[src] || 'Modo red local';
   }
 
   async function startTunnel(autoInstall = false) {
@@ -253,18 +253,19 @@
     renderCajaTunnel();
     try {
       toast(autoInstall
-        ? '⬇️ Descargando cloudflared oficial e iniciando túnel 4G/5G…'
-        : '🚀 Iniciando túnel HTTPS 4G/5G…', 4500);
+        ? '⬇️ Descargando cloudflared oficial e iniciando túnel HTTPS público…'
+        : '🚀 Iniciando túnel HTTPS público…', 4500);
       const res = await apiPost('/api/tunnel/start', { autoInstall });
       tunnelNeedsInstall = false;
       if (res.network) state.network = res.network;
-      toast(res.network?.isPublic4g
-        ? `✅ 4G/5G Activo: ${res.network.baseUrl}`
+      const pubNow = Boolean(res.network?.isPublic ?? !res.network?.isLocalOnly);
+      toast(pubNow
+        ? `✅ Enlace público activo: ${res.network.baseUrl}`
         : '✅ Túnel iniciado; aguardando dirección HTTPS…', 4500);
     } catch (err) {
       if (err.data?.needsInstall) {
         tunnelNeedsInstall = true;
-        toast('ℹ️ Falta cloudflared en esta PC. Tocá "Descargar e iniciar 4G" para instalarlo en 1 clic.', 5500);
+        toast('ℹ️ Falta cloudflared en esta PC. Tocá "Descargar y activar enlace público" para instalarlo en 1 clic.', 5500);
       } else {
         toast(`⚠️ ${err.message}`, 4500);
       }
@@ -284,7 +285,7 @@
     try {
       const res = await apiPost('/api/tunnel/stop', {});
       if (res.network) state.network = res.network;
-      toast('⏹ Túnel HTTPS detenido');
+      toast('⏹ Túnel HTTPS público detenido');
     } catch (err) {
       toast(`⚠️ ${err.message}`);
     } finally {
@@ -300,30 +301,30 @@
     const net = state.network || {};
     const tun = net.tunnel || {};
     const baseUrl = net.baseUrl || location.origin;
-    const is4g = Boolean(net.isPublic4g);
+    const isPublic = Boolean(net.isPublic ?? !net.isLocalOnly);
     const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
     const canManage = Boolean(net.canManageTunnel);
 
-    bar.className = `net-bar ${is4g ? 'is-4g' : 'is-local'}`;
+    bar.className = `net-bar ${isPublic ? 'is-public' : 'is-local'}`;
     bar.innerHTML = `
       <div class="net-bar-info">
-        <span class="net-badge ${is4g ? 'ok' : 'warn'}">
+        <span class="net-badge ${isPublic ? 'ok' : 'warn'}">
           <span class="dot"></span>
-          ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+          ${isPublic ? 'Enlace público activo' : 'Modo red local'}
         </span>
         <code class="net-url">${escapeHtml(baseUrl)}</code>
         <span class="net-meta">${escapeHtml(urlSourceLabel(net.urlSource))}${net.isTemporaryTunnel ? ' (temporal)' : ''}</span>
       </div>
       <div class="net-bar-actions">
-        ${is4g ? `<button class="btn btn-xs btn-ghost" type="button" data-net-copy="${escapeHtml(baseUrl)}">📋 Copiar</button>` : ''}
+        ${isPublic ? `<button class="btn btn-xs btn-ghost" type="button" data-net-copy="${escapeHtml(baseUrl)}">📋 Copiar</button>` : ''}
         ${canManage && tun.active
           ? `<button class="btn btn-xs btn-danger" type="button" data-tunnel-stop ${isStarting ? 'disabled' : ''}>⏹ Detener túnel</button>`
-          : (canManage && !is4g && !net.cloudEnv ? `
+          : (canManage && !isPublic && !net.cloudEnv ? `
               ${tunnelNeedsInstall
-                ? `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="install" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Instalando…' : '⬇️ Descargar e iniciar 4G'}</button>`
-                : `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="normal" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Iniciando túnel…' : '🚀 Activar 4G/5G'}</button>`}
+                ? `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="install" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Instalando…' : '⬇️ Descargar y activar enlace público'}</button>`
+                : `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="normal" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Iniciando túnel…' : '🚀 Activar enlace público'}</button>`}
             ` : '')}
-        ${canManage && !is4g ? `<button class="btn btn-xs btn-ghost" type="button" data-goto-caja>⚙️ Dominio fijo</button>` : ''}
+        ${canManage && !isPublic ? `<button class="btn btn-xs btn-ghost" type="button" data-goto-caja>⚙️ Dominio fijo</button>` : ''}
         <a class="btn btn-xs btn-ghost" href="qr.html" target="_blank">🖨️ QRs</a>
       </div>`;
   }
@@ -335,19 +336,19 @@
     const tun = net.tunnel || {};
     const baseUrl = net.baseUrl || location.origin;
     const lanUrl = net.lanUrl || location.origin;
-    const is4g = Boolean(net.isPublic4g);
+    const isPublic = Boolean(net.isPublic ?? !net.isLocalOnly);
     const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
     const canManage = Boolean(net.canManageTunnel);
 
-    box.className = `tunnel-panel ${is4g ? 'is-4g' : 'is-local'}`;
+    box.className = `tunnel-panel ${isPublic ? 'is-public' : 'is-local'}`;
     box.innerHTML = `
       <div class="tunnel-head">
         <div>
-          <h3 style="margin-bottom:6px">🌐 Acceso 4G/5G sin Wi-Fi (Túnel HTTPS y Dominio Fijo)</h3>
+          <h3 style="margin-bottom:6px">🌐 Túnel HTTPS público y Dominio Fijo</h3>
           <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-            <span class="net-badge ${is4g ? 'ok' : 'warn'}">
+            <span class="net-badge ${isPublic ? 'ok' : 'warn'}">
               <span class="dot"></span>
-              ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+              ${isPublic ? 'Enlace público activo' : 'Modo red local'}
             </span>
             <code class="net-url">${escapeHtml(baseUrl)}/q/&lt;token&gt;</code>
             <span class="net-meta">Origen: ${escapeHtml(urlSourceLabel(net.urlSource))} · LAN: ${escapeHtml(lanUrl)}</span>
@@ -358,7 +359,7 @@
             ? `<button class="btn btn-sm btn-danger" type="button" data-tunnel-stop ${isStarting ? 'disabled' : ''}>⏹ Detener túnel HTTPS</button>`
             : (canManage && !net.cloudEnv ? `
                 <button class="btn btn-sm btn-primary" type="button" data-tunnel-start="normal" ${isStarting ? 'disabled' : ''}>
-                  ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Iniciar túnel HTTPS 4G/5G'}
+                  ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Activar enlace público'}
                 </button>
                 ${!tun.binaryInstalled ? `
                   <button class="btn btn-sm btn-ghost" type="button" data-tunnel-start="install" ${isStarting ? 'disabled' : ''}>
@@ -370,22 +371,22 @@
       </div>
       ${!canManage ? `
         <div class="tunnel-alert info">
-          <strong>🔒 Modo demostración:</strong> el control del túnel HTTPS y del dominio fijo está reservado al encargado autenticado con el PIN real del local.
+          <strong>🔒 Modo demostración:</strong> el control del túnel HTTPS público y del dominio fijo está reservado al encargado autenticado con el PIN real del local.
         </div>` : ''}
-      ${!is4g ? `
+      ${!isPublic ? `
         <div class="tunnel-alert">
-          <strong>⚠️ Atención antes de imprimir QRs:</strong> el servidor apunta hoy a una red local (<code>${escapeHtml(baseUrl)}</code>). Los comensales con datos móviles 4G/5G <strong>no podrán abrir el menú</strong> sin conectarse a tu Wi-Fi hasta que actives el túnel HTTPS 4G/5G o guardes un dominio fijo <code>https://...</code> en la configuración de abajo.
+          <strong>⚠️ Atención antes de imprimir QRs:</strong> el servidor opera hoy en modo red local (<code>${escapeHtml(baseUrl)}</code>). Antes de imprimir QRs definitivos para las mesas, activá el túnel HTTPS público o guardá un dominio fijo <code>https://...</code> en la configuración de abajo.
         </div>` : ''}
       ${net.isTemporaryTunnel ? `
         <div class="tunnel-alert info">
-          <strong>⚡ Túnel rápido Cloudflare activo:</strong> ya podés escanear los QRs desde cualquier celular con 4G/5G sin Wi-Fi. Esta dirección <code>trycloudflare.com</code> cambia al reiniciar la PC; antes de mandar a imprenta acrílicos definitivos, configurá <code>CLOUDFLARE_TUNNEL_TOKEN</code> + tu dominio fijo HTTPS (o desplegá en la nube).
+          <strong>⚡ Túnel HTTPS público activo:</strong> enlace público temporal habilitado para pruebas en vivo. Esta dirección <code>trycloudflare.com</code> cambia al reiniciar la PC; antes de mandar a imprenta acrílicos definitivos, configurá <code>CLOUDFLARE_TUNNEL_TOKEN</code> + tu dominio fijo HTTPS (o desplegá en la nube).
         </div>` : ''}
       ${tun.state === 'error' && tun.lastError ? `
         <div class="tunnel-alert err">
           <strong>Error del túnel:</strong> ${escapeHtml(tun.lastError)}
         </div>` : ''}
       <p class="muted" style="font-size:12.5px">
-        Precedencia automática de QRs: <strong>1) Dominio fijo guardado</strong> -> <strong>2) variable PUBLIC_URL</strong> -> <strong>3) Túnel HTTPS activo</strong> -> <strong>4) Red local LAN</strong>. También podés iniciar con <code>python app/server.py --tunnel</code>.
+        Precedencia automática de QRs: <strong>1) Dominio fijo guardado</strong> -&gt; <strong>2) variable PUBLIC_URL</strong> -&gt; <strong>3) Túnel HTTPS público</strong> -&gt; <strong>4) Modo red local</strong>. También podés iniciar con <code>python app/server.py --tunnel</code>.
       </p>`;
   }
 
@@ -742,7 +743,7 @@
         <div class="field"><label>Nombre del restaurante</label><input class="input" name="name" required value="${escapeHtml(r.name)}"></div>
         <div class="field"><label>Subtítulo / especialidad</label><input class="input" name="subtitle" value="${escapeHtml(r.subtitle || '')}"></div>
         <div class="field">
-          <label>Dominio fijo público HTTPS (para QRs 4G/5G permanentes en acrílico)</label>
+          <label>Dominio fijo público HTTPS (para QRs permanentes en acrílico)</label>
           <input class="input" name="publicUrl" placeholder="Ej: https://tu-local.trycloudflare.com (vacío = automático)" value="${escapeHtml(r.publicUrl || '')}">
         </div>
         <div class="field">
@@ -975,10 +976,9 @@
       if (c.type === 'mozo') {
         return `<div class="call mozo">
           <div class="call-head"><strong>🙋 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-          <p>Motivo: <strong>${escapeHtml(c.reason)}</strong><br>Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong> ${c.status === 'en_camino' ? '· 🏃 En camino' : ''}</p>
+          <p>Motivo: <strong>${escapeHtml(c.reason)}</strong><br>Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong></p>
           <div class="call-actions">
-            ${c.status === 'pendiente' ? `<button class="btn btn-xs" type="button" data-call-way="${escapeHtml(c.id)}">En camino</button>` : ''}
-            <button class="btn btn-xs" type="button" data-call-done="${escapeHtml(c.id)}">Atendido</button>
+            <button class="btn btn-xs btn-primary" type="button" data-call-done="${escapeHtml(c.id)}">✔ Atendido</button>
           </div>
         </div>`;
       }
@@ -993,10 +993,9 @@
         : '';
       return `<div class="call cuenta">
         <div class="call-head"><strong>💳 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-        <p>Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% -&gt; <strong>${money(total)}</strong>${splitNote}<br>${cashNote}Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong> ${c.status === 'en_camino' ? '· 🏃 Llevando cobro' : ''}</p>
+        <p>Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% -&gt; <strong>${money(total)}</strong>${splitNote}<br>${cashNote}Mozo: <strong>${escapeHtml(c.waiterName || 'Sin asignar')}</strong></p>
         <div class="call-actions">
-          ${c.status === 'pendiente' ? `<button class="btn btn-xs" type="button" data-call-way="${escapeHtml(c.id)}">Llevando cobro</button>` : ''}
-          <button class="btn btn-xs btn-primary" type="button" data-open-bill="${escapeHtml(c.tableId)}">Ver cuenta y cerrar</button>
+          <button class="btn btn-xs btn-primary" type="button" data-open-bill="${escapeHtml(c.tableId)}">✔ Cobrar y cerrar</button>
         </div>
       </div>`;
     }).join('');
@@ -1882,8 +1881,6 @@
     };
 
     const handleCallsClick = (e) => {
-      const w = e.target.closest('[data-call-way]');
-      if (w) act('call.status', { id: w.dataset.callWay, status: 'en_camino' });
       const d = e.target.closest('[data-call-done]');
       if (d) act('call.status', { id: d.dataset.callDone, status: 'atendida' });
       const b = e.target.closest('[data-open-bill]');
@@ -1897,7 +1894,7 @@
     };
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-    // Arqueo CSV y controles de túnel 4G/5G
+    // Arqueo CSV y controles de túnel HTTPS público
     $('#csvAllBtn').onclick = (e) => downloadSessionsCsv('all', e.currentTarget);
     $('#csvTodayBtn').onclick = (e) => downloadSessionsCsv('today', e.currentTarget);
     const handleNetActionClick = async (e) => {

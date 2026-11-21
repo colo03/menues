@@ -1,6 +1,6 @@
 # SaleListo: Sistema Integral Restaurante, Pase de Mozos, Pulseras y Pedidos QR
 
-Plataforma gastronómica lado restaurante y lado cliente lista para operar en la nube (4G/5G sin pedir Wi-Fi) y probar localmente con Python estándar, sin dependencias externas de `pip`.
+Plataforma gastronómica lado restaurante y lado cliente lista para operar en la nube (enlace HTTPS público) y probar localmente con Python estándar, sin dependencias externas de `pip`.
 
 ## Cómo probarlo en tu computadora ahora mismo
 
@@ -27,7 +27,7 @@ python webpush.py
 
 ## Qué incluye esta versión
 
-1. **Acceso 4G/5G sin Wi-Fi + QRs con token fijo por mesa**: Generador SVG de QRs propio (sin CDNs externos) y tokens secretos fijos por mesa (`cliente.html?t=...`) para impedir pedidos falsos entre mesas.
+1. **QRs cortos con token fijo por mesa + Enlace HTTPS público**: Generador SVG de QRs propio (sin CDNs externos), rutas cortas `/q/<token>` y tokens secretos fijos por mesa (`cliente.html?t=...`) para impedir pedidos falsos entre mesas.
 2. **Estación de Mozos Fija (`pase.html`) para operar sin celulares en el salón**:
    - Pensada para una tablet o monitor horizontal en el mostrador del pase o la barra, legible a 3 o 4 metros.
    - Columnas automáticas por mozo en turno mostrando retiros listos de Cocina y Barra, cuentas pedidas con medio de pago/propina/total exacto, llamados de mesa y carga ágil de pedidos en mostrador.
@@ -40,4 +40,4 @@ python webpush.py
 5. **Ruteo Directo y Simultáneo a Cocina y Barra + Caja Real**:
    - Separación automática de cada pedido entre **Cocina** y **Barra**, ABM completo de menú con compresión de fotos, ajuste porcentual masivo de precios (`+%`), control de pedidos pendientes antes de cerrar mesa y arqueo de ventas y propinas por medio de pago y por mozo.
 
-Para subirlo a internet con HTTPS y usarlo con celulares reales por 4G/5G y Modo Pulsera Web Push, mirá **`PUBLICAR_EN_INTERNET.md`**.
+Para subirlo a internet con enlace HTTPS público y Modo Pulsera Web Push, mirá **`PUBLICAR_EN_INTERNET.md`**.

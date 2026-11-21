@@ -28,14 +28,14 @@
     <text x="72" y="314" font-size="66"><tspan fill="#D9412B">Un salón en calma</tspan></text>
     <text x="72" y="392" font-size="66">en hora pico.</text>
   </g>
-  <text x="72" y="446" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="24" font-weight="500" fill="#57534E">QR en mesa con 4G · Cocina y Barra separadas · Mozos sin celular</text>
+  <text x="72" y="446" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="24" font-weight="500" fill="#57534E">Carta QR en mesa · Cocina y Barra separadas · Mozos sin celular</text>
 
   <!-- Insignias -->
   <g font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="20" font-weight="700">
     <rect x="72" y="492" width="214" height="48" rx="24" fill="#1C1917"/>
     <text x="179" y="523" text-anchor="middle" fill="#FAF7F2">0% comisión</text>
     <rect x="298" y="492" width="226" height="48" rx="24" fill="#E3F3EA"/>
-    <text x="411" y="523" text-anchor="middle" fill="#2F8A57">4G sin clave Wi-Fi</text>
+    <text x="411" y="523" text-anchor="middle" fill="#2F8A57">Sin apps ni registro</text>
     <rect x="536" y="492" width="232" height="48" rx="24" fill="#FCEAE6"/>
     <text x="652" y="523" text-anchor="middle" fill="#D9412B">Sin celulares</text>
   </g>

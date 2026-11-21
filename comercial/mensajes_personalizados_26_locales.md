@@ -30,7 +30,7 @@ Casilla comercial de marca para dossier y acuerdos: `ventas@salelisto.com`.
 | 3 | Growlers | IG DM + visita | Patio 250 m² + 1.er piso | Escaleras + cero celulares | `?mesas=55&ticket=36000&turnos=4#roi` |
 | 4 | Bierlife | IG DM + visita 17 h | Patio cervecero | Grupos grandes + Vaquita | `?mesas=70&ticket=40000&turnos=4#roi` |
 | 5 | El Galpón de Tacuara | WhatsApp bio + IG DM | 2.º piso pool + terraza | Rondas en el pool con música fuerte | `?mesas=65&ticket=40000&turnos=4#roi` |
-| 6 | Atis Bar | IG DM + visita | Terraza jardín multinivel | 3 estaciones + 4G sin Wi-Fi | `?mesas=45&ticket=48000&turnos=4#roi` |
+| 6 | Atis Bar | IG DM + visita | Terraza jardín multinivel | 3 estaciones + escaleras multinivel | `?mesas=45&ticket=48000&turnos=4#roi` |
 | 7 | Piso Cero Terrace | WhatsApp web + IG DM | Green Terrace | Pico de after office | `?mesas=40&ticket=52000&turnos=5#roi` |
 | 8 | Club Lucero | IG DM + Linktree | Fondo del patio | Estética sin celulares | `?mesas=28&ticket=45000&turnos=4#roi` |
 | 9 | Buena Birra Social Club | IG DM + visita 18 h | Patio de Colegiales | Segundas pintas | `?mesas=30&ticket=36000&turnos=4#roi` |
@@ -77,7 +77,7 @@ Viernes, 23:40. Terraza llena, vereda de la esquina también, y la mesa del fond
 
 SaleListo resuelve exactamente ese momento:
 
-- **QR fijo en cada mesa de terraza y vereda.** Piden la segunda ronda desde su celular, con sus datos móviles, y entra directo a la Barra.
+- **QR fijo en cada mesa de terraza y vereda.** Piden la segunda ronda directo desde la cámara de su celular (sin bajar apps) y entra al instante a la Barra.
 - **Barril pinchado, baja en 1 toque.** Si se termina una de las 40 canillas, desaparece al instante de la carta de todas las mesas.
 - **Cero celulares en la mano.** Tus mozos leen todo en una Estación fija en la barra o en una pulsera que vibra. El teléfono queda guardado.
 
@@ -152,7 +152,7 @@ Hola, gente de Growlers:
 
 Tres números de su local de Chacarita: **250 m²** de patio, **1** escalera al primer piso y **20** canillas. Juntos explican por qué un viernes con grupos grandes el equipo termina el turno con las piernas destruidas.
 
-Lo que proponemos es simple. Cada mesa del patio y del primer piso pide desde un QR fijo, con el 4G del cliente. El pedido llega a la Barra y, cuando las pintas están tiradas, el mozo siente una vibración en la muñeca: `🍺 P1-4 · Retirar Barra`. Sube una sola vez, con todo listo.
+Lo que proponemos es simple. Cada mesa del patio y del primer piso pide desde un QR fijo directo con la cámara del teléfono, sin bajar apps. El pedido llega a la Barra y, cuando las pintas están tiradas, el mozo siente una vibración en la muñeca: `🍺 P1-4 · Retirar Barra`. Sube una sola vez, con todo listo.
 
 Ya sé lo que puede preocupar: "no quiero a mis mozos con el celular en el salón". Justamente: con la pulsera Xiaomi Smart Band el teléfono va guardado y bloqueado en el bolsillo toda la noche. Nadie mira una pantalla frente a los clientes. Y si un día preferís no usar pulseras, la Estación de Mozos fija en la barra viene incluida.
 
@@ -252,19 +252,19 @@ WhatsApp (+54)1138436571 · simonguerenu@gmail.com
 - **Dónde:** Perú 1024 (antiguo convento).
 - **Canal:** IG `@atis.bar` + visita presencial en día hábil.
 - **Sector piloto:** terraza jardín multinivel.
-- **Ángulo de entrada:** planta baja, patio andaluz histórico y una terraza jardín en varios niveles con parrilla. Los muros del convento son preciosos y matan cualquier señal de Wi-Fi. Y la terraza tiene tres estaciones reales: Cocina, Barra y Parrilla.
+- **Ángulo de entrada:** planta baja, patio andaluz histórico y una terraza jardín en varios niveles con parrilla. Subir y bajar las escaleras del convento solo para tomar nota o repartir papeles quema al equipo, y la terraza combina tres estaciones reales: Cocina, Barra y Parrilla.
 
 **Apertura DM / WhatsApp**
 
-> Hola Atis. Terraza en varios niveles, parrilla, barra y cocina abajo, entre muros de convento donde el Wi-Fi no pasa. Tenemos un sistema de pedidos pensado justo para eso. ¿Hablamos?
+> Hola Atis. Terraza en varios niveles, parrilla arriba y barra y cocina abajo: un desgaste enorme en escaleras cada viernes. Tenemos un sistema pensado justo para coordinarlo sin celulares. ¿Hablamos?
 
 **Mensaje completo al decisor**
 
-**Asunto:** Parrilla, barra y cocina, cada una con lo suyo (sin depender del Wi-Fi del convento)
+**Asunto:** Parrilla arriba, barra y cocina abajo: cada una con lo suyo en Atis
 
 Hola, ¿cómo están?
 
-Empiezo por la objeción que seguramente aparece primero: "en la terraza no llega el Wi-Fi". Perfecto, porque SaleListo no lo necesita. El cliente escanea el QR de su mesa y pide con sus propios datos 4G o 5G. Sin clave, sin app.
+Empiezo por lo que hace único al edificio de Perú 1024: varios niveles de terraza jardín conectados por escaleras con el patio andaluz, la cocina y la barra. Con SaleListo el cliente escanea el QR de su mesa directo con la cámara (sin bajar apps ni registrarse) y ahorra la mitad de las subidas y bajadas en vacío.
 
 Ahora lo interesante. Una mesa de la terraza pide un vermut, una provoleta y una entraña. Hoy eso es una comanda que alguien tiene que repartir a mano entre tres lugares. Con SaleListo se reparte sola:
 
@@ -387,7 +387,7 @@ Hola, gente de Buena Birra:
 
 Les respondo de entrada las tres preguntas que seguramente se hacen al leer esto.
 
-**¿Qué es?** Un sistema para que las mesas del patio pidan desde un QR fijo, con su propio celular, y el pedido llegue directo a la barra. Sin app, sin clave de Wi-Fi.
+**¿Qué es?** Un sistema para que las mesas del patio pidan desde un QR fijo directo con la cámara de su celular, y el pedido llegue al instante a la barra. Sin apps ni registros.
 
 **¿Qué cambia para el mozo?** Deja de ir y volver a ciegas. Cuando las pintas están tiradas, lo ve en una Estación fija en la barra o lo siente en la muñeca con una pulsera que vibra, con el celular guardado en el bolsillo. Sale al patio una sola vez, con la bandeja completa.
 
@@ -430,7 +430,7 @@ En los boxes de Harakiri pasa algo curioso: el cliente paga por privacidad, y es
 SaleListo lo resuelve sin tocar la experiencia:
 
 - **Pedido desde el box.** Un QR en la mesa abre la carta con fotos. El cliente suma otro ramen o una ronda de nigiris sin salir.
-- **Llamado silencioso.** Si necesitan al mozo, lo llaman en dos toques y reciben un aviso de "en camino". Sin timbres ni gritos.
+- **Llamado silencioso.** Si necesitan al mozo, lo llaman en dos toques indicando el motivo y el aviso entra directo al pase. Sin timbres ni gritos.
 - **Tres estaciones, un pedido.** El pedido se separa solo: los rolls al **Mostrador de Sushi**, el ramen a **Cocina** y el sake o los tragos a **Barra**. Cada uno ve lo suyo con un semáforo de demora.
 
 Tus mozos no cargan celulares: ven todo en una Estación fija en el pase. Entran al box solo para servir.
@@ -554,7 +554,7 @@ El problema: la esquina de Bonpland tiene dos veredas que se llenan, y quien las
 
 La solución, en concreto:
 
-- Cada mesa de vereda tiene un QR fijo. El cliente pide con su celular y su 4G, y el pedido entra a **Cocina** o a **Barra** según corresponda.
+- Cada mesa de vereda tiene un QR fijo. El cliente escanea directo con su cámara y el pedido entra a **Cocina** o a **Barra** según corresponda.
 - Si se terminan los dumplings de cerdo, la cocina los pausa en **1 toque** y desaparecen de todas las mesas. Nadie pide lo que no hay, nadie se enoja.
 - Para cerrar, la mesa pide la cuenta, suma la propina y declara con cuánto paga. El mozo llega **una sola vez** con el vuelto exacto.
 
@@ -976,7 +976,7 @@ Pocos lugares en Belgrano operan a la escala de ustedes: 900 m², 220 cubiertos,
 
 **Qué hace SaleListo en un predio así**
 
-1. Cada mesa del jardín pide desde un QR fijo, con el 4G del cliente (sin depender del Wi-Fi entre las plantas).
+1. Cada mesa del jardín pide desde un QR fijo directo con la cámara del teléfono (sin bajar apps ni hacer fila).
 2. El pedido se separa en tres estaciones: **Cocina**, **Barra** y **Parrilla / Mostrador**, cada una con su pantalla y su semáforo de demora.
 3. La Estación de Pase se filtra por sector: el pase del jardín muestra solo las mesas del jardín.
 4. Los mozos del jardín usan pulsera Xiaomi Smart Band: sienten `🍸 J12 · Retirar Barra` en la muñeca, con el teléfono guardado y bloqueado en el bolsillo.
@@ -1018,7 +1018,7 @@ Hola, vecinos:
 
 Toda casona tiene su mesa invisible. En Vecino debe estar en alguno de los salones laterales o al fondo del patio: la mesa que levanta la mano y nadie la ve, porque el mozo está en otro ambiente.
 
-SaleListo la hace visible. Desde un QR en la mesa, el cliente llama al mozo en dos toques y ve "en camino" en su pantalla. Si prefiere, pide directo y el pedido entra a **Cocina** o a **Barra** con sus datos móviles. El equipo ve todo en una Estación fija en el pase, con el sector de cada mesa, sin andar con el celular en la mano.
+SaleListo la hace visible. Desde un QR en la mesa, el cliente llama al mozo en dos toques indicando qué necesita y el aviso suena al instante en el pase. Si prefiere, pide directo desde la carta y el pedido entra a **Cocina** o a **Barra** en el acto. El equipo ve todo en una Estación fija en el pase, con el sector de cada mesa, sin andar con el celular en la mano.
 
 Para cerrar, la mesa pide la cuenta, la divide y declara cómo paga. Un solo viaje.
 

@@ -446,6 +446,7 @@ def build_network_snapshot(
         'urlSource': source,
         'lanUrl': f'http://{lan_ip()}:{use_port}',
         'isHttps': base.startswith('https://'),
+        'isPublic': pub4g,
         'isPublic4g': pub4g,
         'isLocalOnly': not pub4g,
         'isTemporaryTunnel': '.trycloudflare.com' in base.lower(),
@@ -1049,6 +1050,7 @@ class Handler(SimpleHTTPRequestHandler):
                     'ok': True,
                     'version': db.version,
                     'subscribers': sub_cnt,
+                    'isPublic': net['isPublic'],
                     'isPublic4g': net['isPublic4g'],
                     'tunnelActive': net['tunnel']['active'],
                 },
@@ -1153,6 +1155,7 @@ class Handler(SimpleHTTPRequestHandler):
                     'urlSource': net['urlSource'],
                     'lanUrl': net['lanUrl'],
                     'isHttps': net['isHttps'],
+                    'isPublic': net['isPublic'],
                     'isPublic4g': net['isPublic4g'],
                     'isLocalOnly': net['isLocalOnly'],
                     'isTemporaryTunnel': net['isTemporaryTunnel'],
@@ -1632,7 +1635,7 @@ def main() -> None:
 
     if cfg['tunnel']:
         mode = 'token' if cfg['tunnel_token'] else 'quick'
-        print(f'\n  Iniciando tunel HTTPS 4G/5G ({mode}) hacia 127.0.0.1:{use_port}...')
+        print(f'\n  Iniciando tunel HTTPS publico ({mode}) hacia 127.0.0.1:{use_port}...')
         try:
             st = tunnel_manager.start(
                 port=use_port,
@@ -1642,7 +1645,7 @@ def main() -> None:
                 wait_seconds=20.0,
             )
             if st.get('publicUrl'):
-                print(f"  Tunel 4G/5G activo:     {st['publicUrl']}")
+                print(f"  Tunel HTTPS publico:    {st['publicUrl']}")
             elif mode == 'token' and st.get('active'):
                 print('  Tunel permanente activo (CLOUDFLARE_TUNNEL_TOKEN).')
         except TunnelError as err:
@@ -1651,9 +1654,9 @@ def main() -> None:
     eff_base, eff_source = resolve_base_url_info(port=use_port)
     print('\n  SaleListo esta corriendo\n')
     if is_public_4g_url(eff_base):
-        print(f'  4G/5G Publico HTTPS:    {eff_base}   (origen: {eff_source})')
+        print(f'  Enlace publico activo:  {eff_base}   (origen: {eff_source})')
     else:
-        print('  Modo red local Wi-Fi:   usa --tunnel o el Panel (> Caja y Ajustes) para 4G/5G sin Wi-Fi')
+        print('  Modo red local:         usa --tunnel o el Panel (> Caja y Ajustes) para enlace publico HTTPS')
     print(f'  Red local (LAN):        {lan_base}')
     print(f'  Inicio / Portada:       {eff_base}/')
     print(f'  Tablero operativo:      {eff_base}/operacion.html')

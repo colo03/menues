@@ -1,8 +1,8 @@
 # SaleListo
 
-**Plataforma gastronómica B2B/B2C en tiempo real para pedidos por QR sobre 4G/5G (sin Wi-Fi), ruteo simultáneo en 3 estaciones (`Cocina`, `Barra` y `Mostrador`) con semáforo SLA, coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulsera Vibradora Xiaomi Band por Bluetooth BLE) y ecosistema comercial completo.**
+**Plataforma gastronómica B2B/B2C en tiempo real para pedidos por QR directo desde la mesa (sin apps ni registros), ruteo simultáneo en 3 estaciones (`Cocina`, `Barra` y `Mostrador`) con semáforo SLA, coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulsera Vibradora Xiaomi Band por Bluetooth BLE) y ecosistema comercial completo.**
 
-SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física del personal de salón en horas pico con un enfoque **100% pro-equipo**, cuidando la presencia visual frente al comensal y conviviendo con el facturador fiscal ARCA actual del restaurante. Funciona al instante desde cualquier navegador sin descargar aplicaciones para el cliente, sin requerir clave de Wi-Fi, sin permanencia mínima y con **0% de comisión sobre las ventas**.
+SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física del personal de salón en horas pico con un enfoque **100% pro-equipo**, cuidando la presencia visual frente al comensal y conviviendo con el facturador fiscal ARCA actual del restaurante. Funciona al instante desde la cámara de cualquier teléfono sin descargar aplicaciones ni registrarse, sin permanencia mínima y con **0% de comisión sobre las ventas**.
 
 ---
 
@@ -11,10 +11,10 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 - **Landing Comercial B2B (`/`) y Hub Operativo (`/operacion.html`) desacoplados y seguros**:
   - **Portada Comercial B2B (`app/public/index.html`)**: orientada a dueños y encargados gastronómicos con loops de video optimizados (`app/public/media/` servidos por `HTTP Range 206`), reproductor interactivo del Spot Oficial, comparativa operativa, simulador de bloques, sección de operación sin celulares, acceso directo al Panel en rol aislado `demo_admin` (`restaurante.html?demo=1`), **calculadora interactiva de ROI con enlaces compartibles (`?mesas=&ticket=&turnos=#roi`)**, matriz transparente de planes en **ARS/USD** y formulario del **Piloto de 14 días** conectado a **`POST /api/leads`** con botón directo a WhatsApp seguro en móviles.
   - **Hub Operativo del Restaurante (`app/public/operacion.html`)**: tablero interno conectado por **SSE en tiempo real** con KPIs vivos (mesas activas, comandas demoradas, retiros en pase y recaudación del turno vigente desde las `06:00 AM ART`), checklist diario de apertura, QR rápido para TV/tablet y accesos a todas las vistas operativas.
-- **Autogestión en mesa por 4G/5G con Calculadora "Vaquita", Vuelto Exacto y Repetir Ronda**: Cada mesa posee un código QR vectorial propio con token fijo anti-spoofing (`cliente.html?t=...`, hasta Versión 10). El comensal explora la carta con fotos reales, **buscador tolerante a tildes**, **filtros rápidos combinables (`Populares`, `Sin TACC`, `Veggie`, `Picante`**, más pastillas `Vegano` y `Sin alcohol`), repite rondas en 1 toque (`🔄 Repetir`), llama al mozo (recibiendo aviso en pantalla cuando va en camino) y solicita la cuenta con **Calculadora "Vaquita" (`÷ N` personas)**, propina y **declaración de efectivo con cálculo automático de vuelto** para cobrar en un solo viaje.
+- **Autogestión en mesa por QR fijo con Calculadora "Vaquita", Vuelto Exacto y Repetir Ronda**: Cada mesa posee un código QR vectorial propio con token fijo anti-spoofing (`/q/<token>` y `cliente.html?t=...`, hasta Versión 10). El comensal escanea directo con la cámara, explora la carta con fotos reales, **buscador tolerante a tildes**, **filtros rápidos combinables (`Populares`, `Sin TACC`, `Veggie`, `Picante`**, más pastillas `Vegano` y `Sin alcohol`), repite rondas en 1 toque (`🔄 Repetir`), llama al mozo indicando motivo y solicita la cuenta con **Calculadora "Vaquita" (`÷ N` personas)**, propina y **declaración de efectivo con cálculo automático de vuelto** para cobrar en un solo viaje.
 - **Ruteo simultáneo en 3 Estaciones Reales (`Cocina`, `Barra` y `Mostrador`), Agotados 86 y Semáforo SLA**: Cada categoría o plato dirige sus ítems automáticamente a **Cocina**, **Barra** o **Mostrador** (sushi, parrilla exterior o vitrina de pastelería) en el mismo segundo en que se envía el pedido. La Comandera KDS (`cocina.html`) incluye cajón rápido **`🚫 Agotados`** para pausar platos en 1 toque, *Screen Wake Lock* y **semáforo SLA visual y sonoro** legible a 3 o 4 metros (`🟢 En tiempo`, `🟠 Atención`, `🔴 Demorado`).
 - **Operación 100% sin celulares en el salón (física exacta de las dos modalidades)**:
-  - **De serie desde el Plan Base (`Estación de Mozos fija /pase.html`)**: una única pantalla o tablet horizontal en el mostrador del pase/barra dividida en columnas por cada mozo activo, con **filtro por sector (`?bloque=`)**, compactación automática de mozos al día en salones grandes (`>= 4` columnas), **flujo en 2 pasos (`Voy -> En camino -> Atendido`)**, cobro persistente con vuelto exacto, actualización `tickSla()` no destructiva, *Screen Wake Lock* y carga rápida de pedidos. **Los teléfonos personales del personal quedan guardados en locker o caja.**
+  - **De serie desde el Plan Base (`Estación de Mozos fija /pase.html`)**: una única pantalla o tablet horizontal en el mostrador del pase/barra dividida en columnas por cada mozo activo, con **filtro por sector (`?bloque=`)**, compactación automática de mozos al día en salones grandes (`>= 4` columnas), **confirmación directa en 1 toque (`✔ Atendido` y `✔ Cobrar y cerrar`)**, cobro con detalle completo y vuelto exacto, actualización `tickSla()` no destructiva, *Screen Wake Lock* y carga rápida de pedidos. **Los teléfonos personales del personal quedan guardados en locker o caja.**
   - **Adicional compatible con los 3 planes (`Kit Pulseras Vibradoras Xiaomi Band`)**: mediante PWA instalable (con íconos raster `180/192/512`) + Service Worker + Web Push cifrado en segundo plano y enlace **Bluetooth Low Energy (BLE)**, el teléfono va **guardado y con pantalla bloqueada en el bolsillo del camarero** (jamás se saca en el salón) y la muñeca vibra al instante mostrando avisos compactos (`🍸 T2 · Retirar Barra`, `💳 M8 · Efectivo c/$50k`).
   - **Balanceo híbrido y continuidad de turno**: asignación fija por bloque o automática por carga activa y **reasignación automática inmediata** cuando un mozo corta turno.
 - **Carta anti-inflación reversible, integridad contable CSV (`06:00 AM ART`) y privacidad de Leads**: Ajuste porcentual masivo de precios con **Vista Previa Antes/Después (redondeo limpio a `$100`) y botón `↩ Deshacer`**, baja lógica contable (`archived = 1`) que preserva ventas históricas al borrar mesas o bloques, **exportación CSV directa para Excel Argentina (`GET /api/export/sessions.csv` en UTF-8 con BOM y `;`)** con corte de turno gastronómico a las `06:00 AM ART` (`UTC-3`), y aislamiento estricto de PII comercial en **`📨 Consultas`** (rol `demo_admin` aislado y entrega de leads reales exclusivamente al rol `admin` autenticado).
@@ -33,7 +33,7 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 │   ├── qrgen.py                      # Generador propio de códigos QR vectoriales SVG (Versión 1 a 10, 271 bytes)
 │   ├── tests_e2e.py                  # Suite permanente de tests E2E en stdlib pura (DB temporal aislada)
 │   ├── iniciar.bat                   # Lanzador directo en un clic para Windows
-│   ├── PUBLICAR_EN_INTERNET.md       # Guía rápida de publicación cloud con disco persistente, 4G/5G y HTTPS
+│   ├── PUBLICAR_EN_INTERNET.md       # Guía rápida de publicación cloud con disco persistente y HTTPS
 │   ├── render.yaml                   # Blueprint local de despliegue cloud con volumen persistente /var/data
 │   ├── data/                         # Datos en ejecución (salelisto.db, vapid_keys.json, server_secret.key, uploads/)
 │   └── public/                       # Frontend responsivo, Landing B2B y PWA en HTML5, CSS3 y Vanilla JS
@@ -44,7 +44,7 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 │       ├── restaurante.html          # Panel del encargado (Salón, Mozos, 3 Estaciones, Inflación Undo, CSV y Leads)
 │       ├── mozo.html                 # PWA móvil del mozo con Modo Pulsera BLE (Xiaomi Band), test push y carga
 │       ├── cocina.html               # Comandera KDS en 3 estaciones (Cocina/Barra/Mostrador) + Agotados 86 + SLA
-│       ├── cliente.html              # Carta QR 4G con buscador, filtros, Repetir ronda, Vaquita y vuelto exacto
+│       ├── cliente.html              # Carta QR interactiva con buscador, filtros, Repetir ronda, Vaquita y vuelto exacto
 │       ├── qr.html                   # Estudio de Impresión QR A4 (Tent-Card, Sticker, Tarjeta, Crema/Carbón y SVG)
 │       ├── media/                    # 5 videos web H.264 faststart (4 loops + Spot) y 5 posters JPG optimizados
 │       ├── css/ · js/                # Estilos modulares y lógica cliente (incluidos landing.css y landing.js)
@@ -120,17 +120,17 @@ O en Windows, haciendo doble clic sobre [`app/iniciar.bat`](./app/iniciar.bat).
 | **Landing Comercial B2B** | [`/`](http://localhost:8123/) | Portada pública con videos loop, Spot Oficial, explorador, calculadora ROI compartible, planes ARS/USD y formulario de piloto (`POST /api/leads`). |
 | **Hub Operativo del Local** | [`/operacion.html`](http://localhost:8123/operacion.html) | Tablero interno conectado por SSE en vivo con KPIs del turno (`06:00 AM ART`), checklist diario, QR para TV y accesos operativos. |
 | **Modo Demo Multipantalla** | [`/demo.html`](http://localhost:8123/demo.html) | Demo interactiva con **`⚡ Simular Hora Pico`** en 1 clic paso a paso y limpieza no destructiva de sesiones abiertas. |
-| **Estación de Mozos (Pase)** | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra filtrable por bloque (`?bloque=`), atención en dos tiempos y cobro persistente *(celulares en locker)*. |
+| **Estación de Mozos (Pase)** | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra filtrable por bloque (`?bloque=`), confirmación directa en 1 toque y cobro con vuelto exacto *(celulares en locker)*. |
 | **Panel del Restaurante** | [`/restaurante.html`](http://localhost:8123/restaurante.html) | Gestión de salón, mozos, carta con 3 estaciones y tags, ajuste % con deshacer, arqueo CSV y bandeja privada `#consultas` *(PIN inicial: `1234`)*. |
 | **PWA Mozo / Modo Pulsera** | [`/mozo.html`](http://localhost:8123/mozo.html) | Configuración de **Modo Pulsera Xiaomi Band** por Bluetooth BLE *(celular bloqueado en bolsillo)*, alertas y carga manual por categorías. |
 | **Comandera 3 Estaciones** | [`/cocina.html`](http://localhost:8123/cocina.html) | Tablero KDS en tiempo real (`Cocina`, `Barra`, `Mostrador` o `Todo`) con cajón rápido **`🚫 Agotados`** y semáforo SLA. |
-| **Vista del Comensal** | `/cliente.html?t=<token>` | Carta QR 4G con buscador, filtros dietarios, botón Repetir ronda, calculadora *Vaquita* y declaración de vuelto en efectivo. |
+| **Vista del Comensal** | `/cliente.html?t=<token>` | Carta QR interactiva con buscador, filtros dietarios, botón Repetir ronda, calculadora *Vaquita* y declaración de vuelto en efectivo. |
 | **Estudio de Impresión QR** | [`/qr.html`](http://localhost:8123/qr.html) | Estudio A4 calibrado en mm (`Tent-Card 10x15 cm`, `Sticker 8x8 cm`, `Tarjeta Compacta`, estilos Crema/Carbón, descarga `.svg` y PIN en prod). |
 | **Monitoreo de Salud** | [`/api/health`](http://localhost:8123/api/health) | Endpoint JSON liviano (`{"ok": true, "version": ..., "subscribers": ...}`) para observabilidad cloud. |
 
 ---
 
-## Despliegue en la Nube (4G/5G, Persistencia NVMe y Web Push HTTPS)
+## Despliegue en la Nube (Persistencia NVMe y Web Push HTTPS)
 
 1. Subí este repositorio a tu cuenta de **GitHub**.
 2. En **Render.com** (o **Railway.app**), creá un servicio web o Blueprint conectado al repositorio:

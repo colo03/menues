@@ -18,7 +18,7 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
 | **C3-PDF** | Carrusel 03 nativo para LinkedIn (5 páginas) | [`posts/SaleListo_Carrusel_03_Cocina_Barra.pdf`](posts/SaleListo_Carrusel_03_Cocina_Barra.pdf) | `1080x1350` PDF |
 | **P1** | Post 0% comisión y ROI | [`posts/post_01_cero_comision_roi.png`](posts/post_01_cero_comision_roi.png) | `1080x1350` |
 | **P2** | Post División Cocina y Barra | [`posts/post_02_division_cocina_barra.png`](posts/post_02_division_cocina_barra.png) | `1080x1350` |
-| **P3** | Post QR 4G en veredas y patios | [`posts/post_03_qr_4g_patios_veredas.png`](posts/post_03_qr_4g_patios_veredas.png) | `1080x1350` |
+| **P3** | Post Segundas rondas en patios y veredas | [`posts/post_03_segundas_rondas_patios.png`](posts/post_03_segundas_rondas_patios.png) | `1080x1350` |
 | **P4** | Post Precios anti inflación (redondeo limpio a `$100`) | [`posts/post_04_precios_anti_inflacion.png`](posts/post_04_precios_anti_inflacion.png) | `1080x1350` |
 | **S1 a S6** | Pack de 6 Historias Verticales nativas | [`stories/`](stories/) (`story_01` a `story_06`) | `1080x1920` (zonas seguras) |
 | **LI** | Post LinkedIn ROI 37x | [`banners/linkedin_post_1200x627.png`](banners/linkedin_post_1200x627.png) | `1200x627` |
@@ -57,7 +57,7 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
 | **9** | Martes 17:00 | **C2** | Instagram feed | Facebook | Romper la objeción de imagen | [#07](#copy-07) |
 | **10** | Miércoles 11:00 | **C3** | Instagram feed | Facebook | Ordenar Cocina y Barra + SLA | [#08](#copy-08) |
 | **11** | Jueves 11:00 | **R2** | Instagram Reels | TikTok | Segundas rondas en terrazas y patios | [#09](#copy-09) |
-| **13** | Sábado 11:00 | **P3** | Instagram feed | Historias (`S3`) | 4G sin Wi-Fi en vereda | [#10](#copy-10) |
+| **13** | Sábado 11:00 | **P3** | Instagram feed | Historias (`S3`) | Segundas rondas en patios y veredas | [#10](#copy-10) |
 | **15** | Lunes 10:30 | **P1** | Instagram feed | LinkedIn | 0% comisión y retorno 37x | [#11](#copy-11) |
 | **16** | Martes 17:00 | **R3** | Instagram Reels | TikTok | Rentabilidad del dueño | [#12](#copy-12) |
 | **17** | Miércoles 11:00 | **C3-PDF** | LinkedIn documento | | Operaciones y mermas B2B | [#13](#copy-13) |
@@ -98,7 +98,7 @@ Todas las piezas de [`stories/`](stories/) respetan zonas seguras libres (`>= 25
 Hora pico. Diez mesas levantando la mano y un equipo que no da abasto.
 
 SaleListo ordena el salón sin cambiar tu forma de atender:
-• El cliente escanea el QR de su mesa con su propio 4G. Sin pedir el Wi-Fi.
+• El cliente escanea el QR de su mesa directo con la cámara, sin bajar apps ni registrarse.
 • El pedido viaja solo y separado a Cocina, Barra y Mostrador.
 • Tu mozo se entera recién cuando hay algo listo para llevar o cobrar.
 
@@ -240,7 +240,7 @@ Eliminá las comandas perdidas entre Salón, Cocina y Barra. 👇
 El papel manchado y las "cantadas" en pleno despacho salen caros: entre el 1,5% y el 3% de la venta mensual se va en platos devueltos, errores de punto o bebidas trabadas atrás de una tanda de cocina.
 
 Con SaleListo cada pedido se ordena solo:
-🔸 El cliente elige en el QR con su 4G y deja sus aclaraciones exactas ("Sin TACC", "jugoso", "poco hielo").
+🔸 El cliente elige desde el QR de su mesa y deja sus aclaraciones exactas ("Sin TACC", "jugoso", "poco hielo").
 🔸 En 0 segundos cada ítem entra por separado a Cocina, Barra o Sushi/Mostrador.
 🔸 Semáforo SLA automático en vivo: En tiempo (< 8 min), Atención (8 a 14 min) o Demorado (15+ min).
 🔸 Si se acaba un barril o un postre, cocina lo pausa en 1 toque y desaparece de todos los QR del salón.
@@ -260,7 +260,7 @@ Viernes, terraza llena. Alguien termina su pinta, busca al mozo con la mirada, n
 
 Esa segunda ronda que no se pidió es margen limpio que se fue.
 
-Con SaleListo el cliente escanea el QR de su mesa con su propio 4G (sin pedir Wi-Fi), repite o pide otra ronda en 10 segundos y la comanda entra directo a Barra. El mozo recibe el aviso recién cuando las pintas ya están listas para llevar.
+Con SaleListo el cliente escanea el QR de su mesa directo con la cámara, repite o pide otra ronda en 10 segundos y la comanda entra directo a Barra. El mozo recibe el aviso recién cuando las pintas ya están listas para llevar.
 
 Más rondas, menos corridas.
 
@@ -273,18 +273,18 @@ Más rondas, menos corridas.
 ### Copy #10 · Día 13 · Post P3 · Instagram feed + Historias
 
 ```text
-Tu vereda pide sola, aunque el Wi-Fi no llegue. 📶
+Segundas rondas en patios y veredas sin esperar al mozo. 🍻
 
-Las mesas de afuera son las que más cuesta atender cuando se llena el local. Y casi siempre son las que peor señal de Wi-Fi tienen.
+Viernes lleno afuera: cuando una mesa termina su vaso y tarda 10 minutos en cruzar mirada con el camarero, esa segunda pinta o trago no se pide.
 
-SaleListo funciona con el 4G del propio cliente:
-• Escanea el QR con la cámara. No descarga ninguna app.
-• No pide la clave del Wi-Fi.
-• El QR va en acrílico o sticker UV para exterior: aguanta sol, lluvia y limpieza con alcohol.
+Con SaleListo cada mesa exterior resuelve la vuelta en 10 segundos:
+• Escanean el QR fijo con la cámara, sin descargar apps ni registrarse.
+• Piden o repiten la ronda en un toque y el pedido entra directo a Barra.
+• Tu mozo se entera en el pase o en su pulsera recién cuando la bandeja está lista para salir.
 
-Y como el QR es fijo por mesa, nunca más lo reimprimís.
+Más consumo y más rotación en terraza, patio y vereda, con 0% de comisión.
 
-Escribinos al (+54)1138436571 y te contamos cómo arrancar por tu vereda en 48 horas.
+Escribinos al (+54)1138436571 y activamos un piloto de 14 días en tu sector exterior en 48 horas.
 ```
 
 <a id="copy-11"></a>
@@ -334,7 +334,7 @@ Entre el 1,5% y el 3% del costo de mercadería de un restaurante urbano se pierd
 Casi nunca es falta de voluntad del equipo: es el teléfono descompuesto entre un salón ruidoso, un papel escrito a las corridas y una misma comanda que frena dos pintas de barra atrás de cuatro platos de cocina.
 
 En este documento de 5 páginas resumimos cómo lo resuelve SaleListo en tiempo real:
-▸ El propio comensal confirma sus ítems y aclaraciones (Sin TACC, punto de cocción, poco hielo) desde el QR fijo de su mesa usando su 4G.
+▸ El propio comensal confirma sus ítems y aclaraciones (Sin TACC, punto de cocción, poco hielo) desde el QR fijo de su mesa, sin descargar apps.
 ▸ Separación instantánea en hasta 3 estaciones reales: Cocina, Barra y Mostrador / Sushi / Parrilla.
 ▸ Semáforo SLA automático (verde < 8 min, ámbar 8 a 14 min, coral 15+ min) en pantallas de despacho y Estación de Pase.
 ▸ Baja de platos o barriles agotados en un clic directo desde cocina para ahorrar viajes de disculpa.
@@ -416,7 +416,7 @@ Contacto: ventas@salelisto.com · WhatsApp (+54)1138436571
 ```text
 Sábado 21:30, salón lleno y el equipo trabajando sin corridas.
 
-El cliente pide desde el QR de su mesa con su propio 4G.
+El cliente pide desde el QR fijo de su mesa directo con la cámara.
 La comanda se separa sola entre Cocina, Barra y Mostrador.
 Tu mozo recibe el aviso en el pase o en su muñeca recién cuando algo está listo para llevar.
 
@@ -458,7 +458,7 @@ En gastronomía, la mejor tecnología es la que el comensal no nota y el equipo 
 Cuando conversamos con dueños y jefes de salón sobre digitalizar pedidos y cobros, la primera pregunta casi nunca es "¿cuánto cuesta?". Es "¿mis mozos van a estar mirando una pantalla frente a las mesas?".
 
 En SaleListo la respuesta es no:
-▸ Los pedidos y solicitudes de cuenta llegan desde el QR fijo de cada mesa con el 4G del cliente.
+▸ Los pedidos y solicitudes de cuenta llegan desde el QR fijo de cada mesa, directo con la cámara del celular.
 ▸ Cocina, Barra y Mostrador reciben cada una únicamente lo suyo en 0 segundos.
 ▸ Los mozos consultan su columna en una Estación fija en el pase, o reciben un pulso háptico en su pulsera Xiaomi Band (con el teléfono bloqueado en el bolsillo) si atienden patios y terrazas.
 
@@ -487,7 +487,7 @@ Planes SaleListo, todos con 0% comisión sobre tus ventas y sin permanencia:
 • Barra / Café: USD 35 por mes (hasta 12 mesas · 2 sectores)
 • Salón / Bistró: USD 65 por mes (hasta 30 mesas · 5 sectores) ⭐ el más elegido
 • Gran Salón: USD 110 por mes (mesas y sectores ilimitados)
-Precios de referencia en USD, facturados en pesos. Todos incluyen QR con 4G, ruteo en 3 estaciones (Cocina, Barra y Mostrador), Estación de Mozos fija en el pase y compatibilidad con Kit Pulseras Xiaomi Band.
+Precios de referencia en USD, facturados en pesos. Todos incluyen QR fijo por mesa, ruteo en 3 estaciones (Cocina, Barra y Mostrador), Estación de Mozos fija en el pase y compatibilidad con Kit Pulseras Xiaomi Band.
 Respondé este estado y activamos tu piloto en 48 h: (+54)1138436571
 ```
 

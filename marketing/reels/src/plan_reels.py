@@ -79,18 +79,18 @@ REELS = {
         ],
         "titles": [
             ("¿Y la |segunda| pinta?", None),
-            ("QR con |4G|", "B2"),
+            ("Escaneo |directo|", "B2"),
             ("Directo a |Barra|", "B3"),
             ("Más |consumo|", "B4"),
         ],
         "marks": {
             "nadie": ("nadie", 1, 0), "mozo": ("mozo", 1, 0), "terraza": ("terraza", 1, 0),
-            "qr": ("qr", 1, -0.05), "g4": ("4g", 1, -0.05), "wifi": ("wifi", 1, -0.10), "piden": ("piden", 1, -0.05), "ronda": ("ronda", 1, 0.05),
+            "qr": ("qr", 1, -0.05), "camara": ("cámara", 1, -0.05), "apps": ("apps", 1, -0.10), "piden": ("piden", 1, -0.05), "ronda": ("ronda", 1, 0.05),
             "va": ("va", 1, 0), "barra": ("barra", 1, 0), "verde": ("verde", 1, -0.10), "mesa": ("sale", 1, -0.05),
             "mas": ("más", 1, 0), "correr": ("correr", 1, 0),
             "contact": ("escribinos", 1, 0),
         },
-        "sfx": [("scan", "qr", -0.02, -14), ("pop", "g4", 0.0, -17), ("pop", "ronda", 0.05, -15),
+        "sfx": [("scan", "qr", -0.02, -14), ("pop", "camara", 0.0, -17), ("pop", "ronda", 0.05, -15),
                 ("pop", "barra", 0.05, -17), ("ding", "verde", 0.0, -13), ("pop", "mas", 0.25, -18), ("success", "badge", 0.0, -14)],
     },
     "r03": {

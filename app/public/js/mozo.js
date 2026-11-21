@@ -458,17 +458,11 @@
         toast('✔ Entregado en mesa');
         return;
       }
-      const onway = e.target.closest('[data-onway]');
-      if (onway) {
-        onway.disabled = true;
-        await safeAct('call.status', { id: onway.dataset.onway, status: 'en_camino' });
-        toast('🏃 Cliente avisado que vas en camino');
-        return;
-      }
       const attend = e.target.closest('[data-attend]');
       if (attend) {
         attend.disabled = true;
         await safeAct('call.status', { id: attend.dataset.attend, status: 'atendida' });
+        toast('✔ Llamado atendido');
         return;
       }
       const openTbl = e.target.closest('[data-open-table]');
@@ -587,10 +581,9 @@
         if (c.type === 'mozo') {
           return `<article class="alert-card call-mozo">
             <div class="alert-top"><strong>🙋 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-            <p style="font-size:14px;margin-bottom:10px">Necesita: <strong>${escapeHtml(c.reason)}</strong> ${c.status === 'en_camino' ? '<span class="chip entregado">En camino</span>' : ''} ${isOrphan ? '<span class="chip nuevo">Sin mozo</span>' : ''}</p>
+            <p style="font-size:14px;margin-bottom:10px">Necesita: <strong>${escapeHtml(c.reason)}</strong> ${isOrphan ? '<span class="chip nuevo">Sin mozo</span>' : ''}</p>
             <div class="alert-actions">
               ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" style="background:#fff" data-claim-table="${escapeHtml(c.tableId)}">🤚 Tomar mesa</button>` : ''}
-              ${c.status === 'pendiente' ? `<button class="btn btn-sm" type="button" style="background:#fff" data-onway="${escapeHtml(c.id)}">🏃 Voy en camino</button>` : ''}
               <button class="btn btn-primary btn-sm" type="button" data-attend="${escapeHtml(c.id)}">✔ Atendido</button>
             </div>
           </article>`;
@@ -601,14 +594,12 @@
           <div class="alert-top"><strong>💳 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
           <p style="font-size:14px;margin-bottom:8px">
             Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% -&gt; <strong>${money(c.total)}</strong>${splitTxt}
-            ${c.status === 'en_camino' ? ' <span class="chip entregado">Llevando cobro</span>' : ''}
             ${isOrphan ? ' <span class="chip nuevo">Sin mozo</span>' : ''}
             ${formatCashChangeNote(c)}
           </p>
           <div class="alert-actions">
             ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" style="background:#fff" data-claim-table="${escapeHtml(c.tableId)}">🤚 Tomar mesa</button>` : ''}
-            ${c.status === 'pendiente' ? `<button class="btn btn-sm" type="button" style="background:#fff" data-onway="${escapeHtml(c.id)}">🏃 Llevo cuenta</button>` : ''}
-            <button class="btn btn-primary btn-sm" type="button" data-open-table="${escapeHtml(c.tableId)}">Cobrar y cerrar</button>
+            <button class="btn btn-primary btn-sm" type="button" data-open-table="${escapeHtml(c.tableId)}">✔ Cobrar y cerrar</button>
           </div>
         </article>`;
       }).join('')

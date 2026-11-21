@@ -1,7 +1,7 @@
 // Conexión reactiva con el servidor de SaleListo.
 // Soporta alcance separado para Clientes (solo su mesa + menú) y Personal (salón completo),
 // rutas cortas /q/<qr_token>, control de versión monotónica, resincronización ante cortes
-// 4G/5G o celular bloqueado (visibilitychange / online) y tokens de sesión.
+// de señal o celular bloqueado (visibilitychange / online) y tokens de sesión.
 
 const ORDER_STATUSES = [
   { id: 'nuevo', label: 'Recibido' },
@@ -106,7 +106,7 @@ function subscribe(fn) {
   return () => listeners.delete(fn);
 }
 
-// Conecta el stream SSE según el rol ('client' o 'staff') con resincronización 4G/5G.
+// Conecta el stream SSE según el rol ('client' o 'staff') con resincronización automática.
 function connectStream(opts = {}, onConnection) {
   const scope = opts.scope || 'client';
   const qrToken = scope === 'client'
@@ -182,7 +182,7 @@ function connectStream(opts = {}, onConnection) {
           applyIncomingState(fresh, { fromSSE: true, reconnected: true });
         }
       } catch (_) {
-        // Corte transitorio de señal 4G/5G: EventSource seguirá reintentando
+        // Corte transitorio de señal: EventSource seguirá reintentando
       } finally {
         resyncInFlight = false;
       }
@@ -230,7 +230,7 @@ function connectStream(opts = {}, onConnection) {
         hadDisconnect = true;
         onConnection?.(false);
         if (!resolved && scope === 'client') {
-          // Microcorte 4G en el primer handshake SSE: cargar la carta de inmediato por HTTP
+          // Microcorte de red en el primer handshake SSE: cargar la carta de inmediato por HTTP
           resyncState(true);
         }
         if (scope !== 'client' && !authChecking) {
@@ -259,7 +259,7 @@ function connectStream(opts = {}, onConnection) {
 
     function onVisibilityChange() {
       if (closed || document.visibilityState !== 'visible') return;
-      // Al desbloquear el celular en la mesa o volver de segundo plano bajo NAT 4G/5G
+      // Al desbloquear el celular en la mesa o volver de segundo plano
       resyncState(false);
       const staleMs = Date.now() - lastEventAt;
       if (!es || es.readyState === EventSource.CLOSED || staleMs > 45000) {

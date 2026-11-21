@@ -19,7 +19,7 @@ marketing/
 │   ├── SaleListo_Carrusel_03_Cocina_Barra.pdf      (1080x1350 x 5 páginas sin márgenes)
 │   ├── post_01_cero_comision_roi.png
 │   ├── post_02_division_cocina_barra.png
-│   ├── post_03_qr_4g_patios_veredas.png
+│   ├── post_03_segundas_rondas_patios.png
 │   └── post_04_precios_anti_inflacion.png
 ├── stories/                       6 Historias verticales 1080x1920 (zonas seguras 250px / 300px)
 │   ├── story_01_encuesta_cobro.png
@@ -52,7 +52,7 @@ Todas las slides llevan numeración `01/05`, barra de progreso e indicador `Desl
 | :--- | :--- | :--- |
 | [`post_01_cero_comision_roi.png`](posts/post_01_cero_comision_roi.png) | 0% comisión frente al 18% a 30% + IVA de las apps de delivery y ROI estimado 37x (`+USD 2.410/mes` con abono de `USD 65`) | Crema `#FAF7F2` |
 | [`post_02_division_cocina_barra.png`](posts/post_02_division_cocina_barra.png) | Un pedido que se bifurca automáticamente en Cocina (`#D97706`) y Barra (`#6D28D9`) | Carbón `#1C1917` |
-| [`post_03_qr_4g_patios_veredas.png`](posts/post_03_qr_4g_patios_veredas.png) | QR fijo en acrílico con badge **4G sin Wi-Fi** para veredas, patios y terrazas | Crema `#FAF7F2` |
+| [`post_03_segundas_rondas_patios.png`](posts/post_03_segundas_rondas_patios.png) | Segundas rondas en patios, terrazas y veredas sin esperar al mozo (escaneo directo en la mesa -> trago directo a Barra -> más rotación) | Crema `#FAF7F2` |
 | [`post_04_precios_anti_inflacion.png`](posts/post_04_precios_anti_inflacion.png) | Ajuste masivo de precios `+8%` con **redondeo gastronómico limpio a `$100`** (`$14.500 -> $15.700`, `$5.200 -> $5.600`, `$4.800 -> $5.200`) y vista previa sin reimprimir QR | Crema `#FAF7F2` |
 
 ### 1.3. Historias verticales interactivas (`1080x1920`, zonas seguras `>= 250 px` arriba y `>= 300 px` abajo)
@@ -83,7 +83,7 @@ Todas las slides llevan numeración `01/05`, barra de progreso e indicador `Desl
 
 Documentados en [`guiones_reels.md`](guiones_reels.md) e integrados en el calendario de 30 días (subir limpios con portada en cuadro 0 y **sin subtítulos automáticos superpuestos**):
 1. [`reels/Reel_01_Sin_Celulares_En_Salon.mp4`](reels/Reel_01_Sin_Celulares_En_Salon.mp4): estética del salón (Estación de Pase + Pulsera vibradora).
-2. [`reels/Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4): segundas rondas en patios, veredas y terrazas con 4G.
+2. [`reels/Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4): segundas rondas en patios, veredas y terrazas directo a Barra sin esperar al mozo.
 3. [`reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4`](reels/Reel_03_Cero_Comision_Precios_Al_Dia.mp4): 0% comisión y ajuste masivo de precios sin reimprimir QR.
 4. [`reels/Reel_04_Cobrar_En_Un_Viaje.mp4`](reels/Reel_04_Cobrar_En_Un_Viaje.mp4): cierre de cuenta con pago y propina elegidos en 1 solo viaje.
 5. [`reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4`](reels/Reel_05_Piloto_14_Dias_Un_Sector.mp4): piloto sin riesgo de 14 días en 1 sector listo en 48 horas.
@@ -99,6 +99,7 @@ Documentados en [`guiones_reels.md`](guiones_reels.md) e integrados en el calend
 - **Logo:** [`logo.svg`](../branding/logo.svg) sobre fondos claros; sobre `#1C1917` se usa `src_grafica/assets/logo-on-dark.svg`, idéntico al oficial con el wordmark en crema `#FAF7F2`.
 - **Tipografía:** Plus Jakarta Sans 500 a 800. Titulares de `68px a 142px` en lienzos `1080`, textos de apoyo de `22px` como mínimo para lectura inmediata en el celular sin hacer zoom.
 - **Datos alineados al 100%:** todas las cifras y promesas coinciden exactamente con [`comercial/modelo_de_negocios.md`](../comercial/modelo_de_negocios.md) (planes `USD 35 / 65 / 110` por mes, packs de pulseras `USD 145 / 230` compatibles con los 3 planes y teléfono bloqueado en el bolsillo por BLE, puesta en marcha en **`48 h`**, piloto quirúrgico de **`14 días`** en 1 sector, redondeo limpio a **`$100`** y ROI de **`+USD 2.410/mes`** bruto / **`+USD 2.345/mes`** neto en el local tipo de 25 mesas).
+- **Regla permanente de comunicación y piezas (prohibición de argumentos de conectividad):** jamás se marketinea ni se aclara *"Pedí sin Wi-Fi / 4G"* (ni variantes sobre claves de red o datos móviles) en ninguna categoría de marketing, QRs, posts, carruseles, historias, banners ni mensajes de ventas. Que funcione con la conexión móvil del cliente es solo un plus implícito; el foco comercial es siempre: **escaneo directo con la cámara sin apps ni registros, comanda separada sola a Cocina, Barra y Mostrador, salón sin celulares con Estación de Pase o Pulsera, cierre directo en 1 toque (`✔ Atendido` / `✔ Cobrar y cerrar` sin pasos intermedios) y 0% comisión**.
 
 ---
 

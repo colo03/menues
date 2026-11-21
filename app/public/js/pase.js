@@ -227,7 +227,6 @@
       .sort((a, b) => (a.updatedAt || a.createdAt) - (b.updatedAt || b.createdAt));
   }
 
-  // Incluye tanto 'pendiente' como 'en_camino' para mantener tarjetas compactas visibles en columna
   function getActiveCalls(s, callType, filterBySector = false, tableMap = null) {
     const tMap = tableMap || new Map((s.tables || []).map((t) => [t.id, t]));
     return (s.calls || [])
@@ -235,17 +234,11 @@
         && (!callType || c.type === callType)
         && (!filterBySector || matchesSector(c.blockId, c.tableId, tMap)))
       .slice()
-      .sort((a, b) => {
-        // Las pendientes primero, las en_camino debajo
-        if ((a.status === 'pendiente') !== (b.status === 'pendiente')) {
-          return a.status === 'pendiente' ? -1 : 1;
-        }
-        return a.createdAt - b.createdAt;
-      });
+      .sort((a, b) => a.createdAt - b.createdAt);
   }
 
   function getPendingOnlyCalls(s) {
-    return (s.calls || []).filter((c) => c.status === 'pendiente');
+    return (s.calls || []).filter((c) => c.status !== 'atendida');
   }
 
   function callSignature(c) {
@@ -309,8 +302,8 @@
 
   function countLate(readyOrders, bills, calls) {
     return readyOrders.filter((o) => slaInfo(o.createdAt).level === 'late').length
-      + bills.filter((c) => c.status === 'pendiente' && slaInfo(c.createdAt, SLA_CALL).level === 'late').length
-      + calls.filter((c) => c.status === 'pendiente' && slaInfo(c.createdAt, SLA_CALL).level === 'late').length;
+      + bills.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length
+      + calls.filter((c) => slaInfo(c.createdAt, SLA_CALL).level === 'late').length;
   }
 
   function updateHeaderSummary() {
@@ -353,17 +346,14 @@
       const ts = Number(card.dataset.slaTs || 0);
       if (!ts) return;
       const kind = card.dataset.slaKind;
-      const isInFlight = card.dataset.slaInflight === '1';
-      if (!isInFlight) {
-        const th = kind === 'call' ? SLA_CALL : SLA_ORDER;
-        const sla = slaInfo(ts, th);
-        card.classList.remove('sla-card-ok', 'sla-card-warn', 'sla-card-late');
-        card.classList.add(`sla-card-${sla.level}`);
-        const waitEl = card.querySelector('.p-wait');
-        if (waitEl) {
-          waitEl.className = `p-wait sla-${sla.level}`;
-          waitEl.textContent = sla.text;
-        }
+      const th = kind === 'call' ? SLA_CALL : SLA_ORDER;
+      const sla = slaInfo(ts, th);
+      card.classList.remove('sla-card-ok', 'sla-card-warn', 'sla-card-late');
+      card.classList.add(`sla-card-${sla.level}`);
+      const waitEl = card.querySelector('.p-wait');
+      if (waitEl) {
+        waitEl.className = `p-wait sla-${sla.level}`;
+        waitEl.textContent = sla.text;
       }
       const readyTs = Number(card.dataset.readyTs || 0);
       if (readyTs) {
@@ -436,36 +426,10 @@
     const { sub, tipPct, tipAmount, total, cashAmount, splitWays } = calcExactBill(c, s, tableMap);
     const payIcon = PAY_ICONS[c.payment] || '💳';
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
-    const inFlight = c.status === 'en_camino';
     const splitHtml = splitWays > 1
       ? `<span class="p-split-tag">÷ ${splitWays} pers. (${money(Math.ceil(total / splitWays))} c/u)</span>`
       : '';
     const changeHtml = renderCashChangeHtml(c.payment || 'Tarjeta', cashAmount, total);
-
-    if (inFlight) {
-      return `<article class="p-card card-cuenta is-compact" data-sla-ts="${c.createdAt}" data-sla-kind="call" data-sla-inflight="1">
-        <div class="p-card-top">
-          <span class="p-kind-pill">💳 Llevando cobro</span>
-          <span class="p-mesa-block">${escapeHtml(c.blockName || '')}</span>
-        </div>
-        <div class="p-mesa-row">
-          <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
-          <strong class="p-bill-total" style="font-size:26px">${money(total)}</strong>
-        </div>
-        <div class="p-bill-box">
-          <div class="p-bill-tags">
-            <span class="p-pay-tag">${payIcon} ${escapeHtml(c.payment || 'Tarjeta')}</span>
-            <span class="p-tip-tag">${tipPct > 0 ? `Propina ${tipPct}%` : 'Sin propina (0%)'}</span>
-            ${splitHtml}
-          </div>
-          ${tipPct > 0 ? `<div class="p-bill-sub">Consumo ${money(sub)} + Propina ${money(tipAmount)}</div>` : ''}
-          ${changeHtml}
-        </div>
-        <button class="p-act-btn" type="button" data-act="close-bill" data-tid="${escapeHtml(c.tableId)}" data-pay="${escapeHtml(c.payment || 'Tarjeta')}" data-tip="${tipPct}">
-          ✔ Cobrada y cerrar
-        </button>
-      </article>`;
-    }
 
     const sla = slaInfo(c.createdAt, SLA_CALL);
     return `<article class="p-card card-cuenta ${freshCls} sla-card-${sla.level}" data-sla-ts="${c.createdAt}" data-sla-kind="call">
@@ -490,30 +454,14 @@
         ${tipPct > 0 ? `<div class="p-bill-sub">Consumo ${money(sub)} + Propina ${money(tipAmount)}</div>` : ''}
         ${changeHtml}
       </div>
-      <button class="p-act-btn" type="button" data-act="onway-bill" data-cid="${escapeHtml(c.id)}">
-        ✔ Llevando cobro
+      <button class="p-act-btn" type="button" data-act="close-bill" data-tid="${escapeHtml(c.tableId)}" data-pay="${escapeHtml(c.payment || 'Tarjeta')}" data-tip="${tipPct}">
+        ✔ Cobrar y cerrar
       </button>
     </article>`;
   }
 
   function renderMozoCallCard(c) {
     const freshCls = freshCardIds.has(c.id) ? 'fresh' : '';
-    if (c.status === 'en_camino') {
-      return `<article class="p-card card-llama is-compact" data-sla-ts="${c.createdAt}" data-sla-kind="call" data-sla-inflight="1">
-        <div class="p-card-top">
-          <span class="p-kind-pill">🏃 En camino</span>
-          <span class="p-mesa-block">${escapeHtml(c.blockName || '')}</span>
-        </div>
-        <div class="p-mesa-row">
-          <div class="p-mesa-code">MESA ${escapeHtml(c.tableCode)}</div>
-          <span style="font-size:15px;font-weight:800;color:var(--p-card-muted)">${escapeHtml(c.reason || 'Consulta en mesa')}</span>
-        </div>
-        <button class="p-act-btn" type="button" data-act="attend-call" data-cid="${escapeHtml(c.id)}">
-          ✔ Atendido
-        </button>
-      </article>`;
-    }
-
     const sla = slaInfo(c.createdAt, SLA_CALL);
     return `<article class="p-card card-llama ${freshCls} sla-card-${sla.level}" data-sla-ts="${c.createdAt}" data-sla-kind="call">
       <div class="p-card-top">
@@ -527,14 +475,14 @@
       <div class="p-reason-box">
         ${escapeHtml(c.reason || 'Consulta en mesa')}
       </div>
-      <button class="p-act-btn" type="button" data-act="onway-call" data-cid="${escapeHtml(c.id)}">
-        ✔ Voy
+      <button class="p-act-btn" type="button" data-act="attend-call" data-cid="${escapeHtml(c.id)}">
+        ✔ Atendido
       </button>
     </article>`;
   }
 
   function renderWaiterColumn(col, tableMap) {
-    const { id, name, color, isOrphan, sectorNames, openTables, ready, bills, calls, inFlightBillTableIds } = col;
+    const { id, name, color, isOrphan, sectorNames, openTables, ready, bills, calls } = col;
     const urgentCount = ready.length + bills.length + calls.length;
 
     const metaParts = [];
@@ -561,13 +509,10 @@
           </div>
           ${openTables.length
             ? `<div class="p-open-chips">
-                ${openTables.map((t) => {
-                  const cobrando = inFlightBillTableIds.has(t.id);
-                  return `<button class="p-tbl-chip ${cobrando ? 'cobrando' : ''}" type="button" data-open-tbl="${escapeHtml(t.id)}" data-wid="${escapeHtml(id)}">
+                ${openTables.map((t) => `<button class="p-tbl-chip" type="button" data-open-tbl="${escapeHtml(t.id)}" data-wid="${escapeHtml(id)}">
                     <span>Mesa ${escapeHtml(t.code)}</span>
-                    <small>${cobrando ? '💳 En cobro · ' : ''}${money(t.subtotal)}</small>
-                  </button>`;
-                }).join('')}
+                    <small>${money(t.subtotal)}</small>
+                  </button>`).join('')}
               </div>`
             : '<div class="p-no-tables">Sin mesas abiertas en este momento</div>'}
         </div>`
@@ -643,7 +588,7 @@
           <span class="p-idle-who"><span class="p-idle-dot"></span>${escapeHtml(col.name)}</span>
           <span class="p-idle-ok">✔ Todo al día</span>
           ${col.openTables.map((t) => `
-            <button class="p-tbl-chip ${col.inFlightBillTableIds.has(t.id) ? 'cobrando' : ''}" type="button" data-open-tbl="${escapeHtml(t.id)}" data-wid="${escapeHtml(col.id)}">
+            <button class="p-tbl-chip" type="button" data-open-tbl="${escapeHtml(t.id)}" data-wid="${escapeHtml(col.id)}">
               <span>Mesa ${escapeHtml(t.code)}</span>
               <small>${money(t.subtotal)}</small>
             </button>
@@ -673,10 +618,6 @@
     const activeBills = getActiveCalls(state, 'cuenta', true, tableMap);
     const activeCalls = getActiveCalls(state, 'mozo', true, tableMap);
 
-    const inFlightBillTableIds = new Set(
-      activeBills.filter((c) => c.status === 'en_camino').map((c) => c.tableId)
-    );
-
     const buckets = new Map();
     allActiveWaiters.forEach((w) => {
       const sectorNames = (w.blockIds || [])
@@ -696,7 +637,6 @@
         ready: [],
         bills: [],
         calls: [],
-        inFlightBillTableIds,
       });
     });
 
@@ -711,7 +651,6 @@
       ready: [],
       bills: [],
       calls: [],
-      inFlightBillTableIds,
     };
 
     readyOrders.forEach((o) => {
@@ -826,9 +765,6 @@
         if (act === 'deliver') {
           await apiAction('order.status', { orderId: btn.dataset.oid, status: 'entregado' });
           toast('✔ Retiro marcado como entregado en mesa');
-        } else if (act === 'onway-bill') {
-          await apiAction('call.attend', { callId: btn.dataset.cid, status: 'en_camino' });
-          toast('💳 Llevando cobro a la mesa · importe visible en tu columna');
         } else if (act === 'close-bill') {
           const tid = btn.dataset.tid;
           const tbl = (state.tables || []).find((t) => t.id === tid);
@@ -850,9 +786,6 @@
             force,
           });
           toast(`✔ Mesa ${tbl?.code || ''} cobrada y cerrada`);
-        } else if (act === 'onway-call') {
-          await apiAction('call.attend', { callId: btn.dataset.cid, status: 'en_camino' });
-          toast('🏃 Avisamos al comensal que ya vas en camino');
         } else if (act === 'attend-call') {
           await apiAction('call.attend', { callId: btn.dataset.cid, status: 'atendida' });
           toast('✔ Llamado de mesa atendido');

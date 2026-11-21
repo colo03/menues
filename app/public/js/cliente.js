@@ -28,7 +28,6 @@
   let activeCat = state.categories[0]?.id || '';
   let openSheetKind = null; // 'item' | 'cart' | 'mozo' | 'cuenta' | 'closed' | null
   let lastOrderStatuses = mapOrders(state);
-  let lastCallStatuses = mapCalls(state);
   let lastWaiterName = state.waiter?.name || null;
   let lastClosed = state.lastClosedAt || 0;
 
@@ -57,7 +56,7 @@
       <div class="invalid-card">
         <img src="logo.svg" alt="SaleListo" style="height:38px;margin:0 auto 14px;display:block">
         <h2>Escaneá el QR de tu mesa</h2>
-        <p>Para ver el menú de <strong>${escapeHtml(s.restaurant?.name || 'nuestro local')}</strong> y pedir desde tu celular sin pedir Wi-Fi, apuntá la cámara al código QR ubicado en tu mesa.</p>
+        <p>Para ver la carta de <strong>${escapeHtml(s.restaurant?.name || 'nuestro local')}</strong> y pedir al instante desde tu mesa, apuntá la cámara del celular al código QR ubicado en tu mesa.</p>
         ${demoHtml}
       </div>`;
   }
@@ -106,9 +105,6 @@
 
   function mapOrders(s) {
     return Object.fromEntries((s.orders || []).map((o) => [o.id, o.status]));
-  }
-  function mapCalls(s) {
-    return Object.fromEntries((s.calls || []).map((c) => [c.id, c.status]));
   }
   const itemById = (id) => state.items.find((i) => i.id === id);
 
@@ -471,8 +467,8 @@
         setPendingReqId('');
         toast(`⚠️ ${err.message}`);
       } else {
-        // Microcorte 4G/5G: conservamos pendingOrderReqId para reintentar sin duplicar platos
-        toast('⚠️ Señal 4G inestable. Tocá "Enviar pedido" de nuevo (no se duplicará).', 4500);
+        // Microcorte de señal: conservamos pendingOrderReqId para reintentar sin duplicar platos
+        toast('⚠️ Señal inestable. Tocá "Enviar pedido" de nuevo (no se duplicará).', 4500);
       }
     }
   }
@@ -560,12 +556,12 @@
     const mozo = activeCall('mozo');
     if (cuenta) {
       el.hidden = false;
-      el.className = `top-status ${cuenta.status === 'en_camino' ? 'ok' : ''}`;
-      el.textContent = cuenta.status === 'en_camino' ? '🏃 Traen tu cuenta' : '🧾 Cuenta pedida';
+      el.className = 'top-status';
+      el.textContent = '🧾 Cuenta solicitada';
     } else if (mozo) {
       el.hidden = false;
-      el.className = `top-status ${mozo.status === 'en_camino' ? 'ok' : ''}`;
-      el.textContent = mozo.status === 'en_camino' ? '🏃 Mozo en camino' : '🙋 Mozo avisado';
+      el.className = 'top-status';
+      el.textContent = '🙋 Avisamos a tu mozo';
     } else {
       el.hidden = true;
     }
@@ -577,8 +573,8 @@
       const wText = state.waiter ? `Avisamos a ${escapeHtml(state.waiter.name)}.` : 'Avisamos al equipo del salón.';
       return openSheet('mozo', `
         <div class="done-hero">
-          <span class="big">${existing.status === 'en_camino' ? '🏃' : '🙋'}</span>
-          <h3>${existing.status === 'en_camino' ? '¡Tu mozo ya va en camino!' : 'Ya avisamos a tu mozo'}</h3>
+          <span class="big">🙋</span>
+          <h3>Avisamos a tu mozo</h3>
           <p class="muted">${wText} Motivo: <strong>${escapeHtml(existing.reason)}</strong>.</p>
         </div>
         <div class="sheet-actions"><button class="btn btn-ghost" type="button" id="ok">Entendido</button></div>`,
@@ -646,7 +642,7 @@
       const hTitle = sheet.querySelector('#cuentaHeroTitle');
       const hTotal = sheet.querySelector('#cuentaHeroTotal');
       const hSplit = sheet.querySelector('#cuentaHeroSplit');
-      if (hTitle) hTitle.textContent = existing.status === 'en_camino' ? '¡Tu mozo ya trae la cuenta!' : 'Cuenta solicitada';
+      if (hTitle) hTitle.textContent = 'Cuenta solicitada';
       if (hTotal) hTotal.textContent = money(grand);
       if (hSplit && Number(existing.splitWays) > 1) {
         hSplit.textContent = ` · ÷ ${existing.splitWays}: ${money(Math.ceil(grand / existing.splitWays))} c/u`;
@@ -734,7 +730,7 @@
       return openSheet('cuenta', `
         <div class="done-hero">
           <span class="big">🧾</span>
-          <h3 id="cuentaHeroTitle">${existing.status === 'en_camino' ? '¡Tu mozo ya trae la cuenta!' : 'Cuenta solicitada'}</h3>
+          <h3 id="cuentaHeroTitle">Cuenta solicitada</h3>
           <p class="muted">Medio de pago: <strong>${escapeHtml(existing.payment)}</strong> · Propina ${existing.tip}%<br>
           Total actualizado: <strong id="cuentaHeroTotal">${money(grand)}</strong><span id="cuentaHeroSplit">${sw > 1 ? ` · ÷ ${sw}: ${money(Math.ceil(grand / sw))} c/u` : ''}</span>${changeInfo}</p>
         </div>
@@ -925,14 +921,6 @@
       }
     });
 
-    (s.calls || []).forEach((c) => {
-      const prev = lastCallStatuses[c.id];
-      if (prev === 'pendiente' && c.status === 'en_camino') {
-        toast(c.type === 'mozo' ? '🏃 Tu mozo ya va camino a tu mesa' : '🧾 Tu mozo ya te acerca la cuenta');
-        ding(1);
-      }
-    });
-
     if (lastWaiterName && s.waiter?.name && s.waiter.name !== lastWaiterName) {
       toast(`🙋 Ahora te atiende ${s.waiter.name}`);
     }
@@ -961,7 +949,6 @@
     lastClosed = closedNow;
 
     lastOrderStatuses = mapOrders(s);
-    lastCallStatuses = mapCalls(s);
 
     sanitizeCart(s, true);
     renderAll();

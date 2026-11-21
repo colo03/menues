@@ -457,6 +457,10 @@ def run_suite() -> None:
         t1_now = next(t for t in st_reassigned['tables'] if t['code'] == 'T1')
         t1_call = next(c for c in st_reassigned['calls'] if c['tableCode'] == 'T1')
         assert t1_call['waiterId'] == t1_now['waiterId'], 'El llamado activo no acompano la reasignacion de mozo'
+        # Confirmacion directa en 1 solo paso (sin paso intermedio en_camino)
+        c_att, r_att = api.action('call.attend', {'callId': t1_call['id'], 'status': 'atendida'}, token=admin_token)
+        assert c_att == 200 and r_att['result']['status'] == 'atendida'
+        assert all(c['id'] != t1_call['id'] for c in r_att['state']['calls']), 'El llamado atendido en 1 paso no se cerro'
         api.action('waiter.toggle', {'id': 'w3', 'available': True}, token=admin_token)
 
         # [B3] Preservacion de PIN de mozo al editar con pin="" y revocacion de sesion al cambiar PIN
@@ -812,7 +816,7 @@ def run_suite() -> None:
         )
         assert m1_card['url'].endswith(f"/q/{mesa_1['qrToken']}"), f"QR no uso ruta corta /q/: {m1_card['url']}"
         assert m1_card['legacyUrl'].endswith(f"/cliente.html?t={mesa_1['qrToken']}")
-        assert qrs_short['isPublic4g'] is False and qrs_short['isLocalOnly'] is True
+        assert qrs_short['isPublic'] is False and qrs_short['isPublic4g'] is False and qrs_short['isLocalOnly'] is True
 
         # 8b. Compresion HTTP Gzip (>= 512 B) con Vary: Accept-Encoding sin tocar SSE ni /media/ 206
         for gz_path, gz_hdrs_in in (

@@ -1,6 +1,6 @@
 # Acuerdo Simple de Piloto Operativo sin Riesgo (14 Días · 2 Fines de Semana)
 
-**SaleListo · Plataforma de Pedidos QR 4G, 3 Estaciones y Salón sin Celulares**  
+**SaleListo · Plataforma de Pedidos QR en Mesa, 3 Estaciones y Salón sin Celulares**  
 Contacto oficial: `(+54)1138436571` · `ventas@salelisto.com` · `simonguerenu@gmail.com`
 
 ---
@@ -26,7 +26,7 @@ Durante los **14 días corridos** de prueba, **SaleListo** provee sin cargo algu
 
 1. **Carga llave en mano en 48 horas**: alta completa de la carta del local (categorías, precios, fotos provistas, etiquetas *Sin TACC / Veggie / Vegano / Picante / Sin alcohol* y ruteo paralelo en hasta **3 estaciones reales: `Cocina`, `Barra` y `Mostrador`**).
 2. **Coordinación 100% sin celulares en el salón**: configuración de la **Estación de Mozos fija (`/pase.html`)** en la tablet o monitor del mostrador/barra (con los teléfonos del personal guardados en locker o caja) y/o activación del **Modo Pulsera Bluetooth BLE** (con el teléfono del mozo guardado y bloqueado en su bolsillo, sin sacarlo jamás frente al cliente).
-3. **Cobro en 1 viaje y convivencia con facturador ARCA**: códigos QR con token fijo seguro sobre 4G/5G (sin pedir clave de Wi-Fi), calculadora grupal *"Vaquita"*, declaración de efectivo para llevar vuelto exacto, inducción práctica de 30 minutos antes de abrir el turno y exportación de arqueo en **CSV para Excel** (conviviendo sin fricción con Maxirest, Fudo, Bistrosoft o el facturador fiscal habitual del local).
+3. **Cobro en 1 viaje y convivencia con facturador ARCA**: códigos QR con token fijo seguro (escaneo directo con la cámara sin bajar apps ni registrarse), calculadora grupal *"Vaquita"*, declaración de efectivo para llevar vuelto exacto, inducción práctica de 30 minutos antes de abrir el turno y exportación de arqueo en **CSV para Excel** (conviviendo sin fricción con Maxirest, Fudo, Bistrosoft o el facturador fiscal habitual del local).
 
 ---
 

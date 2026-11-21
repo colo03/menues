@@ -132,7 +132,7 @@
       background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-card);
       box-shadow: var(--shadow-card); padding: 15px 18px; margin-bottom: 22px; font-size: 13px; color: var(--ink-2);
     }
-    .info-bar.is-4g { border-color: rgba(47, 138, 87, 0.38); background: linear-gradient(90deg, var(--ok-soft), var(--surface) 48%); }
+    .info-bar.is-public { border-color: rgba(47, 138, 87, 0.38); background: linear-gradient(90deg, var(--ok-soft), var(--surface) 48%); }
     .info-bar.is-local { border-color: rgba(217, 119, 6, 0.48); background: linear-gradient(90deg, var(--warn-soft), var(--surface) 48%); }
     .info-bar-top {
       display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
@@ -240,19 +240,6 @@
     .qc-qr-box svg { width: 100%; height: 100%; display: block; }
 
     .qc-foot { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 100%; }
-    .qc-4g {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 3px 10px; border-radius: 999px;
-      font-size: 10.5px; font-weight: 800; letter-spacing: 0.02em;
-      background: #FCEAE6; color: #D9412B; white-space: nowrap;
-    }
-    .qr-card.theme-dark .qc-4g {
-      background: rgba(217, 65, 43, 0.22); color: #FF9B8A; border: 1px solid rgba(217, 65, 43, 0.42);
-    }
-    .sheets-grid[data-fmt="sticker"] .qc-4g { font-size: 9.5px; padding: 2px 8px; }
-    .sheets-grid[data-fmt="compact"] .qc-4g { font-size: 9.5px; padding: 2px 8px; }
-
-    .qc-4g-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
 
     .qc-legend {
       font-size: 11.5px; font-weight: 700; line-height: 1.3; color: #57534E;
@@ -586,32 +573,32 @@
 
       function renderConnectivityBanner() {
         const banner = $('#banner');
-        const is4g = Boolean(data.isPublic4g);
+        const isPublic = Boolean(data.isPublic ?? !data.isLocalOnly);
         const isTemp = Boolean(data.isTemporaryTunnel);
         const tun = data.tunnel || {};
         const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
         const canManage = Boolean(data.canManageTunnel);
         const canInstall = Boolean(data.canAutoInstallTunnel);
 
-        banner.className = `info-bar no-print ${is4g ? 'is-4g' : 'is-local'}`;
+        banner.className = `info-bar no-print ${isPublic ? 'is-public' : 'is-local'}`;
         banner.innerHTML = `
           <div class="info-bar-top">
             <div class="info-bar-left">
-              <span class="net-pill ${is4g ? 'ok' : 'warn'}">
+              <span class="net-pill ${isPublic ? 'ok' : 'warn'}">
                 <span class="dot"></span>
-                ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+                ${isPublic ? 'Enlace público activo' : 'Modo red local'}
               </span>
               <code class="info-url">${escapeHtml(data.baseUrl)}/q/&lt;token&gt;</code>
-              <span>${is4g
-                ? (isTemp ? 'Túnel rápido Cloudflare (temporal)' : 'URL HTTPS pública corta lista para imprenta')
-                : 'Dirección local: requiere Wi-Fi del local'}</span>
+              <span>${isPublic
+                ? (isTemp ? 'Túnel HTTPS público (temporal)' : 'URL HTTPS pública corta lista para imprenta')
+                : 'Dirección en red local del establecimiento'}</span>
             </div>
             <div class="info-bar-actions">
               ${canManage && tun.active
                 ? `<button type="button" class="btn btn-xs btn-danger" data-qr-tunnel="stop" ${isStarting ? 'disabled' : ''}>⏹ Detener túnel</button>`
                 : (canManage && !data.cloudEnv ? `
                     <button type="button" class="btn btn-xs btn-primary" data-qr-tunnel="start" ${isStarting ? 'disabled' : ''}>
-                      ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Activar túnel HTTPS 4G/5G'}
+                      ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Activar enlace público'}
                     </button>
                     ${(tunnelNeedsInstall || !tun.binaryInstalled) && canInstall ? `
                       <button type="button" class="btn btn-xs btn-ghost" data-qr-tunnel="install" ${isStarting ? 'disabled' : ''}>
@@ -621,13 +608,13 @@
               <a class="btn btn-xs btn-ghost" href="restaurante.html#caja">Panel · Caja y Ajustes →</a>
             </div>
           </div>
-          ${!is4g ? `
+          ${!isPublic ? `
             <div class="print-warn-box">
-              <strong>⚠️ Atención antes de mandar a imprenta:</strong> estos QRs apuntan a una IP local (<code>${escapeHtml(data.baseUrl)}</code>) y <strong>no abrirán con datos móviles 4G/5G</strong>. Activá el túnel HTTPS en 1 clic o guardá tu dominio fijo antes de imprimir acrílicos o stickers.
+              <strong>⚠️ Atención antes de mandar a imprenta:</strong> estos QRs apuntan hoy a una dirección en modo red local (<code>${escapeHtml(data.baseUrl)}</code>). Activá el túnel HTTPS público en 1 clic o guardá tu dominio fijo antes de imprimir acrílicos o stickers.
             </div>` : ''}
           ${isTemp ? `
             <div class="print-warn-box info">
-              <strong>⚡ Túnel rápido activo (4G/5G listo para probar):</strong> los celulares ya escanean sin Wi-Fi. Como <code>trycloudflare.com</code> cambia si reiniciás la PC, para impresión definitiva en acrílico guardá un dominio fijo HTTPS abajo (con <code>CLOUDFLARE_TUNNEL_TOKEN</code> o despliegue cloud).
+              <strong>⚡ Túnel HTTPS público activo (listo para probar):</strong> enlace público temporal habilitado. Como <code>trycloudflare.com</code> cambia si reiniciás la PC, para impresión definitiva en acrílico guardá un dominio fijo HTTPS abajo (con <code>CLOUDFLARE_TUNNEL_TOKEN</code> o despliegue cloud).
             </div>` : ''}
           ${canInstall ? `
             <form class="quick-domain-row" id="qrPublicUrlForm">
@@ -674,15 +661,15 @@
         try {
           if (action === 'stop') {
             await apiPost('/api/tunnel/stop', {});
-            toast('⏹ Túnel HTTPS detenido');
+            toast('⏹ Túnel HTTPS público detenido');
           } else {
             const autoInstall = action === 'install';
             toast(autoInstall
-              ? '⬇️ Descargando cloudflared oficial e iniciando túnel 4G/5G…'
-              : '🚀 Iniciando túnel HTTPS 4G/5G…', 4500);
+              ? '⬇️ Descargando cloudflared oficial e iniciando túnel HTTPS público…'
+              : '🚀 Iniciando túnel HTTPS público…', 4500);
             await apiPost('/api/tunnel/start', { autoInstall });
             tunnelNeedsInstall = false;
-            toast('✅ Túnel 4G/5G activo · Regenerando QRs HTTPS…');
+            toast('✅ Enlace público activo · Regenerando QRs HTTPS…');
           }
           await refreshQrs();
         } catch (err) {
@@ -750,8 +737,6 @@
         const ink = isDark ? '#FAF7F2' : '#1C1917';
         const muted = isDark ? '#C8C1B8' : '#57534E';
         const pillBg = isDark ? '#2A2521' : '#EFE9DE';
-        const badgeBg = isDark ? '#3B201B' : '#FCEAE6';
-        const badgeInk = isDark ? '#FF9B8A' : '#D9412B';
 
         const vbMatch = table.svg.match(/viewBox="0 0 (\d+) (\d+)"/);
         const qrSize = vbMatch ? Number(vbMatch[1]) : 33;
@@ -759,10 +744,10 @@
         const qrPath = pathMatch ? pathMatch[1] : '';
 
         const spec = fmt === 'sticker'
-          ? { wMm: 80, hMm: 80, w: 800, h: 800, rx: 42, logoW: 210, logoY: 46, showSec: false, mesaY: 162, mesaFs: 68, qrBox: 400, qrY: 192, bY: 632, legY: 716, legFs: 27, maxCh: 34 }
+          ? { wMm: 80, hMm: 80, w: 800, h: 800, rx: 42, logoW: 210, logoY: 46, showSec: false, mesaY: 162, mesaFs: 68, qrBox: 420, qrY: 196, legY: 688, legFs: 27, maxCh: 34 }
           : fmt === 'compact'
-          ? { wMm: 62, hMm: 88, w: 620, h: 880, rx: 38, logoW: 196, logoY: 46, showSec: true, secY: 122, mesaY: 196, mesaFs: 64, qrBox: 380, qrY: 226, bY: 648, legY: 734, legFs: 25, maxCh: 30 }
-          : { wMm: 100, hMm: 150, w: 1000, h: 1500, rx: 56, logoW: 310, logoY: 82, showSec: true, secY: 196, mesaY: 316, mesaFs: 108, qrBox: 640, qrY: 372, bY: 1068, legY: 1196, legFs: 38, maxCh: 34 };
+          ? { wMm: 62, hMm: 88, w: 620, h: 880, rx: 38, logoW: 196, logoY: 46, showSec: true, secY: 122, mesaY: 196, mesaFs: 64, qrBox: 400, qrY: 230, legY: 710, legFs: 25, maxCh: 30 }
+          : { wMm: 100, hMm: 150, w: 1000, h: 1500, rx: 56, logoW: 310, logoY: 82, showSec: true, secY: 196, mesaY: 316, mesaFs: 108, qrBox: 660, qrY: 382, legY: 1164, legFs: 38, maxCh: 34 };
 
         const logoScale = (spec.logoW / 239).toFixed(4);
         const logoX = ((spec.w - spec.logoW) / 2).toFixed(1);
@@ -771,9 +756,6 @@
         const innerQr = spec.qrBox - qrPad * 2;
         const lines = wrapLegendLines(legendText || 'Escaneá para ver la carta y pedir', spec.maxCh);
         const secText = escapeHtml(`${block.name} · ${data.restaurantName}`).toUpperCase();
-        const badgeW = fmt === 'tent' ? 420 : 320;
-        const badgeH = fmt === 'tent' ? 62 : 46;
-        const badgeFs = fmt === 'tent' ? 29 : 22;
 
         return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${spec.wMm}mm" height="${spec.hMm}mm" viewBox="0 0 ${spec.w} ${spec.h}" fill="none">
@@ -795,8 +777,6 @@
     <rect width="${qrSize}" height="${qrSize}" fill="#FFFFFF"/>
     <path fill="#1C1917" d="${qrPath}"/>
   </svg>
-  <rect x="${(spec.w - badgeW) / 2}" y="${spec.bY}" width="${badgeW}" height="${badgeH}" rx="${badgeH / 2}" fill="${badgeBg}"/>
-  <text x="${spec.w / 2}" y="${spec.bY + Math.round(badgeH * 0.66)}" text-anchor="middle" fill="${badgeInk}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="${badgeFs}" font-weight="800">4G · Sin pedir Wi-Fi</text>
   ${lines.map((ln, idx) => `<text x="${spec.w / 2}" y="${spec.legY + idx * Math.round(spec.legFs * 1.32)}" text-anchor="middle" fill="${muted}" font-family="'Plus Jakarta Sans', 'Segoe UI', Arial, sans-serif" font-size="${spec.legFs}" font-weight="700">${escapeHtml(ln)}</text>`).join('\n  ')}
 </svg>`;
       }
@@ -832,7 +812,6 @@
               </div>
               <div class="qc-qr-box">${table.svg}</div>
               <div class="qc-foot">
-                <span class="qc-4g"><span class="qc-4g-dot"></span>4G · Sin pedir Wi-Fi</span>
                 <p class="qc-legend">${safeLegend}</p>
                 ${showUrl ? `<span class="qc-url">${escapeHtml(table.url)}</span>` : ''}
               </div>
@@ -897,17 +876,18 @@
       };
 
       function confirmPrintReadiness(actionLabel = 'imprimir') {
-        if (!data.isPublic4g) {
+        const isPublic = Boolean(data.isPublic ?? !data.isLocalOnly);
+        if (!isPublic) {
           return confirm(
             `Atención antes de ${actionLabel}:\n\n`
-            + `Tus códigos QR todavía apuntan a la red local (${data.baseUrl}) y NO funcionarán con datos móviles 4G/5G sin Wi-Fi.\n\n`
-            + `¿Querés continuar igual solo para pruebas internas en red local?`,
+            + `Tus códigos QR todavía apuntan al modo red local (${data.baseUrl}) y solo abrirán dentro de esa misma red local.\n\n`
+            + `¿Querés continuar igual solo para pruebas internas?`,
           );
         }
         if (data.isTemporaryTunnel) {
           return confirm(
-            `Aviso de túnel rápido temporal:\n\n`
-            + `Los QRs usan ${data.baseUrl}, que funciona en 4G/5G ahora mismo pero cambia al reiniciar la PC.\n\n`
+            `Aviso de túnel HTTPS público temporal:\n\n`
+            + `Los QRs usan ${data.baseUrl}, que está activo ahora mismo pero cambia al reiniciar la PC.\n\n`
             + `Para impresión definitiva en acrílico te recomendamos configurar un dominio fijo HTTPS. ¿Continuar igual?`,
           );
         }

@@ -388,7 +388,7 @@ async function sendWaiterPushTest(waiterId) {
   });
 }
 
-// Redimensiona una foto elegida desde el dispositivo a JPEG liviano (~35 KB) para carga instantánea en 4G.
+// Redimensiona una foto elegida desde el dispositivo a JPEG liviano (~35 KB) para carga instantánea.
 function compressImageFile(file, maxSide = 480, quality = 0.82) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

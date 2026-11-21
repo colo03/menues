@@ -50,20 +50,20 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 **Archivo:** [`Reel_02_Segundas_Rondas_Terraza.mp4`](reels/Reel_02_Segundas_Rondas_Terraza.mp4) · **Ángulo:** cervecerías, patios y terrazas.
 
 **Locución (49 palabras):**
-> ¿Cuántas segundas pintas perdés un viernes porque nadie ve al mozo en la terraza? Con SaleListo, escanean el QR con su 4G, sin pedir wifi, y piden otra ronda. Va directo a la barra, se prende la luz verde, y sale a la mesa. Más consumo, sin correr. Escribinos.
+> ¿Cuántas segundas pintas perdés un viernes porque nadie ve al mozo en la terraza? Con SaleListo, escanean el QR directo con la cámara, sin bajar apps, y piden otra ronda. Va directo a la barra, se prende la luz verde, y sale a la mesa. Más consumo, sin correr. Escribinos.
 
 | Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
 |---|---|---|---|
 | 0.00 a 4.75 s | **¿Y la `segunda` pinta?** | Pinta vacía dentro de un anillo rojo de tiempo que se va completando; una mano llama (2.74 s) y queda sin respuesta (3.78 s) | Barra cálida de noche, mozo de espaldas |
-| 4.75 a 10.54 s | **QR con `4G`** | Escaneo del QR (6.35 s), píldora `4G` (7.03 s), wifi tachado (8.43 s), dos pintas y botón `Pedir` con toque (9.80 s) | Manos con celular |
+| 4.75 a 10.54 s | **Escaneo `directo`** | Escaneo del QR (6.35 s), píldora `QR` (7.03 s), sin apps (8.43 s), dos pintas y botón `Pedir` con toque (9.80 s) | Manos con celular |
 | 10.54 a 14.16 s | **Directo a `Barra`** | La comanda baja directo a la caja `Barra` (11.27 s), se prende la luz verde (12.39 s) y las pintas llegan a la mesa (13.05 s) | Canilla sirviendo una pinta |
 | 14.16 a 16.06 s | **Más `consumo`** | Cuatro pintas-barra que crecen + flecha de tendencia verde | Amigas brindando |
 | 16.06 a 20.01 s | Logo, `0% comisión`, contacto | Cierre crema: logo (16.42 s), insignia (16.82 s), contacto (17.17 s) | Canilla desenfocada |
 
-**SFX:** escaneo, pop en `4G`, pop al tocar `Pedir`, pop al llegar a Barra, ding con la luz verde, pop en el gráfico, acento de éxito en el cierre.
+**SFX:** escaneo, pop en `QR`, pop al tocar `Pedir`, pop al llegar a Barra, ding con la luz verde, pop en el gráfico, acento de éxito en el cierre.
 
 **Copy sugerido (Instagram / TikTok):**
-> Viernes, terraza llena y nadie encuentra al mozo. Cada ronda que no se pide es plata que no entra. Con SaleListo escanean el QR con sus datos móviles, piden otra ronda y el pedido va directo a la barra. Luz verde, a la mesa, y tu equipo deja de correr.
+> Viernes, terraza llena y nadie encuentra al mozo. Cada ronda que no se pide es plata que no entra. Con SaleListo escanean el QR directo con la cámara, piden otra ronda y el pedido va directo a la barra. Luz verde, a la mesa, y tu equipo deja de correr.
 > Escribinos al (+54)1138436571 o a ventas@salelisto.com.
 > #cerveceria #terraza #patiocervecero #barra #gastronomia #SaleListo
 
@@ -168,7 +168,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 - **Locación:** patio o terraza de cervecería un viernes después de las 20 h, con QR en cada mesa.
 - **Gancho (0 a 3 s):** primer plano a la altura de la mesa: una pinta vacía apoyada con un golpe seco. Texto: **"¿Y la segunda?"**. Voz: *"¿Cuánto tarda la segunda pinta en tu patio?"*
 - **Planos:**
-  1. (3 a 7 s) Sobre el hombro del cliente: escanea el QR con sus datos móviles y aparece la carta. Texto: **"QR con 4G"**.
+  1. (3 a 7 s) Sobre el hombro del cliente: escanea el QR directo con la cámara y aparece la carta. Texto: **"Escaneo directo"**.
   2. (7 a 10 s) Detalle del dedo tocando `Pedir` con 2 pintas en el carrito.
   3. (10 a 14 s) Corte a la barra: la tablet muestra la comanda nueva y el bartender empieza a tirar las pintas. Texto: **"Directo a Barra"**.
   4. (14 a 18 s) Las pintas llegan a la mesa; brindis en cámara lenta (grabar a 60 fps y bajar a 50 %). Texto: **"Más consumo"**.

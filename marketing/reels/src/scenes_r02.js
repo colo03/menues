@@ -1,6 +1,6 @@
 // Reel 02 · Segundas rondas en terraza (cervecerías, patios y terrazas)
 // B1: pinta vacía esperando (anillo de tiempo perdido + mano que llama sin respuesta)
-// B2: QR con 4G (sin wifi) -> dos pintas -> Pedir
+// B2: Escaneo directo QR (sin apps) -> dos pintas -> Pedir
 // B3: la comanda viaja directo a Barra -> luz verde -> sale a la mesa
 // B4: más consumo (pintas que crecen + tendencia)
 (function () {
@@ -18,8 +18,8 @@
       <rect x="-30" y="-12" width="62" height="58" rx="22" fill="#fceae6"/>
       <rect x="22" y="2" width="14" height="40" rx="7" fill="#fceae6" transform="rotate(38 29 22)"/></g>
       <g id="b1wv" fill="none" stroke="${ACC}" stroke-width="4" stroke-linecap="round"><path d="M-50 -30 Q-62 -6 -50 18"/><path d="M-64 -40 Q-80 -6 -64 28"/></g>`;
-  const wifi = `<g fill="none" stroke="#a8a29e" stroke-width="5" stroke-linecap="round">
-      <path d="M-24 -4 Q0 -24 24 -4"/><path d="M-14 6 Q0 -6 14 6"/></g><circle cx="0" cy="16" r="5" fill="#a8a29e"/>
+  const noApp = `<g fill="none" stroke="#a8a29e" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="-14" y="-22" width="28" height="44" rx="6"/><path d="M0 -8 V10 M-7 3 L0 10 L7 3"/></g>
       <path id="b2wx" d="M-26 -22 L26 26" stroke="${ACC}" stroke-width="6" stroke-linecap="round"/>`;
   window.REELS.r02 = {
     build() {
@@ -30,8 +30,8 @@
         <g transform="translate(360 392)">${emptyPint}</g>
         <g id="b1hand">${hand}</g>`;
       // ---------- B2
-      const b2 = `<g id="b2g4"><rect x="-76" y="-36" width="152" height="72" rx="36" fill="${OK}"/><text x="0" y="14" text-anchor="middle" font-size="40" font-weight="800" fill="#ffffff">4G</text></g>
-        <g id="b2wf"><rect x="-76" y="-36" width="152" height="72" rx="36" fill="#ffffff" stroke="${LINE}" stroke-width="3"/><g transform="translate(0 -2)">${wifi}</g></g>
+      const b2 = `<g id="b2cam"><rect x="-76" y="-36" width="152" height="72" rx="36" fill="${OK}"/><text x="0" y="14" text-anchor="middle" font-size="40" font-weight="800" fill="#ffffff">QR</text></g>
+        <g id="b2na"><rect x="-76" y="-36" width="152" height="72" rx="36" fill="#ffffff" stroke="${LINE}" stroke-width="3"/><g transform="translate(0 -2)">${noApp}</g></g>
         <g id="b2qr" transform="translate(184 196)">
           <rect x="0" y="0" width="352" height="352" rx="32" fill="#ffffff" stroke="${LINE}" stroke-width="3"/>
           <g transform="translate(26 26)">${fakeQR(25, 300, 11)}</g>
@@ -93,7 +93,7 @@
         [...$('b1handc').querySelectorAll('rect')].forEach(r => r.setAttribute('fill', mix('#fceae6', '#f3eee6', fade)));
         op($('b1wv'), (t > M.nadie ? 1 : 0) * (1 - fade) * (0.55 + 0.45 * Math.abs(wave)));
       }
-      // ================= B2: QR con 4G, sin wifi -> Pedir
+      // ================= B2: Escaneo directo QR, sin apps -> Pedir
       {
         const qr = M.qr, food = M.piden, tap = M.ronda;
         const qout = A(t, food, 0.32);
@@ -101,11 +101,11 @@
         const q = lin(t, qr, qr + 0.95);
         $('b2scan').setAttribute('transform', `translate(0 ${(30 + 292 * inout(q)).toFixed(2)})`);
         op($('b2scan'), (q > 0 && q < 1) ? Math.min(1, q / 0.12, (1 - q) / 0.12) : 0);
-        const pg = A(t, M.g4, IN_D), pw = A(t, M.wifi, IN_D);
-        place($('b2g4'), 276, 112 + (1 - pg) * 12, 1, pg);
-        place($('b2wf'), 448, 112 + (1 - pw) * 12, 1, pw);
+        const pg = A(t, M.camara, IN_D), pw = A(t, M.apps, IN_D);
+        place($('b2cam'), 276, 112 + (1 - pg) * 12, 1, pg);
+        place($('b2na'), 448, 112 + (1 - pw) * 12, 1, pw);
         const wx = $('b2wx'); if (!P.wxL) { P.wxL = wx.getTotalLength(); wx.style.strokeDasharray = `${P.wxL} ${P.wxL}`; }
-        wx.style.strokeDashoffset = (P.wxL * (1 - A(t, M.wifi + 0.25, 0.35))).toFixed(2);
+        wx.style.strokeDashoffset = (P.wxL * (1 - A(t, M.apps + 0.25, 0.35))).toFixed(2);
         const pf = A(t, food + 0.20, IN_D);
         const ep = $('b2pints'); op(ep, pf); ep.setAttribute('transform', `translate(0 ${((1 - pf) * 14).toFixed(2)})`);
         const pb = A(t, food + 0.42, IN_D);

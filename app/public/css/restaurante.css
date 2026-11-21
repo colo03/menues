@@ -46,7 +46,7 @@ body { background: var(--bg); }
   margin: 14px 22px 0; padding: 10px 14px; border-radius: var(--radius-card);
   background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-xs);
 }
-.net-bar.is-4g { border-color: rgba(47, 138, 87, 0.35); background: linear-gradient(90deg, var(--ok-soft), var(--surface) 45%); }
+.net-bar.is-public { border-color: rgba(47, 138, 87, 0.35); background: linear-gradient(90deg, var(--ok-soft), var(--surface) 45%); }
 .net-bar.is-local { border-color: rgba(217, 119, 6, 0.42); background: linear-gradient(90deg, var(--warn-soft), var(--surface) 45%); }
 .net-bar-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
 .net-badge {
@@ -67,7 +67,7 @@ body { background: var(--bg); }
   padding: 18px; border: 1px solid var(--line); box-shadow: var(--shadow-card);
   display: grid; gap: 12px;
 }
-.tunnel-panel.is-4g { border-color: rgba(47, 138, 87, 0.35); }
+.tunnel-panel.is-public { border-color: rgba(47, 138, 87, 0.35); }
 .tunnel-panel.is-local { border-color: rgba(217, 119, 6, 0.45); }
 .tunnel-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
 .tunnel-alert {
