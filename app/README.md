@@ -1,6 +1,22 @@
 # SaleListo: Sistema Integral Restaurante, Pase de Mozos, Pulseras y Pedidos QR
 
-Plataforma gastronómica lado restaurante y lado cliente lista para operar en la nube (enlace HTTPS público) y probar localmente con Python estándar, sin dependencias externas de `pip`.
+Plataforma gastronómica lado restaurante y lado cliente en producción 24/7 sobre [**https://salelisto.com**](https://salelisto.com/) (Railway + Cloudflare SSL, con redirección `301` desde `www.salelisto.com`) y lista para probar localmente con Python estándar, sin dependencias externas de `pip`.
+
+## Entorno Oficial en Vivo (`https://salelisto.com`)
+
+- **Portada Comercial B2B:** `https://salelisto.com/`
+- **Demo circuito completo en vivo:** `https://salelisto.com/demo.html`
+- **Acceso operativo del local:** `https://salelisto.com/operacion.html`
+- **Panel del Encargado:** `https://salelisto.com/restaurante.html` *(demo aislada: `https://salelisto.com/restaurante.html?demo=1`)*
+- **Estación de Mozos fija (sin celulares en el salón):** `https://salelisto.com/pase.html`
+- **App Móvil del Mozo + Modo Pulsera (Xiaomi Band):** `https://salelisto.com/mozo.html`
+- **Pantalla Cocina, Barra y Mostrador:** `https://salelisto.com/cocina.html`
+- **QRs fijos imprimibles por bloque:** `https://salelisto.com/qr.html`
+
+## Casillas Oficiales y Contacto
+
+- **WhatsApp / Teléfono único:** `(+54)1138436571`
+- **Casillas oficiales activas (`@salelisto.com` en Cloudflare):** `simon@salelisto.com`, `valentin@salelisto.com`, `ventas@salelisto.com` y `consultas@salelisto.com`
 
 ## Cómo probarlo en tu computadora ahora mismo
 

@@ -3,6 +3,7 @@
    export.js recorre todas y exporta PNG al píxel exacto. */
 
 const A = 'assets/';
+const WEB = 'salelisto.com';
 const PHONE = '(+54)1138436571';
 const MAIL = 'ventas@salelisto.com';
 
@@ -13,6 +14,7 @@ const I = {
   arrow: '<path d="M4 12h15M13 6l6 6-6 6"/>',
   phone: '<rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 6.5l8.5 6.5 8.5-6.5"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18"/>',
   chat: '<path d="M20.5 11.5a8.5 8.5 0 0 1-12.3 7.6L3.5 20.5l1.4-4.4A8.5 8.5 0 1 1 20.5 11.5z"/><path d="M9 10.5c.3 1.8 2.2 3.8 4.3 4.3"/>',
   glass: '<path d="M5 4h14l-7 8.5z"/><path d="M12 12.5V20M8 20h8"/>',
   cloche: '<path d="M3 18h18"/><path d="M5 18a7 7 0 0 1 14 0"/><path d="M12 9V7M10 7h4"/>',
@@ -81,18 +83,18 @@ function post({ theme = 'light', body, footer = true }) {
   return `<div class="cv post ${theme}">
     <div class="top">${theme === 'dark' ? logoD(52) : logoL(52)}<span class="chip ${theme === 'dark' ? 'dk' : 'acc'}">${ic('percent', 24)}0% comisión</span></div>
     ${body}
-    ${footer ? `<div class="pfoot"><span>${ic('chat', 30)}WhatsApp ${PHONE}</span><span>${ic('mail', 30)}${MAIL}</span></div>` : ''}
+    ${footer ? `<div class="pfoot" style="font-size:24px"><span>${ic('globe', 27, '#D9412B')}${WEB}</span><span>${ic('chat', 27, '#D9412B')}${PHONE}</span><span>${ic('mail', 27, '#D9412B')}${MAIL}</span></div>` : ''}
   </div>`;
 }
 
 /* Tarjeta de contacto oscura reutilizable */
 const ctaCard = (title, extra = '') => `
-  <div class="ink-card" style="padding:44px 48px;display:flex;flex-direction:column;gap:26px">
+  <div class="ink-card" style="padding:42px 48px;display:flex;flex-direction:column;gap:24px">
     <div style="font-size:40px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">${title}</div>
     ${extra}
-    <div class="contact" style="font-size:34px">
-      <div>${ic('chat', 38, '#D9412B')}WhatsApp ${PHONE}</div>
-      <div>${ic('mail', 38, '#D9412B')}${MAIL}</div>
+    <div class="contact" style="font-size:32px">
+      <div>${ic('chat', 36, '#D9412B')}WhatsApp ${PHONE}</div>
+      <div>${ic('globe', 34, '#D9412B')}${WEB}<span style="color:rgba(250,247,242,.38)">·</span>${ic('mail', 34, '#D9412B')}${MAIL}</div>
     </div>
   </div>`;
 
@@ -486,7 +488,8 @@ P.web = { w: 1920, h: 600, out: 'banners/banner_web_1920x600.png', html: () => `
       <div style="display:flex;gap:14px;margin-top:34px;align-items:center">
         <span class="chip solid" style="font-size:24px;padding:12px 22px">${ic('percent', 24, '#fff', 2.6)}0% comisión</span>
         <span class="chip ok" style="font-size:24px;padding:12px 22px">${ic('check', 24, '#2F8A57', 2.8)}Sin bajar apps</span>
-        <span style="font-size:24px;font-weight:700;color:#57534e;margin-left:16px;display:flex;align-items:center;gap:10px">${ic('chat', 28, '#D9412B')}${PHONE}</span>
+        <span style="font-size:24px;font-weight:800;color:#1c1917;margin-left:12px;display:flex;align-items:center;gap:9px">${ic('globe', 26, '#D9412B')}${WEB}</span>
+        <span style="font-size:24px;font-weight:700;color:#57534e;margin-left:8px;display:flex;align-items:center;gap:9px">${ic('chat', 26, '#D9412B')}${PHONE}</span>
       </div>
     </div>
     <div style="padding-right:20px">${splitMini(1.12)}</div>
@@ -518,7 +521,7 @@ P.lic = { w: 1584, h: 396, out: 'banners/linkedin_portada_1584x396.png', html: (
     <svg width="1584" height="396" style="position:absolute;inset:0"><defs><pattern id="g" width="44" height="44" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="2" fill="#38322e"/></pattern></defs><rect width="520" height="396" fill="url(#g)"/></svg>
     <div style="position:absolute;left:560px;top:0;bottom:0;right:96px;display:flex;align-items:center;justify-content:space-between">
       <div style="width:640px">
-        ${logoD(40)}
+        <div style="display:flex;align-items:center;gap:18px">${logoD(40)}<span class="chip dk" style="font-size:21px;padding:8px 18px">${ic('globe', 21, '#D9412B', 2.4)}${WEB}</span></div>
         <div style="font-size:54px;font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-top:24px">Calma operativa<br>para tu salón.</div>
         <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74);margin-top:16px;line-height:1.4;white-space:nowrap">Carta QR sin apps · Cocina y Barra · Mozos sin celular</div>
       </div>
@@ -537,7 +540,7 @@ P.lip = { w: 1200, h: 627, out: 'banners/linkedin_post_1200x627.png', html: () =
       <span class="chip" style="margin-top:34px;align-self:flex-start;font-size:21px">Caso restaurante tipo · 25 mesas</span>
       <div style="font-size:48px;font-weight:800;letter-spacing:-0.03em;line-height:1.08;margin-top:20px">El abono se paga<br>con <span class="acc">3 a 4 mesas extra</span> al mes.</div>
       <div style="font-size:23px;font-weight:600;color:#57534e;line-height:1.45;margin-top:18px">Plan Salón USD 65/mes, sin comisión sobre ventas.<br>Más rotación, más rondas y picos sin desborde.</div>
-      <div style="margin-top:auto;display:flex;gap:26px;font-size:21px;font-weight:700;color:#57534e"><span style="display:flex;align-items:center;gap:10px">${ic('chat', 24, '#D9412B')}${PHONE}</span><span style="display:flex;align-items:center;gap:10px">${ic('mail', 24, '#D9412B')}${MAIL}</span></div>
+      <div style="margin-top:auto;display:flex;align-items:center;gap:18px;font-size:19.5px;font-weight:700;color:#57534e"><span style="display:flex;align-items:center;gap:8px;color:#1c1917;font-weight:800;white-space:nowrap">${ic('globe', 22, '#D9412B')}${WEB}</span><span style="display:flex;align-items:center;gap:8px;white-space:nowrap">${ic('chat', 22, '#D9412B')}${PHONE}</span><span style="display:flex;align-items:center;gap:8px;white-space:nowrap">${ic('mail', 22, '#D9412B')}${MAIL}</span></div>
     </div>
     <div class="ink-card" style="width:380px;padding:40px 36px;display:flex;flex-direction:column;justify-content:center">
       <div style="font-size:22px;font-weight:700;color:rgba(250,247,242,.72)">Retorno estimado</div>
@@ -555,8 +558,11 @@ P.mfeed = { w: 1080, h: 1080, out: 'banners/meta_ad_feed_1080x1080.png', html: (
     <div class="h1" style="font-size:84px;margin-top:48px">Mozos sin celular.<br><span class="hl">Salón sin caos.</span></div>
     <div style="font-size:30px;font-weight:500;color:rgba(250,247,242,.74);margin-top:22px;line-height:1.4">Cada mozo ve en el pase qué retirar y qué cobrar.</div>
     <div style="margin-top:36px">${passStation(912, 410)}</div>
-    <div style="position:absolute;left:84px;right:84px;bottom:70px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:28px;font-weight:700;display:flex;align-items:center;gap:12px">${ic('chat', 32, '#D9412B')}${PHONE}</span>
+    <div style="position:absolute;left:84px;right:84px;bottom:68px;display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <span style="font-size:26px;font-weight:800;display:flex;align-items:center;gap:10px">${ic('globe', 28, '#D9412B')}${WEB}</span>
+        <span style="font-size:24px;font-weight:700;color:rgba(250,247,242,.78);display:flex;align-items:center;gap:10px">${ic('chat', 26, '#D9412B')}${PHONE}</span>
+      </div>
       <div class="btn" style="height:72px;padding:0 34px;font-size:28px">Pedí tu demo ${ic('arrow', 28, '#fff', 2.8)}</div>
     </div>
   </div>` };
@@ -576,9 +582,9 @@ P.mstory = { w: 1080, h: 1920, out: 'banners/meta_ad_story_1080x1920.png', html:
           ${okRow('Cocina y Barra separadas', 31)}
         </div>
       </div>
-      <div class="ink-card" style="margin-top:72px;padding:38px 44px;display:flex;align-items:center;justify-content:space-between">
-        <div><div style="font-size:28px;font-weight:600;color:rgba(250,247,242,.72)">Escribinos por WhatsApp</div><div style="font-size:46px;font-weight:800;margin-top:6px;letter-spacing:-0.01em">${PHONE}</div></div>
-        <div style="width:88px;height:88px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center">${ic('arrow', 44, '#fff', 3)}</div>
+      <div class="ink-card" style="margin-top:72px;padding:36px 44px;display:flex;align-items:center;justify-content:space-between">
+        <div><div style="font-size:26px;font-weight:700;color:rgba(250,247,242,.82);display:flex;align-items:center;gap:10px">${ic('globe', 26, '#D9412B')}${WEB} · Demo en vivo</div><div style="font-size:44px;font-weight:800;margin-top:6px;letter-spacing:-0.01em">WhatsApp ${PHONE}</div></div>
+        <div style="width:88px;height:88px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 44, '#fff', 3)}</div>
       </div>
     </div>
   </div>` };
@@ -596,9 +602,9 @@ P.wa = { w: 1080, h: 1080, out: 'banners/whatsapp_catalogo_1080x1080.png', html:
       ${catRow('Salón / Bistró', 'USD 65', 'Hasta 30 mesas · 5 sectores', 1)}
       ${catRow('Gran Salón', 'USD 110', 'Mesas y sectores ilimitados')}
     </div>
-    <div style="position:absolute;left:84px;right:84px;bottom:64px;display:flex;justify-content:space-between;align-items:center;font-size:26px;font-weight:700;color:#57534e">
-      <span>Precios de referencia, facturados en pesos.</span>
-      <span style="display:flex;align-items:center;gap:10px;color:#1c1917">${ic('chat', 30, '#D9412B')}${PHONE}</span>
+    <div style="position:absolute;left:84px;right:84px;bottom:64px;display:flex;justify-content:space-between;align-items:center;font-size:25px;font-weight:700;color:#57534e">
+      <span style="display:flex;align-items:center;gap:10px"><b style="color:#1c1917;font-weight:800;display:inline-flex;align-items:center;gap:8px">${ic('globe', 26, '#D9412B')}${WEB}</b> · Facturados en pesos</span>
+      <span style="display:flex;align-items:center;gap:10px;color:#1c1917">${ic('chat', 28, '#D9412B')}${PHONE}</span>
     </div>
   </div>` };
 
@@ -738,7 +744,7 @@ const storyFootDark = (sub) => `
   <div class="ink-card" style="padding:30px 38px;display:flex;align-items:center;justify-content:space-between">
     <div>
       <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74)">${sub}</div>
-      <div style="font-size:38px;font-weight:800;margin-top:6px;letter-spacing:-0.01em;display:flex;align-items:center;gap:12px">${ic('chat', 34, '#D9412B')}WhatsApp ${PHONE}</div>
+      <div style="font-size:33px;font-weight:800;margin-top:6px;letter-spacing:-0.015em;display:flex;align-items:center;gap:12px">${ic('globe', 30, '#D9412B')}${WEB}<span style="color:rgba(250,247,242,.38)">·</span>${ic('chat', 30, '#D9412B')}${PHONE}</div>
     </div>
     <div style="width:76px;height:76px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 38, '#fff', 3)}</div>
   </div>`;
@@ -747,7 +753,7 @@ const storyFootOnDark = (sub) => `
   <div class="card-d" style="padding:30px 38px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid #3d3632">
     <div>
       <div style="font-size:24px;font-weight:600;color:rgba(250,247,242,.74)">${sub}</div>
-      <div style="font-size:38px;font-weight:800;margin-top:6px;letter-spacing:-0.01em;display:flex;align-items:center;gap:12px">${ic('chat', 34, '#D9412B')}WhatsApp ${PHONE}</div>
+      <div style="font-size:33px;font-weight:800;margin-top:6px;letter-spacing:-0.015em;display:flex;align-items:center;gap:12px">${ic('globe', 30, '#D9412B')}${WEB}<span style="color:rgba(250,247,242,.38)">·</span>${ic('chat', 30, '#D9412B')}${PHONE}</div>
     </div>
     <div style="width:76px;height:76px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 38, '#fff', 3)}</div>
   </div>`;
@@ -924,7 +930,7 @@ P.st6 = { w: 1080, h: 1920, out: 'stories/story_06_piloto_14_dias.png', html: ()
     <div style="display:flex;flex-direction:column;gap:10px">
       <div style="font-size:27px;font-weight:700;color:rgba(250,247,242,.78)">Pedí tu piloto hoy mismo</div>
       <div style="font-size:42px;font-weight:800;letter-spacing:-0.01em;display:flex;align-items:center;gap:14px">${ic('chat', 38, '#D9412B')}WhatsApp ${PHONE}</div>
-      <div style="font-size:26px;font-weight:600;color:rgba(250,247,242,.74);display:flex;align-items:center;gap:12px">${ic('mail', 28, '#D9412B')}${MAIL}</div>
+      <div style="font-size:25px;font-weight:700;color:rgba(250,247,242,.82);display:flex;align-items:center;gap:12px">${ic('globe', 26, '#D9412B')}${WEB}<span style="color:rgba(250,247,242,.38)">·</span>${ic('mail', 26, '#D9412B')}${MAIL}</div>
     </div>
     <div style="width:84px;height:84px;border-radius:50%;background:#D9412B;display:flex;align-items:center;justify-content:center;flex:none">${ic('arrow', 42, '#fff', 3)}</div>
   </div>`) };

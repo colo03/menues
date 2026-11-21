@@ -619,7 +619,7 @@
           ${canInstall ? `
             <form class="quick-domain-row" id="qrPublicUrlForm">
               <label for="qrPublicUrlInput" style="font-weight:700;color:var(--ink);white-space:nowrap">Dominio fijo HTTPS:</label>
-              <input class="input" id="qrPublicUrlInput" type="url" placeholder="Ej: https://tu-local.trycloudflare.com (vacío = automático)" value="${escapeHtml(data.publicUrlConfigured || '')}">
+              <input class="input" id="qrPublicUrlInput" type="url" placeholder="Ej: https://salelisto.com (vacío = automático)" value="${escapeHtml(data.publicUrlConfigured || '')}">
               <button type="submit" class="btn btn-xs btn-ghost">Guardar dominio fijo</button>
             </form>` : ''}`;
 

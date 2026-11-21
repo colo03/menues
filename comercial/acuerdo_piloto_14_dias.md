@@ -1,7 +1,8 @@
 # Acuerdo Simple de Piloto Operativo sin Riesgo (14 Días · 2 Fines de Semana)
 
 **SaleListo · Plataforma de Pedidos QR en Mesa, 3 Estaciones y Salón sin Celulares**  
-Contacto oficial: `(+54)1138436571` · `ventas@salelisto.com` · `simonguerenu@gmail.com`
+Sitio oficial y demo interactiva: [`https://salelisto.com`](https://salelisto.com) · [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)  
+Contacto oficial: `(+54)1138436571` · `simon@salelisto.com` · `ventas@salelisto.com`
 
 ---
 
@@ -60,4 +61,4 @@ En prueba de conformidad con este piloto sin riesgo de 14 días, firman dos ejem
 
 | Por el Local Gastronómico | Por SaleListo |
 | :--- | :--- |
-| <br>**Firma y aclaración:** `______________________________`<br>**DNI / CUIT (opcional):** `___________________________` | <br>**Simón Martínez de Guereñu**<br>Dirección Comercial · SaleListo<br>WhatsApp `(+54)1138436571` · `ventas@salelisto.com` |
+| <br>**Firma y aclaración:** `______________________________`<br>**DNI / CUIT (opcional):** `___________________________` | <br>**Simón Martínez de Guereñu**<br>Dirección Comercial · SaleListo (`salelisto.com`)<br>WhatsApp `(+54)1138436571` · `simon@salelisto.com` · `ventas@salelisto.com` |

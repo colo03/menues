@@ -1,6 +1,6 @@
 # Marketing · SaleListo
 
-Pack integral de comunicación para redes sociales, pauta y canales comerciales B2B de **SaleListo**: carruseles en PNG y PDF nativo para LinkedIn, posts de feed, pack de 6 historias verticales interactivas, banners multicanal, 5 Reels verticales renderizados y calendario editorial de 30 días. Todas las piezas respetan el [Sistema de Marca](../branding/sistema_de_marca.md) (identidad *Pase Limpio*, tokens de [`tokens.css`](../branding/tokens.css), tipografía única **Plus Jakarta Sans** y datos de contacto oficiales).
+Pack integral de comunicación para redes sociales, pauta y canales comerciales B2B de **SaleListo** ([`https://salelisto.com`](https://salelisto.com) · demo interactiva [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)): carruseles en PNG y PDF nativo para LinkedIn, posts de feed, pack de 6 historias verticales interactivas, banners multicanal, 5 Reels verticales renderizados y calendario editorial de 30 días. Todas las piezas respetan el [Sistema de Marca](../branding/sistema_de_marca.md) (identidad *Pase Limpio*, tokens de [`tokens.css`](../branding/tokens.css), tipografía única **Plus Jakarta Sans**, dominio oficial `salelisto.com` y casillas activas `ventas@salelisto.com`, `simon@salelisto.com`, `valentin@salelisto.com` y `consultas@salelisto.com`).
 
 ---
 
@@ -99,7 +99,7 @@ Documentados en [`guiones_reels.md`](guiones_reels.md) e integrados en el calend
 - **Logo:** [`logo.svg`](../branding/logo.svg) sobre fondos claros; sobre `#1C1917` se usa `src_grafica/assets/logo-on-dark.svg`, idéntico al oficial con el wordmark en crema `#FAF7F2`.
 - **Tipografía:** Plus Jakarta Sans 500 a 800. Titulares de `68px a 142px` en lienzos `1080`, textos de apoyo de `22px` como mínimo para lectura inmediata en el celular sin hacer zoom.
 - **Datos alineados al 100%:** todas las cifras y promesas coinciden exactamente con [`comercial/modelo_de_negocios.md`](../comercial/modelo_de_negocios.md) (planes `USD 35 / 65 / 110` por mes, packs de pulseras `USD 145 / 230` compatibles con los 3 planes y teléfono bloqueado en el bolsillo por BLE, puesta en marcha en **`48 h`**, piloto quirúrgico de **`14 días`** en 1 sector, redondeo limpio a **`$100`** y ROI de **`+USD 2.410/mes`** bruto / **`+USD 2.345/mes`** neto en el local tipo de 25 mesas).
-- **Regla permanente de comunicación y piezas (prohibición de argumentos de conectividad):** jamás se marketinea ni se aclara *"Pedí sin Wi-Fi / 4G"* (ni variantes sobre claves de red o datos móviles) en ninguna categoría de marketing, QRs, posts, carruseles, historias, banners ni mensajes de ventas. Que funcione con la conexión móvil del cliente es solo un plus implícito; el foco comercial es siempre: **escaneo directo con la cámara sin apps ni registros, comanda separada sola a Cocina, Barra y Mostrador, salón sin celulares con Estación de Pase o Pulsera, cierre directo en 1 toque (`✔ Atendido` / `✔ Cobrar y cerrar` sin pasos intermedios) y 0% comisión**.
+- **Regla permanente de comunicación y piezas (prohibición de argumentos de conectividad):** jamás se marketinea ni se aclara el prescindir de la red inalámbrica del local ni el uso de datos móviles del teléfono (ni variantes sobre pedir claves de red) en ninguna categoría de marketing, QRs, posts, carruseles, historias, banners ni mensajes de ventas. Que funcione con la conexión móvil del cliente es solo un plus implícito; el foco comercial es siempre: **escaneo directo con la cámara sin apps ni registros, comanda separada sola a Cocina, Barra y Mostrador, salón sin celulares con Estación de Pase o Pulsera, cierre directo en 1 toque (`✔ Atendido` / `✔ Cobrar y cerrar` sin pasos intermedios) y 0% comisión**.
 
 ---
 
@@ -158,8 +158,8 @@ Remove-Item -Recurse -Force $work                     # limpieza obligatoria
 - **33 imágenes PNG** (3 carruseles x 5 slides + 4 posts + 6 historias verticales + 8 banners) y **3 documentos PDF nativos para LinkedIn** (`1080x1350` x 5 páginas exactas cada uno, sin márgenes blancos) verificados programática y visualmente: cero desbordes, cero solapamientos y respeto estricto de zonas seguras (`>= 250 px` arriba y `>= 300 px` abajo en `1080x1920`).
 - **5 Reels MP4** (`1080x1920`, `60 fps`, `-14.0 LUFS`) preservados intactos en [`reels/`](reels/).
 - Sin rayas largas (`U+2014`) en imágenes, PDFs, HTML, CSS, JS ni Markdown.
-- Contacto único en todas las piezas: WhatsApp **`(+54)1138436571`** y correo comercial **`ventas@salelisto.com`**. Sin URLs, dominios web ni perfiles sociales inventados.
+- Dominio canónico y contacto oficial en piezas: **`salelisto.com`** (`https://salelisto.com` y demo en vivo `https://salelisto.com/demo.html`), WhatsApp **`(+54)1138436571`** y casillas oficiales **`ventas@salelisto.com`**, **`simon@salelisto.com`**, **`valentin@salelisto.com`** y **`consultas@salelisto.com`**. Cero enlaces ni perfiles sociales inventados.
 
 ---
 
-**Contacto comercial:** WhatsApp `(+54)1138436571` · `ventas@salelisto.com` · Autor del proyecto: Simón Martínez de Guereñu (`simonguerenu@gmail.com`).
+**Sitio oficial y contacto comercial:** [`https://salelisto.com`](https://salelisto.com) · Demo en vivo: [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html) · WhatsApp `(+54)1138436571` · `ventas@salelisto.com` · `consultas@salelisto.com` · Dirección: Simón Martínez de Guereñu (`simon@salelisto.com`) · `valentin@salelisto.com`.

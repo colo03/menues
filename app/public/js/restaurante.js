@@ -744,7 +744,7 @@
         <div class="field"><label>Subtítulo / especialidad</label><input class="input" name="subtitle" value="${escapeHtml(r.subtitle || '')}"></div>
         <div class="field">
           <label>Dominio fijo público HTTPS (para QRs permanentes en acrílico)</label>
-          <input class="input" name="publicUrl" placeholder="Ej: https://tu-local.trycloudflare.com (vacío = automático)" value="${escapeHtml(r.publicUrl || '')}">
+          <input class="input" name="publicUrl" placeholder="Ej: https://salelisto.com (vacío = automático)" value="${escapeHtml(r.publicUrl || '')}">
         </div>
         <div class="field">
           <label>Cambiar PIN de Encargado (dejar vacío para mantener el actual)</label>

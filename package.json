@@ -1,0 +1,24 @@
+{
+  "name": "menues",
+  "version": "1.0.0",
+  "description": "**Plataforma gastronómica B2B/B2C en tiempo real para pedidos por QR directo desde la mesa (sin apps ni registros), ruteo simultáneo en 3 estaciones (`Cocina`, `Barra` y `Mostrador`) con semáforo SLA, coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulsera Vibradora Xiaomi Band por Bluetooth BLE) y ecosistema comercial completo.**",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/colo03/menues.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/colo03/menues/issues"
+  },
+  "homepage": "https://github.com/colo03/menues#readme"
+}

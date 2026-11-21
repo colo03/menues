@@ -1,6 +1,6 @@
 # SaleListo: Spot Comercial Vertical (Video Ad)
 
-Pieza audiovisual vertical (`9:16`, `1080x1920`, `60 fps`) diseñada para Instagram Reels, TikTok, YouTube Shorts y prospección B2B por WhatsApp. El enfoque narrativo se centra en **aliviar la carga operativa de los mozos en hora pico** y **simplificar el despacho integral del restaurante** entre salón, cocina y barra.
+Pieza audiovisual vertical (`9:16`, `1080x1920`, `60 fps`) diseñada para Instagram Reels, TikTok, YouTube Shorts y prospección B2B por WhatsApp del ecosistema oficial **[`https://salelisto.com`](https://salelisto.com)** (demo pública interactiva en [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)). El enfoque narrativo se centra en **aliviar la carga operativa de los mozos en hora pico** y **simplificar el despacho integral del restaurante** entre salón, cocina y barra.
 
 ---
 
@@ -107,4 +107,5 @@ Para mantener `video-ad/` liviano y ágil de clonar (`< 15 MB` en activos versio
 
 - **Música:** *"Gimme that Groove!"* de Michael Ramir C. (Mixkit Stock Music Free License).
 - **B-roll:** Mixkit Stock Video Free License.
-- **Contacto en la placa final del spot:** WhatsApp `(+54)1138436571` | `ventas@salelisto.com`
+- **Sitio oficial y demo interactiva:** [`https://salelisto.com`](https://salelisto.com) · [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)
+- **Contacto en la placa final del spot:** WhatsApp `(+54)1138436571` | `ventas@salelisto.com` *(casillas oficiales: `simon@salelisto.com`, `valentin@salelisto.com`, `ventas@salelisto.com`, `consultas@salelisto.com`)*

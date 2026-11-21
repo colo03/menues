@@ -6,7 +6,7 @@ Mensajes escritos uno por uno a partir de la arquitectura física real de cada l
 
 1. **Primer toque (DM de Instagram o WhatsApp):** usar el *mensaje corto de apertura* (35 palabras o menos). Su único objetivo es conseguir el nombre o el contacto del encargado o socio operativo.
 2. **Segundo toque (correo o mensaje largo al decisor):** enviar el *mensaje completo* solo cuando ya hay un interlocutor, o directo al correo público cuando existe.
-3. **Calculadora ROI:** cada local tiene parámetros sugeridos. Se agregan al final del link público de la landing de SaleListo (`index.html`), representado acá como `{LANDING}`. Ejemplo: `{LANDING}?mesas=30&ticket=38000&turnos=4#roi`. La calculadora abre con esos valores precargados y el dueño los ajusta con sus números reales. Mientras la landing no esté publicada, mandar una captura de la lámina 7 de [`presentacion_interactiva.html`](./presentacion_interactiva.html) con los mismos valores.
+3. **Sitio oficial y Calculadora ROI en vivo:** cada local tiene parámetros sugeridos sobre el dominio oficial activo [`https://salelisto.com`](https://salelisto.com). Ejemplo: `https://salelisto.com/?mesas=30&ticket=38000&turnos=4#roi`. La calculadora abre con esos valores precargados para que el dueño los ajuste con sus números reales, y desde [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html) puede recorrer la demo interactiva completa (carta QR, Cocina, Barra, Mostrador y Estación de Pase).
 4. **Reunión:** usar el deck [`presentacion_interactiva.html`](./presentacion_interactiva.html) (tecla `N` para las notas del orador).
 
 > Las cifras de "mesas más atendidas por mes" salen de la misma fórmula conservadora de la calculadora (2,6 rotaciones por turno fuerte, 85% de ocupación, +10% de mesas por rotación recuperada). Son una estimación orientativa, nunca una promesa: el piloto es donde se mide de verdad.
@@ -15,11 +15,11 @@ Mensajes escritos uno por uno a partir de la arquitectura física real de cada l
 
 ```
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 ```
 
-Casilla comercial de marca para dossier y acuerdos: `ventas@salelisto.com`.
+Casillas oficiales activas en `salelisto.com`: `simon@salelisto.com` (prospección y dirección comercial), `valentin@salelisto.com` (equipo directivo), `ventas@salelisto.com` (dossier, acuerdos y demos B2B) y `consultas@salelisto.com` (atención general).
 
 ### Mapa rápido de los 26
 
@@ -83,14 +83,14 @@ SaleListo resuelve exactamente ese momento:
 
 La propuesta: 14 días (dos fines de semana) solo en la terraza y la vereda, andando en 48 horas, sin costo y sin tocar tu caja. Si después seguís, es un abono fijo mensual: nunca un porcentaje de lo que vendés.
 
-Dejé la calculadora cargada con 60 mesas, ticket de ARS 42.000 y 5 turnos fuertes: `{LANDING}?mesas=60&ticket=42000&turnos=5#roi`. Con supuestos conservadores, la rotación recuperada equivale a unas 285 mesas más atendidas por mes. Cambiala con tus números reales.
+Dejé la calculadora cargada con 60 mesas, ticket de ARS 42.000 y 5 turnos fuertes: `https://salelisto.com/?mesas=60&ticket=42000&turnos=5#roi`. Con supuestos conservadores, la rotación recuperada equivale a unas 285 mesas más atendidas por mes. Cambiala con tus números reales.
 
 ¿Puedo pasar un martes o miércoles antes de las 19 h y mostrárselo al encargado en 10 minutos?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -122,14 +122,14 @@ Con SaleListo cada mesa del entrepiso tiene un QR fijo. El cliente pide desde ah
 
 Te propongo un piloto de 14 días solo en la galería del entrepiso. Lo activamos en 48 horas, sin costo, y el día 14 miramos juntos cuántas rondas sumó.
 
-Para que lo veas con números: `{LANDING}?mesas=30&ticket=38000&turnos=4#roi` (30 mesas, ticket de ARS 38.000 y 4 turnos fuertes por semana). Con supuestos conservadores, son unas 114 mesas más atendidas por mes. Movelo como quieras.
+Para que lo veas con números: `https://salelisto.com/?mesas=30&ticket=38000&turnos=4#roi` (30 mesas, ticket de ARS 38.000 y 4 turnos fuertes por semana). Con supuestos conservadores, son unas 114 mesas más atendidas por mes. Movelo como quieras.
 
 ¿Te sirve que lo charlemos 10 minutos en Chacarita esta semana?
 
 Abrazo,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -158,14 +158,14 @@ Ya sé lo que puede preocupar: "no quiero a mis mozos con el celular en el saló
 
 Piloto de 14 días (dos fines de semana) en el patio y el primer piso, activo en 48 horas, sin costo y con pulseras en préstamo.
 
-Calculadora precargada para Chacarita: `{LANDING}?mesas=55&ticket=36000&turnos=4#roi`. Con esos supuestos, son unas 209 mesas más atendidas por mes.
+Calculadora precargada para Chacarita: `https://salelisto.com/?mesas=55&ticket=36000&turnos=4#roi`. Con esos supuestos, son unas 209 mesas más atendidas por mes.
 
 Puedo pasar antes de la apertura, el día que les quede cómodo, con la pulsera en la muñeca para que la prueben.
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -198,14 +198,14 @@ Además, el sistema reparte las mesas nuevas entre los mozos según quién tiene
 
 Piloto de 14 días en el patio principal, activo en 48 horas y sin costo.
 
-Para dimensionarlo: `{LANDING}?mesas=70&ticket=40000&turnos=4#roi`. Son unas 266 mesas más atendidas por mes con supuestos conservadores.
+Para dimensionarlo: `https://salelisto.com/?mesas=70&ticket=40000&turnos=4#roi`. Son unas 266 mesas más atendidas por mes con supuestos conservadores.
 
 ¿Paso un día a las 17 h, antes del servicio, y les muestro la Vaquita en vivo?
 
 Gracias por leer,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -236,14 +236,14 @@ Con SaleListo, el grupo pide desde el QR de la mesa de pool con su propio celula
 
 Propuesta: 14 días en el segundo piso y la terraza, andando en 48 horas, sin costo. Si funciona, después lo vemos para San Isidro.
 
-Calculadora con supuestos para Belgrano: `{LANDING}?mesas=65&ticket=40000&turnos=4#roi`.
+Calculadora con supuestos para Belgrano: `https://salelisto.com/?mesas=65&ticket=40000&turnos=4#roi`.
 
 ¿Te parece si lo vemos 10 minutos en el local un día de semana?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -278,14 +278,14 @@ Y tus mozos no suben y bajan los niveles con un celular en la mano: ven todo en 
 
 Piloto de 14 días solo en la terraza jardín, activo en 48 horas y sin costo.
 
-Para verlo en números: `{LANDING}?mesas=45&ticket=48000&turnos=4#roi`.
+Para verlo en números: `https://salelisto.com/?mesas=45&ticket=48000&turnos=4#roi`.
 
 ¿Te viene bien que pase un día hábil y lo veamos en la terraza misma?
 
 Quedo atento,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -321,14 +321,14 @@ Todo sin celulares en la mano del equipo: una Estación fija en la barra muestra
 
 Te propongo 14 días solo en la Green Terrace, activo en 48 horas, sin costo.
 
-Calculadora con supuestos para su after office: `{LANDING}?mesas=40&ticket=52000&turnos=5#roi`. Equivale a unas 190 mesas más atendidas por mes.
+Calculadora con supuestos para su after office: `https://salelisto.com/?mesas=40&ticket=52000&turnos=5#roi`. Equivale a unas 190 mesas más atendidas por mes.
 
 ¿Lo vemos un martes a la tarde, antes del pico?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -357,12 +357,12 @@ Tu equipo no saca el celular en ningún momento: los avisos aparecen en una Esta
 
 ¿Lo probamos 14 días solo en las mesas del fondo? Lo dejamos andando en 48 horas, sin costo.
 
-Te dejo la calculadora precargada: `{LANDING}?mesas=28&ticket=45000&turnos=4#roi`.
+Te dejo la calculadora precargada: `https://salelisto.com/?mesas=28&ticket=45000&turnos=4#roi`.
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 PD: si querés, llevo la pulsera y te muestro cómo vibra con un pedido de prueba. Tarda medio segundo en leerse.
 
@@ -395,14 +395,14 @@ Les respondo de entrada las tres preguntas que seguramente se hacen al leer esto
 
 Piloto: 14 días en el patio de Colegiales, activo en 48 horas y sin costo. Cobramos un abono fijo después, 0% de comisión.
 
-Números para Zapiola: `{LANDING}?mesas=30&ticket=36000&turnos=4#roi`. Unas 114 mesas más atendidas por mes con supuestos conservadores.
+Números para Zapiola: `https://salelisto.com/?mesas=30&ticket=36000&turnos=4#roi`. Unas 114 mesas más atendidas por mes con supuestos conservadores.
 
 ¿Paso un día a las 18 h, antes de que se llene?
 
 Abrazo,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -437,14 +437,14 @@ Tus mozos no cargan celulares: ven todo en una Estación fija en el pase. Entran
 
 ¿Lo probamos 14 días solo en los boxes? Activo en 48 horas, sin costo.
 
-Calculadora precargada: `{LANDING}?mesas=35&ticket=70000&turnos=4#roi`. Con ese ticket, unas 133 mesas más atendidas por mes ya cambian el mes.
+Calculadora precargada: `https://salelisto.com/?mesas=35&ticket=70000&turnos=4#roi`. Con ese ticket, unas 133 mesas más atendidas por mes ya cambian el mes.
 
 ¿Coordinamos 10 minutos antes del servicio?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -478,14 +478,14 @@ El equipo trabaja con una Estación fija en el pase, sin celulares en el salón.
 
 Piloto de 14 días en las mesas de salón del turno noche, activo en 48 horas, sin costo.
 
-Supuestos para Carranza: `{LANDING}?mesas=16&ticket=50000&turnos=5#roi`. Son unas 76 mesas más por mes; con fila en la puerta, esas mesas ya están esperando afuera.
+Supuestos para Carranza: `https://salelisto.com/?mesas=16&ticket=50000&turnos=5#roi`. Son unas 76 mesas más por mes; con fila en la puerta, esas mesas ya están esperando afuera.
 
 ¿Paso un día a las 18:30, antes de abrir?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -522,14 +522,14 @@ Todo sin celulares en el salón: el equipo ve en una Estación fija qué retirar
 
 Propuesta: 14 días en el salón y el exterior de Paraguay, activo en 48 horas, sin costo.
 
-Calculadora con supuestos: `{LANDING}?mesas=22&ticket=48000&turnos=4#roi`.
+Calculadora con supuestos: `https://salelisto.com/?mesas=22&ticket=48000&turnos=4#roi`.
 
 ¿Te sirve que lo veamos 10 minutos esta semana?
 
 Gracias,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -562,14 +562,14 @@ Tu equipo no anda con el celular: ve todo en una Estación fija en la barra.
 
 Piloto: 14 días en la doble vereda, activo en 48 horas, sin costo y sin tocar tu caja.
 
-Calculadora para Bushi: `{LANDING}?mesas=20&ticket=42000&turnos=4#roi`.
+Calculadora para Bushi: `https://salelisto.com/?mesas=20&ticket=42000&turnos=4#roi`.
 
 ¿Paso por la esquina un día de semana a la tarde?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -592,14 +592,14 @@ Hola, equipo de Norimōto:
 
 Seré breve, como un handroll. En las mesas de vereda, el segundo pedido depende de que alguien pase justo cuando el cliente termina el primero. Con SaleListo, el cliente lo pide desde el QR de la mesa en 10 segundos: el handroll va al **Mostrador** y la bebida a **Barra**, cada uno en su pantalla. Eso sube ticket y, como la cuenta también se resuelve desde la mesa, libera la silla más rápido para la fila. Todo sin mozos con celular y con un piloto de 14 días en la vereda, activo en 48 horas y sin costo.
 
-Supuestos para su ritmo de horario corrido: `{LANDING}?mesas=18&ticket=38000&turnos=6#roi`.
+Supuestos para su ritmo de horario corrido: `https://salelisto.com/?mesas=18&ticket=38000&turnos=6#roi`.
 
 ¿Te lo muestro en 10 minutos en Virrey Avilés o en Libertador?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -630,12 +630,12 @@ El equipo de salón sigue todo desde una Estación fija en el pase, con columnas
 
 ¿Lo probamos 14 días en la vereda y las mesas grupales? Activo en 48 horas, sin costo.
 
-Calculadora con supuestos: `{LANDING}?mesas=30&ticket=50000&turnos=4#roi`. Son unas 114 mesas más atendidas por mes.
+Calculadora con supuestos: `https://salelisto.com/?mesas=30&ticket=50000&turnos=4#roi`. Son unas 114 mesas más atendidas por mes.
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -668,14 +668,14 @@ Además, para un ramen bar con la estética de KOI:
 
 Propuesta: 14 días en el salón de Palermo, almuerzo y noche, activo en 48 horas y sin costo. Si les sirve, después lo vemos para Thames.
 
-Supuestos para Beruti: `{LANDING}?mesas=20&ticket=32000&turnos=7#roi`. Con siete turnos fuertes por semana, son unas 133 mesas más atendidas por mes.
+Supuestos para Beruti: `https://salelisto.com/?mesas=20&ticket=32000&turnos=7#roi`. Con siete turnos fuertes por semana, son unas 133 mesas más atendidas por mes.
 
 ¿Coordinamos 10 minutos en el local esta semana?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -710,12 +710,12 @@ Para las bebidas, el pedido va directo a Barra. Para el final, la mesa divide la
 
 ¿Lo probamos 14 días en el patio andaluz? Activo en 48 horas, pulseras en préstamo, sin costo.
 
-Calculadora con supuestos: `{LANDING}?mesas=26&ticket=55000&turnos=4#roi`.
+Calculadora con supuestos: `https://salelisto.com/?mesas=26&ticket=55000&turnos=4#roi`.
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -748,14 +748,14 @@ En turnos concentrados como los suyos, eso significa menos tiempo tomando pedido
 
 Les propongo empezar con algo acotado: **6 a 8 mesas del turno mediodía, durante 14 días**. Lo dejamos funcionando en 48 horas, sin costo y sin modificar su sistema de cobro.
 
-Para dimensionar el comedor completo: `{LANDING}?mesas=30&ticket=38000&turnos=7#roi`.
+Para dimensionar el comedor completo: `https://salelisto.com/?mesas=30&ticket=38000&turnos=7#roi`.
 
 Quedo a disposición para acercarme en el horario que les resulte más cómodo.
 
 Atentamente,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -787,14 +787,14 @@ El equipo coordina todo desde una Estación fija, sin celulares en el salón.
 
 Piloto de 14 días en la terraza exterior, activo en 48 horas, sin costo.
 
-Calculadora con supuestos para Asato: `{LANDING}?mesas=14&ticket=75000&turnos=4#roi`.
+Calculadora con supuestos para Asato: `https://salelisto.com/?mesas=14&ticket=75000&turnos=4#roi`.
 
 ¿Lo vemos en el local un día de semana?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -829,14 +829,14 @@ Cuando quiere irse, paga desde la mesa y el equipo cobra en un solo viaje. Sin c
 
 Con tres sedes, les propongo empezar por una: el patio de Belgrano o la doble vereda de Colegiales, 14 días, activo en 48 horas y sin costo.
 
-Supuestos para una sede: `{LANDING}?mesas=24&ticket=24000&turnos=7#roi`. Con siete turnos fuertes entre semana y fin de semana, son unas 160 mesas más atendidas por mes.
+Supuestos para una sede: `https://salelisto.com/?mesas=24&ticket=24000&turnos=7#roi`. Con siete turnos fuertes entre semana y fin de semana, son unas 160 mesas más atendidas por mes.
 
 ¿Cuál de las dos sedes les queda mejor para arrancar?
 
 Gracias por leer,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -867,14 +867,14 @@ Ese patio es lo más lindo de Malvón y también lo más lejos de todo. SaleList
 
 Piloto de 14 días solo en el patio trasero, activo en 48 horas, sin costo.
 
-Supuestos para la casona: `{LANDING}?mesas=30&ticket=30000&turnos=4#roi`.
+Supuestos para la casona: `https://salelisto.com/?mesas=30&ticket=30000&turnos=4#roi`.
 
 ¿Paso un día de semana a la mañana, cuando están más tranquilos?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -905,12 +905,12 @@ Sin celulares en la mano del equipo, en un salón con la estética de la casa: t
 
 ¿Lo probamos 14 días solo en la terraza del primer piso? Activo en 48 horas, sin costo.
 
-Supuestos para Malabia: `{LANDING}?mesas=35&ticket=28000&turnos=6#roi`.
+Supuestos para Malabia: `https://salelisto.com/?mesas=35&ticket=28000&turnos=6#roi`.
 
 Saludos cordiales,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -944,14 +944,14 @@ Sin celulares en la mano del equipo: una Estación fija en la barra muestra qué
 
 Piloto de 14 días en las veredas de un local, durante el brunch de fin de semana, activo en 48 horas y sin costo.
 
-Supuestos para un local: `{LANDING}?mesas=18&ticket=22000&turnos=6#roi`.
+Supuestos para un local: `https://salelisto.com/?mesas=18&ticket=22000&turnos=6#roi`.
 
 ¿Paso en horario valle por el local que prefieran?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -988,14 +988,14 @@ Pocos lugares en Belgrano operan a la escala de ustedes: 900 m², 220 cubiertos,
 - Pulseras en préstamo, sin costo y sin tocar su caja.
 - El día 14 revisamos juntos el arqueo: mesas por turno, segundas rondas y tiempo hasta la cuenta.
 
-Para el predio completo: `{LANDING}?mesas=70&ticket=45000&turnos=4#roi`. Con supuestos conservadores, unas 266 mesas más atendidas por mes.
+Para el predio completo: `https://salelisto.com/?mesas=70&ticket=45000&turnos=4#roi`. Con supuestos conservadores, unas 266 mesas más atendidas por mes.
 
 ¿Podemos vernos antes de un servicio para recorrer el jardín juntos?
 
 Saludos,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -1024,12 +1024,12 @@ Para cerrar, la mesa pide la cuenta, la divide y declara cómo paga. Un solo via
 
 ¿Lo probamos 14 días en el patio y los salones laterales? Activo en 48 horas, sin costo.
 
-Supuestos para la casona: `{LANDING}?mesas=28&ticket=32000&turnos=5#roi`.
+Supuestos para la casona: `https://salelisto.com/?mesas=28&ticket=32000&turnos=5#roi`.
 
 Abrazo,
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
@@ -1058,19 +1058,72 @@ Para un local como el de ustedes, alcanza con el Plan Barra / Café y la Estaci�
 
 ¿Lo probamos 14 días en las mesas de afuera? Activo en 48 horas, sin costo.
 
-Supuestos para un local: `{LANDING}?mesas=12&ticket=20000&turnos=6#roi`.
+Supuestos para un local: `https://salelisto.com/?mesas=12&ticket=20000&turnos=6#roi`.
 
 Saludos (y caricias al perro de la casa, si lo hay),
 Simón Martínez de Guereñu
-SaleListo
-WhatsApp (+54)1138436571 · simonguerenu@gmail.com
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
+
+---
+
+## Plantillas de Seguimiento con Demo Interactiva en Vivo (`https://salelisto.com/demo.html`)
+
+Si a los 4 días hábiles no hubo respuesta al correo o mensaje inicial, enviar un seguimiento corto con estructura y asunto distintos que les permita probar la experiencia real desde su propio celular sin compromiso:
+
+### Seguimiento A · Para bares y cervecerías con patio, terraza o vereda (ICP A)
+
+**Asunto:** Probar en 30 segundos cómo entra una ronda a Barra en [Local]
+
+Hola, equipo de [Local]:
+
+Para no sacarles tiempo con teoría, les dejo abierta la demo pública interactiva de SaleListo: `https://salelisto.com/demo.html`.
+
+Ahí pueden tocar la carta de una mesa, mandar dos pintas con un plato y ver en el mismo segundo cómo se dividen entre Barra y Cocina y cómo figura el aviso en la Estación de Pase sin que ningún mozo lleve celular en la mano.
+
+Si les gusta cómo fluye, en 48 horas dejamos andando el piloto sin costo de 14 días (dos fines de semana) solo en [terraza / patio / vereda].
+
+Saludos,
+Simón Martínez de Guereñu
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
+
+### Seguimiento B · Para restaurantes, izakayas, sushi y salones de estética cuidada (ICP B)
+
+**Asunto:** Vista real del Pase sin celulares y las 3 estaciones para [Local]
+
+Hola, ¿cómo están?
+
+Sumo un enlace corto a mi correo anterior para que puedan chusmear el sistema funcionando en vivo cuando tengan dos minutos libres: `https://salelisto.com/demo.html` (y el detalle completo de planes fijos con 0% comisión en `https://salelisto.com`).
+
+Van a poder simular un pedido mixto a Cocina, Barra y Mostrador y probar la calculadora grupal "Vaquita" con declaración de vuelto exacto en un solo viaje. ¿Coordinamos 10 minutos esta semana en horario valle para verlo en [Local]?
+
+Gracias,
+Simón Martínez de Guereñu
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
+
+### Seguimiento C · Cierre cordial de derivación (Día 9 · Todos los segmentos)
+
+**Asunto:** ¿Con quién veo operaciones de salón en [Local]?
+
+Hola nuevamente:
+
+Paso por última vez para no recargarles la casilla. Si el manejo del salón, patio o terraza depende de otro socio o encargado general, ¿me indicarían a quién escribirle?
+
+Dejo a mano la demo en vivo (`https://salelisto.com/demo.html`) y mis canales directos por si quieren activar más adelante el piloto bonificado de 14 días.
+
+Muy buena semana,
+Simón Martínez de Guereñu
+SaleListo · salelisto.com
+WhatsApp (+54)1138436571 · simon@salelisto.com
 
 ---
 
 ## Checklist antes de enviar cada mensaje
 
 - [ ] El nombre del local y el sector mencionado coinciden con la ficha.
-- [ ] Reemplazar `{LANDING}` por la URL pública de la landing (o adjuntar captura de la lámina 7 del deck con los mismos valores).
-- [ ] Teléfono exacto: `(+54)1138436571`. Correo personal: `simonguerenu@gmail.com`. Casilla de marca: `ventas@salelisto.com`.
-- [ ] No sumar links que no estén confirmados (portfolio, redes personales o dominios propios).
-- [ ] Si no hay respuesta en 4 días hábiles, seguimiento corto con un dato nuevo (no reenviar el mismo texto).
+- [ ] Verificar los parámetros precargados de la calculadora en vivo sobre `https://salelisto.com/?mesas=...&ticket=...&turnos=...#roi` y sumar `https://salelisto.com/demo.html` en el seguimiento.
+- [ ] Teléfono exacto: `(+54)1138436571`. Casillas oficiales en `salelisto.com`: `simon@salelisto.com` (prospección y dirección), `valentin@salelisto.com`, `ventas@salelisto.com` y `consultas@salelisto.com`.
+- [ ] Usar únicamente el dominio oficial confirmado (`https://salelisto.com` y `https://salelisto.com/demo.html`); cero enlaces inventados.
+- [ ] Si no hay respuesta en 4 días hábiles, enviar uno de los seguimientos cortos con la demo interactiva en vivo (sin reenviar el mismo texto).

@@ -53,7 +53,10 @@ from webpush import (
 mimetypes.add_type('application/javascript; charset=utf-8', '.js')
 mimetypes.add_type('application/manifest+json; charset=utf-8', '.webmanifest')
 mimetypes.add_type('application/json; charset=utf-8', '.json')
+mimetypes.add_type('application/xml; charset=utf-8', '.xml')
+mimetypes.add_type('text/plain; charset=utf-8', '.txt')
 mimetypes.add_type('image/svg+xml', '.svg')
+mimetypes.add_type('image/png', '.png')
 mimetypes.add_type('text/css; charset=utf-8', '.css')
 mimetypes.add_type('video/mp4', '.mp4')
 mimetypes.add_type('video/webm', '.webm')
@@ -91,9 +94,11 @@ SSE_KEEPALIVE_S = 15
 COMPRESSIBLE_MIME_TYPES = {
     'application/json',
     'application/javascript',
+    'application/xml',
     'text/javascript',
     'text/html',
     'text/css',
+    'text/xml',
     'image/svg+xml',
     'application/manifest+json',
     'text/csv',

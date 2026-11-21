@@ -787,7 +787,32 @@ def run_suite() -> None:
         for route in ('/qr.html', '/demo.html', '/operacion.html', '/api/qrs', '/api/health'):
             r_code, _, _ = api.request('GET', route)
             assert r_code == 200, f'Ruta {route} devolvio {r_code}'
-        print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4 y vistas clave verificados.')
+
+        # SEO, Open Graph PNG 1200x630 y canales oficiales en index.html / robots.txt / sitemap.xml
+        idx_code, idx_hdrs, idx_raw = api.request('GET', '/')
+        assert idx_code == 200 and 'text/html' in idx_hdrs.get('content-type', '')
+        idx_html = idx_raw.decode('utf-8')
+        assert '<link rel="canonical" href="https://salelisto.com/">' in idx_html
+        assert '<meta property="og:url" content="https://salelisto.com/">' in idx_html
+        assert '<meta property="og:image" content="https://salelisto.com/og-salelisto.png">' in idx_html
+        assert '<meta property="og:image:type" content="image/png">' in idx_html
+        assert '<meta name="twitter:image" content="https://salelisto.com/og-salelisto.png">' in idx_html
+        assert 'ventas@salelisto.com' in idx_html and 'consultas@salelisto.com' in idx_html
+
+        og_code, og_hdrs, og_raw = api.request('GET', '/og-salelisto.png')
+        assert og_code == 200 and og_hdrs.get('content-type', '').startswith('image/png')
+        assert og_raw[:8] == b'\x89PNG\r\n\x1a\n' and int.from_bytes(og_raw[16:20], 'big') == 1200 and int.from_bytes(og_raw[20:24], 'big') == 630
+
+        rob_code, rob_hdrs, rob_raw = api.request('GET', '/robots.txt')
+        assert rob_code == 200 and 'text/plain' in rob_hdrs.get('content-type', '')
+        rob_txt = rob_raw.decode('utf-8')
+        assert 'Disallow: /api/' in rob_txt and 'Sitemap: https://salelisto.com/sitemap.xml' in rob_txt
+
+        sm_code, sm_hdrs, sm_raw = api.request('GET', '/sitemap.xml')
+        assert sm_code == 200 and 'xml' in sm_hdrs.get('content-type', '')
+        sm_txt = sm_raw.decode('utf-8')
+        assert '<loc>https://salelisto.com/</loc>' in sm_txt and '<loc>https://salelisto.com/demo.html</loc>' in sm_txt
+        print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4, Open Graph PNG, SEO y vistas clave verificados.')
 
         # 8. Arquitectura 4G/5G sin Wi-Fi: /q/<token>, Gzip, _client_ip(), idempotencia POST /api/orders y /api/tunnel/*
         api.action('data.clear_orders', {}, token=admin_token)

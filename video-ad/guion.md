@@ -6,7 +6,8 @@
 **Duración:** `30.19s` (`1811 frames` a `60 fps`) sobre la toma continua v5 `video-ad/locucion_argentina.mp3`  
 **Salida:** `video-ad/SaleListo_Ad.mp4`, `1080x1920`, `60 fps`, H.264 (`libx264 -preset slow -crf 20 -movflags +faststart`, `11.57 MB`) + AAC `48 kHz` (`-14 LUFS`)  
 **Identidad:** tokens de `branding/tokens.css`, `v2/assets/logo.svg` y `v2/assets/mark.svg` (Propuesta 01, logo oficial vigente del proyecto)  
-**Contacto en la placa final del spot:** WhatsApp `(+54)1138436571` | `ventas@salelisto.com`
+**Sitio web oficial y demo pública:** [`https://salelisto.com`](https://salelisto.com) · [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)  
+**Contacto en la placa final del spot:** WhatsApp `(+54)1138436571` | `ventas@salelisto.com` *(casillas oficiales activas: `simon@salelisto.com`, `valentin@salelisto.com`, `ventas@salelisto.com`, `consultas@salelisto.com`)*
 
 ---
 
@@ -59,4 +60,4 @@ Pausas naturales de la toma: todas entre `0.25s` y `0.55s` (fin de frase), sin c
 - [x] Lienzo blanco único `720x720` radio `36px` en escenas 1 a 5; logo y mark oficiales vigentes.
 - [x] Crossfade `0.48s`, deriva `3%`, curva `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote.
 - [x] `SaleListo_Ad.mp4` `1080x1920`, `60 fps`, `11.57 MB`, `-14 LUFS`; `v2/build/` y `node_modules/` borrados.
-- [x] Placa final con WhatsApp `(+54)1138436571` y correo comercial `ventas@salelisto.com`, cero enlaces inventados, cero rayas largas.
+- [x] Placa final con WhatsApp `(+54)1138436571` y correo comercial `ventas@salelisto.com` (ecosistema oficial `https://salelisto.com`), cero enlaces inventados, cero rayas largas.

@@ -4,6 +4,9 @@
 
 SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física del personal de salón en horas pico con un enfoque **100% pro-equipo**, cuidando la presencia visual frente al comensal y conviviendo con el facturador fiscal ARCA actual del restaurante. Funciona al instante desde la cámara de cualquier teléfono sin descargar aplicaciones ni registrarse, sin permanencia mínima y con **0% de comisión sobre las ventas**.
 
+- **Producción oficial en vivo 24/7 (Railway + Cloudflare SSL):** [**https://salelisto.com**](https://salelisto.com/) *(con redirección `301` desde `www.salelisto.com` a `https://salelisto.com`)*
+- **Demo interactiva multipantalla en vivo:** [**https://salelisto.com/demo.html**](https://salelisto.com/demo.html)
+
 ---
 
 ## Pilares Principales
@@ -27,18 +30,19 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 ```text
 .
 ├── app/                              # Aplicación web completa de SaleListo (Backend + Landing + Vistas + PWA)
-│   ├── server.py                     # Servidor HTTP endurecido, scopes SSE, Leads, CSV, Range 206, Push y Health
+│   ├── server.py                     # Servidor HTTP endurecido, /q/<token>, Gzip, SSE, Leads, CSV, Range 206 y Health
+│   ├── tunnel.py                     # Gestor integrado de túnel HTTPS público (cloudflared en stdlib pura)
 │   ├── db.py                         # Motor SQLite WAL, corte 06:00 ART, 3 estaciones, Vaquita/vuelto y baja lógica
 │   ├── webpush.py                    # Motor Web Push RFC 8291 (aes128gcm) + VAPID RFC 8292 + Anti-SSRF en stdlib
 │   ├── qrgen.py                      # Generador propio de códigos QR vectoriales SVG (Versión 1 a 10, 271 bytes)
 │   ├── tests_e2e.py                  # Suite permanente de tests E2E en stdlib pura (DB temporal aislada)
 │   ├── iniciar.bat                   # Lanzador directo en un clic para Windows
-│   ├── PUBLICAR_EN_INTERNET.md       # Guía rápida de publicación cloud con disco persistente y HTTPS
+│   ├── PUBLICAR_EN_INTERNET.md       # Guía de producción cloud (Railway + Cloudflare SSL) y túnel HTTPS local
 │   ├── render.yaml                   # Blueprint local de despliegue cloud con volumen persistente /var/data
 │   ├── data/                         # Datos en ejecución (salelisto.db, vapid_keys.json, server_secret.key, uploads/)
 │   └── public/                       # Frontend responsivo, Landing B2B y PWA en HTML5, CSS3 y Vanilla JS
 │       ├── index.html                # Landing Comercial B2B (loops, Spot, ROI compartible, planes ARS/USD y leads)
-│       ├── operacion.html            # Hub Operativo interno conectado por SSE en vivo, checklist y QR para TV
+│       ├── operacion.html            # Hub Operativo interno de acceso por rol para el personal del local
 │       ├── demo.html                 # Demo multipantalla con Simulador de Hora Pico en 1 clic paso a paso
 │       ├── pase.html                 # Estación de Mozos fija por columnas + filtro por bloque (celulares en locker)
 │       ├── restaurante.html          # Panel del encargado (Salón, Mozos, 3 Estaciones, Inflación Undo, CSV y Leads)
@@ -49,8 +53,9 @@ SaleListo elimina los tiempos muertos en la mesa y alivia la exigencia física d
 │       ├── media/                    # 5 videos web H.264 faststart (4 loops + Spot) y 5 posters JPG optimizados
 │       ├── css/ · js/                # Estilos modulares y lógica cliente (incluidos landing.css y landing.js)
 │       ├── manifest.json · sw.js     # Manifiesto PWA instalable y Service Worker para Web Push nativo
+│       ├── robots.txt · sitemap.xml  # Directivas SEO e índice canónico para buscadores en https://salelisto.com
 │       ├── icon-180.png · icon-192.png · icon-512.png  # Íconos raster PWA (Android/iOS) desde mark.svg
-│       ├── og-salelisto.svg          # Imagen Open Graph 1200x630 para previsualización social de la Landing
+│       ├── og-salelisto.png · og-salelisto.svg  # Previsualización Open Graph 1200x630 para WhatsApp, LinkedIn y X
 │       └── logo.svg · logo-dark.svg · mark.svg  # Identidad oficial (copia idéntica de branding/)
 ├── branding/                         # Sistema de marca unificado de SaleListo (fuente de verdad visual)
 │   ├── sistema_de_marca.md           # Paleta, tipografía, radios, sombras, motion sobrio y reglas de contacto
@@ -113,34 +118,38 @@ O en Windows, haciendo doble clic sobre [`app/iniciar.bat`](./app/iniciar.bat).
 
 *(Para correr la suite completa de tests E2E automáticos sobre una base temporal aislada, ejecutar `python -B app/tests_e2e.py`; para la autoverificación criptográfica de Web Push P-256 + AES-128-GCM + RFC 8291, correr `python app/webpush.py`).*
 
-### Vistas Disponibles (`http://localhost:8123`)
+### Vistas Disponibles (Producción en `https://salelisto.com` y Local en `http://localhost:8123`)
 
-| Vista | Ruta | Rol / Uso |
-| :--- | :--- | :--- |
-| **Landing Comercial B2B** | [`/`](http://localhost:8123/) | Portada pública con videos loop, Spot Oficial, explorador, calculadora ROI compartible, planes ARS/USD y formulario de piloto (`POST /api/leads`). |
-| **Hub Operativo del Local** | [`/operacion.html`](http://localhost:8123/operacion.html) | Tablero interno conectado por SSE en vivo con KPIs del turno (`06:00 AM ART`), checklist diario, QR para TV y accesos operativos. |
-| **Modo Demo Multipantalla** | [`/demo.html`](http://localhost:8123/demo.html) | Demo interactiva con **`⚡ Simular Hora Pico`** en 1 clic paso a paso y limpieza no destructiva de sesiones abiertas. |
-| **Estación de Mozos (Pase)** | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra filtrable por bloque (`?bloque=`), confirmación directa en 1 toque y cobro con vuelto exacto *(celulares en locker)*. |
-| **Panel del Restaurante** | [`/restaurante.html`](http://localhost:8123/restaurante.html) | Gestión de salón, mozos, carta con 3 estaciones y tags, ajuste % con deshacer, arqueo CSV y bandeja privada `#consultas` *(PIN inicial: `1234`)*. |
-| **PWA Mozo / Modo Pulsera** | [`/mozo.html`](http://localhost:8123/mozo.html) | Configuración de **Modo Pulsera Xiaomi Band** por Bluetooth BLE *(celular bloqueado en bolsillo)*, alertas y carga manual por categorías. |
-| **Comandera 3 Estaciones** | [`/cocina.html`](http://localhost:8123/cocina.html) | Tablero KDS en tiempo real (`Cocina`, `Barra`, `Mostrador` o `Todo`) con cajón rápido **`🚫 Agotados`** y semáforo SLA. |
-| **Vista del Comensal** | `/cliente.html?t=<token>` | Carta QR interactiva con buscador, filtros dietarios, botón Repetir ronda, calculadora *Vaquita* y declaración de vuelto en efectivo. |
-| **Estudio de Impresión QR** | [`/qr.html`](http://localhost:8123/qr.html) | Estudio A4 calibrado en mm (`Tent-Card 10x15 cm`, `Sticker 8x8 cm`, `Tarjeta Compacta`, estilos Crema/Carbón, descarga `.svg` y PIN en prod). |
-| **Monitoreo de Salud** | [`/api/health`](http://localhost:8123/api/health) | Endpoint JSON liviano (`{"ok": true, "version": ..., "subscribers": ...}`) para observabilidad cloud. |
+| Vista | Producción (`https://salelisto.com`) | Local (`http://localhost:8123`) | Rol / Uso |
+| :--- | :--- | :--- | :--- |
+| **Landing Comercial B2B** | [`salelisto.com/`](https://salelisto.com/) | [`/`](http://localhost:8123/) | Portada pública con videos loop, Spot Oficial, explorador, calculadora ROI compartible, planes ARS/USD, `og-salelisto.png` y formulario de piloto (`POST /api/leads`). |
+| **Modo Demo Multipantalla** | [`salelisto.com/demo.html`](https://salelisto.com/demo.html) | [`/demo.html`](http://localhost:8123/demo.html) | Demo interactiva con **`⚡ Simular Hora Pico`** en 1 clic paso a paso y limpieza no destructiva de sesiones abiertas. |
+| **Hub Operativo del Local** | [`salelisto.com/operacion.html`](https://salelisto.com/operacion.html) | [`/operacion.html`](http://localhost:8123/operacion.html) | Tablero interno de acceso rápido por puesto para el personal del restaurante. |
+| **Estación de Mozos (Pase)** | [`salelisto.com/pase.html`](https://salelisto.com/pase.html) | [`/pase.html`](http://localhost:8123/pase.html) | Pantalla fija en mostrador/barra filtrable por bloque (`?bloque=`), confirmación directa en 1 toque y cobro con vuelto exacto *(celulares en locker)*. |
+| **Panel del Restaurante** | [`salelisto.com/restaurante.html`](https://salelisto.com/restaurante.html) | [`/restaurante.html`](http://localhost:8123/restaurante.html) | Gestión de salón, mozos, carta con 3 estaciones y tags, ajuste % con deshacer, arqueo CSV y bandeja privada `#consultas` *(PIN inicial: `1234`)*. |
+| **PWA Mozo / Modo Pulsera** | [`salelisto.com/mozo.html`](https://salelisto.com/mozo.html) | [`/mozo.html`](http://localhost:8123/mozo.html) | Configuración de **Modo Pulsera Xiaomi Band** por Bluetooth BLE *(celular bloqueado en bolsillo)*, alertas y carga manual por categorías. |
+| **Comandera 3 Estaciones** | [`salelisto.com/cocina.html`](https://salelisto.com/cocina.html) | [`/cocina.html`](http://localhost:8123/cocina.html) | Tablero KDS en tiempo real (`Cocina`, `Barra`, `Mostrador` o `Todo`) con cajón rápido **`🚫 Agotados`** y semáforo SLA. |
+| **Vista del Comensal** | `salelisto.com/q/<token>` | `/cliente.html?t=<token>` | Carta QR interactiva con buscador, filtros dietarios, botón Repetir ronda, calculadora *Vaquita* y declaración de vuelto en efectivo. |
+| **Estudio de Impresión QR** | [`salelisto.com/qr.html`](https://salelisto.com/qr.html) | [`/qr.html`](http://localhost:8123/qr.html) | Estudio A4 calibrado en mm (`Tent-Card 10x15 cm`, `Sticker 8x8 cm`, `Tarjeta Compacta`, estilos Crema/Carbón, descarga `.svg` y PIN en prod). |
+| **Monitoreo de Salud** | [`salelisto.com/api/health`](https://salelisto.com/api/health) | [`/api/health`](http://localhost:8123/api/health) | Endpoint JSON liviano (`{"ok": true, "version": ..., "subscribers": ...}`) para observabilidad cloud. |
 
 ---
 
-## Despliegue en la Nube (Persistencia NVMe y Web Push HTTPS)
+## Despliegue en Producción 24/7 (`https://salelisto.com` · Railway + Cloudflare SSL)
 
+El entorno oficial de SaleListo opera 24/7 en [**https://salelisto.com**](https://salelisto.com/) sobre **Railway.app + Cloudflare SSL/TLS** (`www.salelisto.com` redirige `301` a `https://salelisto.com`, con volumen persistente en `/var/data` y **Cloudflare Email Routing** activo para las casillas `@salelisto.com`).
+
+Para replicar o actualizar un despliegue cloud propio:
 1. Subí este repositorio a tu cuenta de **GitHub**.
-2. En **Render.com** (o **Railway.app**), creá un servicio web o Blueprint conectado al repositorio:
-   - [`render.yaml`](./render.yaml) configura automáticamente `rootDir: app`, `startCommand: python server.py`, disco persistente `1 GB` en `/var/data` (`DATA_DIR=/var/data`) y `TZ=America/Argentina/Buenos_Aires`.
+2. En **Railway.app** (mediante [`Procfile`](./Procfile)) o **Render.com** (mediante [`render.yaml`](./render.yaml)):
+   - Configurá volumen persistente en `/var/data` (`DATA_DIR=/var/data`), `TZ=America/Argentina/Buenos_Aires` y `PUBLIC_URL=https://salelisto.com` (o tu dominio propio).
    - Opcionalmente definí `VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY` en variables de entorno para respaldo externo de suscripciones Push.
-3. Ingresá a `/restaurante.html` en tu URL HTTPS:
+3. En **Cloudflare**, apuntá el dominio raíz con SSL/TLS activo y regla de redirección `301` desde `www`.
+4. Ingresá a `/restaurante.html` en tu URL HTTPS:
    - Cambiá el PIN de administrador inicial (`1234`) en **Caja y Ajustes**.
    - Desactivá el *Modo Demo* (`demoMode = False`) para exigir sesión con PIN en vistas operativas y `/qr.html`, y aislar la bandeja de leads reales.
    - Configurá tus bloques, mozos con PIN y tu carta real en las 3 estaciones (`Cocina`, `Barra`, `Mostrador`).
-4. Abrí `/pase.html` en la pantalla horizontal del mostrador/barra (o vinculá las pulseras Bluetooth BLE desde `/mozo.html`) e imprimí los códigos QR definitivos desde `/qr.html`.
+5. Abrí `/pase.html` en la pantalla horizontal del mostrador/barra (o vinculá las pulseras Bluetooth BLE desde `/mozo.html`) e imprimí los códigos QR definitivos desde `/qr.html`.
 
 Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md), [`docs/arquitectura_salelisto.md`](./docs/arquitectura_salelisto.md), [`docs/mejoras_producto_ux.md`](./docs/mejoras_producto_ux.md) y [`docs/goldfish_review_report.md`](./docs/goldfish_review_report.md).
 
@@ -169,6 +178,7 @@ Más detalles en [`app/PUBLICAR_EN_INTERNET.md`](./app/PUBLICAR_EN_INTERNET.md),
 ## Autor y Contacto
 
 **Simón Martínez de Guereñu**  
+- **Sitio oficial en producción:** [**https://salelisto.com**](https://salelisto.com/) *(demo en vivo: [**https://salelisto.com/demo.html**](https://salelisto.com/demo.html))*  
 - **WhatsApp / Teléfono único:** `(+54)1138436571`  
-- **Correo electrónico (autor y prospección directa):** `simonguerenu@gmail.com`  
-- **Correo comercial oficial (marca, Dossier, Acuerdo y piezas B2B):** `ventas@salelisto.com`
+- **Casillas oficiales activas en Cloudflare (`@salelisto.com`):** `simon@salelisto.com` · `valentin@salelisto.com` · `ventas@salelisto.com` · `consultas@salelisto.com`  
+- **Correo electrónico personal del autor:** `simonguerenu@gmail.com`

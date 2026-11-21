@@ -40,7 +40,27 @@ Plan de publicaciones para Instagram, LinkedIn, TikTok, Historias y Estados de W
   3. **Semana 3 · Rentabilidad y control:** 0% comisión, ROI verificable, mermas y ajuste de precios con redondeo limpio a `$100`.
   4. **Semana 4 · Conversión sin fricción:** Piloto quirúrgico de 14 días en 1 solo sector, listo en 48 horas.
 - **Regla audiovisual para `SPOT` y `R1`..`R5`:** los archivos `.mp4` ya traen su titular grande y diagrama animado desde el cuadro 0. Subirlos limpios eligiendo el cuadro 0 como portada: **no agregar texto o ganchos superpuestos encima en IG/TikTok ni activar subtítulos automáticos** para no tapar el lienzo central.
-- **Regla de oro del copy:** voseo rioplatense, frases cortas, una sola idea por publicación, cifras exactas del [modelo de negocios](../comercial/modelo_de_negocios.md) y llamado a la acción directo a WhatsApp `(+54)1138436571` o `ventas@salelisto.com`.
+- **Regla de oro del copy:** voseo rioplatense, frases cortas, una sola idea por publicación, cifras exactas del [modelo de negocios](../comercial/modelo_de_negocios.md) y llamado a la acción directo a [`https://salelisto.com`](https://salelisto.com), la demo interactiva [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html), WhatsApp `(+54)1138436571` o `ventas@salelisto.com`.
+
+### 1.1. Bio sugerida de Instagram, TikTok, LinkedIn y WhatsApp Business
+
+- **Instagram y TikTok (Bio de perfil):**
+  ```text
+  SaleListo · Salón en orden, 0% comisión
+  📋 Carta QR sin apps -> Cocina, Barra y Mostrador en 0 seg
+  ⌚ Mozos sin celular en la mano (Pase fijo o Pulsera)
+  🚀 Piloto sin riesgo de 14 días en 1 sector (listo en 48 h)
+  👇 Probá la demo en vivo o escribinos al (+54)1138436571
+  ```
+  - **Enlace principal en Bio:** `https://salelisto.com/demo.html` *(enlace secundario: `https://salelisto.com`)*
+  - **Botón de contacto:** Correo `ventas@salelisto.com` / WhatsApp `(+54)1138436571`
+- **LinkedIn (Titular y Acerca de la página de empresa):**
+  ```text
+  SaleListo (salelisto.com) · Plataforma B2B de pedidos QR en mesa, ruteo automático en 3 estaciones (Cocina, Barra y Mostrador) y coordinación de salón 100% sin celulares en la mano, con abono fijo y 0% comisión.
+  Demo pública interactiva: https://salelisto.com/demo.html
+  Calculadora de retorno y planes: https://salelisto.com
+  Contacto comercial: ventas@salelisto.com · consultas@salelisto.com · WhatsApp (+54)1138436571
+  ```
 
 ---
 
@@ -79,11 +99,11 @@ Todas las piezas de [`stories/`](stories/) respetan zonas seguras libres (`>= 25
 | Código | Archivo | Días sugeridos | Interacción nativa sugerida | Historia Destacada |
 | :---: | :--- | :---: | :--- | :--- |
 | **S1** | [`stories/story_01_encuesta_cobro.png`](stories/story_01_encuesta_cobro.png) | Días 2 y 18 | Colocar sticker nativo de **Encuesta** dentro del recuadro blanco punteado: *"Menos de 5 min"* / *"10 a 15 min (4 viajes)"* | `Cobro 1 viaje` |
-| **S2** | [`stories/story_02_estacion_pase.png`](stories/story_02_estacion_pase.png) | Días 4 y 9 | Sticker de **Enlace directo a WhatsApp** `(+54)1138436571` para mostrar el Plan Base sin celulares (celulares en locker/caja) | `Sin celulares` |
+| **S2** | [`stories/story_02_estacion_pase.png`](stories/story_02_estacion_pase.png) | Días 4 y 9 | Sticker de **Enlace** a `https://salelisto.com/demo.html` o WhatsApp `(+54)1138436571` para mostrar el Plan Base sin celulares | `Sin celulares` |
 | **S3** | [`stories/story_03_kit_pulsera.png`](stories/story_03_kit_pulsera.png) | Días 11 y 13 | Sticker de **Pregunta**: *"¿Tenés terraza, jardín o patio grande?"* (pulsera BLE con celular bloqueado en el bolsillo) | `Sin celulares` |
-| **S4** | [`stories/story_04_vaquita_y_vuelto.png`](stories/story_04_vaquita_y_vuelto.png) | Días 5 y 19 | Sticker de reacción o enlace directo a demo interactiva (Calculadora *Vaquita* + declaración de vuelto en efectivo) | `Cobro 1 viaje` |
+| **S4** | [`stories/story_04_vaquita_y_vuelto.png`](stories/story_04_vaquita_y_vuelto.png) | Días 5 y 19 | Sticker de **Enlace directo** a la demo interactiva `https://salelisto.com/demo.html` (Calculadora *Vaquita* + vuelto exacto) | `Cobro 1 viaje` |
 | **S5** | [`stories/story_05_3_estaciones_sla.png`](stories/story_05_3_estaciones_sla.png) | Días 6 y 17 | Sticker de encuesta rápida: *"¿Cuántas estaciones tenés hoy? 2 / 3+"* (`Cocina`, `Barra` y `Sushi/Mostrador` + SLA) | `Despacho` |
-| **S6** | [`stories/story_06_piloto_14_dias.png`](stories/story_06_piloto_14_dias.png) | Días 14, 24 y 27 | Sticker de **Enlace directo a WhatsApp** `(+54)1138436571` para activar el piloto de 14 días listo en 48 h | `Piloto 14d` |
+| **S6** | [`stories/story_06_piloto_14_dias.png`](stories/story_06_piloto_14_dias.png) | Días 14, 24 y 27 | Sticker de **Enlace** a `https://salelisto.com` o WhatsApp `(+54)1138436571` para activar el piloto de 14 días listo en 48 h | `Piloto 14d` |
 
 ---
 
@@ -104,7 +124,7 @@ SaleListo ordena el salón sin cambiar tu forma de atender:
 
 Y lo mejor: 0% de comisión sobre tus ventas. Pagás un abono fijo mensual y listo.
 
-¿Lo querés ver funcionando en tu propio local? Escribinos por WhatsApp al (+54)1138436571 y te lo mostramos en 10 minutos.
+Probá la demo en vivo en salelisto.com/demo.html o escribinos por WhatsApp al (+54)1138436571 y te lo mostramos en 10 minutos.
 
 #gastronomia #restaurantes #bares #cervecerias #gastronomiaargentina
 ```
@@ -127,9 +147,9 @@ Con SaleListo la mesa pide la cuenta desde el QR, ya con medio de pago, propina,
 
 Resultado estimado: entre 18 y 25 minutos recuperados por mesa en hora pico.
 
-Deslizá hasta el final para ver los planes (0% comisión) y guardalo para mostrárselo a tu encargado.
+Deslizá hasta el final para ver los planes (0% comisión) y probá la demo en salelisto.com/demo.html.
 
-📲 WhatsApp (+54)1138436571
+🌐 salelisto.com · 📲 WhatsApp (+54)1138436571
 ```
 
 <a id="copy-03"></a>
@@ -146,7 +166,7 @@ Con SaleListo la mesa pide la cuenta en el QR eligiendo medio de pago (efectivo 
 
 Más rotación cuando más vale cada silla. 0% de comisión sobre tus ventas.
 
-Escribinos por WhatsApp al (+54)1138436571 y te enviamos el Dossier Ejecutivo o coordinamos una demo de 10 minutos.
+Miralo funcionando en salelisto.com/demo.html o escribinos al (+54)1138436571 y coordinamos una demo de 10 minutos.
 
 #restaurantes #gastronomia #bares #rotaciondemesas #cervecerias
 ```
@@ -167,7 +187,7 @@ Por eso SaleListo funciona sin celulares a la vista:
 
 Tecnología que el cliente no ve. Servicio que el cliente sí nota.
 
-Escribinos y te mostramos cómo queda en tu salón: (+54)1138436571
+Recorré la demo en salelisto.com/demo.html o escribinos al (+54)1138436571.
 
 #mozos #restaurantes #hospitalidad #gastronomia #bares
 ```
@@ -185,7 +205,7 @@ Con SaleListo: la comanda se divide sola en el mismo segundo entre Cocina, Barra
 
 Menos errores, menos platos devueltos y un salón que fluye aunque esté lleno.
 
-¿Querés probarlo con tu carta real en 48 h? Escribinos al (+54)1138436571.
+Probalo en vivo en salelisto.com/demo.html o escribinos al (+54)1138436571 para activarlo con tu carta en 48 h.
 ```
 
 <a id="copy-06"></a>
@@ -207,7 +227,7 @@ Ganancia neta limpia estimada para el local: +USD 2.345 por mes (retorno de 37x 
 
 Dicho en términos de salón: el abono representa menos del 0,20% de tu venta y se paga solo con 3 a 4 mesas extra en todo el mes.
 
-Si tenés o gestionás un restaurante, bar o cervecería en CABA o GBA y querés ver estos números aplicados a tu local, escribime: ventas@salelisto.com · WhatsApp (+54)1138436571.
+Podés simular los números de tu propio local en https://salelisto.com (y probar las pantallas en https://salelisto.com/demo.html) o escribirme directo: ventas@salelisto.com · WhatsApp (+54)1138436571.
 
 #Gastronomía #Restaurantes #Hospitalidad #FoodService #GestiónGastronómica
 ```
@@ -228,7 +248,7 @@ SaleListo lo resuelve con dos modalidades reales:
 
 ¿Querés probarlo sin riesgo? Piloto de 14 días en un solo sector de tu local, listo en 48 horas.
 
-Escribinos al (+54)1138436571 y lo coordinamos.
+Miralo en salelisto.com/demo.html o escribinos al (+54)1138436571.
 ```
 
 <a id="copy-08"></a>
@@ -245,9 +265,9 @@ Con SaleListo cada pedido se ordena solo:
 🔸 Semáforo SLA automático en vivo: En tiempo (< 8 min), Atención (8 a 14 min) o Demorado (15+ min).
 🔸 Si se acaba un barril o un postre, cocina lo pausa en 1 toque y desaparece de todos los QR del salón.
 
-Deslizá para ver el circuito completo y probalo 14 días en un solo sector de tu local.
+Deslizá para ver el circuito completo, recorré la demo en salelisto.com/demo.html y probalo 14 días en un sector de tu local.
 
-📲 WhatsApp (+54)1138436571 · ventas@salelisto.com
+🌐 salelisto.com · 📲 WhatsApp (+54)1138436571 · ventas@salelisto.com
 ```
 
 <a id="copy-09"></a>
@@ -264,7 +284,7 @@ Con SaleListo el cliente escanea el QR de su mesa directo con la cámara, repite
 
 Más rondas, menos corridas.
 
-¿Tenés patio, terraza o vereda? Activamos un piloto sin riesgo de 14 días solo en ese sector, listo en 48 h. WhatsApp (+54)1138436571.
+¿Tenés patio, terraza o vereda? Probá la demo en salelisto.com/demo.html o pedí un piloto de 14 días solo en ese sector al (+54)1138436571.
 
 #cerveceria #cervezaartesanal #terraza #bares #gastronomia
 ```
@@ -284,7 +304,7 @@ Con SaleListo cada mesa exterior resuelve la vuelta en 10 segundos:
 
 Más consumo y más rotación en terraza, patio y vereda, con 0% de comisión.
 
-Escribinos al (+54)1138436571 y activamos un piloto de 14 días en tu sector exterior en 48 horas.
+Conocé más en salelisto.com o escribinos al (+54)1138436571 y activamos un piloto de 14 días en 48 horas.
 ```
 
 <a id="copy-11"></a>
@@ -299,7 +319,7 @@ SaleListo cobra un abono fijo mensual desde USD 35 por mes, facturado en pesos y
 
 En un restaurante tipo de 25 mesas estimamos +USD 2.410 por mes de beneficio generado (+USD 2.345 netos descontando el abono de USD 65 del Plan Salón). Retorno estimado: 37 veces el abono.
 
-La ganancia de tu salón es 100% tuya. Escribinos y hacemos los números con tu local: (+54)1138436571 · ventas@salelisto.com
+Calculá los números de tu local en salelisto.com o escribinos: (+54)1138436571 · ventas@salelisto.com
 ```
 
 <a id="copy-12"></a>
@@ -318,7 +338,7 @@ SaleListo resuelve las dos:
 
 Tu carta al día, tu margen intacto.
 
-Escribinos al (+54)1138436571 y te lo mostramos con tu menú.
+Probalo en salelisto.com/demo.html o escribinos al (+54)1138436571 y te lo mostramos con tu menú.
 
 #gastronomia #inflacion #restaurantes #dueñosderestaurantes #bares
 ```
@@ -339,7 +359,7 @@ En este documento de 5 páginas resumimos cómo lo resuelve SaleListo en tiempo 
 ▸ Semáforo SLA automático (verde < 8 min, ámbar 8 a 14 min, coral 15+ min) en pantallas de despacho y Estación de Pase.
 ▸ Baja de platos o barriles agotados en un clic directo desde cocina para ahorrar viajes de disculpa.
 
-Si gestionás un restaurante, bistró o cervecería en CABA o GBA, escribime y te comparto nuestro Dossier Ejecutivo en PDF o agendamos un piloto de 14 días en un sector: ventas@salelisto.com · WhatsApp (+54)1138436571.
+Podés recorrer la demo pública en https://salelisto.com/demo.html o escribirme para recibir el Dossier Ejecutivo en PDF y agendar un piloto de 14 días en un sector: ventas@salelisto.com · WhatsApp (+54)1138436571.
 
 #Gastronomía #OperacionesGastronómicas #Cocina #Restaurantes #Hospitalidad
 ```
@@ -360,7 +380,7 @@ Sumando el primer pedido, el despacho y el cobro, un servicio tradicional acumul
 
 En un viernes o sábado, eso permite pasar de 3 a 3,75 rotaciones por mesa: hasta un 25% más de capacidad sin sumar una sola silla.
 
-Les dejo el documento completo con el desglose. Si querés ver una demo de 10 minutos en tu local, escribime a ventas@salelisto.com o al (+54)1138436571.
+Les dejo el documento completo y el simulador abierto en https://salelisto.com (demo interactiva en https://salelisto.com/demo.html). Si querés verlo en 10 minutos en tu local, escribime a ventas@salelisto.com o al (+54)1138436571.
 
 #Gastronomía #Operaciones #Restaurantes #Hospitalidad
 ```
@@ -380,7 +400,7 @@ Con SaleListo el ajuste es masivo, prolijo y al instante:
 
 El QR fijo de cada mesa sigue intacto y el cliente ve el precio nuevo al segundo.
 
-Escribinos al (+54)1138436571 y te mostramos cómo queda con tu carta.
+Probalo en salelisto.com/demo.html o escribinos al (+54)1138436571.
 ```
 
 <a id="copy-16"></a>
@@ -403,7 +423,7 @@ Por eso diseñamos SaleListo para coordinar el salón sin celulares a la vista:
 
 El documento adjunto resume ambas modalidades. Para validarlo en servicio real, ofrecemos un piloto sin riesgo de 14 días en 1 solo sector, activado llave en mano en 48 horas.
 
-Contacto: ventas@salelisto.com · WhatsApp (+54)1138436571
+Sitio y demo en vivo: https://salelisto.com · https://salelisto.com/demo.html · Contacto: ventas@salelisto.com · WhatsApp (+54)1138436571
 
 #Hospitalidad #Gastronomía #ExperienciaDelCliente #Restaurantes
 ```
@@ -422,7 +442,7 @@ Tu mozo recibe el aviso en el pase o en su muñeca recién cuando algo está lis
 
 Sin papelitos, sin celulares en la mano y con 0% de comisión sobre tus ventas.
 
-Si tenés un restaurante, bar o cervecería en CABA o GBA, escribinos al (+54)1138436571 y lo ves funcionando en tu local.
+Mirá la demo interactiva en salelisto.com/demo.html o escribinos al (+54)1138436571 si tenés un restaurante, bar o cervecería en CABA o GBA.
 
 #gastronomia #restaurante #bar #dueñodenegocio #emprendedor
 ```
@@ -442,7 +462,7 @@ Por eso armamos el Piloto Quirúrgico de 14 días:
 
 0% de comisión sobre tus ventas, sin permanencia mínima y cero celulares en la mano de tus mozos.
 
-Pedí tu piloto por WhatsApp al (+54)1138436571 o escribinos a ventas@salelisto.com y te enviamos el Dossier y el Acuerdo de Piloto de 1 carilla en el acto.
+Entrá en salelisto.com o pedí tu piloto por WhatsApp al (+54)1138436571 / ventas@salelisto.com y te enviamos el Dossier y el Acuerdo de Piloto de 1 carilla en el acto.
 
 #dueñosderestaurantes #gastronomiaargentina #bares #cervecerias #hospitalidad
 ```
@@ -464,7 +484,7 @@ En SaleListo la respuesta es no:
 
 El foco vuelve a estar 100% en la hospitalidad.
 
-Si querés verlo en una demo de 10 minutos en tu local: ventas@salelisto.com · WhatsApp (+54)1138436571.
+Probá la demo en https://salelisto.com/demo.html o coordinemos 10 minutos en tu local: ventas@salelisto.com · WhatsApp (+54)1138436571.
 
 #Gastronomía #Hospitalidad #Restaurantes #Operaciones
 ```
@@ -472,23 +492,23 @@ Si querés verlo en una demo de 10 minutos en tu local: ventas@salelisto.com · 
 <a id="copy-20"></a>
 ### Copy #20 · Día 27 · Historias S6 + ST + Catálogo WA · Historias de Instagram + Estados de WhatsApp
 
-**Historia de cierre ([`stories/story_06_piloto_14_dias.png`](stories/story_06_piloto_14_dias.png) o [`banners/meta_ad_story_1080x1920.png`](banners/meta_ad_story_1080x1920.png)) con sticker de enlace directo a WhatsApp:**
+**Historia de cierre ([`stories/story_06_piloto_14_dias.png`](stories/story_06_piloto_14_dias.png) o [`banners/meta_ad_story_1080x1920.png`](banners/meta_ad_story_1080x1920.png)) con sticker de enlace directo a `https://salelisto.com` o WhatsApp:**
 
 ```text
 Piloto sin riesgo de 14 días en tu vereda, patio o terraza.
 Dejamos tu carta y los QR fijos listos en 48 h y medimos juntos 2 fines de semana reales.
-Escribinos 👉 (+54)1138436571
+Demo en vivo: salelisto.com/demo.html · WhatsApp 👉 (+54)1138436571
 ```
 
 **Estado de WhatsApp Business y catálogo ([`banners/whatsapp_catalogo_1080x1080.png`](banners/whatsapp_catalogo_1080x1080.png)):**
 
 ```text
-Planes SaleListo, todos con 0% comisión sobre tus ventas y sin permanencia:
+Planes SaleListo (salelisto.com), todos con 0% comisión sobre tus ventas y sin permanencia:
 • Barra / Café: USD 35 por mes (hasta 12 mesas · 2 sectores)
 • Salón / Bistró: USD 65 por mes (hasta 30 mesas · 5 sectores) ⭐ el más elegido
 • Gran Salón: USD 110 por mes (mesas y sectores ilimitados)
 Precios de referencia en USD, facturados en pesos. Todos incluyen QR fijo por mesa, ruteo en 3 estaciones (Cocina, Barra y Mostrador), Estación de Mozos fija en el pase y compatibilidad con Kit Pulseras Xiaomi Band.
-Respondé este estado y activamos tu piloto en 48 h: (+54)1138436571
+Probá la demo en salelisto.com/demo.html o respondé este estado para activar tu piloto en 48 h: (+54)1138436571
 ```
 
 ---
@@ -520,10 +540,10 @@ Con un presupuesto inicial eficiente de **`USD 320/mes` (`~USD 10,60/día`)** al
 - **Mensaje precargado del botón:** *"Hola, vi el anuncio de SaleListo y quiero consultar por el piloto de 14 días para mi local."*
 - **Protocolo de primer contacto (`< 15 min`):**
   1. Saludar por nombre, preguntar **barrio, cantidad aproximada de mesas y cuál es hoy el sector más difícil de atender** (vereda, patio, terraza o salón).
-  2. Adjuntar el Dossier Ejecutivo A4 de 2 páginas [`SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf).
+  2. Compartir la calculadora personalizada (`https://salelisto.com/?mesas=...&ticket=...&turnos=...#roi`), la demo interactiva (`https://salelisto.com/demo.html`) y el Dossier Ejecutivo A4 de 2 páginas [`SaleListo_Dossier_Comercial.pdf`](../comercial/SaleListo_Dossier_Comercial.pdf).
   3. Ofrecer visita o videollamada de **10 minutos** en valle de servicio (martes a jueves 10:30 a 12:00 o 16:30 a 18:30) y cerrar con el acuerdo simple de 1 página [`SaleListo_Acuerdo_Piloto_14d.pdf`](../comercial/SaleListo_Acuerdo_Piloto_14d.pdf) + planilla [`plantilla_carga_carta.csv`](../comercial/plantilla_carga_carta.csv) para dejar el sector activo en **48 horas**.
 - **KPIs de control (días 15 y 30):** costo por conversación iniciada en WhatsApp, porcentaje de conversaciones calificadas (dueños/encargados), demos agendadas y pilotos de 14 días activados. Rotar cada 14 días el creativo con mayor costo por conversación calificada.
 
 ---
 
-**Contacto comercial:** WhatsApp `(+54)1138436571` · `ventas@salelisto.com`
+**Sitio oficial y contacto comercial:** [`https://salelisto.com`](https://salelisto.com) · Demo en vivo: [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html) · WhatsApp `(+54)1138436571` · `ventas@salelisto.com` · `consultas@salelisto.com` · `simon@salelisto.com` · `valentin@salelisto.com`

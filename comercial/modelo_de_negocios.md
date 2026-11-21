@@ -1,6 +1,7 @@
 # Modelo de Negocios Integral: SaleListo
 
-**Plataforma en la nube de pedidos autogestionados en mesa, ruteo inteligente en hasta 3 estaciones (`Cocina`, `Barra` y `Mostrador`), y coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulseras Vibradoras Xiaomi Band por Bluetooth BLE) para gastronomía en Argentina y América Latina.**
+**Plataforma en la nube de pedidos autogestionados en mesa, ruteo inteligente en hasta 3 estaciones (`Cocina`, `Barra` y `Mostrador`), y coordinación de salón 100% sin celulares en mano (Estación de Mozos fija en el pase + opción de Pulseras Vibradoras Xiaomi Band por Bluetooth BLE) para gastronomía en Argentina y América Latina.**  
+**Sitio oficial en vivo:** [`https://salelisto.com`](https://salelisto.com) · **Demo interactiva:** [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html) · **Contacto:** `(+54)1138436571` · `simon@salelisto.com` · `ventas@salelisto.com`
 
 ---
 
@@ -461,16 +462,20 @@ A continuación se detalla el manual práctico frente a las **12 objeciones real
 
 Antes de encender pauta paga en Meta Ads y despachar campañas salientes masivas, verificar el 100% de los siguientes puntos:
 
-- [ ] **Dominio y registros `MX` activos en `salelisto.com`**: verificar registros DNS `MX`, `SPF` y `DKIM` operativos en `salelisto.com` (con reenvío/bandeja verificada hacia `simonguerenu@gmail.com`) para garantizar recepción y entrega al 100% en **`ventas@salelisto.com`**.
+- [x] **Dominio oficial y registros `MX` activos en `salelisto.com`**: sitio público en vivo en [`https://salelisto.com`](https://salelisto.com) (con demo interactiva en [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)) y registros DNS `MX`, `SPF` y `DKIM` operativos con las 4 casillas oficiales activas: **`simon@salelisto.com`**, **`valentin@salelisto.com`**, **`ventas@salelisto.com`** y **`consultas@salelisto.com`**.
 - [ ] **Persistencia Cloud y Zona Horaria Argentina**: servicio desplegado sobre HTTPS con disco persistente montado en `/var/data` (`DATA_DIR=/var/data`), `TZ=America/Argentina/Buenos_Aires` (corte de turno `06:00 AM ART`), claves `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` respaldadas y `GET /api/health` respondiendo `200 OK`.
 - [ ] **Endurecimiento de Producción por Instancia de Cliente**: `demoMode` desactivado (`False`), `adminPin` rotado fuera del valor por defecto (`1234`) y PINs de mozos configurados antes de imprimir los QRs definitivos desde `/qr.html`.
-- [ ] **Kit Comercial de Calle Listo**: Dossier `SaleListo_Dossier_Comercial.pdf` (2 páginas A4), Acuerdo `SaleListo_Acuerdo_Piloto_14d.pdf` (1 página A4), planilla `plantilla_carga_carta.csv`, display acrílico de muestra y Xiaomi Smart Band cargada y vinculada en Modo Pulsera BLE.
+- [x] **Kit Comercial de Calle Listo**: Dossier `SaleListo_Dossier_Comercial.pdf` (2 páginas A4), Acuerdo `SaleListo_Acuerdo_Piloto_14d.pdf` (1 página A4), planilla `plantilla_carga_carta.csv`, display acrílico de muestra y Xiaomi Smart Band cargada y vinculada en Modo Pulsera BLE.
 
 ---
 
 ### Datos de Contacto Oficiales
 
 * **Dirección Comercial y de Producto**: Simón Martínez de Guereñu
+* **Sitio web oficial y demo interactiva**: [`https://salelisto.com`](https://salelisto.com) · [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)
 * **Teléfono / WhatsApp único**: `(+54)1138436571`
-* **Correo comercial oficial (marca, dossier y piezas B2B)**: `ventas@salelisto.com`
-* **Correo directo de dirección y prospección ejecutiva**: `simonguerenu@gmail.com`
+* **Casillas corporativas oficiales (`@salelisto.com`)**:
+  * **Prospección ejecutiva y dirección comercial**: `simon@salelisto.com`
+  * **Co-equipo directivo**: `valentin@salelisto.com`
+  * **Comercial, dossier y activación de pilotos B2B**: `ventas@salelisto.com`
+  * **Consultas generales y atención**: `consultas@salelisto.com`

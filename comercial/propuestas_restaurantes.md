@@ -1,7 +1,8 @@
 # Plan Comercial y Prospección B2B: SaleListo en Buenos Aires
 
 **Autor:** Simón Martínez de Guereñu  
-**Contacto directo:** `simonguerenu@gmail.com` *(casilla comercial oficial: `ventas@salelisto.com`)* | `(+54)1138436571`  
+**Sitio oficial y demo en vivo:** [`https://salelisto.com`](https://salelisto.com) · [`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)  
+**Contacto directo:** `simon@salelisto.com` *(casillas oficiales del dominio: `ventas@salelisto.com`, `consultas@salelisto.com` y `valentin@salelisto.com`)* | `(+54)1138436571`  
 **Alcance geográfico:** CABA (Palermo, Chacarita, Villa Crespo, Colegiales, Belgrano, San Telmo) y Zona Norte (Vicente López, Olivos, San Isidro)  
 **Oferta canónica de conversión:** Conseguir demos presenciales en vivo de 10 minutos y activar el **Piloto sin riesgo de 14 días (2 fines de semana completos) en 1 sector crítico del local, puesto en marcha llave en mano en 48 horas**, operando **100% sin celulares en la mano de los mozos**.
 
@@ -295,10 +296,10 @@ Toda prospección saliente y toda respuesta entrante convergen hacia **una únic
   > ¡Hola equipo de [Bar]! Consulta para el encargado: con **SaleListo** la terraza pide segundas pintas por QR directo a Barra, sin apps ni mozos mirando celulares. ¿A quién le muestro una demo? Simón `(+54)1138436571`.
 
 * **Mensaje 2 (Día 4 · Seguimiento tras respuesta o visto):**
-  > ¡Gracias por leer! Lo mejor para bares con patio o terraza es que no tocamos todo el local: **en 48 horas activamos llave en mano un piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza/patio, con pantalla fija de pase en barra (teléfonos en locker) o pulseras Xiaomi Band que vibran con el celular bloqueado en el bolsillo recién cuando las pintas están tiradas, más calculadora *Vaquita* al pedir la cuenta. ¿Paso un martes o miércoles antes de abrir y lo ven andando en 10 minutos? Simón Martínez de Guereñu, `(+54)1138436571` / `simonguerenu@gmail.com`.
+  > ¡Gracias por leer! Lo mejor para bares con patio o terraza es que no tocamos todo el local: **en 48 horas activamos llave en mano un piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza/patio, con pantalla fija de pase en barra (teléfonos en locker) o pulseras Xiaomi Band que vibran con el celular bloqueado en el bolsillo recién cuando las pintas están tiradas, más calculadora *Vaquita* al pedir la cuenta. ¿Paso un martes o miércoles antes de abrir y lo ven andando en 10 minutos? Simón Martínez de Guereñu, `(+54)1138436571` / `simon@salelisto.com`.
 
 * **Mensaje 3 (Día 9 · Cierre suave sin presión):**
-  > ¡Buenas! No quiero molestarlos en plena semana. Dejo abierta la invitación por si quieren activar el piloto de 14 días en el sector exterior antes de las noches fuertes. Me encuentran en `(+54)1138436571` o `simonguerenu@gmail.com`. ¡Éxitos el finde!
+  > ¡Buenas! No quiero molestarlos en plena semana. Dejo abierta la invitación por si quieren activar el piloto de 14 días en el sector exterior antes de las noches fuertes. Me encuentran en `(+54)1138436571` o `simon@salelisto.com`. ¡Éxitos el finde!
 
 ---
 
@@ -308,10 +309,10 @@ Toda prospección saliente y toda respuesta entrante convergen hacia **una únic
   > ¡Hola equipo de [Restaurante]! Armamos **SaleListo**: QR en mesa que separa Cocina, Barra y Mostrador Sushi, con pantalla fija en el pase y cero mozos usando celular. ¿Con qué encargado coordino 10 min?
 
 * **Mensaje 2 (Día 4 · Seguimiento enfocado en rotación y estética de salón):**
-  > Sumo un dato clave para salones que cuidan la puesta en escena: con la **Estación de Mozos fija** los teléfonos del equipo quedan guardados en el locker, y ahorrar 12 a 15 minutos entre la primera comanda y el cobro en un solo viaje habilita un recambio más cuando hay espera afuera. Podemos probarlo **14 días (2 fines de semana) sin riesgo** en un sector, dejándolo listo llave en mano en **48 horas**. Mi directo es `(+54)1138436571` (`simonguerenu@gmail.com`).
+  > Sumo un dato clave para salones que cuidan la puesta en escena: con la **Estación de Mozos fija** los teléfonos del equipo quedan guardados en el locker, y ahorrar 12 a 15 minutos entre la primera comanda y el cobro en un solo viaje habilita un recambio más cuando hay espera afuera. Podemos probarlo **14 días (2 fines de semana) sin riesgo** en un sector, dejándolo listo llave en mano en **48 horas**. Mi directo es `(+54)1138436571` (`simon@salelisto.com`).
 
 * **Mensaje 3 (Día 8 · Cierre breve):**
-  > ¡Hola! Paso por última vez para no ocupar el chat de reservas. Si más adelante quieren probar el piloto de 14 días para agilizar micro-comandas y cierres de cuenta sin perder estética de salón, me escriben al `(+54)1138436571` o `simonguerenu@gmail.com`. ¡Gran semana!
+  > ¡Hola! Paso por última vez para no ocupar el chat de reservas. Si más adelante quieren probar el piloto de 14 días para agilizar micro-comandas y cierres de cuenta sin perder estética de salón, me escriben al `(+54)1138436571` o `simon@salelisto.com`. ¡Gran semana!
 
 ---
 
@@ -321,10 +322,10 @@ Toda prospección saliente y toda respuesta entrante convergen hacia **una únic
   > ¡Hola equipo de [Café]! Con **SaleListo** el patio y la vereda piden por QR directo a Barista, Mostrador y Cocina, sin mozos mirando celulares. ¿Con quién coordino una demo rápida? Simón `(+54)1138436571`.
 
 * **Mensaje 2 (Día 4 · Ángulo coworking + pastelería del día + piloto 14 días):**
-  > Les cuento dónde más rinde en brunch y café: quien trabaja con su compu en el patio pide un segundo flat white sin dejar sus cosas solas, y cuando se acaba un laminado lo pausan en 1 toque desde el mostrador. Les ofrecemos un **piloto sin riesgo de 14 días (2 fines de semana completos)** solo en patio/vereda, activado llave en mano en **48 horas**. Quedo atento en `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
+  > Les cuento dónde más rinde en brunch y café: quien trabaja con su compu en el patio pide un segundo flat white sin dejar sus cosas solas, y cuando se acaba un laminado lo pausan en 1 toque desde el mostrador. Les ofrecemos un **piloto sin riesgo de 14 días (2 fines de semana completos)** solo en patio/vereda, activado llave en mano en **48 horas**. Quedo atento en `(+54)1138436571` o `simon@salelisto.com` (Simón).
 
 * **Mensaje 3 (Día 9 · Cierre cordial):**
-  > ¡Buenas tardes! Dejo mi contacto (`(+54)1138436571` / `simonguerenu@gmail.com`) por si quieren ver en 10 minutos el piloto de 14 días para patio y vereda una tarde tranquila. ¡Éxitos con el brunch del finde!
+  > ¡Buenas tardes! Dejo mi contacto (`(+54)1138436571` / `simon@salelisto.com`) por si quieren ver en 10 minutos el piloto de 14 días para patio y vereda una tarde tranquila. ¡Éxitos con el brunch del finde!
 
 ---
 
@@ -334,7 +335,7 @@ Toda prospección saliente y toda respuesta entrante convergen hacia **una únic
    * **Mensaje 1 DM (`<= 35 palabras`):**
      > ¡Hola equipo de Atis! Con **SaleListo** la terraza jardín pide por QR separando Cocina, Barra y Parrilla sin subir escaleras en vano ni mozos con celular. ¿Con qué encargado hablo 2 min?
    * **Mensaje 2 (al responder):**
-     > ¡Genial! En Perú 1024 además podemos filtrar una Estación de Pase arriba y usar pulseras Xiaomi Band con el celular bloqueado en el bolsillo para ahorrar escaleras. En **48 horas** les activamos un **piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza. ¿Paso 10 min un martes o miércoles? Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
+     > ¡Genial! En Perú 1024 además podemos filtrar una Estación de Pase arriba y usar pulseras Xiaomi Band con el celular bloqueado en el bolsillo para ahorrar escaleras. En **48 horas** les activamos un **piloto sin cargo de 14 días (2 fines de semana)** solo en la terraza. ¿Paso 10 min un martes o miércoles? Simón (`(+54)1138436571` / `simon@salelisto.com`).
 
 2. **Para Piso Cero Terrace (`@pisocero_terrace`, Vicente López):**
    * **Mensaje 1 DM (`<= 35 palabras`):**
@@ -346,19 +347,19 @@ Toda prospección saliente y toda respuesta entrante convergen hacia **una únic
    * **Mensaje 1 DM (`<= 35 palabras`):**
      > ¡Hola equipo de Harakiri! Para sus boxes tatami armamos **SaleListo**: QR en mesa que divide Sushi, Barra y Cocina Ramen, sin mozos con celular en mano. ¿A qué encargado muestro una demo?
    * **Mensaje 2 (al responder):**
-     > ¡Gracias! En Honduras 4756 los boxes ganan atención instantánea sin perder intimidad: pantalla fija en el pase (celulares en locker) o pulsera silenciosa, puesta en marcha llave en mano en **48 horas** para probarlo **14 días (2 fines de semana)** exclusivo en los tatamis. Quedo atento en `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
+     > ¡Gracias! En Honduras 4756 los boxes ganan atención instantánea sin perder intimidad: pantalla fija en el pase (celulares en locker) o pulsera silenciosa, puesta en marcha llave en mano en **48 horas** para probarlo **14 días (2 fines de semana)** exclusivo en los tatamis. Quedo atento en `(+54)1138436571` o `simon@salelisto.com` (Simón).
 
 4. **Para Abreboca (`@abreboca.ba`, Chacarita):**
    * **Mensaje 1 DM (`<= 35 palabras`):**
      > ¡Hola gente de Abreboca! Con la cocina al fondo del patio en Fraga 541, **SaleListo** ahorra caminatas sumando raciones y vermuts por QR, cero celulares en mano. ¿Con quién coordino 10 min?
    * **Mensaje 2 (al responder):**
-     > ¡Qué bueno! Con la Estación fija en el pase y pulseras livianas (con el celular bloqueado en el bolsillo) cuidan al 100% la estética de la casona. Les armamos en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana)** en el patio andaluz. ¿Paso un miércoles o jueves antes de las 20 hs? Simón (`(+54)1138436571` / `simonguerenu@gmail.com`).
+     > ¡Qué bueno! Con la Estación fija en el pase y pulseras livianas (con el celular bloqueado en el bolsillo) cuidan al 100% la estética de la casona. Les armamos en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana)** en el patio andaluz. ¿Paso un miércoles o jueves antes de las 20 hs? Simón (`(+54)1138436571` / `simon@salelisto.com`).
 
 5. **Para Vecino "Cocina de Barrio" (`@vecino.cocinadebarrio`, Olivos):**
    * **Mensaje 1 DM (`<= 35 palabras`):**
      > ¡Hola equipo de Vecino! En los salones y el patio de Rioja 3053, **SaleListo** toma pedidos por QR hacia Café, Barra y Cocina sin mozos usando celular. ¿Con qué encargado hablo 2 min?
    * **Mensaje 2 (al responder):**
-     > ¡Gracias por contestar! Así eliminan puntos ciegos en hora pico y ven cada llamado al instante en el pase. En **48 horas** dejamos andando un **piloto sin costo de 14 días (2 fines de semana)** solo en el patio rústico. Me escriben al `(+54)1138436571` o `simonguerenu@gmail.com` (Simón).
+     > ¡Gracias por contestar! Así eliminan puntos ciegos en hora pico y ven cada llamado al instante en el pase. En **48 horas** dejamos andando un **piloto sin costo de 14 días (2 fines de semana)** solo en el patio rústico. Me escriben al `(+54)1138436571` o `simon@salelisto.com` (Simón).
 
 ---
 
@@ -378,7 +379,7 @@ Cuando un dueño o encargado gastronómico toca el botón de WhatsApp desde uno 
 
 #### Paso 2: Calificación rápida (Matriz en 60 segundos) + Envío de ROI Personalizado y Dossier PDF
 
-Apenas el prospecto responde esas dos líneas, identificamos su configuración ideal y le enviamos **un enlace personalizado de la Calculadora ROI** junto al PDF de 2 páginas ([`SaleListo_Dossier_Comercial.pdf`](./SaleListo_Dossier_Comercial.pdf)):
+Apenas el prospecto responde esas dos líneas, identificamos su configuración ideal y le enviamos **un enlace personalizado de la Calculadora ROI en vivo** (`https://salelisto.com/?mesas=...&ticket=...&turnos=...#roi`), la **demo interactiva** (`https://salelisto.com/demo.html`) y el PDF de 2 páginas ([`SaleListo_Dossier_Comercial.pdf`](./SaleListo_Dossier_Comercial.pdf)):
 
 | Señal que menciona el lead | Configuración a recomendar en la respuesta | Sector ideal para el Piloto de 14 días |
 | :--- | :--- | :--- |
@@ -389,7 +390,7 @@ Apenas el prospecto responde esas dos líneas, identificamos su configuración i
 
 * **Mensaje 2 Inbound (envío de valor concreto + cierre directo a los 10 min presenciales):**
   > ¡Clarísimo! Con ese formato en [Nombre del Local], podés operar **100% sin celulares en el salón** (con una pantalla fija en el pase y los teléfonos en el locker, o con pulseras Xiaomi Band vibrando en la muñeca con el celular bloqueado en el bolsillo si cubren [terraza/patio]) y sin tocar [Maxirest/Fudo/tu caja actual].
-  > Te adjunto acá el **Dossier de 2 carillas** con los planes en pesos (0% comisión y sin permanencia) y el cálculo estimado para [N] mesas.
+  > Te adjunto acá el **Dossier de 2 carillas** con los planes en pesos (0% comisión y sin permanencia), el cálculo estimado en `https://salelisto.com` y la demo interactiva en `https://salelisto.com/demo.html`.
   > Lo más práctico es que **me acerque 10 minutos en horario tranquilo** con la pantalla de pase y una pulsera de muestra para que lo prueben desde su propio celular; si les cierra, **en 48 horas les activamos sin cargo un Piloto de 14 días (2 fines de semana)** solo en [la terraza / el patio / la vereda]. ¿Te queda mejor **este martes a las 17:00 o el miércoles a las 11:00 hs**?
 
 #### Paso 3: Post-Demo / Activación en 48 Horas (Envío en el acto al cerrar el piloto)
@@ -401,10 +402,10 @@ Apenas el dueño acepta probar el piloto de 14 días en la mesa:
 
 #### Paso 4: Seguimiento Inbound Anti-Frío (si dejó en visto tras pedir info)
 
-* **A las 24 horas (audio corto de 20 seg o texto de 2 líneas):**
-  > ¡Hola [Nombre]! Sé que en gastronomía el día vuela. Te dejo picando la propuesta del **piloto sin cargo de 14 días (2 fines de semana)** solo en un sector de [Nombre del Local] (nosotros cargamos toda la carta en 48 h): avisame qué tarde tranquila andás 10 minutos por el local y paso a mostrártelo en vivo.
+* **A las 24 horas (audio corto de 20 seg o texto de 2 líneas con demo en vivo):**
+  > ¡Hola [Nombre]! Sé que en gastronomía el día vuela. Te dejo acá la demo interactiva en vivo (`https://salelisto.com/demo.html`) y la propuesta del **piloto sin cargo de 14 días (2 fines de semana)** solo en un sector de [Nombre del Local] (nosotros cargamos toda la carta en 48 h): avisame qué tarde tranquila andás 10 minutos por el local y paso a mostrártelo en vivo.
 * **A las 72 horas (último toque elegante):**
-  > ¡Buenas [Nombre]! Esta semana estamos cerrando los 3 cupos de pilotos llave en mano en la zona de [Barrio]. Si quieren reservar uno para probarlo en [terraza/vereda] sin compromiso, chiflame por acá y lo agendamos; si prefieren verlo más adelante, queda mi contacto a mano. ¡Buen servicio!
+  > ¡Buenas [Nombre]! Esta semana estamos cerrando los 3 cupos de pilotos llave en mano en la zona de [Barrio]. Si quieren reservar uno para probarlo en [terraza/vereda] sin compromiso, chiflame por acá y lo agendamos; si prefieren mirarlo más adelante, te queda a mano `https://salelisto.com` y mi contacto directo. ¡Buen servicio!
 
 ---
 
@@ -423,21 +424,21 @@ Hola equipo de Desarmadero,
 
 Cuando la esquina de Gorriti y Lavalleja está a tope entre las veredas, los dos salones y la terraza, hay dos situaciones que se repiten en casi todas las cervecerías de alto volumen: el grupo de amigos que se queda charlando con el vaso vacío en la terraza porque justo no cruza mirada con el camarero, y el barril que se pincha a mitad de la noche obligando a avisar mesa por mesa qué estilo ya no sale.
 
-Construimos **SaleListo** específicamente para resolver esa fricción en bares de gran caudal sin tocar su facturador actual ni poner a los chicos a mirar celulares en medio del turno:
+Construimos **SaleListo** (`https://salelisto.com`) específicamente para resolver esa fricción en bares de gran caudal sin tocar su facturador actual ni poner a los chicos a mirar celulares en medio del turno:
 
 * **Pedidos directos por QR fijo y botón Repetir ronda:** Cada mesa tiene un QR con token fijo seguro. Si un grupo en la terraza quiere dos pintas más y unas tapas, las dispara en 10 segundos directo con la cámara (sin bajar apps), y al final divide la cuenta con la calculadora *Vaquita* informando con cuánto efectivo paga.
 * **Separación instantánea Barra vs. Cocina + aviso sin celulares en mano:** La cerveza entra directo a Barra y la comida a Cocina. Al camarero asignado se le enciende su columna en la **Estación de Mozos fija** de la barra (o le vibra una **pulsera Xiaomi Band** en la muñeca con el teléfono bloqueado en el bolsillo) recién cuando las pintas están servidas para llevarlas con la espuma intacta.
 * **Control 86 de canillas y precios en vivo:** Si se agota un estilo invitado, lo pausan en un clic desde Barra o el Panel y desaparece de la carta digital en el acto.
 
-En vez de cambiar toda la operación de entrada, les propongo algo muy simple: pasar un día de semana antes de las 18 hs a mostrarles una **demo en vivo de 10 minutos** y, si les cierra, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos) únicamente en la terraza** para medir cuántas rondas adicionales suma.
+Pueden recorrer una prueba real de las pantallas en `https://salelisto.com/demo.html`. En vez de cambiar toda la operación de entrada, les propongo algo muy simple: pasar un día de semana antes de las 18 hs a mostrarles una **demo en vivo de 10 minutos** y, si les cierra, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos) únicamente en la terraza** para medir cuántas rondas adicionales suma.
 
 ¿Les queda cómodo este martes o miércoles a las 17:15 hs en Gorriti 4295, o prefieren otro horario?
 
 Un saludo,
 
 **Simón Martínez de Guereñu**  
-SaleListo  
-Correo: `simonguerenu@gmail.com` (`ventas@salelisto.com`)  
+SaleListo · `salelisto.com`  
+Correo: `simon@salelisto.com` (`ventas@salelisto.com`)  
 Teléfono / WhatsApp: `(+54)1138436571`
 
 ---
@@ -451,21 +452,21 @@ Hola equipo de KOI,
 
 Pensando en la velocidad que exigen formatos como Palermo Off o sus salones propios, tanto en la ventana de almuerzo de días hábiles como en los picos nocturnos donde una misma mesa combina dumplings, baos, ramen y coctelería, suele aparecer un cuello de botella silencioso: las micro-comandas a mitad de la comida se frenan cuando el salón explota, y ningún encargado quiere ver camareros distraídos con teléfonos personales en la mano ni perder seguimiento cuando cambia un turno.
 
-Con **SaleListo** armamos una plataforma operativa pensada para ordenar ese flujo manteniendo intacta su caja fiscal actual:
+Con **SaleListo** (`https://salelisto.com`) armamos una plataforma operativa pensada para ordenar ese flujo manteniendo intacta su caja fiscal actual:
 
 1. **Estación de Mozos fija en el pase (incluida desde el Plan Base):** Una sola tablet horizontal en el mostrador organiza columnas en vivo por cada camarero en turno (legibles a 3 o 4 metros, dejando los celulares personales guardados en el locker), con asignación híbrida y **reasignación automática inmediata** si alguien corta turno.
 2. **Ruteo automático en hasta 3 estaciones:** El comensal escanea el QR de su mesa directo con la cámara y el pedido viaja separado entre Cocina (vapor/caldos), Barra (coctelería/tirados) y Mostrador si lo requieren, con botón rápido de agotados (*86*) directo en cocina.
 3. **Cobro en un solo viaje:** Al pedir la cuenta, la mesa elige división *Vaquita*, propina y medio de pago (más vuelto exacto si abona en efectivo), ganando entre 10 y 12 minutos por rotación.
 
-Me encantaría mostrarles la Estación de Mozos y la vista de cliente funcionando en tiempo real en una **demo de 10 minutos** (presencial en Beruti 3336 o por videollamada corta) y evaluar un **piloto sin cargo de 14 días (2 fines de semana)** en un sector de una sede, puesto en marcha llave en mano en **48 horas**.
+Si quieren chusmearlo desde el celular, la demo pública interactiva está en `https://salelisto.com/demo.html`. Me encantaría mostrarles la Estación de Mozos y la vista de cliente funcionando en una **demo de 10 minutos** (presencial en Beruti 3336 o por videollamada corta) y evaluar un **piloto sin cargo de 14 días (2 fines de semana)** en un sector de una sede, puesto en marcha llave en mano en **48 horas**.
 
 ¿Con quién del equipo de operaciones podría coordinar 10 minutos esta semana?
 
 Saludos cordiales,
 
 **Simón Martínez de Guereñu**  
-SaleListo  
-`simonguerenu@gmail.com` | `(+54)1138436571`
+SaleListo · `salelisto.com`  
+`simon@salelisto.com` | `(+54)1138436571`
 
 ---
 
@@ -480,21 +481,21 @@ Vi que en Avenida Independencia 732 ya trabajan con menú digital de lectura, y 
 
 Cuando todo el público ingresa casi al mismo tiempo, el cuello de botella rara vez está en la cocina; está en los minutos que pasan hasta tomar nota mesa por mesa, separar qué va a sushi y qué va a cocina caliente, y atender todos los pedidos de cuenta juntos cerca del cierre cuidando la sobriedad del salón.
 
-Desarrollamos **SaleListo** para que ese mismo código QR en cada mesa pase de ser un catálogo de lectura a un asistente silencioso para su equipo:
+Desarrollamos **SaleListo** (`https://salelisto.com`) para que ese mismo código QR en cada mesa pase de ser un catálogo de lectura a un asistente silencioso para su equipo:
 
 * El comensal escanea directo con su cámara (sin descargar apps ni registrarse) y envía su pedido con aclaraciones, o presiona llamar al mozo si prefiere atención tradicional (con carga rápida en mostrador en 5 segundos).
 * La comanda se separa sola entre las **3 estaciones reales (`Mostrador de Sushi`, `Cocina Caliente` y `Barra`)**, y si un plato del día se termina a las 14:15 hs se marca agotado en un toque.
 * **Cero celulares en el salón:** Una única pantalla de **Estación de Mozos** en el mostrador muestra una columna por camarero indicando retiros listos y cuentas solicitadas con propina, división y vuelto exacto.
 
-No requiere instalaciones complejas ni compromisos de permanencia: podemos hacer una **muestra en vivo de 10 minutos** entre las 15:30 y las 16:00 hs y, si les resulta útil, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos)** en 6 a 8 mesas del salón.
+No requiere instalaciones complejas ni compromisos de permanencia (pueden ver una simulación abierta en `https://salelisto.com/demo.html`): podemos hacer una **muestra en vivo de 10 minutos** entre las 15:30 y las 16:00 hs y, si les resulta útil, activar llave en mano en **48 horas** un **piloto sin riesgo de 14 días (2 fines de semana completos)** en 6 a 8 mesas del salón.
 
 Quedo a disposición por este correo o directo en el `(+54)1138436571` para combinar el día que mejor les quede.
 
 Muchas gracias por su tiempo,
 
 **Simón Martínez de Guereñu**  
-SaleListo  
-`simonguerenu@gmail.com`  
+SaleListo · `salelisto.com`  
+`simon@salelisto.com`  
 `(+54)1138436571`
 
 ---
@@ -510,21 +511,21 @@ Siguiendo lo que vienen construyendo en Colegiales, Espacio Pirámide en Belgran
 
 En esa mezcla suele quedar facturación sin capturar por un motivo cotidiano: quien está trabajando solo con su notebook y mochila en el patio de Belgrano casi nunca quiere dejar sus cosas solas para acercarse a la barra a pedir un segundo filtrado o algo dulce; y en las veredas grandes de Conde 1200, los fines de semana el equipo corre entre la máquina espresso, el mostrador y la cocina de brunch.
 
-Con **SaleListo** resolvemos las dos puntas cuidando la estética de cada local:
+Con **SaleListo** (`https://salelisto.com`) resolvemos las dos puntas cuidando la estética de cada local:
 
 * **Más ticket por hora en coworking y exterior:** Cada mesa tiene un QR fijo que abre en menos de un segundo con la cámara. El cliente suma otro café, pastelería recién horneada o una copa de vino a la tarde sin moverse de su silla.
 * **División automática en 3 estaciones (`Barra Barista`, `Mostrador Dulce` y `Cocina`) sin celulares a la vista:** En el mostrador, la **Estación de Mozos fija** ordena por columnas cada retiro (con teléfonos guardados en locker), y el camarero de patio/vereda puede llevar una **pulsera vibradora liviana** con su celular bloqueado en el bolsillo para enterarse al instante cuando sale cada bandeja.
 * **Baja inmediata de pastelería agotada:** Apenas sale la última unidad de un laminado, se pausa en 1 toque para todas las mesas.
 
-¿Qué les parece si coordinamos una **demo de 10 minutos** en cualquiera de los locales (martes o miércoles a la tarde) y evaluamos un **piloto sin costo de 14 días (2 fines de semana completos)** en el patio de Belgrano o en las veredas de Colegiales, puesto en marcha llave en mano en **48 horas**?
+Les dejo abierta la demo interactiva en `https://salelisto.com/demo.html`. ¿Qué les parece si coordinamos una **demo de 10 minutos** en cualquiera de los locales (martes o miércoles a la tarde) y evaluamos un **piloto sin costo de 14 días (2 fines de semana completos)** en el patio de Belgrano o en las veredas de Colegiales, puesto en marcha llave en mano en **48 horas**?
 
 Pueden responderme por acá o escribirme directo al `(+54)1138436571`.
 
 ¡Un gran saludo para todo el equipo!
 
 **Simón Martínez de Guereñu**  
-SaleListo  
-`simonguerenu@gmail.com` | `(+54)1138436571`
+SaleListo · `salelisto.com`  
+`simon@salelisto.com` | `(+54)1138436571`
 
 ---
 
@@ -539,7 +540,7 @@ Sábado 12:30 del mediodía, sol pleno y todas las mesas exteriores ocupadas: es
 
 ¿Les interesaría medir durante **14 días (2 fines de semana completos)** cuánto mejora la rotación y el ticket promedio del sector exterior con un **piloto sin riesgo de SaleListo activado llave en mano en 48 horas**, sin que ningún camarero ande con el celular en la mano?
 
-Cómo funciona en la práctica dentro del local:
+Cómo funciona en la práctica dentro del local (pueden probar el circuito en vivo en `https://salelisto.com/demo.html`):
 * Cargamos nosotros toda la carta y armamos el bloque exterior sin frenar el servicio ni instalar cableado, operando al instante desde la cámara del celular en cada mesa.
 * Cuando una mesa pide, las infusiones van a **Barra**, la pastelería a **Mostrador** y los platos calientes a **Cocina** en simultáneo.
 * El equipo se coordina desde una única **Estación de Mozos fija** por columnas en el mostrador (dejando teléfonos en locker) o mediante **pulseras vibradoras Xiaomi Band** en la muñeca con el celular bloqueado en el bolsillo para quienes cubren jardín o terraza.
@@ -549,26 +550,26 @@ Solo necesito **10 minutos** en el local fuera del horario fuerte para que prueb
 Atentamente,
 
 **Simón Martínez de Guereñu**  
-SaleListo  
-Correo: `simonguerenu@gmail.com` (`ventas@salelisto.com`)  
+SaleListo · `salelisto.com`  
+Correo: `simon@salelisto.com` (`ventas@salelisto.com`)  
 Contacto directo: `(+54)1138436571`
 
 ---
 
-#### Secuencia de correos de seguimiento (Follow-up 1 y Follow-up 2 con estructuras variadas)
+#### Secuencia de correos de seguimiento (Follow-up 1 y Follow-up 2 con estructuras variadas y demo en vivo)
 
-**Follow-up 1 (Enviar a los 4 días hábiles, estructura ultra-corta de 4 líneas):**
+**Follow-up 1 (Enviar a los 4 días hábiles, estructura ultra-corta con link directo a la demo interactiva):**
 
-* **Asunto:** Piloto de 14 días (2 fines de semana) en un sector de [Nombre del Local]
+* **Asunto:** Demo en 30 segundos + piloto de 14 días en un sector de [Nombre del Local]
 * **Cuerpo:**
   > Hola equipo de [Nombre del Local], ¿cómo están?
   >
-  > Retomo cortito mi mensaje anterior con una propuesta bien concreta: en vez de evaluar un cambio para todo el salón, **en 48 horas les dejamos activado sin cargo el bloque de solo 6 a 10 mesas (en terraza, patio o vereda) durante 14 días (2 fines de semana completos)** para que midan en servicio real cómo **SaleListo** divide Cocina, Barra y Mostrador en tiempo real y coordina a los mozos **sin celulares en el salón**.
+  > Para no sacarles tiempo con explicaciones largas, les dejo acá el enlace a nuestra **demo interactiva en vivo**: `https://salelisto.com/demo.html` (y la calculadora de retorno en `https://salelisto.com`).
   >
-  > Si tienen 10 minutos este martes o jueves en horario valle, me acerco con la tablet y una pulsera de prueba y lo vemos en vivo.
+  > Si les gusta cómo divide Cocina, Barra y Mostrador en tiempo real coordinando a los mozos **sin celulares en el salón**, **en 48 horas les dejamos activado sin cargo un bloque de 6 a 10 mesas (en terraza, patio o vereda) durante 14 días (2 fines de semana completos)**. ¿Coordinamos 10 minutos este martes o jueves en horario valle?
   >
   > Saludos,  
-  > **Simón Martínez de Guereñu** | `simonguerenu@gmail.com` | `(+54)1138436571`
+  > **Simón Martínez de Guereñu** | SaleListo (`salelisto.com`) | `simon@salelisto.com` | `(+54)1138436571`
 
 **Follow-up 2 (Enviar a los 9 o 10 días hábiles, estructura de cierre respetuoso con pregunta de derivación):**
 
@@ -576,12 +577,13 @@ Contacto directo: `(+54)1138436571`
 * **Cuerpo:**
   > Hola nuevamente,
   >
-  > Escribo por última vez para no llenarles la bandeja de entrada. Si hoy no están buscando optimizar tiempos de comanda entre barra, mostrador, cocina y sectores exteriores, los dejo tranquilos; y si el tema lo maneja otra persona del equipo (socio operativo o encargado general), les agradezco mucho si me indican a quién dirigirle una demo corta de 10 minutos.
+  > Escribo por última vez para no llenarles la bandeja de entrada. Si hoy no están buscando optimizar tiempos de comanda entre barra, mostrador, cocina y sectores exteriores, los dejo tranquilos; y si el tema lo maneja otra persona del equipo (socio operativo o encargado general), les agradezco mucho si me indican a quién compartirle una muestra corta de 10 minutos.
   >
-  > Dejo mis datos directos por si más adelante quieren activar el piloto de 14 días: `simonguerenu@gmail.com` y `(+54)1138436571`.
+  > Queda abierta la demo pública en `https://salelisto.com/demo.html` y mis datos directos por si más adelante quieren activar el piloto de 14 días: `simon@salelisto.com` y `(+54)1138436571`.
   >
   > ¡Muy buena semana y éxitos con el servicio!  
-  > **Simón Martínez de Guereñu**
+  > **Simón Martínez de Guereñu**  
+  > SaleListo · `salelisto.com`
 
 ---
 

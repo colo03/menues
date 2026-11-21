@@ -5,7 +5,18 @@ Documento maestro de los **5 Reels verticales renderizados** (Instagram Reels, T
 - Archivos finales: [`reels/`](reels/) · código reproducible en [`reels/src/`](reels/src/) (ver [`reels/src/README.md`](reels/src/README.md)).
 - Línea gráfica: Propuesta 01 `Pase Limpio`, `Plus Jakarta Sans`, lienzo blanco redondeado de 720x720 sobre B-roll cálido con deriva lineal del 3 %, curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote, crossfades de 0.48 s y **máximo 5 palabras en pantalla por escena**.
 - Locución: ElevenLabs `eleven_v4`, voz argentina **Gabi** (`8jv0VaaN6d7mWZAeGj79`), una toma continua por Reel con alineación por palabra (`convert_with_timestamps`), `atempo 1.05` / `1.07`. Verificada con Scribe: transcripción idéntica al guion.
-- Contacto en todos los cierres: **(+54)1138436571** · **ventas@salelisto.com**.
+- Contacto en todos los cierres: **(+54)1138436571** · **ventas@salelisto.com** · Sitio oficial y demo en vivo: **[`https://salelisto.com`](https://salelisto.com)** · **[`https://salelisto.com/demo.html`](https://salelisto.com/demo.html)**.
+
+### Bio sugerida de Instagram / TikTok / LinkedIn para acompañar los Reels
+
+- **Instagram y TikTok:**
+  > Pedidos por QR en mesa · Cocina, Barra y Mostrador en 0 seg
+  > Mozos 100% sin celular en la mano (Pase fijo o Pulsera)
+  > 0% comisión · Piloto 14d en 1 sector (listo en 48 h)
+  > 👇 Probá la demo en vivo o escribinos al (+54)1138436571
+  > Enlace del perfil: `https://salelisto.com/demo.html` (sitio completo: `https://salelisto.com`)
+- **LinkedIn (Página de marca):**
+  > **SaleListo** (`https://salelisto.com`) · Plataforma operativa B2B para restaurantes, bares y cafeterías. Carta QR sin apps, ruteo instantáneo en 3 estaciones (Cocina, Barra y Mostrador), cobro en 1 viaje y coordinación de salón sin celulares a la vista con 0% comisión. Demo interactiva en vivo: `https://salelisto.com/demo.html` · Contacto: `ventas@salelisto.com` · `consultas@salelisto.com` · WhatsApp `(+54)1138436571`.
 
 | Reel | Duración | Peso | Audio |
 |---|---|---|---|
@@ -38,10 +49,10 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 **Copy sugerido (Instagram / TikTok):**
 > Tu salón no es una oficina. Con SaleListo los mozos no sacan el celular frente al cliente: cada uno tiene su columna en la Estación del Pase y, si trabajan en patio o terraza, la pulsera les vibra cuando sale el plato. Tecnología invisible, 0% comisión por pedido.
-> Escribinos al (+54)1138436571 o a ventas@salelisto.com y lo probás en un sector.
+> Probá la demo en vivo en salelisto.com/demo.html o escribinos al (+54)1138436571 / ventas@salelisto.com para activarlo en un sector.
 > #gastronomia #restaurantes #mozos #salon #cartadigital #SaleListo
 
-**Estado de WhatsApp B2B:** "Mozos sin celular en el salón y platos que salen a tiempo. ¿Te muestro cómo? (+54)1138436571"
+**Estado de WhatsApp B2B:** "Mozos sin celular en el salón y platos que salen a tiempo. Probalo en vivo en salelisto.com/demo.html o escribime al (+54)1138436571"
 
 ---
 
@@ -64,10 +75,10 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 **Copy sugerido (Instagram / TikTok):**
 > Viernes, terraza llena y nadie encuentra al mozo. Cada ronda que no se pide es plata que no entra. Con SaleListo escanean el QR directo con la cámara, piden otra ronda y el pedido va directo a la barra. Luz verde, a la mesa, y tu equipo deja de correr.
-> Escribinos al (+54)1138436571 o a ventas@salelisto.com.
+> Mirá la demo interactiva en salelisto.com/demo.html o escribinos al (+54)1138436571 / ventas@salelisto.com.
 > #cerveceria #terraza #patiocervecero #barra #gastronomia #SaleListo
 
-**Estado de WhatsApp B2B:** "Más segundas rondas en el patio sin sumar mozos. Escribime y te cuento: (+54)1138436571"
+**Estado de WhatsApp B2B:** "Más segundas rondas en el patio sin sumar mozos. Miralo en salelisto.com/demo.html o escribime: (+54)1138436571"
 
 ---
 
@@ -90,10 +101,10 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 **Copy sugerido (Instagram / TikTok / LinkedIn):**
 > En tu salón, cada peso que entra es tuyo. SaleListo no cobra comisión por pedido. Y cuando suben los costos, actualizás toda la carta con un toque y el mismo QR de siempre muestra los precios nuevos: nada de reimprimir.
-> Escribinos al (+54)1138436571 o a ventas@salelisto.com y lo configuramos con tu carta.
+> Calculá el retorno de tu local en salelisto.com o escribinos al (+54)1138436571 / ventas@salelisto.com.
 > #duenosgastronomicos #restaurantes #inflacion #cartadigital #rentabilidad #SaleListo
 
-**Estado de WhatsApp B2B:** "0% comisión y precios actualizados en un toque, sin reimprimir QR. Hablemos: (+54)1138436571"
+**Estado de WhatsApp B2B:** "0% comisión y precios actualizados en un toque, sin reimprimir QR. Planes en salelisto.com · Hablemos: (+54)1138436571"
 
 ---
 
@@ -115,10 +126,10 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 **Copy sugerido (Instagram / TikTok / LinkedIn):**
 > Cobrar una mesa de forma tradicional le lleva 4 viajes al mozo: pedir la cuenta, imprimir el ticket, buscar con qué paga y volver con el posnet. En viernes o sábado a la noche, eso te traba 15 o 20 minutos cada recambio. Con SaleListo el cliente pide la cuenta en el QR eligiendo medio de pago y propina, y tu mozo resuelve todo en 1 solo viaje. 0% comisión por pedido.
-> Escribinos al (+54)1138436571 o a ventas@salelisto.com.
+> Probá cómo funciona en salelisto.com/demo.html o escribinos al (+54)1138436571 / ventas@salelisto.com.
 > #rotaciondemesas #gastronomia #restaurantes #mozos #horapico #SaleListo
 
-**Estado de WhatsApp B2B:** "Pasá de 4 viajes para cobrar una mesa a 1 solo viaje con el monto exacto. ¿Lo vemos? (+54)1138436571"
+**Estado de WhatsApp B2B:** "Pasá de 4 viajes para cobrar una mesa a 1 solo viaje con el monto exacto. Demo en salelisto.com/demo.html · (+54)1138436571"
 
 ---
 
@@ -141,10 +152,10 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 
 **Copy sugerido (Instagram / TikTok / LinkedIn):**
 > No tenés que frenar ni cambiar la operación de todo tu local para probar SaleListo. Activamos un piloto de 14 días (2 fines de semana reales) únicamente en tu vereda, patio o terraza: en 48 horas dejamos tu carta cargada y los QR listos para medir cuántas rondas extra vendés y cuánto aire gana tu equipo. 0% comisión.
-> Pedí tu piloto por WhatsApp al (+54)1138436571 o escribinos a ventas@salelisto.com.
+> Recorré salelisto.com, probá la demo en salelisto.com/demo.html o pedí tu piloto al (+54)1138436571 / ventas@salelisto.com.
 > #duenosgastronomicos #restaurantes #terraza #vereda #pilotogastronomico #SaleListo
 
-**Estado de WhatsApp B2B:** "Probá SaleListo 14 días solo en tu vereda o terraza, listo en 48 h y 0% comisión. Pedí tu piloto: (+54)1138436571"
+**Estado de WhatsApp B2B:** "Probá SaleListo 14 días solo en tu vereda o terraza, listo en 48 h y 0% comisión: salelisto.com · (+54)1138436571"
 
 ---
 
@@ -161,7 +172,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
   2. (7 a 11 s) Detalle de la mano tocando `✔ Ya lo llevé` en la pantalla. Texto: **"Un toque"**.
   3. (11 a 16 s) Seguimiento en mano (paso firme, rodillas flexionadas) del mozo llevando el plato hasta la mesa; el cliente sonríe sin interrupciones.
   4. (16 a 20 s) Plano general del salón prolijo, sin pantallas en las manos. Texto: **"Tecnología invisible"**.
-- **Llamado a la acción (20 a 23 s):** placa crema con logo, `0% comisión` y "Escribinos: (+54)1138436571".
+- **Llamado a la acción (20 a 23 s):** placa crema con logo, `0% comisión`, `salelisto.com` y "Escribinos: (+54)1138436571".
 
 ### Guion 2 · "Viernes en el patio cervecero" (segundas rondas)
 
@@ -172,7 +183,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
   2. (7 a 10 s) Detalle del dedo tocando `Pedir` con 2 pintas en el carrito.
   3. (10 a 14 s) Corte a la barra: la tablet muestra la comanda nueva y el bartender empieza a tirar las pintas. Texto: **"Directo a Barra"**.
   4. (14 a 18 s) Las pintas llegan a la mesa; brindis en cámara lenta (grabar a 60 fps y bajar a 50 %). Texto: **"Más consumo"**.
-- **Llamado a la acción (18 a 22 s):** voz *"Probalo un viernes en un sector."* + placa con (+54)1138436571 y ventas@salelisto.com.
+- **Llamado a la acción (18 a 22 s):** voz *"Probalo un viernes en un sector."* + placa con `salelisto.com`, (+54)1138436571 y ventas@salelisto.com.
 
 ### Guion 3 · "Hacé la cuenta" (0 % comisión)
 
@@ -182,7 +193,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
   1. (3 a 8 s) Plano medio fijo (celular sobre un trípode chico en el mostrador): el dueño explica en una frase que con SaleListo paga un plan fijo y **0 % de comisión por pedido**. Texto: **"0% comisión"**.
   2. (8 a 12 s) Detalle de sus manos anotando en una libreta su facturación del mes, sin cifras legibles. Texto: **"Todo queda acá"**.
   3. (12 a 16 s) Plano general del salón lleno, travelling lento en mano desde la caja hacia las mesas.
-- **Llamado a la acción (16 a 20 s):** el dueño a cámara: *"Si tenés un local, escribiles."* + placa con (+54)1138436571.
+- **Llamado a la acción (16 a 20 s):** el dueño a cámara: *"Si tenés un local, escribiles."* + placa con `salelisto.com` y (+54)1138436571.
 - **Nota:** no inventar porcentajes de la competencia ni cifras de ahorro; que el dueño hable de su experiencia propia.
 
 ### Guion 4 · "Subieron los costos: 10 segundos" (precios al día)
@@ -193,7 +204,7 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
   1. (3 a 7 s) Pantalla del panel del restaurante grabada de frente (brillo al máximo, sin reflejos): el dueño toca `+ %` y la lista de precios se actualiza. Texto: **"Toda la carta"**.
   2. (7 a 11 s) Corte a una mesa: un cliente escanea **el mismo QR de siempre** y ve los precios nuevos. Texto: **"Mismo QR"**.
   3. (11 a 15 s) Detalle del QR pegado en la mesa con el logo SaleListo, foco suave hacia el salón.
-- **Llamado a la acción (15 a 19 s):** voz *"Precios al día en un toque, cero comisión."* + placa con (+54)1138436571 y ventas@salelisto.com.
+- **Llamado a la acción (15 a 19 s):** voz *"Precios al día en un toque, cero comisión."* + placa con `salelisto.com`, (+54)1138436571 y ventas@salelisto.com.
 
 ### Guion 5 · "La pulsera que avisa" (Kit Pulsera Vibradora)
 
@@ -203,13 +214,14 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
   1. (3 a 7 s) En la cocina: el cocinero marca el plato como listo en la pantalla de Cocina. Texto: **"Cocina marca listo"**.
   2. (7 a 11 s) Corte a la terraza: el mozo atiende otra mesa con el celular guardado y bloqueado en el bolsillo, siente la vibración, mira la muñeca y gira hacia la cocina.
   3. (11 a 16 s) Seguimiento en mano del mozo retirando el plato y llevándolo a la mesa. Texto: **"Sin mirar el celular"**.
-- **Llamado a la acción (16 a 20 s):** plano general de la terraza llena + placa con logo, `0% comisión` y (+54)1138436571.
+- **Llamado a la acción (16 a 20 s):** plano general de la terraza llena + placa con logo, `0% comisión`, `salelisto.com` y (+54)1138436571.
 
 ---
 
 ## Checklist de publicación
 
+- Verificar que la Bio del perfil tenga configurado el enlace activo a **`https://salelisto.com/demo.html`** o **`https://salelisto.com`**.
 - Subir los MP4 tal cual (sin recomprimir en editores externos) y elegir como portada el cuadro 0, que ya muestra titular grande y diagrama.
 - Instagram, TikTok, LinkedIn y YouTube Shorts: **NO activar subtítulos automáticos superpuestos** ni agregar titulares o stickers de texto encima del video. Los 5 MP4 ya incluyen su gancho visual en el cuadro 0 y tipografía cinética (`<= 5 palabras` por escena) diseñada para entenderse incluso en silencio; activar subtítulos automáticos taparía el lienzo central de `720x720`.
-- YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día", "Cobrar una mesa en 1 solo viaje", "Piloto de 14 días en tu terraza").
+- YouTube Shorts: título corto con la palabra clave del Reel ("Mozos sin celular en el salón", "Más segundas rondas en la terraza", "0% comisión y precios al día", "Cobrar una mesa en 1 solo viaje", "Piloto de 14 días en tu terraza") y descripción con `https://salelisto.com/demo.html`.
 - WhatsApp Business: compartir como estado y en listas de difusión B2B con el texto sugerido de cada Reel.

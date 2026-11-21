@@ -142,13 +142,16 @@ El lenguaje de movimiento de **SaleListo** refleja calma profesional, precisión
 
 ---
 
-## 7. Integridad Editorial y Datos Oficiales de Contacto
+## 7. Integridad Editorial, Dominio Canónico y Datos Oficiales de Contacto
 
 En todas las pantallas, documentos, piezas gráficas, tarjetas y cierres de video rigen sin excepción las siguientes normas editoriales:
-1. **Teléfono y WhatsApp único e inalterable**: `(+54)1138436571` (escrito exactamente carácter por carácter: sin espacios, sin guiones y sin el dígito `9`; en enlaces `wa.me` se emplea únicamente `541138436571`).
-2. **Correos electrónicos oficiales según contexto**:
-   - **Piezas públicas comerciales de la marca SaleListo** (Landing Page B2B, Spot Oficial, Reels, Carruseles, Posts y Banners): se utiliza junto al WhatsApp `(+54)1138436571` el correo comercial **`ventas@salelisto.com`**.
-   - **Firma personal de autor y prospección directa**: se mantiene **`simonguerenu@gmail.com`**.
-3. **Cero enlaces inventados**: no incluir dominios web ficticios, perfiles sociales no verificados ni URLs externas inventadas.
-4. **Puntuación limpia**: no utilizar el carácter de raya larga (`U+2014`); emplear dos puntos, punto y coma, coma o paréntesis según corresponda.
-5. **Regla permanente de marketing, QRs y ventas**: jamás se marketinea ni se incluye como argumento o aclaración *"Pedí sin Wi-Fi / 4G"* (ni variantes sobre pedir clave de red o conectividad móvil) en ninguna categoría de marketing, tarjetas QR impresas, presentaciones, guiones ni mensajes de prospección. Que funcione con la conexión del teléfono es un supuesto implícito, nunca un diferencial comercial. El foco comunicacional es siempre: **escaneo directo con la cámara sin apps ni registros, comanda separada sola a Cocina, Barra y Mostrador, salón sin celulares con Estación de Pase o Pulsera, cierre en 1 toque y 0% comisión**. Asimismo, en el flujo operativo de mozos cada aviso presenta **un único botón directo de confirmar** (`✔ Atendido` o `✔ Cobrar y cerrar`), sin pasos intermedios.
+1. **Dominio oficial canónico en vivo**: **`https://salelisto.com`** (escrito en piezas visuales como **`salelisto.com`**), con demo pública interactiva en **`https://salelisto.com/demo.html`**.
+2. **Teléfono y WhatsApp único e inalterable**: `(+54)1138436571` (escrito exactamente carácter por carácter: sin espacios, sin guiones y sin el dígito `9`; en enlaces `wa.me` se emplea únicamente `541138436571`).
+3. **Casillas electrónicas oficiales activas en `@salelisto.com`**:
+   - **`ventas@salelisto.com`**: correo comercial principal en piezas públicas de marca (Landing Page B2B, Spot Oficial, Reels, Carruseles, Posts, Historias, Banners y Dossier Comercial).
+   - **`simon@salelisto.com`**: casilla ejecutiva de Simón Martínez de Guereñu para dirección comercial, acuerdos y prospección B2B directa.
+   - **`valentin@salelisto.com`**: casilla ejecutiva oficial del equipo directivo de SaleListo.
+   - **`consultas@salelisto.com`**: casilla oficial de atención general, soporte y consultas entrantes.
+4. **Cero enlaces inventados**: fuera del dominio canónico `https://salelisto.com` y sus vistas operativas reales, no incluir dominios web ficticios, perfiles sociales no verificados ni URLs externas inventadas.
+5. **Puntuación limpia**: no utilizar el carácter de raya larga (`U+2014`); emplear dos puntos, punto y coma, coma o paréntesis según corresponda.
+6. **Regla permanente de marketing, QRs y ventas**: jamás se marketinea ni se incluye como argumento o aclaración el prescindir de la red inalámbrica del local ni el uso de datos móviles del teléfono (ni variantes sobre pedir claves de red) en ninguna categoría de marketing, tarjetas QR impresas, presentaciones, guiones ni mensajes de prospección. Que funcione con la conexión del teléfono es un supuesto implícito, nunca un diferencial comercial. El foco comunicacional es siempre: **escaneo directo con la cámara sin apps ni registros, comanda separada sola a Cocina, Barra y Mostrador, salón sin celulares con Estación de Pase o Pulsera, cierre en 1 toque y 0% comisión**. Asimismo, en el flujo operativo de mozos cada aviso presenta **un único botón directo de confirmar** (`✔ Atendido` o `✔ Cobrar y cerrar`), sin pasos intermedios.
