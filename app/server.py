@@ -1,20 +1,26 @@
-"""Servidor web de SaleListo: API transaccional, QR locales y tiempo real por rol.
+"""Servidor web de SaleListo: API transaccional, QR cortos 4G/5G y tiempo real por rol.
 
-Funciona tanto en computadora local (`python server.py`) como publicado en un
-servidor cloud con HTTPS (usando la variable de entorno `PORT`) para que los
-clientes escaneen con sus propios datos 4G/5G sin pedir Wi-Fi.
+Funciona tanto en computadora local (`python app/server.py` o `--tunnel` con
+Cloudflare Tunnel HTTPS integrado) como publicado en cloud HTTPS (`Render`,
+`Fly.io`, `Railway`, VPS o dominio propio) para que los clientes escaneen el QR
+con sus propios datos moviles 4G/5G sin conectarse al Wi-Fi del restaurante.
 """
 from __future__ import annotations
 
+import atexit
 import csv
+import gzip
 import hashlib
 import hmac
 import io
+import ipaddress
 import json
 import mimetypes
 import os
 import queue
+import re
 import secrets
+import signal
 import socket
 import sys
 import threading
@@ -22,6 +28,7 @@ import time
 from datetime import datetime, timedelta
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
 from db import (
@@ -34,6 +41,7 @@ from db import (
     start_of_today_ms,
 )
 from qrgen import qr_svg
+from tunnel import TunnelError, TunnelManager
 from webpush import (
     b64url_decode,
     decode_p256_public,
@@ -57,7 +65,40 @@ MEDIA_DIR = PUBLIC / 'media'
 DATA_DIR = Path(os.environ.get('DATA_DIR') or (ROOT / 'data')).resolve()
 DB_PATH = DATA_DIR / 'salelisto.db'
 UPLOADS_DIR = DATA_DIR / 'uploads'
-PORT = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.environ.get('PORT') or 8123)
+
+
+def _parse_initial_port(argv: list[str]) -> int:
+    for idx, arg in enumerate(argv[1:], start=1):
+        if arg == '--port' and idx + 1 < len(argv) and argv[idx + 1].isdigit():
+            return int(argv[idx + 1])
+        if arg.startswith('--port=') and arg.split('=', 1)[1].isdigit():
+            return int(arg.split('=', 1)[1])
+    if len(argv) > 1 and argv[1].isdigit():
+        return int(argv[1])
+    try:
+        return int(os.environ.get('PORT') or 8123)
+    except ValueError:
+        return 8123
+
+
+PORT = _parse_initial_port(sys.argv)
+
+SAFE_HOST_RE = re.compile(r'^[A-Za-z0-9.\[\]:-]{1,253}$')
+SHORT_QR_PATH_RE = re.compile(r'^/q/([A-Za-z0-9_-]{1,64})/?$')
+GZIP_MIN_BYTES = 512
+SSE_KEEPALIVE_S = 15
+
+COMPRESSIBLE_MIME_TYPES = {
+    'application/json',
+    'application/javascript',
+    'text/javascript',
+    'text/html',
+    'text/css',
+    'image/svg+xml',
+    'application/manifest+json',
+    'text/csv',
+    'text/plain',
+}
 
 
 def ensure_server_secret(data_dir: Path) -> bytes:
@@ -95,17 +136,168 @@ VAPID_KEYS = ensure_vapid_keys(DATA_DIR)
 
 STAFF_ROLES = ('admin', 'demo_admin', 'waiter', 'kitchen')
 
-# Anti-spam liviano para el formulario público de la Landing (por IP)
+# Anti-spam liviano para el formulario público de la Landing (por IP real)
 LEAD_WINDOW_S = 600
 LEAD_MAX_PER_WINDOW = 6
 leads_rate: dict[str, list[float]] = {}
 leads_rate_lock = threading.Lock()
 
-# Anti fuerza bruta para endpoints /api/auth/* (por client_address[0])
+# Anti fuerza bruta para endpoints /api/auth/* (por IP real)
 AUTH_WINDOW_S = 300
 AUTH_MAX_FAILURES = 10
 auth_failures: dict[str, list[float]] = {}
 auth_rate_lock = threading.Lock()
+
+
+def is_cloud_env() -> bool:
+    return any(
+        bool((os.environ.get(var) or '').strip())
+        for var in ('RENDER', 'FLY_APP_NAME', 'RAILWAY_ENVIRONMENT')
+    )
+
+
+def _explicit_trust_proxy() -> bool | None:
+    raw = (os.environ.get('TRUST_PROXY') or '').strip().lower()
+    if raw in ('1', 'true', 'yes', 'on'):
+        return True
+    if raw in ('0', 'false', 'no', 'off'):
+        return False
+    return None
+
+
+def trust_proxy_enabled() -> bool:
+    explicit = _explicit_trust_proxy()
+    if explicit is not None:
+        return explicit
+    return is_cloud_env()
+
+
+def sanitize_ip(raw: str) -> str:
+    txt = str(raw or '').strip()
+    if not txt:
+        return ''
+    if txt.startswith('[') and ']' in txt:
+        txt = txt[1 : txt.index(']')]
+    elif txt.count(':') == 1 and '.' in txt:
+        # IPv4 con puerto (ej. 181.45.10.2:52310)
+        txt = txt.split(':', 1)[0]
+    try:
+        ip = ipaddress.ip_address(txt)
+    except ValueError:
+        return ''
+    if isinstance(ip, ipaddress.IPv6Address) and ip.ipv4_mapped:
+        return str(ip.ipv4_mapped)
+    return str(ip)
+
+
+def is_loopback_ip(ip_str: str) -> bool:
+    clean = sanitize_ip(ip_str)
+    if not clean:
+        return False
+    try:
+        return ipaddress.ip_address(clean).is_loopback
+    except ValueError:
+        return False
+
+
+INTERNAL_PROXY_NETWORKS = (
+    ipaddress.ip_network('127.0.0.0/8'),
+    ipaddress.ip_network('10.0.0.0/8'),
+    ipaddress.ip_network('172.16.0.0/12'),
+    ipaddress.ip_network('192.168.0.0/16'),
+    ipaddress.ip_network('169.254.0.0/16'),
+    ipaddress.ip_network('0.0.0.0/8'),
+    ipaddress.ip_network('::1/128'),
+    ipaddress.ip_network('fc00::/7'),
+    ipaddress.ip_network('fe80::/10'),
+    ipaddress.ip_network('::/128'),
+)
+
+
+def is_internal_proxy_ip(ip_str: str) -> bool:
+    """Devuelve True para saltos de proxy/LAN internos (RFC1918, loopback, link-local, ULA)."""
+    clean = sanitize_ip(ip_str)
+    if not clean:
+        return False
+    try:
+        ip = ipaddress.ip_address(clean)
+        return any(ip in net for net in INTERNAL_PROXY_NETWORKS)
+    except ValueError:
+        return False
+
+
+def _header_get_all(headers: Any, name: str) -> list[str]:
+    if headers is None:
+        return []
+    if hasattr(headers, 'get_all'):
+        vals = headers.get_all(name)
+        return [str(v) for v in (vals or []) if v is not None]
+    if hasattr(headers, 'items'):
+        target = name.lower()
+        out = [str(v) for k, v in headers.items() if str(k).lower() == target and v is not None]
+        if out:
+            return out
+    val = headers.get(name) if hasattr(headers, 'get') else None
+    return [str(val)] if val else []
+
+
+def _header_get_one(headers: Any, name: str) -> str:
+    vals = _header_get_all(headers, name)
+    return vals[0] if vals else ''
+
+
+def _etag_matches(inm_header: str, etag: str) -> bool:
+    raw = str(inm_header or '').strip()
+    if not raw or not etag:
+        return False
+    if raw == '*':
+        return True
+    target = etag.removeprefix('W/').strip()
+    for part in raw.split(','):
+        cand = part.strip().removeprefix('W/').strip()
+        if cand == target:
+            return True
+    return False
+
+
+def is_public_4g_url(url: str) -> bool:
+    """Devuelve True si la URL usa HTTPS sobre un host público accesible desde 4G/5G."""
+    try:
+        parsed = urlparse(str(url or '').strip())
+    except ValueError:
+        return False
+    if parsed.scheme != 'https':
+        return False
+    host = (parsed.hostname or '').strip().lower().rstrip('.')
+    if not host:
+        return False
+    if host in ('localhost', '0.0.0.0') or host.endswith(('.local', '.localhost', '.lan', '.internal')):
+        return False
+    try:
+        ip = ipaddress.ip_address(host)
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        ):
+            return False
+    except ValueError:
+        # Nombre de dominio público (debe contener al menos un punto)
+        if '.' not in host:
+            return False
+    return True
+
+
+def _host_is_loopback(host_header: str) -> bool:
+    h = str(host_header or '').strip().lower()
+    if not h:
+        return True
+    parsed = urlparse(f'http://{h}')
+    hn = (parsed.hostname or '').lower()
+    return hn in ('localhost', '127.0.0.1', '::1', '0.0.0.0') or is_loopback_ip(hn)
 
 
 def make_admin_token() -> str:
@@ -188,6 +380,98 @@ def _staff_scope_for_role(role: str) -> str:
     return 'staff'
 
 
+def resolve_base_url_info(
+    headers: Any = None,
+    trusted_proxy: bool = False,
+    port: int | None = None,
+) -> tuple[str, str]:
+    """Determina la URL pública efectiva respetando la precedencia 4G/5G.
+
+    Precedencia:
+      1. `restaurant.public_url` configurado manualmente en SQLite
+      2. Variable de entorno `PUBLIC_URL`
+      3. URL activa del túnel `cloudflared` (`tunnel_manager.active_url()`)
+      4. Cabeceras `X-Forwarded-Proto`/`X-Forwarded-Host` (solo si el proxy es confiable)
+      5. URL externa cloud (`RENDER_EXTERNAL_URL` / `FLY_APP_NAME`)
+      6. `http://<lan_ip>:<PORT>` (o `Host` directo si no es loopback)
+    """
+    configured = db.get_public_url()
+    if configured:
+        return configured, 'restaurant_public_url'
+
+    env_public = (os.environ.get('PUBLIC_URL') or '').strip().rstrip('/')
+    if env_public:
+        return env_public, 'env_public_url'
+
+    tunnel_url = tunnel_manager.active_url()
+    if tunnel_url:
+        return tunnel_url, 'tunnel'
+
+    if trusted_proxy and headers is not None:
+        xf_host = (headers.get('X-Forwarded-Host') or '').split(',')[0].strip()
+        raw_host = xf_host or (headers.get('Host') or '').strip()
+        xf_proto = (headers.get('X-Forwarded-Proto') or '').split(',')[0].strip().lower()
+        proto = xf_proto if xf_proto in ('http', 'https') else ('https' if is_cloud_env() else 'http')
+        if raw_host and SAFE_HOST_RE.match(raw_host) and not _host_is_loopback(raw_host):
+            return f'{proto}://{raw_host}', 'forwarded_proxy'
+
+    render_url = (os.environ.get('RENDER_EXTERNAL_URL') or '').strip().rstrip('/')
+    if render_url:
+        return render_url, 'cloud_env'
+    fly_app = (os.environ.get('FLY_APP_NAME') or '').strip()
+    if fly_app:
+        return f'https://{fly_app}.fly.dev', 'cloud_env'
+
+    if headers is not None:
+        direct_host = (headers.get('Host') or '').strip()
+        if direct_host and SAFE_HOST_RE.match(direct_host) and not _host_is_loopback(direct_host):
+            return f'http://{direct_host}', 'lan_host'
+
+    use_port = int(port or PORT)
+    return f'http://{lan_ip()}:{use_port}', 'lan'
+
+
+def build_network_snapshot(
+    role: str = 'client',
+    headers: Any = None,
+    trusted_proxy: bool = False,
+    port: int | None = None,
+) -> dict[str, Any]:
+    base, source = resolve_base_url_info(headers=headers, trusted_proxy=trusted_proxy, port=port)
+    use_port = int(port or PORT)
+    pub4g = is_public_4g_url(base)
+    is_real_admin = role == 'admin'
+    return {
+        'baseUrl': base,
+        'urlSource': source,
+        'lanUrl': f'http://{lan_ip()}:{use_port}',
+        'isHttps': base.startswith('https://'),
+        'isPublic4g': pub4g,
+        'isLocalOnly': not pub4g,
+        'isTemporaryTunnel': '.trycloudflare.com' in base.lower(),
+        'cloudEnv': is_cloud_env(),
+        'canManageTunnel': is_real_admin,
+        'canAutoInstallTunnel': is_real_admin,
+        'tunnel': tunnel_manager.status(include_details=is_real_admin),
+    }
+
+
+def get_enriched_staff_state(
+    role: str = 'staff',
+    headers: Any = None,
+    trusted_proxy: bool = False,
+    port: int | None = None,
+) -> dict[str, Any]:
+    st = db.get_staff_state(role=role)
+    st['network'] = build_network_snapshot(
+        role=role,
+        headers=headers,
+        trusted_proxy=trusted_proxy,
+        port=port,
+    )
+    return st
+
+
 def broadcast_updates() -> None:
     with subs_lock:
         current_subs = list(subscribers)
@@ -208,7 +492,7 @@ def broadcast_updates() -> None:
                     eff_scope = 'staff'
             if eff_scope not in staff_cache:
                 staff_cache[eff_scope] = json.dumps(
-                    db.get_staff_state(role=eff_scope),
+                    get_enriched_staff_state(role=eff_scope),
                     ensure_ascii=False,
                 )
             sub.enqueue(staff_cache[eff_scope])
@@ -222,18 +506,34 @@ def broadcast_updates() -> None:
             sub.enqueue(client_cache[key])
 
 
+tunnel_manager = TunnelManager(DATA_DIR, default_port=PORT, on_change=broadcast_updates)
+atexit.register(tunnel_manager.stop)
+
+
 class Handler(SimpleHTTPRequestHandler):
     timeout = 30
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=str(PUBLIC), **kwargs)
 
+    def _server_port(self) -> int:
+        srv = getattr(self, 'server', None)
+        if srv is not None and getattr(srv, 'server_port', None):
+            return int(srv.server_port)
+        return PORT
+
     def end_headers(self) -> None:
         req_path = self.path.split('?', 1)[0]
         if req_path == '/sw.js':
             self.send_header('Service-Worker-Allowed', '/')
-        # /uploads/ y /media/ gestionan su propio Cache-Control (caché pública de 24 h)
-        if not (req_path.startswith('/uploads/') or req_path.startswith('/media/')):
+        if req_path == '/api/health':
+            self.send_header('Access-Control-Allow-Origin', '*')
+        # /uploads/, /media/ y /api/events gestionan su propio Cache-Control
+        if not (
+            req_path.startswith('/uploads/')
+            or req_path.startswith('/media/')
+            or req_path == '/api/events'
+        ):
             self.send_header('Cache-Control', 'no-store')
         super().end_headers()
 
@@ -241,44 +541,261 @@ class Handler(SimpleHTTPRequestHandler):
         if '/api/' in self.path and 'events' not in self.path:
             sys.stderr.write(f"{self.command} {self.path} {args[1] if len(args) > 1 else ''}\n")
 
+    # ---------- Proxy confiable, IP real y Compresión Gzip ----------
+
+    def _peer_ip(self) -> str:
+        raw = str(self.client_address[0]) if self.client_address else ''
+        return sanitize_ip(raw) or raw
+
+    def _is_trusted_proxy(self) -> bool:
+        peer = self._peer_ip()
+        if is_loopback_ip(peer):
+            return True
+        explicit = _explicit_trust_proxy()
+        if explicit is not None:
+            return explicit
+        if is_cloud_env():
+            # En cloud (Render/Fly/Railway), el proxy interno se conecta por red privada/loopback, nunca desde IP publica directa
+            return is_internal_proxy_ip(peer)
+        return False
+
+    def _client_ip(self) -> str:
+        """Devuelve la IP real del cliente 4G/5G cuando entra por cloudflared o proxy confiable.
+
+        - En LAN directa sin TRUST_PROXY ignora por completo CF-Connecting-IP / X-Forwarded-For.
+        - En Fly.io prioriza Fly-Client-IP.
+        - Acepta CF-Connecting-IP solo cuando el peer es loopback (cloudflared local),
+          TRUST_PROXY esta explicito o viene cabecera CF-Ray de Cloudflare Edge.
+        - En X-Forwarded-For une todas las cabeceras y elige de derecha a izquierda la
+          primera IP publica global (evitando spoofing de prefijos inyectados por el atacante).
+        """
+        peer = self._peer_ip()
+        if not self._is_trusted_proxy():
+            return peer or 'unknown'
+
+        if (os.environ.get('FLY_APP_NAME') or '').strip():
+            fly_ip = sanitize_ip(_header_get_one(self.headers, 'Fly-Client-IP'))
+            if fly_ip:
+                return fly_ip
+
+        allow_cf = (
+            is_loopback_ip(peer)
+            or _explicit_trust_proxy() is True
+            or bool(_header_get_one(self.headers, 'CF-Ray').strip())
+        )
+        if allow_cf:
+            cf_ip = sanitize_ip(_header_get_one(self.headers, 'CF-Connecting-IP'))
+            if cf_ip:
+                return cf_ip
+
+        xff_candidates: list[str] = []
+        for hdr_val in _header_get_all(self.headers, 'X-Forwarded-For'):
+            for part in hdr_val.split(','):
+                candidate = sanitize_ip(part)
+                if candidate:
+                    xff_candidates.append(candidate)
+
+        if xff_candidates:
+            for candidate in reversed(xff_candidates):
+                if not is_internal_proxy_ip(candidate):
+                    return candidate
+            return xff_candidates[-1]
+
+        return peer or 'unknown'
+
     def _effective_base_url(self) -> str:
-        staff = db.get_staff_state(role='staff')
-        configured = staff['restaurant'].get('publicUrl') or ''
-        if configured:
-            return configured.rstrip('/')
+        base, _ = resolve_base_url_info(
+            headers=self.headers,
+            trusted_proxy=self._is_trusted_proxy(),
+            port=self._server_port(),
+        )
+        return base
 
-        host = (self.headers.get('X-Forwarded-Host') or self.headers.get('Host') or '').strip()
-        proto = (self.headers.get('X-Forwarded-Proto') or 'http').split(',')[0].strip()
-        if host and not host.startswith('localhost') and not host.startswith('127.0.0.1'):
-            return f'{proto}://{host}'
-        return f'http://{lan_ip()}:{PORT}'
+    def _network_snapshot(self, role: str = 'client') -> dict[str, Any]:
+        return build_network_snapshot(
+            role=role,
+            headers=self.headers,
+            trusted_proxy=self._is_trusted_proxy(),
+            port=self._server_port(),
+        )
 
-    def send_json(self, code: int, body) -> None:
+    def _accepts_gzip(self) -> bool:
+        ae = (self.headers.get('Accept-Encoding') or '').lower()
+        if 'gzip' not in ae:
+            return False
+        for item in ae.split(','):
+            parts = [p.strip() for p in item.split(';') if p.strip()]
+            if not parts or parts[0] != 'gzip':
+                continue
+            q = 1.0
+            for param in parts[1:]:
+                m = re.match(r'^q\s*=\s*(.+)$', param)
+                if m:
+                    try:
+                        q = float(m.group(1).strip())
+                    except ValueError:
+                        q = 0.0
+            return q > 0.0
+        return False
+
+    @staticmethod
+    def _is_compressible_type(content_type: str) -> bool:
+        base_mime = str(content_type or '').split(';', 1)[0].strip().lower()
+        return base_mime in COMPRESSIBLE_MIME_TYPES
+
+    def send_bytes(
+        self,
+        code: int,
+        raw: bytes,
+        content_type: str,
+        *,
+        extra_headers: dict[str, str] | None = None,
+        head_only: bool = False,
+        compressible: bool | None = None,
+    ) -> None:
+        if code in (204, 304) or 100 <= code < 200:
+            self.send_response(code)
+            if extra_headers:
+                for k, v in extra_headers.items():
+                    self.send_header(k, v)
+            self.end_headers()
+            return
+
+        can_compress = self._is_compressible_type(content_type) if compressible is None else bool(compressible)
+        payload = raw
+        use_gzip = False
+        if can_compress and len(raw) >= GZIP_MIN_BYTES and self._accepts_gzip():
+            gz = gzip.compress(raw, compresslevel=6)
+            if len(gz) < len(raw):
+                payload = gz
+                use_gzip = True
+
+        self.send_response(code)
+        self.send_header('Content-Type', content_type)
+        if can_compress:
+            self.send_header('Vary', 'Accept-Encoding')
+        if use_gzip:
+            self.send_header('Content-Encoding', 'gzip')
+        if extra_headers:
+            for k, v in extra_headers.items():
+                self.send_header(k, v)
+        self.send_header('Content-Length', str(len(payload)))
+        self.end_headers()
+        if not head_only and payload:
+            self.wfile.write(payload)
+
+    def send_json(self, code: int, body: Any) -> None:
         raw = (
             body.encode('utf-8')
             if isinstance(body, str)
             else json.dumps(body, ensure_ascii=False).encode('utf-8')
         )
-        self.send_response(code)
-        self.send_header('Content-Type', 'application/json; charset=utf-8')
-        self.send_header('Content-Length', str(len(raw)))
-        self.end_headers()
-        self.wfile.write(raw)
+        self.send_bytes(code, raw, 'application/json; charset=utf-8', compressible=True)
 
-    def _serve_upload(self, rel_path: str) -> None:
+    def _serve_static_file_compressed(self, target: Path, content_type: str, head_only: bool = False) -> None:
+        st = target.stat()
+        last_mod = self.date_time_string(int(st.st_mtime))
+        etag_gz = f'"{st.st_size:x}-{int(st.st_mtime):x}-gz"'
+        etag_id = f'"{st.st_size:x}-{int(st.st_mtime):x}-id"'
+        want_gzip = self._is_compressible_type(content_type) and st.st_size >= GZIP_MIN_BYTES and self._accepts_gzip()
+        inm = self.headers.get('If-None-Match') or ''
+
+        # Atajo rapido 304 sin leer disco si la variante solicitada coincide con el ETag
+        fast_etag = etag_gz if want_gzip else etag_id
+        if _etag_matches(inm, fast_etag):
+            self.send_bytes(
+                304,
+                b'',
+                content_type,
+                extra_headers={
+                    'ETag': fast_etag,
+                    'Last-Modified': last_mod,
+                    'Vary': 'Accept-Encoding',
+                },
+                head_only=True,
+                compressible=False,
+            )
+            return
+
+        raw = target.read_bytes()
+        payload = raw
+        use_gzip = False
+        if want_gzip:
+            gz = gzip.compress(raw, compresslevel=6)
+            if len(gz) < len(raw):
+                payload = gz
+                use_gzip = True
+
+        actual_etag = etag_gz if use_gzip else etag_id
+        if _etag_matches(inm, actual_etag):
+            self.send_bytes(
+                304,
+                b'',
+                content_type,
+                extra_headers={
+                    'ETag': actual_etag,
+                    'Last-Modified': last_mod,
+                    'Vary': 'Accept-Encoding',
+                },
+                head_only=True,
+                compressible=False,
+            )
+            return
+
+        self.send_response(200)
+        self.send_header('Content-Type', content_type)
+        self.send_header('Vary', 'Accept-Encoding')
+        if use_gzip:
+            self.send_header('Content-Encoding', 'gzip')
+        self.send_header('ETag', actual_etag)
+        self.send_header('Last-Modified', last_mod)
+        self.send_header('Content-Length', str(len(payload)))
+        self.end_headers()
+        if not head_only and payload:
+            self.wfile.write(payload)
+
+    def _serve_short_qr(self, head_only: bool = False) -> None:
+        target = (PUBLIC / 'cliente.html').resolve()
+        if not target.is_file():
+            self.send_error(404, 'Vista de cliente no encontrada')
+            return
+        self._serve_static_file_compressed(target, 'text/html; charset=utf-8', head_only=head_only)
+
+    def _try_serve_static_compressed(self, req_path: str, head_only: bool = False) -> bool:
+        """Sirve archivos estáticos textuales (HTML/CSS/JS/SVG/JSON) con ETag/304 y Gzip para 4G/5G."""
+        rel = unquote(req_path).lstrip('/')
+        if not rel or rel.endswith('/'):
+            rel = rel + 'index.html'
+        pub_root = PUBLIC.resolve()
+        try:
+            target = (pub_root / rel).resolve()
+        except (OSError, ValueError):
+            return False
+        if pub_root not in target.parents or not target.is_file():
+            return False
+        mime, _ = mimetypes.guess_type(str(target))
+        if not mime or not self._is_compressible_type(mime):
+            return False
+        if mime.startswith('text/') and 'charset=' not in mime:
+            mime = f'{mime}; charset=utf-8'
+        self._serve_static_file_compressed(target, mime, head_only=head_only)
+        return True
+
+    def _serve_upload(self, rel_path: str, head_only: bool = False) -> None:
         fname = Path(rel_path).name
         target = (UPLOADS_DIR / fname).resolve()
         if target.parent != UPLOADS_DIR.resolve() or not target.is_file():
             self.send_error(404, 'Imagen no encontrada')
             return
         mime, _ = mimetypes.guess_type(str(target))
-        raw = target.read_bytes()
+        st = target.stat()
         self.send_response(200)
         self.send_header('Content-Type', mime or 'image/jpeg')
         self.send_header('Cache-Control', 'public, max-age=86400')
-        self.send_header('Content-Length', str(len(raw)))
+        self.send_header('Content-Length', str(st.st_size))
         self.end_headers()
-        self.wfile.write(raw)
+        if not head_only:
+            self.wfile.write(target.read_bytes())
 
     # ---------- Multimedia de la Landing (/media/...) con caché y Range ----------
 
@@ -360,8 +877,23 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:
         path = urlparse(self.path).path
+        if path.startswith('/uploads/'):
+            return self._serve_upload(path[len('/uploads/'):], head_only=True)
         if path.startswith('/media/'):
             return self._serve_media(path[len('/media/'):], head_only=True)
+        if path in ('/q', '/q/'):
+            self.send_response(302)
+            self.send_header('Location', '/cliente.html')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return
+        if SHORT_QR_PATH_RE.match(path):
+            return self._serve_short_qr(head_only=True)
+        if path.startswith('/q/'):
+            self.send_error(404, 'Código QR inválido')
+            return
+        if self._try_serve_static_compressed(path, head_only=True):
+            return
         return super().do_HEAD()
 
     # ---------- Autorización y Rate-Limiting ----------
@@ -374,7 +906,7 @@ class Handler(SimpleHTTPRequestHandler):
         return self._request_role(qs) in ('admin', 'demo_admin') or db.is_demo_mode()
 
     def _auth_rate_limited(self) -> bool:
-        ip = str(self.client_address[0] if self.client_address else 'unknown')
+        ip = self._client_ip()
         now = time.time()
         with auth_rate_lock:
             hits = [t for t in auth_failures.get(ip, []) if now - t < AUTH_WINDOW_S]
@@ -382,7 +914,7 @@ class Handler(SimpleHTTPRequestHandler):
             return len(hits) >= AUTH_MAX_FAILURES
 
     def _record_auth_failure(self) -> None:
-        ip = str(self.client_address[0] if self.client_address else 'unknown')
+        ip = self._client_ip()
         now = time.time()
         with auth_rate_lock:
             hits = [t for t in auth_failures.get(ip, []) if now - t < AUTH_WINDOW_S]
@@ -395,7 +927,7 @@ class Handler(SimpleHTTPRequestHandler):
     # ---------- Exportación contable CSV (arqueo en hora Argentina UTC-3 con corte 06:00) ----------
 
     @staticmethod
-    def _csv_safe(value) -> str:
+    def _csv_safe(value: Any) -> str:
         txt = str(value if value is not None else '')
         # Evita inyección de fórmulas al abrir el archivo en Excel / Google Sheets
         if txt and txt[0] in ('=', '+', '-', '@', '\t', '\r'):
@@ -431,7 +963,7 @@ class Handler(SimpleHTTPRequestHandler):
 
         rows = db.get_closed_sessions_export(since_ms=since, until_ms=until)
 
-        def fmt(ts) -> tuple[str, str]:
+        def fmt(ts: Any) -> tuple[str, str]:
             if not ts:
                 return '', ''
             dt = datetime.fromtimestamp(ts / 1000, tz=AR_TZ)
@@ -457,16 +989,19 @@ class Handler(SimpleHTTPRequestHandler):
             ])
         raw = ('\ufeff' + buf.getvalue()).encode('utf-8')
         fname = f"arqueo_salelisto_{now_ar.strftime('%Y%m%d-%H%M')}.csv"
-        self.send_response(200)
-        self.send_header('Content-Type', 'text/csv; charset=utf-8')
-        self.send_header('Content-Disposition', f'attachment; filename="{fname}"')
-        self.send_header('X-Rows', str(len(rows)))
-        self.send_header('Content-Length', str(len(raw)))
-        self.end_headers()
-        self.wfile.write(raw)
+        self.send_bytes(
+            200,
+            raw,
+            'text/csv; charset=utf-8',
+            extra_headers={
+                'Content-Disposition': f'attachment; filename="{fname}"',
+                'X-Rows': str(len(rows)),
+            },
+            compressible=True,
+        )
 
     def _lead_rate_limited(self) -> bool:
-        ip = (self.headers.get('X-Forwarded-For') or self.client_address[0] or '').split(',')[0].strip()
+        ip = self._client_ip()
         now = time.time()
         with leads_rate_lock:
             hits = [t for t in leads_rate.get(ip, []) if now - t < LEAD_WINDOW_S]
@@ -491,15 +1026,45 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/media/'):
             return self._serve_media(path[len('/media/'):])
 
+        # Ruta corta 4G/5G para QRs de baja densidad: /q/<qr_token>
+        if path in ('/q', '/q/'):
+            self.send_response(302)
+            self.send_header('Location', '/cliente.html')
+            self.send_header('Content-Length', '0')
+            self.end_headers()
+            return
+        if SHORT_QR_PATH_RE.match(path):
+            return self._serve_short_qr(head_only=False)
+        if path.startswith('/q/'):
+            self.send_error(404, 'Código QR inválido')
+            return
+
         if path == '/api/health':
             with subs_lock:
                 sub_cnt = len(subscribers)
+            net = self._network_snapshot(role='client')
             return self.send_json(
                 200,
                 {
                     'ok': True,
                     'version': db.version,
                     'subscribers': sub_cnt,
+                    'isPublic4g': net['isPublic4g'],
+                    'tunnelActive': net['tunnel']['active'],
+                },
+            )
+
+        if path == '/api/tunnel/status':
+            role = self._request_role(qs)
+            if role not in ('admin', 'demo_admin'):
+                code = 401 if role == 'client' else 403
+                return self.send_json(code, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
+            return self.send_json(
+                200,
+                {
+                    'ok': True,
+                    'tunnel': tunnel_manager.status(include_details=(role == 'admin')),
+                    'network': self._network_snapshot(role=role),
                 },
             )
 
@@ -521,11 +1086,11 @@ class Handler(SimpleHTTPRequestHandler):
             return self._send_sessions_csv(qs)
 
         if path == '/api/info':
+            net = self._network_snapshot(role='client')
             return self.send_json(
                 200,
                 {
-                    'baseUrl': self._effective_base_url(),
-                    'lanUrl': f'http://{lan_ip()}:{PORT}',
+                    **net,
                     'demoMode': db.is_demo_mode(),
                 },
             )
@@ -538,12 +1103,7 @@ class Handler(SimpleHTTPRequestHandler):
                 svg = qr_svg(text).encode('utf-8')
             except ValueError as e:
                 return self.send_json(400, {'error': str(e)})
-            self.send_response(200)
-            self.send_header('Content-Type', 'image/svg+xml; charset=utf-8')
-            self.send_header('Content-Length', str(len(svg)))
-            self.end_headers()
-            self.wfile.write(svg)
-            return
+            return self.send_bytes(200, svg, 'image/svg+xml; charset=utf-8', compressible=True)
 
         if path == '/api/qrs':
             role = self._request_role(qs)
@@ -552,7 +1112,8 @@ class Handler(SimpleHTTPRequestHandler):
                     401,
                     {'ok': False, 'error': 'Sesión de personal requerida para ver los códigos QR'},
                 )
-            base = self._effective_base_url()
+            net = self._network_snapshot(role=role)
+            base = net['baseUrl']
             st = db.get_staff_state(role='staff')
             blocks_out = []
             try:
@@ -560,15 +1121,17 @@ class Handler(SimpleHTTPRequestHandler):
                     b_tables = [t for t in st['tables'] if t['blockId'] == b['id'] and t['active']]
                     cards = []
                     for t in b_tables:
-                        url = f"{base}/cliente.html?t={t['qrToken']}"
+                        short_url = f"{base}/q/{t['qrToken']}"
+                        legacy_url = f"{base}/cliente.html?t={t['qrToken']}"
                         cards.append(
                             {
                                 'id': t['id'],
                                 'code': t['code'],
                                 'seats': t['seats'],
                                 'qrToken': t['qrToken'],
-                                'url': url,
-                                'svg': qr_svg(url),
+                                'url': short_url,
+                                'legacyUrl': legacy_url,
+                                'svg': qr_svg(short_url),
                             }
                         )
                     blocks_out.append(
@@ -585,8 +1148,18 @@ class Handler(SimpleHTTPRequestHandler):
                 200,
                 {
                     'restaurantName': st['restaurant']['name'],
+                    'publicUrlConfigured': st['restaurant'].get('publicUrl') or '',
                     'baseUrl': base,
-                    'isLocalOnly': '127.0.0.1' in base,
+                    'urlSource': net['urlSource'],
+                    'lanUrl': net['lanUrl'],
+                    'isHttps': net['isHttps'],
+                    'isPublic4g': net['isPublic4g'],
+                    'isLocalOnly': net['isLocalOnly'],
+                    'isTemporaryTunnel': net['isTemporaryTunnel'],
+                    'cloudEnv': net['cloudEnv'],
+                    'tunnel': net['tunnel'],
+                    'canManageTunnel': role == 'admin',
+                    'canAutoInstallTunnel': role == 'admin',
                     'blocks': blocks_out,
                 },
             )
@@ -600,7 +1173,16 @@ class Handler(SimpleHTTPRequestHandler):
             role = self._request_role(qs)
             if role == 'client' and not db.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión requerida'})
-            return self.send_json(200, db.get_staff_state(role=_staff_scope_for_role(role)))
+            eff_role = _staff_scope_for_role(role)
+            return self.send_json(
+                200,
+                get_enriched_staff_state(
+                    role=eff_role,
+                    headers=self.headers,
+                    trusted_proxy=self._is_trusted_proxy(),
+                    port=self._server_port(),
+                ),
+            )
 
         if path == '/api/waiters-public':
             # Lista mínima de mozos para la pantalla de ingreso del celular del mozo
@@ -637,6 +1219,9 @@ class Handler(SimpleHTTPRequestHandler):
             qr_tok = (qs.get('t') or [''])[0]
             mesa = (qs.get('mesa') or [''])[0]
             return self._stream_events(Subscriber('client', qr_tok, mesa))
+
+        if self._try_serve_static_compressed(path, head_only=False):
+            return
 
         return super().do_GET()
 
@@ -723,6 +1308,112 @@ class Handler(SimpleHTTPRequestHandler):
         auth_header = self.headers.get('X-Auth-Token') or ''
         role = resolve_role(auth_header)
 
+        if path == '/api/tunnel/start':
+            if role != 'admin':
+                code = 401 if role == 'client' else 403
+                msg = (
+                    'Se requiere acceso de encargado (PIN)'
+                    if role == 'client'
+                    else 'Solo el encargado autenticado con el PIN real puede iniciar o configurar el túnel HTTPS'
+                )
+                return self.send_json(code, {'ok': False, 'error': msg})
+            auto_install = bool(body.get('autoInstall'))
+            req_token = str(body.get('token') or '').strip()
+            mode = str(body.get('mode') or 'auto').strip().lower()
+            if mode not in ('auto', 'quick', 'token'):
+                mode = 'auto'
+            try:
+                wait_s = min(25.0, max(1.0, float(body.get('waitSeconds') or 18.0)))
+            except (TypeError, ValueError):
+                wait_s = 18.0
+            try:
+                st = tunnel_manager.start(
+                    port=self._server_port(),
+                    mode=mode,
+                    token=req_token,
+                    auto_install=auto_install,
+                    wait_seconds=wait_s,
+                )
+                return self.send_json(
+                    200,
+                    {
+                        'ok': True,
+                        'tunnel': st,
+                        'network': self._network_snapshot(role=role),
+                    },
+                )
+            except TunnelError as err:
+                return self.send_json(
+                    err.status,
+                    {
+                        'ok': False,
+                        'error': str(err),
+                        'needsInstall': err.needs_install,
+                        'tunnel': tunnel_manager.status(include_details=True),
+                        'network': self._network_snapshot(role=role),
+                    },
+                )
+
+        if path == '/api/tunnel/stop':
+            if role != 'admin':
+                code = 401 if role == 'client' else 403
+                msg = (
+                    'Se requiere acceso de encargado (PIN)'
+                    if role == 'client'
+                    else 'Solo el encargado autenticado con el PIN real puede detener el túnel HTTPS'
+                )
+                return self.send_json(code, {'ok': False, 'error': msg})
+            st = tunnel_manager.stop()
+            return self.send_json(
+                200,
+                {
+                    'ok': True,
+                    'tunnel': st,
+                    'network': self._network_snapshot(role=role),
+                },
+            )
+
+        if path == '/api/orders':
+            payload = dict(body)
+            idem_hdr = (self.headers.get('Idempotency-Key') or '').strip()
+            if idem_hdr and not payload.get('clientRequestId') and not payload.get('client_request_id'):
+                payload['clientRequestId'] = idem_hdr
+            try:
+                result = db.execute('order.create', payload, role=role)
+                dedup = bool(isinstance(result, dict) and result.get('deduplicated'))
+                if not dedup:
+                    flush_pending_webpush()
+                    broadcast_updates()
+                if role in STAFF_ROLES:
+                    state_out = get_enriched_staff_state(
+                        role=_staff_scope_for_role(role),
+                        headers=self.headers,
+                        trusted_proxy=self._is_trusted_proxy(),
+                        port=self._server_port(),
+                    )
+                else:
+                    state_out = db.get_client_state(
+                        str(payload.get('qrToken') or ''),
+                        str(payload.get('mesa') or ''),
+                    )
+                return self.send_json(
+                    200,
+                    {
+                        'ok': True,
+                        'result': result,
+                        'orderIds': result.get('orderIds', []),
+                        'batchId': result.get('batchId'),
+                        'deduplicated': dedup,
+                        'state': state_out,
+                    },
+                )
+            except AuthError as e:
+                return self.send_json(e.status, {'ok': False, 'error': str(e)})
+            except ActionError as e:
+                return self.send_json(400, {'ok': False, 'error': str(e)})
+            except (ValueError, TypeError) as e:
+                return self.send_json(400, {'ok': False, 'error': f'Datos inválidos: {e}'})
+
         if path == '/api/push/subscribe':
             if role not in STAFF_ROLES and not db.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión de personal requerida'})
@@ -807,16 +1498,27 @@ class Handler(SimpleHTTPRequestHandler):
             action_type = str(body.get('type') or body.get('action') or '')
             raw_payload = body.get('payload')
             if isinstance(raw_payload, dict):
-                payload = raw_payload
+                payload = dict(raw_payload)
             else:
                 payload = {k: v for k, v in body.items() if k not in ('type', 'action')}
+            if action_type == 'order.create':
+                idem_hdr = (self.headers.get('Idempotency-Key') or '').strip()
+                if idem_hdr and not payload.get('clientRequestId') and not payload.get('client_request_id'):
+                    payload['clientRequestId'] = idem_hdr
             result = db.execute(action_type, payload, role=role)
-            flush_pending_webpush()
-            broadcast_updates()
+            dedup = bool(isinstance(result, dict) and result.get('deduplicated'))
+            if not dedup:
+                flush_pending_webpush()
+                broadcast_updates()
             if role in STAFF_ROLES or (
                 db.is_demo_mode() and action_type not in ('order.create', 'call.create')
             ):
-                state_out = db.get_staff_state(role=_staff_scope_for_role(role))
+                state_out = get_enriched_staff_state(
+                    role=_staff_scope_for_role(role),
+                    headers=self.headers,
+                    trusted_proxy=self._is_trusted_proxy(),
+                    port=self._server_port(),
+                )
             else:
                 state_out = db.get_client_state(
                     str(payload.get('qrToken') or ''),
@@ -833,12 +1535,18 @@ class Handler(SimpleHTTPRequestHandler):
     def _stream_events(self, sub: Subscriber) -> None:
         self.send_response(200)
         self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
+        self.send_header('Cache-Control', 'no-cache, no-transform')
         self.send_header('Connection', 'keep-alive')
         self.send_header('X-Accel-Buffering', 'no')
         self.end_headers()
 
         initial = (
-            db.get_staff_state(role=sub.scope)
+            get_enriched_staff_state(
+                role=sub.scope,
+                headers=self.headers,
+                trusted_proxy=self._is_trusted_proxy(),
+                port=self._server_port(),
+            )
             if sub.scope in ('admin', 'demo_admin', 'staff')
             else db.get_client_state(sub.qr_token, sub.legacy_code)
         )
@@ -847,9 +1555,11 @@ class Handler(SimpleHTTPRequestHandler):
         with subs_lock:
             subscribers.add(sub)
         try:
+            self.wfile.write(b'retry: 3000\n\n')
+            self.wfile.flush()
             while True:
                 try:
-                    msg = sub.q.get(timeout=15)
+                    msg = sub.q.get(timeout=SSE_KEEPALIVE_S)
                     self.wfile.write(f'data: {msg}\n\n'.encode('utf-8'))
                 except queue.Empty:
                     self.wfile.write(b': ping\n\n')
@@ -872,28 +1582,106 @@ class SaleListoHTTPServer(ThreadingHTTPServer):
         super().handle_error(request, client_address)
 
 
+def parse_cli_flags(argv: list[str]) -> dict[str, Any]:
+    port = _parse_initial_port(argv)
+    want_tunnel = (os.environ.get('SALELISTO_TUNNEL') or '').strip().lower() in ('1', 'true', 'yes', 'on')
+    auto_install = (os.environ.get('SALELISTO_TUNNEL_AUTOINSTALL') or '').strip().lower() in ('1', 'true', 'yes', 'on')
+    tunnel_token = (os.environ.get('CLOUDFLARE_TUNNEL_TOKEN') or '').strip()
+
+    i = 1
+    while i < len(argv):
+        arg = argv[i]
+        if arg == '--tunnel':
+            want_tunnel = True
+        elif arg == '--auto-install-tunnel':
+            auto_install = True
+            want_tunnel = True
+        elif arg == '--tunnel-token' and i + 1 < len(argv):
+            tunnel_token = argv[i + 1].strip()
+            want_tunnel = True
+            i += 1
+        elif arg.startswith('--tunnel-token='):
+            tunnel_token = arg.split('=', 1)[1].strip()
+            want_tunnel = True
+        elif arg == '--port' and i + 1 < len(argv):
+            i += 1
+        i += 1
+
+    if tunnel_token and not is_cloud_env():
+        want_tunnel = True
+
+    return {
+        'port': port,
+        'tunnel': want_tunnel,
+        'auto_install': auto_install,
+        'tunnel_token': tunnel_token,
+    }
+
+
 def main() -> None:
     for stream in (sys.stdout, sys.stderr):
         try:
             stream.reconfigure(errors='replace', line_buffering=True)
         except Exception:
             pass
-    server = SaleListoHTTPServer(('0.0.0.0', PORT), Handler)
-    base = f'http://{lan_ip()}:{PORT}'
-    print('\n  SaleListo está corriendo\n')
-    print(f'  Inicio / Portada:       {base}/')
-    print(f'  Tablero operativo:      {base}/operacion.html')
-    print(f'  Demo 4 pantallas:       {base}/demo.html')
-    print(f'  Panel Encargado (PIN):  {base}/restaurante.html   (PIN inicial: 1234)')
-    print(f'  Estación de Mozos:      {base}/pase.html')
-    print(f'  Celular del Mozo:       {base}/mozo.html')
-    print(f'  Pantalla Cocina/Barra:  {base}/cocina.html')
-    print(f'  QRs fijos imprimibles:  {base}/qr.html')
+
+    cfg = parse_cli_flags(sys.argv)
+    use_port = int(cfg['port'])
+    server = SaleListoHTTPServer(('0.0.0.0', use_port), Handler)
+    lan_base = f'http://{lan_ip()}:{use_port}'
+
+    if cfg['tunnel']:
+        mode = 'token' if cfg['tunnel_token'] else 'quick'
+        print(f'\n  Iniciando tunel HTTPS 4G/5G ({mode}) hacia 127.0.0.1:{use_port}...')
+        try:
+            st = tunnel_manager.start(
+                port=use_port,
+                mode=mode,
+                token=cfg['tunnel_token'],
+                auto_install=cfg['auto_install'],
+                wait_seconds=20.0,
+            )
+            if st.get('publicUrl'):
+                print(f"  Tunel 4G/5G activo:     {st['publicUrl']}")
+            elif mode == 'token' and st.get('active'):
+                print('  Tunel permanente activo (CLOUDFLARE_TUNNEL_TOKEN).')
+        except TunnelError as err:
+            print(f'  [AVISO TUNEL] {err}')
+
+    eff_base, eff_source = resolve_base_url_info(port=use_port)
+    print('\n  SaleListo esta corriendo\n')
+    if is_public_4g_url(eff_base):
+        print(f'  4G/5G Publico HTTPS:    {eff_base}   (origen: {eff_source})')
+    else:
+        print('  Modo red local Wi-Fi:   usa --tunnel o el Panel (> Caja y Ajustes) para 4G/5G sin Wi-Fi')
+    print(f'  Red local (LAN):        {lan_base}')
+    print(f'  Inicio / Portada:       {eff_base}/')
+    print(f'  Tablero operativo:      {eff_base}/operacion.html')
+    print(f'  Demo 4 pantallas:       {eff_base}/demo.html')
+    print(f'  Panel Encargado (PIN):  {eff_base}/restaurante.html   (PIN inicial: 1234)')
+    print(f'  Estacion de Mozos:      {eff_base}/pase.html')
+    print(f'  Celular del Mozo:       {eff_base}/mozo.html')
+    print(f'  Pantalla Cocina/Barra:  {eff_base}/cocina.html')
+    print(f'  QRs fijos imprimibles:  {eff_base}/qr.html   (ruta corta /q/<token>)')
     print('\n  Ctrl+C para detener.\n')
+    def _handle_termination(_signum, _frame) -> None:
+        raise KeyboardInterrupt
+
+    for sig_name in ('SIGTERM', 'SIGBREAK'):
+        sig = getattr(signal, sig_name, None)
+        if sig is not None:
+            try:
+                signal.signal(sig, _handle_termination)
+            except (OSError, ValueError):
+                pass
+
     try:
         server.serve_forever()
     except KeyboardInterrupt:
         print('\n  Servidor detenido.')
+    finally:
+        tunnel_manager.stop()
+        server.server_close()
 
 
 if __name__ == '__main__':

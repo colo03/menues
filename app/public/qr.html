@@ -128,10 +128,40 @@
     .chk input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
 
     .info-bar {
-      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
-      background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-control);
-      padding: 11px 15px; margin-bottom: 22px; font-size: 13px; font-weight: 600; color: var(--ink-2);
+      display: grid; gap: 12px;
+      background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-card);
+      box-shadow: var(--shadow-card); padding: 15px 18px; margin-bottom: 22px; font-size: 13px; color: var(--ink-2);
     }
+    .info-bar.is-4g { border-color: rgba(47, 138, 87, 0.38); background: linear-gradient(90deg, var(--ok-soft), var(--surface) 48%); }
+    .info-bar.is-local { border-color: rgba(217, 119, 6, 0.48); background: linear-gradient(90deg, var(--warn-soft), var(--surface) 48%); }
+    .info-bar-top {
+      display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .info-bar-left { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; min-width: 0; }
+    .info-bar-actions { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .net-pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px;
+      border-radius: var(--radius-pill); font-size: 12px; font-weight: 800; white-space: nowrap;
+    }
+    .net-pill.ok { background: var(--ok); color: #ffffff; }
+    .net-pill.warn { background: var(--warn); color: #ffffff; }
+    .net-pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+    .info-url {
+      font-size: 12.5px; font-weight: 700; color: var(--ink); background: var(--surface-2);
+      padding: 3px 8px; border-radius: var(--radius-sm); word-break: break-all;
+    }
+    .print-warn-box {
+      padding: 10px 13px; border-radius: var(--radius-control); font-size: 13px; line-height: 1.45;
+      background: #fff7e6; color: #7c4400; border: 1px solid rgba(217, 119, 6, 0.38);
+    }
+    .print-warn-box.info {
+      background: var(--info-soft); color: #1e40af; border-color: rgba(37, 99, 235, 0.28);
+    }
+    .quick-domain-row {
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      padding-top: 10px; border-top: 1px dashed var(--line);
+    }
+    .quick-domain-row .input { flex: 1 1 260px; padding: 7px 10px; font-size: 13px; }
     .info-bar strong { color: var(--ink); }
     .status-ok { color: var(--ok); font-weight: 800; }
 
@@ -529,7 +559,8 @@
         return res.json();
       }
 
-      const data = await loadQrsData();
+      let data = await loadQrsData();
+      if (qrToken) setAuthToken(qrToken);
 
       // Estado interactivo del estudio
       let fmt = 'tent';           // 'tent' | 'sticker' | 'compact'
@@ -539,23 +570,137 @@
       let legendText = $('#legendInput').value.trim();
       let cutGuides = false;
       let showUrl = false;
+      let tunnelBusy = false;
+      let tunnelNeedsInstall = false;
+
+      function renderSectorPills() {
+        const totalActive = data.blocks.reduce((acc, b) => acc + b.tables.length, 0);
+        if (sectorFilter !== 'all' && !data.blocks.some((b) => b.id === sectorFilter)) {
+          sectorFilter = 'all';
+        }
+        $('#sectorPills').innerHTML = [
+          `<button type="button" class="sec-pill ${sectorFilter === 'all' ? 'active' : ''}" data-sec="all">Todos los sectores (${totalActive})</button>`,
+          ...data.blocks.map((b) => `<button type="button" class="sec-pill ${sectorFilter === b.id ? 'active' : ''}" data-sec="${escapeHtml(b.id)}">${b.icon || ''} ${escapeHtml(b.name)} (${b.tables.length})</button>`),
+        ].join('');
+      }
+
+      function renderConnectivityBanner() {
+        const banner = $('#banner');
+        const is4g = Boolean(data.isPublic4g);
+        const isTemp = Boolean(data.isTemporaryTunnel);
+        const tun = data.tunnel || {};
+        const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
+        const canManage = Boolean(data.canManageTunnel);
+        const canInstall = Boolean(data.canAutoInstallTunnel);
+
+        banner.className = `info-bar no-print ${is4g ? 'is-4g' : 'is-local'}`;
+        banner.innerHTML = `
+          <div class="info-bar-top">
+            <div class="info-bar-left">
+              <span class="net-pill ${is4g ? 'ok' : 'warn'}">
+                <span class="dot"></span>
+                ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+              </span>
+              <code class="info-url">${escapeHtml(data.baseUrl)}/q/&lt;token&gt;</code>
+              <span>${is4g
+                ? (isTemp ? 'Túnel rápido Cloudflare (temporal)' : 'URL HTTPS pública corta lista para imprenta')
+                : 'Dirección local: requiere Wi-Fi del local'}</span>
+            </div>
+            <div class="info-bar-actions">
+              ${canManage && tun.active
+                ? `<button type="button" class="btn btn-xs btn-danger" data-qr-tunnel="stop" ${isStarting ? 'disabled' : ''}>⏹ Detener túnel</button>`
+                : (canManage && !data.cloudEnv ? `
+                    <button type="button" class="btn btn-xs btn-primary" data-qr-tunnel="start" ${isStarting ? 'disabled' : ''}>
+                      ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Activar túnel HTTPS 4G/5G'}
+                    </button>
+                    ${(tunnelNeedsInstall || !tun.binaryInstalled) && canInstall ? `
+                      <button type="button" class="btn btn-xs btn-ghost" data-qr-tunnel="install" ${isStarting ? 'disabled' : ''}>
+                        ⬇️ Instalar cloudflared y activar
+                      </button>` : ''}
+                  ` : '')}
+              <a class="btn btn-xs btn-ghost" href="restaurante.html#caja">Panel · Caja y Ajustes →</a>
+            </div>
+          </div>
+          ${!is4g ? `
+            <div class="print-warn-box">
+              <strong>⚠️ Atención antes de mandar a imprenta:</strong> estos QRs apuntan a una IP local (<code>${escapeHtml(data.baseUrl)}</code>) y <strong>no abrirán con datos móviles 4G/5G</strong>. Activá el túnel HTTPS en 1 clic o guardá tu dominio fijo antes de imprimir acrílicos o stickers.
+            </div>` : ''}
+          ${isTemp ? `
+            <div class="print-warn-box info">
+              <strong>⚡ Túnel rápido activo (4G/5G listo para probar):</strong> los celulares ya escanean sin Wi-Fi. Como <code>trycloudflare.com</code> cambia si reiniciás la PC, para impresión definitiva en acrílico guardá un dominio fijo HTTPS abajo (con <code>CLOUDFLARE_TUNNEL_TOKEN</code> o despliegue cloud).
+            </div>` : ''}
+          ${canInstall ? `
+            <form class="quick-domain-row" id="qrPublicUrlForm">
+              <label for="qrPublicUrlInput" style="font-weight:700;color:var(--ink);white-space:nowrap">Dominio fijo HTTPS:</label>
+              <input class="input" id="qrPublicUrlInput" type="url" placeholder="Ej: https://tu-local.trycloudflare.com (vacío = automático)" value="${escapeHtml(data.publicUrlConfigured || '')}">
+              <button type="submit" class="btn btn-xs btn-ghost">Guardar dominio fijo</button>
+            </form>` : ''}`;
+
+        const domForm = $('#qrPublicUrlForm');
+        if (domForm) {
+          domForm.onsubmit = async (ev) => {
+            ev.preventDefault();
+            const val = ($('#qrPublicUrlInput')?.value || '').trim();
+            if (val && !/^https?:\/\//i.test(val)) {
+              return toast('⚠️ El dominio fijo debe comenzar con https://');
+            }
+            try {
+              await apiPost('/api/action', { type: 'restaurant.save', payload: { publicUrl: val } });
+              await refreshQrs();
+              toast(val ? '✔ Dominio fijo guardado y QRs regenerados' : '✔ Modo automático restaurado');
+            } catch (err) {
+              toast(`⚠️ ${err.message}`);
+            }
+          };
+        }
+      }
+
+      async function refreshQrs() {
+        const res = await fetchQrs(qrToken);
+        if (!res.ok) throw new Error('No se pudieron actualizar los QRs');
+        data = await res.json();
+        $('#title').textContent = `Estudio de Impresión QR · ${data.restaurantName}`;
+        renderConnectivityBanner();
+        renderSectorPills();
+        render();
+      }
+
+      $('#banner').onclick = async (e) => {
+        const btn = e.target.closest('[data-qr-tunnel]');
+        if (!btn || tunnelBusy) return;
+        const action = btn.dataset.qrTunnel;
+        tunnelBusy = true;
+        renderConnectivityBanner();
+        try {
+          if (action === 'stop') {
+            await apiPost('/api/tunnel/stop', {});
+            toast('⏹ Túnel HTTPS detenido');
+          } else {
+            const autoInstall = action === 'install';
+            toast(autoInstall
+              ? '⬇️ Descargando cloudflared oficial e iniciando túnel 4G/5G…'
+              : '🚀 Iniciando túnel HTTPS 4G/5G…', 4500);
+            await apiPost('/api/tunnel/start', { autoInstall });
+            tunnelNeedsInstall = false;
+            toast('✅ Túnel 4G/5G activo · Regenerando QRs HTTPS…');
+          }
+          await refreshQrs();
+        } catch (err) {
+          if (err.data?.needsInstall) {
+            tunnelNeedsInstall = true;
+            toast('ℹ️ Falta cloudflared en esta PC. Tocá "Instalar cloudflared y activar".', 5000);
+          } else {
+            toast(`⚠️ ${err.message}`, 4500);
+          }
+        } finally {
+          tunnelBusy = false;
+          renderConnectivityBanner();
+        }
+      };
 
       $('#title').textContent = `Estudio de Impresión QR · ${data.restaurantName}`;
-      $('#banner').innerHTML = `
-        <div>
-          🔗 Dirección codificada en cada QR: <strong>${escapeHtml(data.baseUrl)}</strong>
-          ${data.baseUrl.startsWith('https://')
-            ? '<span class="status-ok">· ✔ Lista para datos 4G/5G sin Wi-Fi</span>'
-            : '· <span>(Modo red local; al publicar con HTTPS codificará automáticamente tu dominio público)</span>'}
-        </div>
-        <a class="btn btn-xs btn-ghost" href="restaurante.html#caja">Configurar dominio público →</a>`;
-
-      // Construir píldoras de filtro por sector
-      const totalActive = data.blocks.reduce((acc, b) => acc + b.tables.length, 0);
-      $('#sectorPills').innerHTML = [
-        `<button type="button" class="sec-pill active" data-sec="all">Todos los sectores (${totalActive})</button>`,
-        ...data.blocks.map((b) => `<button type="button" class="sec-pill" data-sec="${escapeHtml(b.id)}">${b.icon || ''} ${escapeHtml(b.name)} (${b.tables.length})</button>`),
-      ].join('');
+      renderConnectivityBanner();
+      renderSectorPills();
 
       function filteredEntries() {
         const list = [];
@@ -751,13 +896,35 @@
         render();
       };
 
+      function confirmPrintReadiness(actionLabel = 'imprimir') {
+        if (!data.isPublic4g) {
+          return confirm(
+            `Atención antes de ${actionLabel}:\n\n`
+            + `Tus códigos QR todavía apuntan a la red local (${data.baseUrl}) y NO funcionarán con datos móviles 4G/5G sin Wi-Fi.\n\n`
+            + `¿Querés continuar igual solo para pruebas internas en red local?`,
+          );
+        }
+        if (data.isTemporaryTunnel) {
+          return confirm(
+            `Aviso de túnel rápido temporal:\n\n`
+            + `Los QRs usan ${data.baseUrl}, que funciona en 4G/5G ahora mismo pero cambia al reiniciar la PC.\n\n`
+            + `Para impresión definitiva en acrílico te recomendamos configurar un dominio fijo HTTPS. ¿Continuar igual?`,
+          );
+        }
+        return true;
+      }
+
       $('#cutGuidesChk').onchange = (e) => { cutGuides = e.target.checked; render(); };
       $('#showUrlChk').onchange = (e) => { showUrl = e.target.checked; render(); };
-      $('#printBtn').onclick = () => window.print();
+      $('#printBtn').onclick = () => {
+        if (!confirmPrintReadiness('imprimir o guardar PDF')) return;
+        window.print();
+      };
 
       $('#cardsOut').onclick = (e) => {
         const dl = e.target.closest('[data-dl-svg]');
         if (!dl) return;
+        if (!confirmPrintReadiness('descargar arte SVG para imprenta')) return;
         const entry = filteredEntries().find((x) => x.table.id === dl.dataset.dlSvg);
         if (!entry) return;
         const svgContent = buildPrintShopSvg(entry);

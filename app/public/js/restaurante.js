@@ -23,6 +23,9 @@
   let panelBound = false;
   let activeStream = null;
   let unsubState = null;
+  let tunnelBusy = false;
+  let tunnelNeedsInstall = false;
+  let adminRole = sessionStorage.getItem('salelisto:adminRole') || '';
 
   // Preservar selecciones del modal operativo de mesa ante actualizaciones SSE
   const tableModalDraft = {
@@ -80,7 +83,9 @@
       if (!getAuthToken() && wantDemoAuth) {
         const r = await apiPost('api/auth/admin', { demo: true });
         setAuthToken(r.token);
+        adminRole = r.role || 'demo_admin';
         sessionStorage.setItem('salelisto:adminToken', r.token);
+        sessionStorage.setItem('salelisto:adminRole', adminRole);
       }
       if (!getAuthToken()) throw new Error('AUTH_REQUIRED');
       activeStream = await connectStream({ scope: 'staff' }, connectionBanner);
@@ -108,6 +113,8 @@
   window.addEventListener('salelisto:auth-expired', () => {
     toast('🔒 Tu sesión de encargado venció o cambió el PIN. Ingresá nuevamente.');
     sessionStorage.removeItem('salelisto:adminToken');
+    sessionStorage.removeItem('salelisto:adminRole');
+    adminRole = '';
     setAuthToken('');
     showPinGate();
   });
@@ -118,7 +125,9 @@
     try {
       const res = await apiPost('api/auth/admin', { pin });
       setAuthToken(res.token);
+      adminRole = res.role || 'admin';
       sessionStorage.setItem('salelisto:adminToken', res.token);
+      sessionStorage.setItem('salelisto:adminRole', adminRole);
       $('#pinInput').value = '';
       unlockAudio();
       activeStream = await connectStream({ scope: 'staff' }, connectionBanner);
@@ -135,6 +144,8 @@
     } catch (err) {
       if (err.status === 401 || /sesión requerida|no autorizado/i.test(err.message)) {
         sessionStorage.removeItem('salelisto:adminToken');
+        sessionStorage.removeItem('salelisto:adminRole');
+        adminRole = '';
         setAuthToken('');
         showPinGate();
       }
@@ -221,6 +232,162 @@
       renderCalls();
     }
   }, 30000);
+
+  // ---------- Estado 4G/5G Sin Wi-Fi y Túnel HTTPS ----------
+  function urlSourceLabel(src) {
+    return {
+      restaurant_public_url: 'Dominio fijo guardado',
+      env_public_url: 'Variable PUBLIC_URL',
+      tunnel: 'Túnel HTTPS Cloudflare',
+      forwarded_proxy: 'Proxy HTTPS confiable',
+      cloud_env: 'Servidor Cloud HTTPS',
+      lan_host: 'Red local Wi-Fi',
+      lan: 'Red local Wi-Fi',
+    }[src] || 'Red local';
+  }
+
+  async function startTunnel(autoInstall = false) {
+    if (tunnelBusy) return;
+    tunnelBusy = true;
+    renderNetBar();
+    renderCajaTunnel();
+    try {
+      toast(autoInstall
+        ? '⬇️ Descargando cloudflared oficial e iniciando túnel 4G/5G…'
+        : '🚀 Iniciando túnel HTTPS 4G/5G…', 4500);
+      const res = await apiPost('/api/tunnel/start', { autoInstall });
+      tunnelNeedsInstall = false;
+      if (res.network) state.network = res.network;
+      toast(res.network?.isPublic4g
+        ? `✅ 4G/5G Activo: ${res.network.baseUrl}`
+        : '✅ Túnel iniciado; aguardando dirección HTTPS…', 4500);
+    } catch (err) {
+      if (err.data?.needsInstall) {
+        tunnelNeedsInstall = true;
+        toast('ℹ️ Falta cloudflared en esta PC. Tocá "Descargar e iniciar 4G" para instalarlo en 1 clic.', 5500);
+      } else {
+        toast(`⚠️ ${err.message}`, 4500);
+      }
+      if (err.data?.network) state.network = err.data.network;
+    } finally {
+      tunnelBusy = false;
+      renderNetBar();
+      renderCajaTunnel();
+    }
+  }
+
+  async function stopTunnel() {
+    if (tunnelBusy) return;
+    tunnelBusy = true;
+    renderNetBar();
+    renderCajaTunnel();
+    try {
+      const res = await apiPost('/api/tunnel/stop', {});
+      if (res.network) state.network = res.network;
+      toast('⏹ Túnel HTTPS detenido');
+    } catch (err) {
+      toast(`⚠️ ${err.message}`);
+    } finally {
+      tunnelBusy = false;
+      renderNetBar();
+      renderCajaTunnel();
+    }
+  }
+
+  function renderNetBar() {
+    const bar = $('#netBar');
+    if (!bar || !state) return;
+    const net = state.network || {};
+    const tun = net.tunnel || {};
+    const baseUrl = net.baseUrl || location.origin;
+    const is4g = Boolean(net.isPublic4g);
+    const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
+    const canManage = Boolean(net.canManageTunnel);
+
+    bar.className = `net-bar ${is4g ? 'is-4g' : 'is-local'}`;
+    bar.innerHTML = `
+      <div class="net-bar-info">
+        <span class="net-badge ${is4g ? 'ok' : 'warn'}">
+          <span class="dot"></span>
+          ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+        </span>
+        <code class="net-url">${escapeHtml(baseUrl)}</code>
+        <span class="net-meta">${escapeHtml(urlSourceLabel(net.urlSource))}${net.isTemporaryTunnel ? ' (temporal)' : ''}</span>
+      </div>
+      <div class="net-bar-actions">
+        ${is4g ? `<button class="btn btn-xs btn-ghost" type="button" data-net-copy="${escapeHtml(baseUrl)}">📋 Copiar</button>` : ''}
+        ${canManage && tun.active
+          ? `<button class="btn btn-xs btn-danger" type="button" data-tunnel-stop ${isStarting ? 'disabled' : ''}>⏹ Detener túnel</button>`
+          : (canManage && !is4g && !net.cloudEnv ? `
+              ${tunnelNeedsInstall
+                ? `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="install" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Instalando…' : '⬇️ Descargar e iniciar 4G'}</button>`
+                : `<button class="btn btn-xs btn-primary" type="button" data-tunnel-start="normal" ${isStarting ? 'disabled' : ''}>${isStarting ? 'Iniciando túnel…' : '🚀 Activar 4G/5G'}</button>`}
+            ` : '')}
+        ${canManage && !is4g ? `<button class="btn btn-xs btn-ghost" type="button" data-goto-caja>⚙️ Dominio fijo</button>` : ''}
+        <a class="btn btn-xs btn-ghost" href="qr.html" target="_blank">🖨️ QRs</a>
+      </div>`;
+  }
+
+  function renderCajaTunnel() {
+    const box = $('#cajaTunnel');
+    if (!box || !state) return;
+    const net = state.network || {};
+    const tun = net.tunnel || {};
+    const baseUrl = net.baseUrl || location.origin;
+    const lanUrl = net.lanUrl || location.origin;
+    const is4g = Boolean(net.isPublic4g);
+    const isStarting = tunnelBusy || tun.state === 'starting' || tun.state === 'installing';
+    const canManage = Boolean(net.canManageTunnel);
+
+    box.className = `tunnel-panel ${is4g ? 'is-4g' : 'is-local'}`;
+    box.innerHTML = `
+      <div class="tunnel-head">
+        <div>
+          <h3 style="margin-bottom:6px">🌐 Acceso 4G/5G sin Wi-Fi (Túnel HTTPS y Dominio Fijo)</h3>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span class="net-badge ${is4g ? 'ok' : 'warn'}">
+              <span class="dot"></span>
+              ${is4g ? '4G/5G Activo · Escaneo sin Wi-Fi' : 'Solo Red Local Wi-Fi'}
+            </span>
+            <code class="net-url">${escapeHtml(baseUrl)}/q/&lt;token&gt;</code>
+            <span class="net-meta">Origen: ${escapeHtml(urlSourceLabel(net.urlSource))} · LAN: ${escapeHtml(lanUrl)}</span>
+          </div>
+        </div>
+        <div class="tunnel-actions">
+          ${canManage && tun.active
+            ? `<button class="btn btn-sm btn-danger" type="button" data-tunnel-stop ${isStarting ? 'disabled' : ''}>⏹ Detener túnel HTTPS</button>`
+            : (canManage && !net.cloudEnv ? `
+                <button class="btn btn-sm btn-primary" type="button" data-tunnel-start="normal" ${isStarting ? 'disabled' : ''}>
+                  ${isStarting ? '⏳ Iniciando túnel…' : '🚀 Iniciar túnel HTTPS 4G/5G'}
+                </button>
+                ${!tun.binaryInstalled ? `
+                  <button class="btn btn-sm btn-ghost" type="button" data-tunnel-start="install" ${isStarting ? 'disabled' : ''}>
+                    ⬇️ Descargar cloudflared oficial y activar
+                  </button>` : ''}
+              ` : '')}
+          <a class="btn btn-sm btn-ghost" href="qr.html" target="_blank">🖨️ Abrir Estudio QR</a>
+        </div>
+      </div>
+      ${!canManage ? `
+        <div class="tunnel-alert info">
+          <strong>🔒 Modo demostración:</strong> el control del túnel HTTPS y del dominio fijo está reservado al encargado autenticado con el PIN real del local.
+        </div>` : ''}
+      ${!is4g ? `
+        <div class="tunnel-alert">
+          <strong>⚠️ Atención antes de imprimir QRs:</strong> el servidor apunta hoy a una red local (<code>${escapeHtml(baseUrl)}</code>). Los comensales con datos móviles 4G/5G <strong>no podrán abrir el menú</strong> sin conectarse a tu Wi-Fi hasta que actives el túnel HTTPS 4G/5G o guardes un dominio fijo <code>https://...</code> en la configuración de abajo.
+        </div>` : ''}
+      ${net.isTemporaryTunnel ? `
+        <div class="tunnel-alert info">
+          <strong>⚡ Túnel rápido Cloudflare activo:</strong> ya podés escanear los QRs desde cualquier celular con 4G/5G sin Wi-Fi. Esta dirección <code>trycloudflare.com</code> cambia al reiniciar la PC; antes de mandar a imprenta acrílicos definitivos, configurá <code>CLOUDFLARE_TUNNEL_TOKEN</code> + tu dominio fijo HTTPS (o desplegá en la nube).
+        </div>` : ''}
+      ${tun.state === 'error' && tun.lastError ? `
+        <div class="tunnel-alert err">
+          <strong>Error del túnel:</strong> ${escapeHtml(tun.lastError)}
+        </div>` : ''}
+      <p class="muted" style="font-size:12.5px">
+        Precedencia automática de QRs: <strong>1) Dominio fijo guardado</strong> -> <strong>2) variable PUBLIC_URL</strong> -> <strong>3) Túnel HTTPS activo</strong> -> <strong>4) Red local LAN</strong>. También podés iniciar con <code>python app/server.py --tunnel</code>.
+      </p>`;
+  }
 
   // ---------- KPIs Reales ----------
   function renderKpis() {
@@ -523,6 +690,7 @@
 
     if (!$('#cajaSummary')) {
       $('#cajaAdmin').innerHTML = `
+        <div id="cajaTunnel"></div>
         <div class="caja-grid">
           <div class="caja-card" id="cajaSummary"></div>
           <div class="caja-card" id="cajaConfig"></div>
@@ -530,6 +698,8 @@
         <div id="cajaHistory"></div>`;
       cajaConfigDirty = false;
     }
+
+    renderCajaTunnel();
 
     $('#cajaSummary').innerHTML = `
       <h3>💵 Resumen de cobros del día</h3>
@@ -572,8 +742,8 @@
         <div class="field"><label>Nombre del restaurante</label><input class="input" name="name" required value="${escapeHtml(r.name)}"></div>
         <div class="field"><label>Subtítulo / especialidad</label><input class="input" name="subtitle" value="${escapeHtml(r.subtitle || '')}"></div>
         <div class="field">
-          <label>Link público en internet (opcional, para QRs 4G/5G)</label>
-          <input class="input" name="publicUrl" placeholder="Automático según el dominio donde se abra" value="${escapeHtml(r.publicUrl || '')}">
+          <label>Dominio fijo público HTTPS (para QRs 4G/5G permanentes en acrílico)</label>
+          <input class="input" name="publicUrl" placeholder="Ej: https://tu-local.trycloudflare.com (vacío = automático)" value="${escapeHtml(r.publicUrl || '')}">
         </div>
         <div class="field">
           <label>Cambiar PIN de Encargado (dejar vacío para mantener el actual)</label>
@@ -1727,12 +1897,35 @@
     };
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-    // Arqueo CSV
+    // Arqueo CSV y controles de túnel 4G/5G
     $('#csvAllBtn').onclick = (e) => downloadSessionsCsv('all', e.currentTarget);
     $('#csvTodayBtn').onclick = (e) => downloadSessionsCsv('today', e.currentTarget);
+    const handleNetActionClick = async (e) => {
+      const startBtn = e.target.closest('[data-tunnel-start]');
+      if (startBtn) return startTunnel(startBtn.dataset.tunnelStart === 'install');
+      const stopBtn = e.target.closest('[data-tunnel-stop]');
+      if (stopBtn) return stopTunnel();
+      const copyBtn = e.target.closest('[data-net-copy]');
+      if (copyBtn) {
+        const val = copyBtn.dataset.netCopy;
+        try {
+          await navigator.clipboard.writeText(val);
+          toast('📋 Dirección HTTPS copiada');
+        } catch (_) {
+          prompt('Copiá la dirección pública:', val);
+        }
+        return;
+      }
+      if (e.target.closest('[data-goto-caja]')) {
+        setView('caja');
+        setTimeout(() => document.querySelector('#restConfigForm input[name="publicUrl"]')?.focus(), 40);
+      }
+    };
+    $('#netBar').onclick = handleNetActionClick;
     $('#cajaAdmin').addEventListener('click', (e) => {
       const b = e.target.closest('[data-csv]');
-      if (b) downloadSessionsCsv(b.dataset.csv, b);
+      if (b) return downloadSessionsCsv(b.dataset.csv, b);
+      handleNetActionClick(e);
     });
 
     // Consultas comerciales
@@ -1774,6 +1967,7 @@
 
   function renderAll() {
     $('#restName').textContent = state.restaurant.name;
+    renderNetBar();
     renderKpis();
     renderBoard();
     renderSalon();

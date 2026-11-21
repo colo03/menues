@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import base64
 import hmac
+import json
 import re
 import secrets
 import sqlite3
@@ -333,6 +334,19 @@ class Database:
                         note TEXT NOT NULL DEFAULT ''
                     );
 
+                    CREATE TABLE IF NOT EXISTS order_requests (
+                        table_id TEXT NOT NULL,
+                        client_request_id TEXT NOT NULL,
+                        session_id TEXT NOT NULL,
+                        batch_id TEXT NOT NULL,
+                        order_ids_json TEXT NOT NULL,
+                        stations_json TEXT NOT NULL,
+                        waiter_name TEXT NOT NULL DEFAULT '',
+                        created_at INTEGER NOT NULL,
+                        PRIMARY KEY (table_id, client_request_id)
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_order_requests_created ON order_requests(created_at);
+
                     CREATE TABLE IF NOT EXISTS calls (
                         id TEXT PRIMARY KEY,
                         session_id TEXT NOT NULL REFERENCES table_sessions(id) ON DELETE CASCADE,
@@ -494,6 +508,7 @@ class Database:
             DELETE FROM push_subscriptions;
             DELETE FROM notifications;
             DELETE FROM calls;
+            DELETE FROM order_requests;
             DELETE FROM order_items;
             DELETE FROM orders;
             DELETE FROM table_sessions;
@@ -906,6 +921,29 @@ class Database:
         if not is_staff and not p.get('qrToken') and not (demo_on and p.get('tableId')):
             raise ActionError('Código QR de mesa requerido')
         tbl = self._resolve_table(conn, p)
+
+        raw_req_id = str(p.get('clientRequestId') or p.get('client_request_id') or '').strip()
+        client_req_id = re.sub(r'[^A-Za-z0-9._:-]', '', raw_req_id)[:80]
+        if client_req_id:
+            existing = conn.execute(
+                """
+                SELECT r.*
+                FROM order_requests r
+                JOIN table_sessions s ON s.id = r.session_id
+                WHERE r.table_id = ? AND r.client_request_id = ? AND s.status = 'open'
+                """,
+                (tbl['id'], client_req_id),
+            ).fetchone()
+            if existing:
+                return {
+                    'orderIds': json.loads(existing['order_ids_json']),
+                    'batchId': existing['batch_id'],
+                    'waiterName': existing['waiter_name'] or None,
+                    'stations': json.loads(existing['stations_json']),
+                    'clientRequestId': client_req_id,
+                    'deduplicated': True,
+                }
+
         raw_lines = p.get('items') or []
         if not isinstance(raw_lines, list) or not raw_lines:
             raise ActionError('El pedido está vacío')
@@ -981,6 +1019,28 @@ class Database:
             created_ids.append(oid)
             stations_used.append(STATION_LABELS[st])
 
+        if client_req_id:
+            conn.execute('DELETE FROM order_requests WHERE created_at < ?', (ts - 86_400_000,))
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO order_requests (
+                    table_id, client_request_id, session_id, batch_id,
+                    order_ids_json, stations_json, waiter_name, created_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    tbl['id'],
+                    client_req_id,
+                    session['id'],
+                    batch_id,
+                    json.dumps(created_ids, ensure_ascii=False),
+                    json.dumps(stations_used, ensure_ascii=False),
+                    waiter['name'] if waiter else '',
+                    ts,
+                ),
+            )
+
         summary_items = ', '.join(
             f"{ln['qty']}× {ln['name']}" for st in STATION_ORDER for ln in by_station[st]
         )[:90]
@@ -1005,8 +1065,11 @@ class Database:
 
         return {
             'orderIds': created_ids,
+            'batchId': batch_id,
             'waiterName': waiter['name'] if waiter else None,
             'stations': stations_used,
+            'clientRequestId': client_req_id or None,
+            'deduplicated': False,
         }
 
     def _notify_order_ready(self, conn: sqlite3.Connection, order: sqlite3.Row) -> None:
@@ -1339,6 +1402,8 @@ class Database:
             "UPDATE orders SET status = 'entregado', updated_at = ? WHERE session_id = ? AND status NOT IN ('entregado', 'cancelado')",
             (ts, sess['id']),
         )
+        conn.execute('DELETE FROM order_requests WHERE session_id = ?', (sess['id'],))
+        conn.execute('DELETE FROM order_requests WHERE created_at < ?', (ts - 86_400_000,))
         return {'sessionId': sess['id'], 'total': total}
 
     def act_session_reassign(self, conn: sqlite3.Connection, p: dict[str, Any]) -> dict[str, Any]:
@@ -1877,7 +1942,13 @@ class Database:
             demo_mode = cur['demo_mode']
             pin = cur['admin_pin']
         else:
-            public_url = clean_text(p, 'publicUrl', 200).rstrip('/') if 'publicUrl' in p else cur['public_url']
+            if 'publicUrl' in p:
+                raw_pub = clean_text(p, 'publicUrl', 200).rstrip('/')
+                if raw_pub and not raw_pub.startswith(('https://', 'http://')):
+                    raise ActionError('El link público debe comenzar con https:// o http://')
+                public_url = raw_pub
+            else:
+                public_url = cur['public_url']
             demo_mode = (1 if p.get('demoMode') else 0) if 'demoMode' in p else cur['demo_mode']
             if new_pin and len(new_pin) < 4:
                 raise ActionError('El PIN debe tener al menos 4 caracteres')
@@ -1908,6 +1979,7 @@ class Database:
             """
             DELETE FROM notifications;
             DELETE FROM calls;
+            DELETE FROM order_requests;
             DELETE FROM order_items;
             DELETE FROM orders;
             DELETE FROM table_sessions;
@@ -1916,6 +1988,7 @@ class Database:
 
     def act_clear_open_turn(self, conn: sqlite3.Connection, _p: dict[str, Any]) -> dict[str, Any]:
         conn.execute('DELETE FROM notifications')
+        conn.execute("DELETE FROM order_requests WHERE session_id IN (SELECT id FROM table_sessions WHERE status = 'open')")
         cur = conn.execute("DELETE FROM table_sessions WHERE status = 'open'")
         return {'clearedOpenSessions': int(cur.rowcount)}
 
@@ -2329,6 +2402,15 @@ class Database:
             finally:
                 conn.close()
 
+    def get_public_url(self) -> str:
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute('SELECT public_url FROM restaurant WHERE id = 1').fetchone()
+                return str(row['public_url'] or '').strip().rstrip('/') if row else ''
+            finally:
+                conn.close()
+
     # ---------- Ejecución Transaccional de Acciones ----------
 
     def execute(self, action_type: str, payload: dict[str, Any], role: str = 'client') -> Any:
@@ -2412,7 +2494,8 @@ class Database:
             self._tx_notifications = []
             try:
                 result = fn(conn, payload or {})
-                self._bump_version(conn)
+                if not (isinstance(result, dict) and result.get('deduplicated')):
+                    self._bump_version(conn)
                 conn.commit()
                 if self._tx_notifications:
                     self._pending_push_notifications.extend(self._tx_notifications)

@@ -14,11 +14,15 @@ directorio temporal aislado (nunca lee ni modifica app/data/) y verifica:
   6. Aislamiento total de Leads PII ante demo_admin/waiter/kitchen (REST + SSE), HTTP 401 en /api/action
      y persistencia tras reinicio (state_ver monotonico, server_secret.key y staff_sessions).
   7. Streaming HTTP 206 Partial Content, ETag/304, sufijos y seguridad de /media/hero-salon-loop.mp4.
+  8. Arquitectura 4G/5G sin Wi-Fi: rutas cortas /q/<qr_token>, compresion Gzip (sin tocar SSE ni 206),
+     _client_ip() detras de CF-Connecting-IP/X-Forwarded-For vs LAN directa, idempotencia clientRequestId
+     en POST /api/orders, precedencia PUBLIC_URL/tunel y endpoints /api/tunnel/*.
 """
 from __future__ import annotations
 
 import atexit
 import csv
+import gzip
 import http.client
 import io
 import json
@@ -27,9 +31,11 @@ import shutil
 import sys
 import tempfile
 import threading
+import time
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
+from email.message import Message
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
@@ -120,23 +126,76 @@ class ApiClient:
         )
 
 
-def read_first_sse_event(port: int, path: str) -> tuple[int, dict | None]:
+def read_first_sse_event(
+    port: int,
+    path: str,
+    headers: dict[str, str] | None = None,
+) -> tuple[int, dict[str, str], dict | None]:
     conn = http.client.HTTPConnection('127.0.0.1', port, timeout=5)
     try:
-        conn.request('GET', path)
+        conn.request('GET', path, headers=headers or {})
         resp = conn.getresponse()
         status = int(resp.status)
+        resp_hdrs = {k.lower(): v for k, v in resp.getheaders()}
         if status != 200:
             resp.read()
-            return status, None
+            return status, resp_hdrs, None
         while True:
             line = resp.fp.readline().decode('utf-8')
             if not line:
-                return status, None
+                return status, resp_hdrs, None
             if line.startswith('data: '):
-                return status, json.loads(line[6:].strip())
+                return status, resp_hdrs, json.loads(line[6:].strip())
     finally:
         conn.close()
+
+
+class _FakeCloudflaredProc:
+    """Simula un proceso cloudflared emitiendo una URL Quick Tunnel sin usar red."""
+
+    def __init__(self, lines: list[str], pid: int = 42420):
+        self.pid = pid
+        self.returncode: int | None = None
+        self._stop_evt = threading.Event()
+        self._r_fd, self._w_fd = os.pipe()
+        self.stdout = os.fdopen(self._r_fd, 'r', encoding='utf-8', buffering=1)
+        self._writer = os.fdopen(self._w_fd, 'w', encoding='utf-8', buffering=1)
+        self._emitter = threading.Thread(target=self._run, args=(lines,), daemon=True)
+        self._emitter.start()
+
+    def _run(self, lines: list[str]) -> None:
+        try:
+            for ln in lines:
+                self._writer.write(ln + '\n')
+                self._writer.flush()
+                time.sleep(0.02)
+            self._stop_evt.wait(timeout=30)
+        except OSError:
+            pass
+        finally:
+            try:
+                self._writer.close()
+            except OSError:
+                pass
+            if self.returncode is None:
+                self.returncode = 0
+
+    def poll(self) -> int | None:
+        return self.returncode
+
+    def terminate(self) -> None:
+        self.returncode = 0
+        self._stop_evt.set()
+
+    def kill(self) -> None:
+        self.returncode = -9
+        self._stop_evt.set()
+
+    def wait(self, timeout: float | None = None) -> int:
+        self._emitter.join(timeout=timeout or 2)
+        if self.returncode is None:
+            self.returncode = 0
+        return self.returncode
 
 
 def run_suite() -> None:
@@ -208,7 +267,7 @@ def run_suite() -> None:
             },
         )
         assert code_ssrf == 400, 'Suscripcion Push con endpoint local HTTP debio rechazarse con 400'
-        print('OK [1/7] Web Push RFC 8291/8292, VAPID env, Anti-SSRF y /api/health verificados.')
+        print('OK [1/8] Web Push RFC 8291/8292, VAPID env, Anti-SSRF y /api/health verificados.')
 
         # Autenticar sesion de encargado real (PIN inicial 1234)
         code, auth_res = api.post_json('/api/auth/admin', {'pin': '1234'})
@@ -291,7 +350,7 @@ def run_suite() -> None:
 
         api.action('restaurant.save', {'demoMode': True}, token=admin_token)
         api.action('data.clear_orders', {}, token=admin_token)
-        print('OK [2/7] Seguridad /api/qrs en produccion, QR V10 (271 B) y anti-spoofing verificados.')
+        print('OK [2/8] Seguridad /api/qrs en produccion, QR V10 (271 B) y anti-spoofing verificados.')
 
         # 3. Ruteo simultaneo a 3 estaciones (Cocina + Barra + Mostrador), 86 por kitchen y price.undo
         mesa_t1 = tables_by_code['T1']
@@ -366,7 +425,7 @@ def run_suite() -> None:
         assert code_undo == 200 and r_undo['state']['restaurant']['canUndoPrices'] is False
         restored_ramen = next(i for i in r_undo['state']['items'] if i['id'] == ramen['id'])
         assert restored_ramen['price'] == orig_ramen_price, 'price.undo no restauro el precio exacto original'
-        print('OK [3/7] 3 Estaciones (Cocina + Barra + Mostrador), 86 en Cocina y price.undo verificados.')
+        print('OK [3/8] 3 Estaciones (Cocina + Barra + Mostrador), 86 en Cocina y price.undo verificados.')
 
         # 4. Balanceo, desasignacion limpia, preservacion de PIN de mozo, login en prod y anti fuerza bruta
         mesa_2 = tables_by_code['2']
@@ -455,7 +514,7 @@ def run_suite() -> None:
         c_locked, _ = api.post_json('/api/auth/admin', {'pin': '1234'})
         assert c_locked == 429, f'Tras {server.AUTH_MAX_FAILURES} fallos /api/auth/admin debio responder 429, dio {c_locked}'
         server.auth_failures.clear()
-        print('OK [4/7] Preservacion de PIN, login seguro en produccion, revocacion y rate-limit verificados.')
+        print('OK [4/8] Preservacion de PIN, login seguro en produccion, revocacion y rate-limit verificados.')
 
         # 5. Cuenta con vuelto y division (cashAmount/splitWays), cierre, integridad al borrar mesa/bloque (B5) y ART 06:00 (B7)
         expected_sub = expected_kitchen + expected_bar + expected_counter  # 35.500 + 13.600 + 10.500 = 59.600
@@ -558,7 +617,7 @@ def run_suite() -> None:
         evening_utc_next_day = datetime(2026, 11, 21, 1, 30, 0, tzinfo=timezone.utc)  # 22:30 ART del 20/11 -> turno del 20/11 06:00 ART
         expected_shift_20 = int(datetime(2026, 11, 20, 6, 0, 0, tzinfo=db_mod.AR_TZ).timestamp() * 1000)
         assert db_mod.start_of_today_ms(evening_utc_next_day) == expected_shift_20, 'Fallo corte ART a las 22:30 ART (01:30 UTC)'
-        print('OK [5/7] Efectivo/vuelto/vaquita, archivo contable sin perdida (B5) y corte 06:00 ART (B7) verificados.')
+        print('OK [5/8] Efectivo/vuelto/vaquita, archivo contable sin perdida (B5) y corte 06:00 ART (B7) verificados.')
 
         # 6. Aislamiento total de Leads PII ante demo_admin (B2), HTTP 401 en /api/action y persistencia tras reinicio (B6)
         server.leads_rate.clear()
@@ -597,13 +656,20 @@ def run_suite() -> None:
         _, api_dm_leads = api.get_json('/api/leads', token=demo_admin_token)
         assert {l['id'] for l in api_dm_leads['leads']} == {'DEMO-L1', 'DEMO-L2'}
 
-        sse_code_dm, sse_dm = read_first_sse_event(port, f'/api/events?scope=staff&token={demo_admin_token}')
+        sse_code_dm, _, sse_dm = read_first_sse_event(port, f'/api/events?scope=staff&token={demo_admin_token}')
         assert sse_code_dm == 200 and sse_dm is not None
         assert {l['id'] for l in sse_dm['leads']} == {'DEMO-L1', 'DEMO-L2'}, 'FUGA PII en SSE demo_admin'
 
-        sse_code_adm, sse_adm = read_first_sse_event(port, f'/api/events?scope=staff&token={admin_token}')
+        sse_code_adm, sse_adm_hdrs, sse_adm = read_first_sse_event(
+            port,
+            f'/api/events?scope=staff&token={admin_token}',
+            headers={'Accept-Encoding': 'gzip'},
+        )
         assert sse_code_adm == 200 and sse_adm is not None
         assert any(l['id'] == real_lead_id for l in sse_adm['leads']), 'Admin real no recibio leads reales en SSE'
+        assert 'content-encoding' not in sse_adm_hdrs, 'SSE /api/events jamas debe comprimirse con gzip'
+        assert 'no-transform' in sse_adm_hdrs.get('cache-control', ''), 'SSE debe incluir Cache-Control: no-cache, no-transform'
+        assert sse_adm_hdrs.get('x-accel-buffering') == 'no', 'SSE debe incluir X-Accel-Buffering: no'
 
         # Kitchen y Waiter reciben leads=[] vacio
         _, st_kitchen = api.get_json('/api/staff-state', token=kitchen_token)
@@ -671,7 +737,7 @@ def run_suite() -> None:
         assert persisted_w2 is not None and persisted_w2['role'] == 'waiter', 'staff_sessions no persistio en SQLite'
         restarted_db.execute('notifications.read', {}, role='admin')
         assert restarted_db.version == ver_before_restart + 1, 'La version no crecio monotonicamente tras reinicio'
-        print('OK [6/7] Aislamiento PII demo_admin, HTTP 401 y persistencia tras reinicio (B6) verificados.')
+        print('OK [6/8] Aislamiento PII demo_admin, HTTP 401 y persistencia tras reinicio (B6) verificados.')
 
         # 7. Entrega multimedia HTTP 206 Partial Content (/media/hero-salon-loop.mp4) y vistas clave
         hero_file = APP_DIR / 'public' / 'media' / 'hero-salon-loop.mp4'
@@ -717,7 +783,524 @@ def run_suite() -> None:
         for route in ('/qr.html', '/demo.html', '/operacion.html', '/api/qrs', '/api/health'):
             r_code, _, _ = api.request('GET', route)
             assert r_code == 200, f'Ruta {route} devolvio {r_code}'
-        print('OK [7/7] Streaming HTTP 206 de /media/hero-salon-loop.mp4 y vistas clave verificados.')
+        print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4 y vistas clave verificados.')
+
+        # 8. Arquitectura 4G/5G sin Wi-Fi: /q/<token>, Gzip, _client_ip(), idempotencia POST /api/orders y /api/tunnel/*
+        api.action('data.clear_orders', {}, token=admin_token)
+        api.action('restaurant.save', {'publicUrl': '', 'demoMode': True}, token=admin_token)
+
+        # 8a. Rutas cortas /q/<qr_token> (sirve cliente.html directo con <base href="/">) y compatibilidad /cliente.html?t=
+        q_code, q_hdrs, q_raw = api.request('GET', f"/q/{mesa_1['qrToken']}")
+        assert q_code == 200, f'GET /q/<token> debio responder 200, dio {q_code}'
+        assert 'text/html' in q_hdrs.get('content-type', '')
+        q_html = q_raw.decode('utf-8')
+        assert '<base href="/">' in q_html and 'js/cliente.js' in q_html, 'GET /q/<token> no sirvio cliente.html con base href'
+
+        qh_code, _, qh_raw = api.request('HEAD', f"/q/{mesa_1['qrToken']}")
+        assert qh_code == 200 and len(qh_raw) == 0, 'HEAD /q/<token> fallo'
+
+        qt_code, _, _ = api.request('GET', '/q/../../server.py')
+        assert qt_code == 404, f'Path traversal en /q/ debio responder 404, dio {qt_code}'
+
+        # Verificar que /api/qrs emite URLs cortas /q/<qrToken>
+        _, qrs_short = api.get_json('/api/qrs', token=admin_token)
+        m1_card = next(
+            card
+            for blk in qrs_short['blocks']
+            for card in blk['tables']
+            if card['qrToken'] == mesa_1['qrToken']
+        )
+        assert m1_card['url'].endswith(f"/q/{mesa_1['qrToken']}"), f"QR no uso ruta corta /q/: {m1_card['url']}"
+        assert m1_card['legacyUrl'].endswith(f"/cliente.html?t={mesa_1['qrToken']}")
+        assert qrs_short['isPublic4g'] is False and qrs_short['isLocalOnly'] is True
+
+        # 8b. Compresion HTTP Gzip (>= 512 B) con Vary: Accept-Encoding sin tocar SSE ni /media/ 206
+        for gz_path, gz_hdrs_in in (
+            ('/api/staff-state', {'Accept-Encoding': 'gzip', 'X-Auth-Token': admin_token}),
+            (f"/q/{mesa_1['qrToken']}", {'Accept-Encoding': 'gzip, deflate'}),
+            ('/js/cliente.js', {'Accept-Encoding': 'gzip'}),
+            ('/css/cliente.css', {'Accept-Encoding': 'gzip'}),
+            (f"/api/qr.svg?text=https://tu-local.trycloudflare.com/q/{mesa_1['qrToken']}", {'Accept-Encoding': 'gzip'}),
+        ):
+            c_gz, h_gz, raw_gz = api.request('GET', gz_path, headers=gz_hdrs_in)
+            assert c_gz == 200, f'Gzip GET {gz_path} fallo con {c_gz}'
+            assert h_gz.get('content-encoding') == 'gzip', f'{gz_path} no devolvio Content-Encoding: gzip ({h_gz})'
+            assert 'accept-encoding' in h_gz.get('vary', '').lower(), f'{gz_path} no incluyo Vary: Accept-Encoding'
+            dec = gzip.decompress(raw_gz)
+            assert len(raw_gz) < len(dec), f'{gz_path} comprimido ({len(raw_gz)}) no redujo tamano ({len(dec)})'
+
+        # Accept-Encoding: gzip; q = 0 (con espacios) NO debe comprimir
+        _, h_nogz, raw_nogz = api.request(
+            'GET',
+            '/api/staff-state',
+            headers={'Accept-Encoding': 'gzip; q = 0', 'X-Auth-Token': admin_token},
+        )
+        assert 'content-encoding' not in h_nogz and json.loads(raw_nogz.decode('utf-8'))['version'] >= 1
+
+        # ETag diferenciado (-gz vs -id), 304 Not Modified y HEAD sin body en estaticos y /q/<token>
+        c_js_gz, h_js_gz, _ = api.request('GET', '/js/cliente.js', headers={'Accept-Encoding': 'gzip'})
+        c_js_id, h_js_id, _ = api.request('GET', '/js/cliente.js')
+        etag_js_gz = h_js_gz.get('etag', '')
+        etag_js_id = h_js_id.get('etag', '')
+        assert c_js_gz == 200 and c_js_id == 200
+        assert etag_js_gz.endswith('-gz"') and etag_js_id.endswith('-id"') and etag_js_gz != etag_js_id
+        assert h_js_gz.get('last-modified'), 'Falta Last-Modified en estatico comprimido'
+
+        c_304_gz, h_304_gz, b_304_gz = api.request(
+            'GET',
+            '/js/cliente.js',
+            headers={'Accept-Encoding': 'gzip', 'If-None-Match': etag_js_gz},
+        )
+        assert c_304_gz == 304 and len(b_304_gz) == 0 and 'content-encoding' not in h_304_gz
+
+        c_304_id, _, b_304_id = api.request(
+            'GET',
+            '/js/cliente.js',
+            headers={'If-None-Match': etag_js_id},
+        )
+        assert c_304_id == 304 and len(b_304_id) == 0
+
+        c_q304_1, h_q304_1, _ = api.request('GET', f"/q/{mesa_1['qrToken']}", headers={'Accept-Encoding': 'gzip'})
+        assert c_q304_1 == 200 and h_q304_1.get('etag', '').endswith('-gz"')
+        c_q304_2, _, b_q304_2 = api.request(
+            'GET',
+            f"/q/{mesa_1['qrToken']}",
+            headers={'Accept-Encoding': 'gzip', 'If-None-Match': h_q304_1['etag']},
+        )
+        assert c_q304_2 == 304 and len(b_q304_2) == 0
+
+        c_head_gz, h_head_gz, b_head_gz = api.request('HEAD', '/js/cliente.js', headers={'Accept-Encoding': 'gzip'})
+        assert c_head_gz == 200 and h_head_gz.get('content-encoding') == 'gzip' and len(b_head_gz) == 0
+
+        # HEAD /uploads/<archivo> devuelve 200 sin body
+        up_test = server.UPLOADS_DIR / 'e2e_probe.jpg'
+        up_test.write_bytes(b'\xff\xd8\xff\xe0salelisto-upload-probe')
+        try:
+            c_up_h, h_up_h, b_up_h = api.request('HEAD', '/uploads/e2e_probe.jpg')
+            assert c_up_h == 200 and len(b_up_h) == 0 and int(h_up_h.get('content-length', '0')) == up_test.stat().st_size
+        finally:
+            up_test.unlink(missing_ok=True)
+
+        # /media/ 206 con Accept-Encoding: gzip NO debe comprimirse
+        c_m206, h_m206, ch_m206 = api.request(
+            'GET',
+            '/media/hero-salon-loop.mp4',
+            headers={'Range': 'bytes=0-1023', 'Accept-Encoding': 'gzip'},
+        )
+        assert c_m206 == 206 and len(ch_m206) == 1024 and 'content-encoding' not in h_m206
+
+        # 8c. _client_ip(): derecha-a-izquierda en XFF, cabeceras duplicadas, Fly/CF-Ray y anti-spoofing LAN/cloud
+        def _make_dummy_handler(peer: str, hdrs: dict[str, str] | Message):
+            h = server.Handler.__new__(server.Handler)
+            h.client_address = (peer, 54321)
+            h.headers = hdrs
+            return h
+
+        lan_spoof = _make_dummy_handler(
+            '192.168.1.50',
+            {'CF-Connecting-IP': '203.0.113.99', 'X-Forwarded-For': '198.51.100.77, 10.0.0.1'},
+        )
+        saved_env = {k: os.environ.pop(k, None) for k in ('TRUST_PROXY', 'RENDER', 'FLY_APP_NAME', 'RAILWAY_ENVIRONMENT')}
+        try:
+            assert lan_spoof._client_ip() == '192.168.1.50', (
+                'Conexion LAN directa sin TRUST_PROXY no debe confiar en CF-Connecting-IP ni X-Forwarded-For'
+            )
+            os.environ['TRUST_PROXY'] = '1'
+            assert lan_spoof._client_ip() == '203.0.113.99', (
+                'Con TRUST_PROXY=1 debe priorizar CF-Connecting-IP'
+            )
+            # X-Forwarded-For con prefijo falsificado por atacante + IP real + salto interno -> derecha a izquierda
+            lan_xff = _make_dummy_handler('192.168.1.50', {'X-Forwarded-For': '1.2.3.4, 198.51.100.77, 10.0.0.1'})
+            assert lan_xff._client_ip() == '198.51.100.77', (
+                f'X-Forwarded-For debio elegir primera IP publica de derecha a izquierda, dio {lan_xff._client_ip()}'
+            )
+            # Cabeceras X-Forwarded-For duplicadas (HTTPMessage.get_all)
+            dup_msg = Message()
+            dup_msg['X-Forwarded-For'] = '1.2.3.4'
+            dup_msg['X-Forwarded-For'] = '198.51.100.88, 10.0.0.2'
+            lan_dup = _make_dummy_handler('192.168.1.50', dup_msg)
+            assert lan_dup._client_ip() == '198.51.100.88', (
+                f'X-Forwarded-For duplicado debio resolver 198.51.100.88, dio {lan_dup._client_ip()}'
+            )
+
+            # En FLY_APP_NAME sin TRUST_PROXY explicito: ignora CF-Connecting-IP sin CF-Ray y prioriza Fly-Client-IP
+            os.environ.pop('TRUST_PROXY', None)
+            os.environ['FLY_APP_NAME'] = 'salelisto-prod'
+            fly_req = _make_dummy_handler(
+                '172.19.0.1',
+                {'CF-Connecting-IP': '1.1.1.1', 'Fly-Client-IP': '181.45.99.1', 'X-Forwarded-For': '1.2.3.4, 181.45.99.1'},
+            )
+            assert fly_req._client_ip() == '181.45.99.1', 'En Fly debe priorizar Fly-Client-IP sobre CF-Connecting-IP falsificado'
+
+            fly_no_hdr = _make_dummy_handler(
+                '172.19.0.1',
+                {'CF-Connecting-IP': '1.1.1.1', 'X-Forwarded-For': '1.2.3.4, 181.45.99.2, 172.19.0.2'},
+            )
+            assert fly_no_hdr._client_ip() == '181.45.99.2', 'Sin CF-Ray ni TRUST_PROXY no debe aceptar CF-Connecting-IP en Fly'
+
+            fly_cf_ray = _make_dummy_handler(
+                '172.19.0.1',
+                {'CF-Ray': 'abc123-EZE', 'CF-Connecting-IP': '181.45.99.3', 'X-Forwarded-For': '1.2.3.4, 181.45.99.3'},
+            )
+            assert fly_cf_ray._client_ip() == '181.45.99.3', 'Con CF-Ray presente debe aceptar CF-Connecting-IP'
+
+            # En cloud (RENDER=true), un peer con IP publica global directa NO es proxy confiable
+            os.environ.pop('FLY_APP_NAME', None)
+            os.environ['RENDER'] = 'true'
+            direct_pub_peer = _make_dummy_handler(
+                '203.0.113.55',
+                {'X-Forwarded-For': '198.51.100.1', 'CF-Connecting-IP': '198.51.100.2'},
+            )
+            assert direct_pub_peer._client_ip() == '203.0.113.55', (
+                'Un peer con IP publica directa en entorno cloud no debe poder falsificar XFF/CF-Connecting-IP'
+            )
+        finally:
+            for k, v in saved_env.items():
+                os.environ.pop(k, None)
+                if v is not None:
+                    os.environ[k] = v
+
+        # Verificar por HTTP real que cabeceras X-Forwarded-For duplicadas no evaden el rate-limit
+        server.auth_failures.clear()
+        for idx in range(server.AUTH_MAX_FAILURES):
+            c_xff = http.client.HTTPConnection('127.0.0.1', port, timeout=5)
+            try:
+                payload_bad = json.dumps({'pin': '0000'}).encode('utf-8')
+                c_xff.putrequest('POST', '/api/auth/admin')
+                c_xff.putheader('Content-Type', 'application/json')
+                c_xff.putheader('Content-Length', str(len(payload_bad)))
+                # Atacante rota la primera cabecera XFF en cada intento; la segunda es la del proxy
+                c_xff.putheader('X-Forwarded-For', f'198.51.101.{idx + 1}')
+                c_xff.putheader('X-Forwarded-For', '181.45.30.9, 10.0.0.5')
+                c_xff.endheaders()
+                c_xff.send(payload_bad)
+                resp_xff = c_xff.getresponse()
+                resp_xff.read()
+                assert resp_xff.status == 401
+            finally:
+                c_xff.close()
+        c_xff_blk = http.client.HTTPConnection('127.0.0.1', port, timeout=5)
+        try:
+            payload_ok = json.dumps({'pin': '1234'}).encode('utf-8')
+            c_xff_blk.putrequest('POST', '/api/auth/admin')
+            c_xff_blk.putheader('Content-Type', 'application/json')
+            c_xff_blk.putheader('Content-Length', str(len(payload_ok)))
+            c_xff_blk.putheader('X-Forwarded-For', '198.51.101.250')
+            c_xff_blk.putheader('X-Forwarded-For', '181.45.30.9, 10.0.0.5')
+            c_xff_blk.endheaders()
+            c_xff_blk.send(payload_ok)
+            resp_blk = c_xff_blk.getresponse()
+            resp_blk.read()
+            assert resp_blk.status == 429, f'Rotar el primer XFF no debe evadir el rate-limit (dio {resp_blk.status})'
+        finally:
+            c_xff_blk.close()
+        server.auth_failures.clear()
+
+        # Desde loopback (como cloudflared local), dos clientes 4G distintos NO comparten rate-limit
+        server.auth_failures.clear()
+        for _ in range(server.AUTH_MAX_FAILURES):
+            c_cf1, _, _ = api.request(
+                'POST',
+                '/api/auth/admin',
+                body={'pin': '0000'},
+                headers={'CF-Connecting-IP': '181.45.10.1'},
+            )
+            assert c_cf1 == 401
+        c_cf1_blk, _, _ = api.request(
+            'POST',
+            '/api/auth/admin',
+            body={'pin': '1234'},
+            headers={'CF-Connecting-IP': '181.45.10.1'},
+        )
+        assert c_cf1_blk == 429, 'La IP 4G abusiva debio recibir 429'
+        c_cf2_ok, _, _ = api.request(
+            'POST',
+            '/api/auth/admin',
+            body={'pin': '1234'},
+            headers={'CF-Connecting-IP': '181.45.10.2'},
+        )
+        assert c_cf2_ok == 200, 'Otra IP 4G detras de cloudflared no debe quedar bloqueada por 127.0.0.1'
+        server.auth_failures.clear()
+
+        # Misma verificacion de aislamiento por IP 4G en POST /api/leads
+        server.leads_rate.clear()
+        for idx in range(server.LEAD_MAX_PER_WINDOW):
+            c_ld1, _, _ = api.request(
+                'POST',
+                '/api/leads',
+                body={'name': f'Lead A {idx}', 'contact': 'ventas@salelisto.com'},
+                headers={'CF-Connecting-IP': '181.45.20.1'},
+            )
+            assert c_ld1 == 200
+        c_ld1_blk, _, _ = api.request(
+            'POST',
+            '/api/leads',
+            body={'name': 'Lead A extra', 'contact': 'ventas@salelisto.com'},
+            headers={'CF-Connecting-IP': '181.45.20.1'},
+        )
+        assert c_ld1_blk == 429
+        c_ld2_ok, _, _ = api.request(
+            'POST',
+            '/api/leads',
+            body={'name': 'Lead B', 'contact': 'ventas@salelisto.com'},
+            headers={'CF-Connecting-IP': '181.45.20.2'},
+        )
+        assert c_ld2_ok == 200, 'Lead desde otra IP 4G no debe quedar limitado por la primera IP'
+        server.leads_rate.clear()
+
+        # 8d. Idempotencia de pedidos ante microcortes 4G (clientRequestId en POST /api/orders)
+        ver_before_idem = server.db.version
+        c_o1, _, raw_o1 = api.request(
+            'POST',
+            '/api/orders',
+            body={
+                'qrToken': mesa_1['qrToken'],
+                'clientRequestId': 'ord-4g-microcut-001',
+                'items': [
+                    {'itemId': ramen['id'], 'qty': 1, 'note': 'Sin verdeo'},
+                    {'itemId': gin['id'], 'qty': 2, 'note': 'Poco hielo'},
+                ],
+            },
+        )
+        assert c_o1 == 200
+        o1 = json.loads(raw_o1.decode('utf-8'))
+        assert o1['ok'] is True and o1['deduplicated'] is False and len(o1['orderIds']) == 2
+        ver_after_o1 = server.db.version
+        assert ver_after_o1 == ver_before_idem + 1
+
+        # Simular reintento tras microcorte 4G con el mismo clientRequestId (incluso si un plato se agota en el medio!)
+        api.action('item.toggle', {'itemId': ramen['id'], 'available': False}, token=admin_token)
+        ver_before_retry = server.db.version
+        c_o2, _, raw_o2 = api.request(
+            'POST',
+            '/api/orders',
+            body={
+                'qrToken': mesa_1['qrToken'],
+                'clientRequestId': 'ord-4g-microcut-001',
+                'items': [
+                    {'itemId': ramen['id'], 'qty': 1, 'note': 'Sin verdeo'},
+                    {'itemId': gin['id'], 'qty': 2, 'note': 'Poco hielo'},
+                ],
+            },
+        )
+        assert c_o2 == 200
+        o2 = json.loads(raw_o2.decode('utf-8'))
+        assert o2['ok'] is True and o2['deduplicated'] is True, 'Reintento con mismo clientRequestId debe deduplicarse'
+        assert o2['orderIds'] == o1['orderIds'] and o2['batchId'] == o1['batchId'], 'Debe devolver exactamente las mismas comandas'
+        assert server.db.version == ver_before_retry, 'Reintento deduplicado no debe mutar state_ver'
+        _, st_idem = api.get_json('/api/staff-state', token=admin_token)
+        assert len(st_idem['orders']) == 2, f'No debio duplicar comandas en Cocina/Barra, hay {len(st_idem["orders"])}'
+        api.action('item.toggle', {'itemId': ramen['id'], 'available': True}, token=admin_token)
+
+        # Un clientRequestId distinto (o por cabecera Idempotency-Key) si crea nueva comanda
+        c_o3, _, raw_o3 = api.request(
+            'POST',
+            '/api/orders',
+            body={'qrToken': mesa_1['qrToken'], 'items': [{'itemId': gyozas['id'], 'qty': 1}]},
+            headers={'Idempotency-Key': 'ord-4g-hdr-002'},
+        )
+        assert c_o3 == 200
+        o3 = json.loads(raw_o3.decode('utf-8'))
+        assert o3['deduplicated'] is False and o3['orderIds'] != o1['orderIds']
+        c_o3_dup, _, raw_o3_dup = api.request(
+            'POST',
+            '/api/orders',
+            body={'qrToken': mesa_1['qrToken'], 'items': [{'itemId': gyozas['id'], 'qty': 1}]},
+            headers={'Idempotency-Key': 'ord-4g-hdr-002'},
+        )
+        assert c_o3_dup == 200 and json.loads(raw_o3_dup.decode('utf-8'))['deduplicated'] is True
+
+        # Aislamiento por mesa: dos mesas distintas con el mismo clientRequestId crean pedidos independientes
+        c_m2_same, _, raw_m2_same = api.request(
+            'POST',
+            '/api/orders',
+            body={
+                'qrToken': mesa_2['qrToken'],
+                'clientRequestId': 'ord-4g-microcut-001',
+                'items': [{'itemId': gyozas['id'], 'qty': 1}],
+            },
+        )
+        assert c_m2_same == 200
+        o_m2 = json.loads(raw_m2_same.decode('utf-8'))
+        assert o_m2['deduplicated'] is False, 'clientRequestId de Mesa 1 no debe colisionar con Mesa 2'
+        assert set(o_m2['orderIds']).isdisjoint(set(o1['orderIds'])), 'Mesa 2 recibio orderIds de Mesa 1'
+
+        # Reutilizacion de clientRequestId tras cerrar la mesa debe crear un pedido nuevo en la nueva sesion
+        for oid in o1['orderIds'] + o3['orderIds']:
+            api.action('order.status', {'id': oid, 'status': 'entregado'}, token=admin_token)
+        c_close_m1, _ = api.action('table.close', {'tableId': mesa_1['id'], 'payment': 'Tarjeta', 'tip': 0}, token=admin_token)
+        assert c_close_m1 == 200
+        c_m1_reopen, _, raw_m1_reopen = api.request(
+            'POST',
+            '/api/orders',
+            body={
+                'qrToken': mesa_1['qrToken'],
+                'clientRequestId': 'ord-4g-microcut-001',
+                'items': [{'itemId': gyozas['id'], 'qty': 1}],
+            },
+        )
+        assert c_m1_reopen == 200
+        o_m1_new = json.loads(raw_m1_reopen.decode('utf-8'))
+        assert o_m1_new['deduplicated'] is False, 'Tras cerrar mesa, reutilizar clientRequestId debe crear pedido nuevo'
+        assert set(o_m1_new['orderIds']).isdisjoint(set(o1['orderIds']))
+
+        # 8e. Endpoints /api/tunnel/* + RBAC estricto + tunel simulado + precedencia estricta de _effective_base_url()
+        c_dm8, dm8_auth = api.post_json('/api/auth/admin', {'demo': True})
+        assert c_dm8 == 200 and dm8_auth.get('role') == 'demo_admin'
+        demo_admin_tok8 = dm8_auth['token']
+        waiter_tok8 = w2_login['token']
+
+        c_tun_anon, _ = api.get_json('/api/tunnel/status')
+        assert c_tun_anon == 401, 'GET /api/tunnel/status anonimo debio dar 401'
+        c_tun_kit, _ = api.get_json('/api/tunnel/status', token=kitchen_token)
+        assert c_tun_kit == 403, 'GET /api/tunnel/status como kitchen debio dar 403'
+        c_tun_wait, _ = api.get_json('/api/tunnel/status', token=waiter_tok8)
+        assert c_tun_wait == 403, 'GET /api/tunnel/status como waiter debio dar 403'
+
+        c_tun_dm_st, r_tun_dm_st = api.get_json('/api/tunnel/status', token=demo_admin_tok8)
+        assert c_tun_dm_st == 200 and r_tun_dm_st['network']['canManageTunnel'] is False
+        assert 'pid' not in r_tun_dm_st['tunnel'] and 'lastError' not in r_tun_dm_st['tunnel'], (
+            'demo_admin no debe recibir detalles internos (pid/lastError) del tunel'
+        )
+        _, qrs_dm8 = api.get_json('/api/qrs', token=demo_admin_tok8)
+        assert qrs_dm8['canManageTunnel'] is False and qrs_dm8['canAutoInstallTunnel'] is False
+
+        # Solo role == 'admin' puede iniciar o detener el tunel (403 para demo_admin, waiter y kitchen; 401 para anon)
+        c_start_anon, _ = api.post_json('/api/tunnel/start', {'mode': 'quick'})
+        c_stop_anon, _ = api.post_json('/api/tunnel/stop', {})
+        assert c_start_anon == 401 and c_stop_anon == 401
+        for bad_role_name, bad_tok in (('demo_admin', demo_admin_tok8), ('waiter', waiter_tok8), ('kitchen', kitchen_token)):
+            c_st_bad, _ = api.post_json('/api/tunnel/start', {'mode': 'quick'}, token=bad_tok)
+            c_sp_bad, _ = api.post_json('/api/tunnel/stop', {}, token=bad_tok)
+            assert c_st_bad == 403, f'{bad_role_name} no debe poder iniciar tunel (dio {c_st_bad})'
+            assert c_sp_bad == 403, f'{bad_role_name} no debe poder detener tunel (dio {c_sp_bad})'
+        c_tun_dm_inst, _ = api.post_json('/api/tunnel/start', {'autoInstall': True}, token=demo_admin_tok8)
+        assert c_tun_dm_inst == 403
+        c_tun_dm_tok, _ = api.post_json('/api/tunnel/start', {'token': 'fake-token'}, token=demo_admin_tok8)
+        assert c_tun_dm_tok == 403
+
+        # Rechazo limpio de caracteres de control / bytes nulos en token de tunel
+        c_ctrl_tok, _ = api.post_json('/api/tunnel/start', {'mode': 'token', 'token': 'tok\x00evil'}, token=admin_token)
+        assert c_ctrl_tok == 400 and server.tunnel_manager.status()['state'] == 'stopped'
+
+        orig_factory = server.tunnel_manager._process_factory
+        old_pub_env = os.environ.pop('PUBLIC_URL', None)
+        try:
+            def _fake_factory(cmd, env=None):
+                return _FakeCloudflaredProc(
+                    [
+                        'INF Thank you for trying Cloudflare Tunnel.',
+                        'INF +----------------------------------------------------------------+',
+                        'INF |  https://demo-bistro-4g.trycloudflare.com                      |',
+                        'INF +----------------------------------------------------------------+',
+                    ]
+                )
+
+            server.tunnel_manager._process_factory = _fake_factory
+
+            c_tstart, r_tstart = api.post_json('/api/tunnel/start', {'mode': 'quick'}, token=admin_token)
+            assert c_tstart == 200 and r_tstart['ok'] is True
+            assert r_tstart['tunnel']['active'] is True
+            assert r_tstart['tunnel']['publicUrl'] == 'https://demo-bistro-4g.trycloudflare.com'
+            assert r_tstart['network']['isPublic4g'] is True
+            assert r_tstart['network']['isTemporaryTunnel'] is True
+            assert r_tstart['network']['urlSource'] == 'tunnel'
+
+            # /api/qrs debe reflejar automaticamente la URL HTTPS corta del tunel activo
+            _, qrs_tun = api.get_json('/api/qrs', token=admin_token)
+            assert qrs_tun['baseUrl'] == 'https://demo-bistro-4g.trycloudflare.com'
+            assert qrs_tun['isPublic4g'] is True and qrs_tun['isLocalOnly'] is False
+            t1_tun = next(c for b in qrs_tun['blocks'] for c in b['tables'] if c['qrToken'] == mesa_1['qrToken'])
+            assert t1_tun['url'] == f"https://demo-bistro-4g.trycloudflare.com/q/{mesa_1['qrToken']}"
+
+            # SSE de staff debe exponer el snapshot network.baseUrl con el tunel activo
+            sse_t_code, _, sse_t_state = read_first_sse_event(
+                port,
+                f'/api/events?scope=staff&token={admin_token}',
+            )
+            assert sse_t_code == 200 and sse_t_state is not None
+            assert sse_t_state['network']['baseUrl'] == 'https://demo-bistro-4g.trycloudflare.com'
+            assert sse_t_state['network']['isPublic4g'] is True
+
+            # Precedencia 2: PUBLIC_URL supera al tunel rapido
+            os.environ['PUBLIC_URL'] = 'https://menu-env.example.com'
+            _, info_env = api.get_json('/api/info')
+            assert info_env['baseUrl'] == 'https://menu-env.example.com'
+            assert info_env['urlSource'] == 'env_public_url' and info_env['isPublic4g'] is True
+
+            # Precedencia 1: restaurant.public_url supera a PUBLIC_URL y al tunel
+            c_save_pub, _ = api.action(
+                'restaurant.save',
+                {'publicUrl': 'https://menu-fijo.example.com/'},
+                token=admin_token,
+            )
+            assert c_save_pub == 200
+            _, info_rest = api.get_json('/api/info')
+            assert info_rest['baseUrl'] == 'https://menu-fijo.example.com'
+            assert info_rest['urlSource'] == 'restaurant_public_url'
+
+            # Limpiar restaurant.public_url y PUBLIC_URL -> vuelve al tunel activo
+            api.action('restaurant.save', {'publicUrl': ''}, token=admin_token)
+            os.environ.pop('PUBLIC_URL', None)
+            _, info_back = api.get_json('/api/info')
+            assert info_back['baseUrl'] == 'https://demo-bistro-4g.trycloudflare.com'
+            assert info_back['urlSource'] == 'tunnel'
+
+            # Detener tunel via POST /api/tunnel/stop
+            c_tstop, r_tstop = api.post_json('/api/tunnel/stop', {}, token=admin_token)
+            assert c_tstop == 200 and r_tstop['tunnel']['active'] is False
+            assert r_tstop['network']['isPublic4g'] is False
+
+            # Tunel permanente con token (TUNNEL_TOKEN pasado por entorno, nunca por argv)
+            captured_cmd_env: dict[str, object] = {}
+
+            def _fake_token_factory(cmd, env=None):
+                captured_cmd_env['cmd'] = list(cmd)
+                captured_cmd_env['token_env'] = (env or {}).get('TUNNEL_TOKEN')
+                return _FakeCloudflaredProc(['INF Registered tunnel connection connIndex=0'])
+
+            server.tunnel_manager._process_factory = _fake_token_factory
+            c_ttok, r_ttok = api.post_json(
+                '/api/tunnel/start',
+                {'mode': 'token', 'token': 'cf-secret-token-e2e'},
+                token=admin_token,
+            )
+            assert c_ttok == 200 and r_ttok['tunnel']['active'] is True and r_ttok['tunnel']['mode'] == 'token'
+            assert 'cf-secret-token-e2e' not in ' '.join(captured_cmd_env['cmd']), 'El token no debe ir en argv'
+            assert captured_cmd_env['token_env'] == 'cf-secret-token-e2e'
+            api.post_json('/api/tunnel/stop', {}, token=admin_token)
+
+            # Parseo de flags CLI (--tunnel, --port, puerto posicional)
+            cli_pos = server.parse_cli_flags(['server.py', '9100', '--tunnel'])
+            assert cli_pos['port'] == 9100 and cli_pos['tunnel'] is True
+            cli_flag = server.parse_cli_flags(['server.py', '--port', '9200', '--auto-install-tunnel'])
+            assert cli_flag['port'] == 9200 and cli_flag['tunnel'] is True and cli_flag['auto_install'] is True
+
+            # Precedencia 4: X-Forwarded-Proto/Host solo con proxy confiable (loopback), ignorado en LAN directa
+            c_fwd, _, raw_fwd = api.request(
+                'GET',
+                '/api/info',
+                headers={'X-Forwarded-Proto': 'https', 'X-Forwarded-Host': 'bistro-proxy.example.com'},
+            )
+            assert c_fwd == 200
+            info_fwd = json.loads(raw_fwd.decode('utf-8'))
+            assert info_fwd['baseUrl'] == 'https://bistro-proxy.example.com'
+            assert info_fwd['urlSource'] == 'forwarded_proxy' and info_fwd['isPublic4g'] is True
+
+            untrusted_base, untrusted_src = server.resolve_base_url_info(
+                headers={'X-Forwarded-Proto': 'https', 'X-Forwarded-Host': 'evil.example.com', 'Host': '127.0.0.1:8123'},
+                trusted_proxy=False,
+                port=port,
+            )
+            assert 'evil.example.com' not in untrusted_base and untrusted_src == 'lan'
+        finally:
+            server.tunnel_manager.stop()
+            server.tunnel_manager._process_factory = orig_factory
+            os.environ.pop('PUBLIC_URL', None)
+            if old_pub_env is not None:
+                os.environ['PUBLIC_URL'] = old_pub_env
+
+        print('OK [8/8] 4G/5G: /q/<token>, Gzip, _client_ip(), idempotencia /api/orders, precedencia y /api/tunnel/* verificados.')
 
     finally:
         httpd.shutdown()

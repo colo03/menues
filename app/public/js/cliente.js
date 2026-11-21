@@ -1,6 +1,6 @@
 (async () => {
   const params = new URLSearchParams(location.search);
-  const urlToken = (params.get('t') || '').trim();
+  const urlToken = resolveQrTokenFromLocation(location);
   const legacyMesa = (params.get('mesa') || '').trim();
 
   const $ = (sel) => document.querySelector(sel);
@@ -17,11 +17,13 @@
   const TOKEN = state.table.qrToken;
   // Si entró por ?mesa=X en modo demo, fijamos la URL con el token seguro real
   if (!urlToken && TOKEN) {
-    history.replaceState(null, '', `cliente.html?t=${encodeURIComponent(TOKEN)}`);
+    history.replaceState(null, '', `/cliente.html?t=${encodeURIComponent(TOKEN)}`);
   }
 
   const CART_KEY = `salelisto:cart:${TOKEN}`;
+  const CART_REQ_KEY = `salelisto:cartReq:${TOKEN}`;
   let cart = loadCart();
+  let pendingOrderReqId = loadPendingReqId();
   let tab = 'menu';
   let activeCat = state.categories[0]?.id || '';
   let openSheetKind = null; // 'item' | 'cart' | 'mozo' | 'cuenta' | 'closed' | null
@@ -63,8 +65,19 @@
   function loadCart() {
     try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (_) { return []; }
   }
-  function persistCart() {
+  function loadPendingReqId() {
+    try { return localStorage.getItem(CART_REQ_KEY) || ''; } catch (_) { return ''; }
+  }
+  function setPendingReqId(id) {
+    pendingOrderReqId = id || '';
+    try {
+      if (pendingOrderReqId) localStorage.setItem(CART_REQ_KEY, pendingOrderReqId);
+      else localStorage.removeItem(CART_REQ_KEY);
+    } catch (_) {}
+  }
+  function persistCart(resetIdempotency = true) {
     try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (_) {}
+    if (resetIdempotency) setPendingReqId('');
   }
 
   function sanitizeCart(s, notifyUser) {
@@ -432,21 +445,35 @@
     const btn = e.currentTarget;
     btn.disabled = true;
     btn.textContent = 'Enviando…';
+    const clientRequestId = pendingOrderReqId || generateClientRequestId('ord');
+    setPendingReqId(clientRequestId);
     try {
-      const res = await dispatch('order.create', {
+      const res = await apiPost('/api/orders', {
         qrToken: TOKEN,
+        clientRequestId,
         items: cart.map((l) => ({ itemId: l.itemId, qty: l.qty, note: l.note })),
       });
+      if (res.state) applyIncomingState(res.state, { fromSSE: false });
       cart = [];
-      persistCart();
+      persistCart(true);
       closeSheet();
       const wMsg = res.result?.waiterName ? ` · Te atiende ${res.result.waiterName}` : '';
-      toast(`✅ ¡Pedido enviado!${wMsg}`);
+      const msg = res.deduplicated
+        ? `✅ Pedido confirmado (sin duplicar)${wMsg}`
+        : `✅ ¡Pedido enviado!${wMsg}`;
+      toast(msg);
       setTab('orders');
     } catch (err) {
       btn.disabled = false;
       btn.textContent = 'Enviar pedido';
-      toast(`⚠️ ${err.message}`);
+      if (err.status && err.status >= 400 && err.status < 500) {
+        // Error de validación (ej. plato recién agotado): nuevo intento usará un ID nuevo tras ajustar carrito
+        setPendingReqId('');
+        toast(`⚠️ ${err.message}`);
+      } else {
+        // Microcorte 4G/5G: conservamos pendingOrderReqId para reintentar sin duplicar platos
+        toast('⚠️ Señal 4G inestable. Tocá "Enviar pedido" de nuevo (no se duplicará).', 4500);
+      }
     }
   }
 

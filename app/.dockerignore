@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+data/*.db*
+data/*.key
+data/*.json
+data/bin/
+data/uploads/*
