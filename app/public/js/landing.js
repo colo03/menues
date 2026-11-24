@@ -15,7 +15,14 @@
 
   var currentCur = 'ars';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var isMobile = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
   var hasIO = 'IntersectionObserver' in window;
+
+  // Compatibilidad con enlaces antiguos /?mesas=...#roi -> planes.html
+  if (location.hash === '#roi' && !document.getElementById('roi-tables')) {
+    location.replace('planes.html' + location.search + '#roi');
+    return;
+  }
 
   function $(sel, ctx) { return (ctx || document).querySelector(sel); }
   function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
@@ -74,22 +81,49 @@
     Object.keys(linkById).forEach(function (id) { var s = document.getElementById(id); if (s) spy.observe(s); });
   }
 
-  /* ---------- 2. Aparición al scroll ---------- */
+  /* ---------- 2. Aparición al scroll (sutil y rápida en desktop, inmediata en celular) ---------- */
   var reveals = $all('.reveal');
-  reveals.forEach(function (el) {
-    var sibs = el.parentElement ? $all(':scope > .reveal', el.parentElement) : [];
-    var i = sibs.indexOf(el);
-    if (i > 0) el.style.setProperty('--d', Math.min(i, 4) * 80 + 'ms');
-  });
-  if (!hasIO || reduceMotion) {
+  if (isMobile || !hasIO || reduceMotion) {
     reveals.forEach(function (el) { el.classList.add('is-in'); });
   } else {
-    var ro = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add('is-in'); ro.unobserve(en.target); }
-      });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
-    reveals.forEach(function (el) { ro.observe(el); });
+    reveals.forEach(function (el) {
+      var sibs = el.parentElement ? $all(':scope > .reveal', el.parentElement) : [];
+      var i = sibs.indexOf(el);
+      if (i > 0) el.style.setProperty('--d', Math.min(i, 2) * 25 + 'ms');
+    });
+    var vh = window.innerHeight || document.documentElement.clientHeight || 800;
+    var pending = [];
+    reveals.forEach(function (el) {
+      var rect = el.getBoundingClientRect();
+      if (rect.top < vh * 1.25) {
+        el.classList.add('is-in');
+      } else {
+        pending.push(el);
+      }
+    });
+    if (pending.length) {
+      var ro = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting || en.boundingClientRect.top < (window.innerHeight || 800) + 220) {
+            en.target.classList.add('is-in');
+            ro.unobserve(en.target);
+          }
+        });
+      }, { rootMargin: '0px 0px 260px 0px', threshold: 0 });
+      pending.forEach(function (el) { ro.observe(el); });
+      var revealCheck = function () {
+        var lim = (window.innerHeight || 800) + 240;
+        for (var k = pending.length - 1; k >= 0; k--) {
+          if (pending[k].getBoundingClientRect().top < lim) {
+            pending[k].classList.add('is-in');
+            ro.unobserve(pending[k]);
+            pending.splice(k, 1);
+          }
+        }
+        if (!pending.length) window.removeEventListener('scroll', revealCheck);
+      };
+      window.addEventListener('scroll', revealCheck, { passive: true });
+    }
   }
 
   /* ---------- 3. Videos de fondo ---------- */
@@ -181,7 +215,7 @@
       } else {
         spot.muted = true;
         spotSound.setAttribute('aria-pressed', 'false');
-        label.textContent = 'Escuchar con sonido';
+        label.textContent = 'Escuchar';
         ico.textContent = '🔊';
       }
     });
@@ -382,6 +416,16 @@
     [rTables, rTicket, rShifts].forEach(setFill);
 
     roiState = { tables: M, ticket: T, shifts: S, netArs: netArs, netDisplay: netDisplay, mult: mult, plan: plan.name };
+
+    // Si la calculadora está en planes.html (sin formulario local), pasar los datos por URL al piloto
+    var roiCtaEl = $('#roi-cta');
+    if (roiCtaEl && !$('#lead-form')) {
+      var msgTxt = 'Calculé con la calculadora ROI: ' + M + ' mesas, ticket ' + fmtMoney(T) +
+        ', ' + S + ' turnos fuertes por semana. Ganancia neta estimada ' + netDisplay + '/mes.';
+      roiCtaEl.href = '/?plan=' + encodeURIComponent(plan.name) +
+        '&mesas=' + encodeURIComponent(String(M)) +
+        '&msg=' + encodeURIComponent(msgTxt) + '#piloto';
+    }
   }
 
   function buildRoiShareUrl() {
@@ -501,6 +545,17 @@
   $all('.plan-cta[data-plan]').forEach(function (a) {
     a.addEventListener('click', function () { prefillLead({ plan: a.dataset.plan }); });
   });
+
+  // Precargar plan, mesas o resumen ROI cuando se llega desde planes.html
+  if (form && 'URLSearchParams' in window) {
+    var lqs = new URLSearchParams(location.search);
+    var qPlan = lqs.get('plan');
+    var qMesasLead = lqs.get('mesas');
+    var qMsgLead = lqs.get('msg');
+    if (qPlan || qMesasLead || qMsgLead) {
+      prefillLead({ plan: qPlan || '', tables: qMesasLead || '', message: qMsgLead || '' });
+    }
+  }
 
   function readLead() {
     var fd = new FormData(form);

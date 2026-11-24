@@ -784,9 +784,31 @@ def run_suite() -> None:
         trav_code, _, _ = api.request('GET', '/media/../server.py')
         assert trav_code == 404
 
-        for route in ('/qr.html', '/demo.html', '/operacion.html', '/api/qrs', '/api/health'):
+        for route in (
+            '/qr.html',
+            '/demo.html',
+            '/demo',
+            '/producto.html',
+            '/producto',
+            '/planes.html',
+            '/planes',
+            '/operacion.html',
+            '/operacion',
+            '/api/qrs',
+            '/api/health',
+        ):
             r_code, _, _ = api.request('GET', route)
             assert r_code == 200, f'Ruta {route} devolvio {r_code}'
+        d_head, _, d_body = api.request('HEAD', '/demo')
+        assert d_head == 200 and len(d_body) == 0, f'HEAD /demo fallo ({d_head})'
+        conn_r = http.client.HTTPConnection('127.0.0.1', int(api.base_url.rsplit(':', 1)[-1]), timeout=5)
+        try:
+            conn_r.request('GET', '/demo/')
+            resp_r = conn_r.getresponse()
+            resp_r.read()
+            assert resp_r.status == 301 and resp_r.getheader('Location') == '/demo', f'GET /demo/ debio redirigir a /demo ({resp_r.status}, {resp_r.getheader("Location")})'
+        finally:
+            conn_r.close()
 
         # SEO, Open Graph PNG 1200x630 y canales oficiales en index.html / robots.txt / sitemap.xml
         idx_code, idx_hdrs, idx_raw = api.request('GET', '/')
@@ -811,7 +833,12 @@ def run_suite() -> None:
         sm_code, sm_hdrs, sm_raw = api.request('GET', '/sitemap.xml')
         assert sm_code == 200 and 'xml' in sm_hdrs.get('content-type', '')
         sm_txt = sm_raw.decode('utf-8')
-        assert '<loc>https://salelisto.com/</loc>' in sm_txt and '<loc>https://salelisto.com/demo.html</loc>' in sm_txt
+        assert (
+            '<loc>https://salelisto.com/</loc>' in sm_txt
+            and '<loc>https://salelisto.com/producto.html</loc>' in sm_txt
+            and '<loc>https://salelisto.com/planes.html</loc>' in sm_txt
+            and '<loc>https://salelisto.com/demo.html</loc>' in sm_txt
+        )
         print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4, Open Graph PNG, SEO y vistas clave verificados.')
 
         # 8. Arquitectura 4G/5G sin Wi-Fi: /q/<token>, Gzip, _client_ip(), idempotencia POST /api/orders y /api/tunnel/*

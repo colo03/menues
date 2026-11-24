@@ -119,7 +119,25 @@
     .r-tab { padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: rgba(250, 247, 242, 0.7); transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
     .r-tab.active { background: var(--accent); color: #ffffff; }
 
-    @media (max-width: 1260px) {
+    /* Switcher de pantallas exclusivo para celular y tablet */
+    .mobile-switcher {
+      display: none; gap: 6px; padding: 8px 12px;
+      background: #171412; border-bottom: 1px solid var(--dark-line);
+    }
+    .m-tab {
+      flex: 1; padding: 9px 8px; border-radius: 10px; font-size: 12.5px; font-weight: 800;
+      background: var(--dark-surface); color: rgba(250, 247, 242, 0.72);
+      border: 1px solid var(--dark-line); text-align: center; white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    }
+    .m-tab.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
+
+    .sim-retry {
+      margin-left: 10px; padding: 4px 10px; border-radius: var(--radius-pill);
+      background: var(--accent); color: #ffffff; font-size: 12px; font-weight: 800;
+    }
+
+    @media (max-width: 1260px) and (min-width: 1025px) {
       body { height: auto; overflow: auto; }
       .stage { grid-template-columns: 1fr 1fr; height: auto; }
       .phone { height: 740px; }
@@ -128,15 +146,38 @@
       .panel iframe { width: 100%; height: 100%; transform: none; }
       .col-wrap.wide { grid-column: 1 / -1; }
     }
-    @media (max-width: 780px) {
-      .stage { grid-template-columns: 1fr; }
+    @media (max-width: 1024px) {
+      body { height: 100vh; height: 100dvh; overflow: hidden; }
+      .bar { padding: 8px 12px; gap: 6px 8px; min-height: auto; }
+      .bar-brand strong, .bar-sep, .bar .grow, .bar .bar-desktop-only { display: none; }
+      .bar label { font-size: 11.5px; }
+      .bar select { padding: 5px 8px; font-size: 12px; max-width: 138px; }
+      .sim-btn { padding: 6px 11px; font-size: 12px; }
+      .bar a, .bar .bar-ghost { padding: 5px 8px; font-size: 11.5px; }
+      .sim-strip { padding: 6px 12px; font-size: 12px; }
+      .sim-steps { display: none; }
+      .mobile-switcher { display: flex; }
+      .stage {
+        flex: 1; display: flex; flex-direction: column;
+        padding: 8px 10px 10px; min-height: 0; overflow: hidden;
+      }
+      .col-wrap { display: none; flex: 1; min-height: 0; gap: 6px; }
+      .col-wrap.m-active { display: flex; }
+      .col-wrap .label { display: none; }
+      .phone { flex: 1; height: auto; border-radius: 20px; padding: 4px; }
+      .phone-screen { border-radius: 16px; }
+      .phone-screen iframe, .panel iframe { width: 100%; height: 100%; transform: none; }
+      .panel { flex: 1; height: auto; border-radius: 14px; }
+      .r-tabs { width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; }
+      .r-tabs::-webkit-scrollbar { display: none; }
+      .r-tab { flex: 0 0 auto; white-space: nowrap; text-align: center; padding: 6px 10px; font-size: 12px; }
     }
   </style>
 </head>
 <body>
   <header class="bar">
     <div class="bar-brand">
-      <img src="logo-dark.svg" alt="SaleListo" style="height:34px;display:block;flex:none">
+      <a href="/" style="border:0;padding:0;display:inline-flex" aria-label="Volver al inicio"><img src="logo-dark.svg" alt="SaleListo" style="height:30px;display:block;flex:none"></a>
       <span class="bar-sep">·</span>
       <strong>Circuito en Vivo</strong>
     </div>
@@ -145,16 +186,22 @@
       ⚡ Simular Hora Pico
     </button>
     <button type="button" class="bar-ghost" id="clearDemoBtn" title="Limpia únicamente las mesas abiertas sin borrar el historial cerrado del día">
-      ↺ Limpiar turno demo
+      ↺ Limpiar
     </button>
 
     <span class="grow"></span>
-    <label>📱 Mesa: <select id="clientTableSel"></select></label>
-    <label>⌚ Mozo: <select id="waiterSel"></select></label>
-    <a href="pase.html" target="_blank">🛎️ Pase ↗</a>
-    <a href="operacion.html">Tablero</a>
-    <a href="/">Portada</a>
+    <label>📱 <select id="clientTableSel" aria-label="Mesa del cliente"></select></label>
+    <label>⌚ <select id="waiterSel" aria-label="Mozo seleccionado"></select></label>
+    <a class="bar-desktop-only" href="pase.html" target="_blank">🛎️ Pase ↗</a>
+    <a class="bar-desktop-only" href="operacion.html">Acceso Local</a>
+    <a href="/">Inicio</a>
   </header>
+
+  <nav class="mobile-switcher" id="mobileSwitcher" aria-label="Elegir pantalla de la demo">
+    <button type="button" class="m-tab active" data-pane="client">📱 Cliente</button>
+    <button type="button" class="m-tab" data-pane="waiter">⌚ Mozo</button>
+    <button type="button" class="m-tab" data-pane="local">🛎️ Local</button>
+  </nav>
 
   <div class="sim-strip" id="simStrip" hidden aria-live="polite">
     <div class="sim-steps" id="simSteps">
@@ -168,25 +215,25 @@
   </div>
 
   <main class="stage">
-    <div class="col-wrap">
+    <div class="col-wrap m-active" data-pane="client">
       <div class="col-head"><span class="label">1 · Celular del Cliente (QR de Mesa)</span></div>
       <div class="phone"><div class="phone-screen"><iframe id="clientFrame" title="Vista Cliente"></iframe></div></div>
     </div>
 
-    <div class="col-wrap">
+    <div class="col-wrap" data-pane="waiter">
       <div class="col-head"><span class="label">2 · Mozo / Pulsera Vibradora (Opcional)</span></div>
       <div class="phone"><div class="phone-screen"><iframe id="waiterFrame" title="Vista Mozo"></iframe></div></div>
     </div>
 
-    <div class="col-wrap wide">
+    <div class="col-wrap wide" data-pane="local">
       <div class="col-head">
         <span class="label">3 · Pantallas Fijas del Local</span>
         <div class="r-tabs" id="rightTabs">
-          <button class="r-tab active" type="button" data-src="pase.html">🛎️ Estación de Mozos</button>
+          <button class="r-tab active" type="button" data-src="pase.html">🛎️ Pase</button>
           <button class="r-tab" type="button" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
           <button class="r-tab" type="button" data-src="cocina.html?estacion=barra">🍸 Barra</button>
           <button class="r-tab" type="button" data-src="cocina.html?estacion=mostrador">🍣 Mostrador</button>
-          <button class="r-tab" type="button" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
+          <button class="r-tab" type="button" data-src="restaurante.html?demo=1">🖥️ Panel</button>
         </div>
       </div>
       <div class="panel"><iframe id="rightFrame" src="pase.html" title="Pantallas Fijas del Local"></iframe></div>
@@ -225,23 +272,6 @@
         return adminToken;
       }
 
-      async function fetchQrsSafe() {
-        let res = await fetch('api/qrs', {
-          headers: adminToken ? { 'X-Auth-Token': adminToken } : {},
-        });
-        if (res.status === 401) {
-          adminToken = '';
-          const tok = await ensureAdminToken();
-          res = await fetch('api/qrs', { headers: { 'X-Auth-Token': tok } });
-        }
-        return res.json();
-      }
-
-      const [qrs, wpub] = await Promise.all([
-        fetchQrsSafe(),
-        fetch('api/waiters-public').then((r) => r.json()),
-      ]);
-
       const tSel = document.getElementById('clientTableSel');
       const wSel = document.getElementById('waiterSel');
       const cFrame = document.getElementById('clientFrame');
@@ -252,23 +282,31 @@
       const simStrip = document.getElementById('simStrip');
       const simMsg = document.getElementById('simMsg');
 
-      const allTables = [];
-      (qrs.blocks || []).forEach((b) => {
-        b.tables.forEach((t) => {
-          allTables.push({ ...t, blockId: b.id, blockName: b.name });
-          tSel.add(new Option(`${b.name} · Mesa ${t.code}`, t.qrToken));
+      // Switcher de pantallas en celular / tablet
+      const setMobilePane = (pane) => {
+        document.querySelectorAll('.m-tab').forEach((b) => b.classList.toggle('active', b.dataset.pane === pane));
+        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => c.classList.toggle('m-active', c.dataset.pane === pane));
+      };
+      const mobileSwitcher = document.getElementById('mobileSwitcher');
+      if (mobileSwitcher) {
+        mobileSwitcher.onclick = (e) => {
+          const btn = e.target.closest('[data-pane]');
+          if (btn) setMobilePane(btn.dataset.pane);
+        };
+      }
+
+      async function fetchQrsSafe() {
+        let res = await fetch('api/qrs', {
+          headers: adminToken ? { 'X-Auth-Token': adminToken } : {},
         });
-      });
-
-      const terrazaIdx = allTables.findIndex((t) => /terraza|exterior|patio/i.test(t.blockName));
-      if (terrazaIdx >= 0) tSel.selectedIndex = terrazaIdx;
-      else if (tSel.options.length > 3) tSel.selectedIndex = 3;
-
-      wpub.waiters.forEach((w) => {
-        wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera)'}`, w.id));
-      });
-      const sofiaIdx = wpub.waiters.findIndex((w) => w.available && /sof/i.test(w.name));
-      if (sofiaIdx >= 0) wSel.selectedIndex = sofiaIdx;
+        if (res.status === 401) {
+          adminToken = '';
+          const tok = await ensureAdminToken();
+          res = await fetch('api/qrs', { headers: { 'X-Auth-Token': tok } });
+        }
+        if (!res.ok) throw new Error('Error cargando mesas de la demo (' + res.status + ')');
+        return res.json();
+      }
 
       const syncClient = () => {
         if (tSel.value) cFrame.src = `cliente.html?t=${encodeURIComponent(tSel.value)}`;
@@ -277,10 +315,50 @@
         wFrame.src = wSel.value ? `mozo.html?waiter=${encodeURIComponent(wSel.value)}` : 'mozo.html';
       };
 
-      tSel.onchange = syncClient;
-      wSel.onchange = syncWaiter;
-      syncClient();
-      syncWaiter();
+      const initDemoData = async () => {
+        try {
+          const [qrs, wpub] = await Promise.all([
+            fetchQrsSafe(),
+            fetch('api/waiters-public').then((r) => {
+              if (!r.ok) throw new Error('Error cargando mozos (' + r.status + ')');
+              return r.json();
+            }),
+          ]);
+
+          tSel.innerHTML = '';
+          wSel.innerHTML = '';
+          const allTables = [];
+          (qrs.blocks || []).forEach((b) => {
+            b.tables.forEach((t) => {
+              allTables.push({ ...t, blockId: b.id, blockName: b.name });
+              tSel.add(new Option(`${b.name} · Mesa ${t.code}`, t.qrToken));
+            });
+          });
+
+          const terrazaIdx = allTables.findIndex((t) => /terraza|exterior|patio/i.test(t.blockName));
+          if (terrazaIdx >= 0) tSel.selectedIndex = terrazaIdx;
+          else if (tSel.options.length > 3) tSel.selectedIndex = 3;
+
+          (wpub.waiters || []).forEach((w) => {
+            wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera)'}`, w.id));
+          });
+          const sofiaIdx = (wpub.waiters || []).findIndex((w) => w.available && /sof/i.test(w.name));
+          if (sofiaIdx >= 0) wSel.selectedIndex = sofiaIdx;
+
+          syncClient();
+          syncWaiter();
+          simStrip.hidden = true;
+        } catch (err) {
+          simStrip.hidden = false;
+          simMsg.innerHTML = `⚠️ No pudimos conectar con el servidor de demo (${err.message || 'sin respuesta'}). <button type="button" class="sim-retry" id="retryDemoBtn">Reintentar</button>`;
+          const retryBtn = document.getElementById('retryDemoBtn');
+          if (retryBtn) retryBtn.onclick = initDemoData;
+        }
+      };
+
+      tSel.onchange = () => { syncClient(); setMobilePane('client'); };
+      wSel.onchange = () => { syncWaiter(); setMobilePane('waiter'); };
+      await initDemoData();
 
       const viewMap = {
         pase: 'pase.html',
@@ -294,6 +372,7 @@
         const targetSrc = viewMap[initVista];
         document.querySelectorAll('.r-tab').forEach((x) => x.classList.toggle('active', x.dataset.src === targetSrc));
         rFrame.src = targetSrc;
+        setMobilePane('local');
       }
 
       document.getElementById('rightTabs').onclick = (e) => {

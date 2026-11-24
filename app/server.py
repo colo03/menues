@@ -769,16 +769,41 @@ class Handler(SimpleHTTPRequestHandler):
 
     def _try_serve_static_compressed(self, req_path: str, head_only: bool = False) -> bool:
         """Sirve archivos estáticos textuales (HTML/CSS/JS/SVG/JSON) con ETag/304 y Gzip para 4G/5G."""
-        rel = unquote(req_path).lstrip('/')
-        if not rel or rel.endswith('/'):
-            rel = rel + 'index.html'
+        raw_rel = unquote(req_path).lstrip('/')
+        rel = raw_rel + 'index.html' if (not raw_rel or raw_rel.endswith('/')) else raw_rel
         pub_root = PUBLIC.resolve()
         try:
             target = (pub_root / rel).resolve()
         except (OSError, ValueError):
             return False
         if pub_root not in target.parents or not target.is_file():
-            return False
+            # Rutas limpias sin .html: /demo -> demo.html, /producto -> producto.html, /planes -> planes.html
+            if raw_rel.endswith('/'):
+                slug = raw_rel.rstrip('/')
+                if slug and '/' not in slug and '.' not in slug:
+                    try:
+                        alt = (pub_root / f'{slug}.html').resolve()
+                    except (OSError, ValueError):
+                        return False
+                    if pub_root in alt.parents and alt.is_file():
+                        parsed = urlparse(self.path)
+                        dest = f'/{slug}' + (f'?{parsed.query}' if parsed.query else '')
+                        self.send_response(301)
+                        self.send_header('Location', dest)
+                        self.send_header('Content-Length', '0')
+                        self.end_headers()
+                        return True
+                return False
+            if raw_rel and '/' not in raw_rel and '.' not in raw_rel:
+                try:
+                    alt = (pub_root / f'{raw_rel}.html').resolve()
+                except (OSError, ValueError):
+                    return False
+                if pub_root not in alt.parents or not alt.is_file():
+                    return False
+                target = alt
+            else:
+                return False
         mime, _ = mimetypes.guess_type(str(target))
         if not mime or not self._is_compressible_type(mime):
             return False
