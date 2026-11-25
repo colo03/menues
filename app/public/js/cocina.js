@@ -1,13 +1,36 @@
 (async () => {
   const VALID_FILTERS = ['todas', 'cocina', 'barra', 'mostrador'];
   const params = new URLSearchParams(location.search);
-  let stationFilter = params.get('estacion') || localStorage.getItem('salelisto:kdsStation') || 'todas';
+  const demoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
+  const isEmbed = typeof isDemoEmbed === 'function' ? isDemoEmbed() : false;
+  if (isEmbed) document.body.classList.add('is-embed');
+
+  let stationFilter = params.get('estacion') || (demoSid ? 'todas' : (localStorage.getItem('salelisto:kdsStation') || 'todas'));
   if (!VALID_FILTERS.includes(stationFilter)) stationFilter = 'todas';
 
   const $ = (sel) => document.querySelector(sel);
 
   // Activar Screen Wake Lock con reintento en visibilitychange
-  enableScreenWakeLock();
+  if (!isEmbed) enableScreenWakeLock();
+
+  // Panel de Ajustes
+  function setKSettingsOpen(open) {
+    const bd = $('#kSettingsBackdrop');
+    const dr = $('#kSettingsDrawer');
+    const btn = $('#kSettingsBtn');
+    if (bd) bd.hidden = !open;
+    if (dr) dr.hidden = !open;
+    if (btn) btn.setAttribute('aria-expanded', String(Boolean(open)));
+  }
+  $('#kSettingsBtn')?.addEventListener('click', () => {
+    const dr = $('#kSettingsDrawer');
+    setKSettingsOpen(dr ? dr.hidden : true);
+  });
+  $('#kSettingsClose')?.addEventListener('click', () => setKSettingsOpen(false));
+  $('#kSettingsBackdrop')?.addEventListener('click', () => setKSettingsOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setKSettingsOpen(false);
+  });
 
   // Estado del cajón rápido de Agotados (86)
   let stockOpen = false;
@@ -15,7 +38,9 @@
   let stockStation = 'todas';
 
   // ---------- Autenticación con modal propio (sin window.prompt) ----------
-  let token = sessionStorage.getItem('salelisto:kdsToken') || sessionStorage.getItem('salelisto:adminToken') || '';
+  let token = demoSid
+    ? ''
+    : (sessionStorage.getItem('salelisto:kdsToken') || sessionStorage.getItem('salelisto:adminToken') || '');
   if (token) setAuthToken(token);
 
   function askPinViaGate() {
@@ -55,7 +80,7 @@
       const res = await apiPost('api/auth/kitchen', {});
       token = res.token;
       setAuthToken(token);
-      sessionStorage.setItem('salelisto:kdsToken', token);
+      if (!demoSid) sessionStorage.setItem('salelisto:kdsToken', token);
       $('#kPinGate').hidden = true;
       $('#kApp').hidden = false;
       return true;
@@ -148,8 +173,10 @@
     const b = e.target.closest('[data-st]');
     if (!b) return;
     stationFilter = b.dataset.st;
-    localStorage.setItem('salelisto:kdsStation', stationFilter);
-    history.replaceState(null, '', `cocina.html?estacion=${stationFilter}`);
+    if (!demoSid) {
+      localStorage.setItem('salelisto:kdsStation', stationFilter);
+      history.replaceState(null, '', `cocina.html?estacion=${stationFilter}`);
+    }
     knownIds = new Set(matchingOrders(state).map((o) => o.id));
     seedLateAlerted(state);
     render();

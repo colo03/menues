@@ -29,34 +29,12 @@
         </div>
       </div>
       <div class="m-controls">
-        <button class="audio-pill off" id="audioBtn" type="button" title="Silenciar o reactivar sonido y vibración">🔇 Sonido</button>
-        <button class="shift-pill on" id="shiftBtn" type="button">En turno</button>
-        <button class="btn btn-xs btn-ghost" id="logoutBtn" type="button" title="Cambiar de mozo">Salir</button>
+        <button class="shift-pill on" id="shiftBtn" type="button" title="Cambiar disponibilidad del turno">En turno</button>
       </div>
     </header>
 
-    <!-- Pestaña 1: Avisos prioritarios -->
+    <!-- Pestaña 1: Avisos prioritarios (limpia, solo pedidos y llamados) -->
     <main class="m-view" id="mview-alerts">
-      <section class="wrist-card" id="wristCard">
-        <div class="wrist-head" id="wristToggleHead" role="button" tabindex="0" aria-expanded="true">
-          <strong>⌚ Modo Pulsera (Xiaomi Band)</strong>
-          <div style="display:flex;align-items:center;gap:6px">
-            <span class="wrist-state off" id="wristStateBadge">Inactiva</span>
-            <span class="wrist-chev" id="wristChev" aria-hidden="true">▾</span>
-          </div>
-        </div>
-        <div class="wrist-body" id="wristBody">
-          <p class="wrist-guide">
-            Vinculá tu Xiaomi Band en <strong>Mi Fitness -&gt; Notificaciones de apps -&gt; Chrome/SaleListo</strong> y guardá el celu bloqueado en el bolsillo.
-          </p>
-          <div class="wrist-actions">
-            <button class="btn btn-primary btn-sm" id="wristEnableBtn" type="button">Activar con pantalla bloqueada</button>
-            <button class="btn btn-ok btn-sm" id="wristTestBtn" type="button" hidden>Probar vibración</button>
-            <button class="btn btn-ghost btn-sm" id="wristDisableBtn" type="button" hidden>Desactivar</button>
-            <button class="btn btn-ghost btn-sm" id="wristHideBtn" type="button">Minimizar</button>
-          </div>
-        </div>
-      </section>
       <div id="alertsContent"></div>
       <div class="m-spacer"></div>
     </main>
@@ -75,13 +53,52 @@
     <main class="m-view" id="mview-order" hidden>
       <div class="pad-head">
         <div class="field">
-          <label for="padTable">Elegí la mesa para cargarle pedido</label>
+          <label for="padTable">Seleccione la mesa para cargar pedido</label>
           <select class="input" id="padTable"></select>
         </div>
-        <input class="input" id="padSearch" type="search" placeholder="🔍 Buscar plato o bebida (sin tildes)…" style="margin-top:8px;font-size:16px">
+        <input class="input" id="padSearch" type="search" placeholder="🔍 Buscar plato o bebida…" style="margin-top:8px;font-size:16px">
         <div class="pad-cats" id="padCats" role="group" aria-label="Filtrar por categoría"></div>
       </div>
       <div id="padItems"></div>
+      <div class="m-spacer"></div>
+    </main>
+
+    <!-- Pestaña 4: Ajustes (Pulsera, sonido, turno y cambio de usuario) -->
+    <main class="m-view" id="mview-settings" hidden>
+      <div class="m-settings-wrap">
+        <section class="m-set-card">
+          <h3>Alertas sonoras</h3>
+          <p>Active o silencie el sonido y la vibración ante nuevos pedidos listos o llamados de mesa.</p>
+          <button class="audio-pill off m-set-full" id="audioBtn" type="button">🔇 Activar sonido</button>
+        </section>
+
+        <section class="wrist-card" id="wristCard">
+          <div class="wrist-head" id="wristToggleHead" role="button" tabindex="0" aria-expanded="true">
+            <strong>⌚ Modo Pulsera (Xiaomi Band)</strong>
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="wrist-state off" id="wristStateBadge">Opcional</span>
+              <span class="wrist-chev" id="wristChev" aria-hidden="true">▾</span>
+            </div>
+          </div>
+          <div class="wrist-body" id="wristBody">
+            <p class="wrist-guide">
+              Vincule su Xiaomi Band en <strong>Mi Fitness -&gt; Notificaciones de apps -&gt; Chrome/SaleListo</strong> para recibir avisos con el teléfono bloqueado en el bolsillo.
+            </p>
+            <div class="wrist-actions">
+              <button class="btn btn-primary btn-sm" id="wristEnableBtn" type="button">Activar con pantalla bloqueada</button>
+              <button class="btn btn-ok btn-sm" id="wristTestBtn" type="button" hidden>Probar vibración</button>
+              <button class="btn btn-ghost btn-sm" id="wristDisableBtn" type="button" hidden>Desactivar</button>
+              <button class="btn btn-ghost btn-sm" id="wristHideBtn" type="button" hidden>Minimizar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="m-set-card">
+          <h3>Sesión del mozo</h3>
+          <p>Si cambia de dispositivo o finaliza su jornada, cierre sesión para seleccionar otro mozo.</p>
+          <button class="btn btn-ghost m-set-full" id="logoutBtn" type="button">Cambiar de mozo</button>
+        </section>
+      </div>
       <div class="m-spacer"></div>
     </main>
 
@@ -101,7 +118,10 @@
         <span class="m-badge soft" id="myTablesBadge" hidden>0</span>
       </button>
       <button class="m-tab" type="button" data-mtab="order">
-        <span class="ico">➕</span>Cargar pedido
+        <span class="ico">➕</span>Pedir
+      </button>
+      <button class="m-tab" type="button" data-mtab="settings">
+        <span class="ico">⚙️</span>Ajustes
       </button>
     </nav>
 

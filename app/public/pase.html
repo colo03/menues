@@ -51,24 +51,9 @@
 
         <div class="p-clock" id="pClock" title="Hora actual">--:--</div>
 
-        <button class="audio-pill off" id="pAudioBtn" type="button" title="Campana sonora ante nuevos retiros o llamados">
-          🔇 Activar sonido
+        <button class="p-ctrl-btn p-settings-btn" id="pSettingsBtn" type="button" aria-expanded="false" aria-controls="pSettingsDrawer" title="Abrir ajustes de pantalla">
+          ⚙ Ajustes
         </button>
-
-        <button class="p-ctrl-btn" id="pThemeBtn" type="button" title="Cambiar entre Modo Pase Oscuro y Modo Claro">
-          ☀️ Modo Claro
-        </button>
-
-        <button class="p-ctrl-btn" id="pFsBtn" type="button" title="Alternar pantalla completa">
-          ⛶ Pantalla completa
-        </button>
-
-        <a class="p-ctrl-btn p-nav-link" href="cocina.html" title="Abrir comandera de Cocina, Barra y Mostrador">
-          🍳 Cocina
-        </a>
-        <a class="p-ctrl-btn p-nav-link" href="restaurante.html" title="Abrir Panel del Encargado">
-          Panel
-        </a>
       </div>
     </header>
 
@@ -78,6 +63,43 @@
 
     <aside class="p-idle-strip" id="pIdleStrip" aria-label="Mozos al día" hidden></aside>
   </div>
+
+  <!-- Panel lateral de Ajustes (separa configuraciones de la operación diaria) -->
+  <div class="p-drawer-backdrop" id="pSettingsBackdrop" hidden></div>
+  <aside class="p-drawer" id="pSettingsDrawer" aria-label="Ajustes de la Estación de Mozos" hidden>
+    <div class="p-drawer-head">
+      <div>
+        <h2>⚙ Ajustes de pantalla</h2>
+        <small>Apariencia, alertas sonoras y accesos del local</small>
+      </div>
+      <button class="p-drawer-close" id="pSettingsClose" type="button" aria-label="Cerrar ajustes">✕</button>
+    </div>
+    <div class="p-drawer-body">
+      <div class="p-set-group">
+        <span class="p-set-label">Apariencia</span>
+        <button class="p-ctrl-btn p-set-btn" id="pThemeBtn" type="button">
+          ☀️ Cambiar a Modo Claro
+        </button>
+      </div>
+      <div class="p-set-group">
+        <span class="p-set-label">Alertas sonoras</span>
+        <button class="audio-pill off p-set-btn" id="pAudioBtn" type="button">
+          🔇 Activar sonido
+        </button>
+      </div>
+      <div class="p-set-group">
+        <span class="p-set-label">Pantalla</span>
+        <button class="p-ctrl-btn p-set-btn" id="pFsBtn" type="button">
+          ⛶ Pantalla completa
+        </button>
+      </div>
+      <div class="p-set-group p-set-nav">
+        <span class="p-set-label">Otras vistas del local</span>
+        <a class="p-ctrl-btn p-set-btn" href="cocina.html">🍳 Comandera Cocina / Barra</a>
+        <a class="p-ctrl-btn p-set-btn" href="restaurante.html">🖥️ Panel de Administración</a>
+      </div>
+    </div>
+  </aside>
 
   <!-- Modal ágil para Pedido en mostrador y detalle rápido de mesa -->
   <div class="p-modal-backdrop" id="pModalBackdrop" hidden>

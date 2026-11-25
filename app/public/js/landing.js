@@ -16,9 +16,9 @@
   }
 
   var PLAN_COST = [
-    { max: 12, name: 'Barra / Café', usd: 35, ars: roundArs(35 * USD_ARS) },
-    { max: 30, name: 'Salón / Bistró', usd: 65, ars: roundArs(65 * USD_ARS) },
-    { max: Infinity, name: 'Gran Salón / Multisede', usd: 110, ars: roundArs(110 * USD_ARS) }
+    { max: 12, name: 'Barra / Café', usd: 75, ars: roundArs(75 * USD_ARS) },
+    { max: 30, name: 'Salón / Bistró', usd: 139, ars: roundArs(139 * USD_ARS) },
+    { max: Infinity, name: 'Gran Salón / Multisede', usd: 239, ars: roundArs(239 * USD_ARS) }
   ];
 
   function syncPlanCosts() {

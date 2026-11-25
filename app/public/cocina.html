@@ -51,14 +51,37 @@
         <button class="btn btn-ghost k-ctrl-btn" id="kStockBtn" type="button" title="Pausar o reactivar platos agotados en 1 toque">
           🚫 Agotados <span class="k-86-badge" id="k86Badge" hidden>0</span>
         </button>
-        <button class="audio-pill off k-audio-btn" id="kAudioBtn" type="button">🔇 Activar sonido</button>
-        <a class="btn btn-ghost k-ctrl-btn" href="pase.html" title="Abrir Estación de Mozos">🛎️ Pase</a>
-        <a class="btn btn-ghost k-ctrl-btn" href="restaurante.html">Panel</a>
+        <button class="btn btn-ghost k-ctrl-btn" id="kSettingsBtn" type="button" aria-expanded="false" aria-controls="kSettingsDrawer" title="Ajustes de comandera">
+          ⚙ Ajustes
+        </button>
       </div>
     </header>
 
     <main class="k-board" id="kBoard"></main>
   </div>
+
+  <!-- Cajón de Ajustes de Comandera -->
+  <div class="k-drawer-backdrop" id="kSettingsBackdrop" hidden></div>
+  <aside class="k-drawer k-settings-drawer" id="kSettingsDrawer" aria-label="Ajustes de la comandera" hidden>
+    <div class="kd-head">
+      <div>
+        <h2>⚙ Ajustes de comandera</h2>
+        <small>Alertas sonoras y accesos del establecimiento</small>
+      </div>
+      <button class="kd-close" id="kSettingsClose" type="button" aria-label="Cerrar ajustes">✕</button>
+    </div>
+    <div class="ks-body">
+      <div class="ks-group">
+        <span class="ks-label">Alertas sonoras</span>
+        <button class="audio-pill off k-audio-btn ks-full" id="kAudioBtn" type="button">🔇 Activar sonido</button>
+      </div>
+      <div class="ks-group ks-nav">
+        <span class="ks-label">Otras pantallas del local</span>
+        <a class="btn btn-ghost ks-full" href="pase.html">🛎️ Estación de Mozos</a>
+        <a class="btn btn-ghost ks-full" href="restaurante.html">🖥️ Panel de Administración</a>
+      </div>
+    </div>
+  </aside>
 
   <!-- Cajón rápido 🚫 Agotados (86 en 1 toque desde Cocina/Barra/Mostrador) -->
   <div class="k-drawer-backdrop" id="kStockBackdrop" hidden></div>

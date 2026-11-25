@@ -21,6 +21,44 @@ let currentVersion = 0;
 let authToken = '';
 const listeners = new Set();
 
+// Sesión efímera de demostración (solo en memoria de esta pestaña, nunca se guarda en storage)
+const DEMO_SID = (() => {
+  try {
+    return (new URLSearchParams(window.location.search || '').get('demoSid') || '').trim();
+  } catch (_) {
+    return '';
+  }
+})();
+
+const DEMO_EMBED = (() => {
+  try {
+    return new URLSearchParams(window.location.search || '').get('embed') === '1';
+  } catch (_) {
+    return false;
+  }
+})();
+
+function getDemoSid() {
+  return DEMO_SID;
+}
+
+function isDemoEmbed() {
+  return DEMO_EMBED;
+}
+
+if (typeof window !== 'undefined' && DEMO_SID && typeof window.fetch === 'function') {
+  const _origFetch = window.fetch.bind(window);
+  window.fetch = (input, init = {}) => {
+    const rawUrl = typeof input === 'string' ? input : (input && input.url) || '';
+    const isApi = /^(?:\/?api\/)/.test(rawUrl)
+      || (rawUrl.startsWith(window.location.origin + '/api/'));
+    if (!isApi) return _origFetch(input, init);
+    const hdrs = new Headers((init && init.headers) || (typeof input !== 'string' && input.headers) || {});
+    if (!hdrs.has('X-Demo-Session')) hdrs.set('X-Demo-Session', DEMO_SID);
+    return _origFetch(input, { ...init, headers: hdrs });
+  };
+}
+
 function setAuthToken(tok) {
   authToken = tok || '';
 }
@@ -115,6 +153,7 @@ function connectStream(opts = {}, onConnection) {
   const mesa = scope === 'client' ? (opts.mesa || '') : '';
 
   const params = new URLSearchParams({ scope });
+  if (DEMO_SID) params.set('demoSid', DEMO_SID);
   if (scope === 'client') {
     if (qrToken) params.set('t', qrToken);
     if (mesa) params.set('mesa', mesa);
@@ -133,14 +172,16 @@ function connectStream(opts = {}, onConnection) {
     let es = null;
 
     function buildSnapshotUrl() {
+      const sp = new URLSearchParams();
+      if (DEMO_SID) sp.set('demoSid', DEMO_SID);
       if (scope === 'client') {
-        const sp = new URLSearchParams();
         if (qrToken) sp.set('t', qrToken);
         if (mesa) sp.set('mesa', mesa);
         const q = sp.toString();
         return `/api/client-state${q ? `?${q}` : ''}`;
       }
-      return '/api/staff-state';
+      const q = sp.toString();
+      return `/api/staff-state${q ? `?${q}` : ''}`;
     }
 
     function handleAuthExpired() {
@@ -299,6 +340,7 @@ async function apiPost(url, body = {}, extraHeaders = {}) {
   try {
     const headers = { 'Content-Type': 'application/json', ...extraHeaders };
     if (authToken) headers['X-Auth-Token'] = authToken;
+    if (DEMO_SID && !headers['X-Demo-Session']) headers['X-Demo-Session'] = DEMO_SID;
     res = await fetch(normalizeApiUrl(url), {
       method: 'POST',
       headers,

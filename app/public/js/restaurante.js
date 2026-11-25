@@ -1,6 +1,7 @@
 (async () => {
   const params = new URLSearchParams(location.search);
-  const wantDemoAuth = params.get('demo') === '1';
+  const demoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
+  const wantDemoAuth = params.get('demo') === '1' || Boolean(demoSid);
   const $ = (sel) => document.querySelector(sel);
 
   const EMOJIS = ['🍜', '🍣', '🍙', '🥟', '🍛', '🍱', '🍤', '🍗', '🥢', '🥞', '🫛', '🥗', '🍔', '🍕', '🥩', '🍝', '🌮', '🍡', '🍰', '🍮', '🍨', '🍸', '🍺', '🍷', '🍹', '🧃', '🥤', '🍵', '☕'];
@@ -25,7 +26,7 @@
   let unsubState = null;
   let tunnelBusy = false;
   let tunnelNeedsInstall = false;
-  let adminRole = sessionStorage.getItem('salelisto:adminRole') || '';
+  let adminRole = demoSid ? '' : (sessionStorage.getItem('salelisto:adminRole') || '');
 
   // Preservar selecciones del modal operativo de mesa ante actualizaciones SSE
   const tableModalDraft = {
@@ -75,7 +76,7 @@
   }
 
   // ---------- Autenticación del Panel ----------
-  let savedToken = sessionStorage.getItem('salelisto:adminToken') || '';
+  let savedToken = demoSid ? '' : (sessionStorage.getItem('salelisto:adminToken') || '');
   if (savedToken) setAuthToken(savedToken);
 
   async function tryBoot() {
@@ -84,8 +85,10 @@
         const r = await apiPost('api/auth/admin', { demo: true });
         setAuthToken(r.token);
         adminRole = r.role || 'demo_admin';
-        sessionStorage.setItem('salelisto:adminToken', r.token);
-        sessionStorage.setItem('salelisto:adminRole', adminRole);
+        if (!demoSid) {
+          sessionStorage.setItem('salelisto:adminToken', r.token);
+          sessionStorage.setItem('salelisto:adminRole', adminRole);
+        }
       }
       if (!getAuthToken()) throw new Error('AUTH_REQUIRED');
       activeStream = await connectStream({ scope: 'staff' }, connectionBanner);

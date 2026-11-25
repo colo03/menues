@@ -1,5 +1,6 @@
 (async () => {
   const params = new URLSearchParams(location.search);
+  const demoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
   const urlToken = resolveQrTokenFromLocation(location);
   const legacyMesa = (params.get('mesa') || '').trim();
 
@@ -16,7 +17,7 @@
   $('#clientApp').hidden = false;
   const TOKEN = state.table.qrToken;
   // Si entró por ?mesa=X en modo demo, fijamos la URL con el token seguro real
-  if (!urlToken && TOKEN) {
+  if (!urlToken && TOKEN && !demoSid) {
     history.replaceState(null, '', `/cliente.html?t=${encodeURIComponent(TOKEN)}`);
   }
 
@@ -62,20 +63,25 @@
   }
 
   function loadCart() {
+    if (demoSid) return [];
     try { return JSON.parse(localStorage.getItem(CART_KEY)) || []; } catch (_) { return []; }
   }
   function loadPendingReqId() {
+    if (demoSid) return '';
     try { return localStorage.getItem(CART_REQ_KEY) || ''; } catch (_) { return ''; }
   }
   function setPendingReqId(id) {
     pendingOrderReqId = id || '';
+    if (demoSid) return;
     try {
       if (pendingOrderReqId) localStorage.setItem(CART_REQ_KEY, pendingOrderReqId);
       else localStorage.removeItem(CART_REQ_KEY);
     } catch (_) {}
   }
   function persistCart(resetIdempotency = true) {
-    try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (_) {}
+    if (!demoSid) {
+      try { localStorage.setItem(CART_KEY, JSON.stringify(cart)); } catch (_) {}
+    }
     if (resetIdempotency) setPendingReqId('');
   }
 

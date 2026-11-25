@@ -417,20 +417,22 @@ def make_admin_token() -> str:
     return 'adm_' + hmac.new(SERVER_SECRET, str(pin).encode('utf-8'), hashlib.sha256).hexdigest()
 
 
-def resolve_role(token: str) -> str:
+def resolve_role(token: str, target_db: Database | None = None) -> str:
+    use_db = target_db or db
     tok = str(token or '').strip()
     if not tok:
         return 'client'
-    if hmac.compare_digest(tok, make_admin_token()):
+    if use_db is db and hmac.compare_digest(tok, make_admin_token()):
         return 'admin'
-    sess = db.get_staff_session(tok)
+    sess = use_db.get_staff_session(tok)
     if sess:
         return str(sess['role'])
     return 'client'
 
 
-def create_staff_token(role: str = 'waiter', waiter_id: str = '') -> str:
-    return db.create_staff_session(role=role, waiter_id=waiter_id)
+def create_staff_token(role: str = 'waiter', waiter_id: str = '', target_db: Database | None = None) -> str:
+    use_db = target_db or db
+    return use_db.create_staff_session(role=role, waiter_id=waiter_id)
 
 
 def lan_ip() -> str:
@@ -465,6 +467,78 @@ class Subscriber:
 
 subscribers: set[Subscriber] = set()
 subs_lock = threading.Lock()
+
+# ---------- Sandboxes efímeros en memoria por visita para /demo (sin persistencia) ----------
+
+DEMO_SID_RE = re.compile(r'^[A-Za-z0-9_-]{8,48}$')
+DEMO_SANDBOX_TTL_S = 1200
+DEMO_SANDBOX_MAX = 60
+
+
+class DemoSandbox:
+    def __init__(self, sid: str):
+        self.sid = sid
+        self.db = Database(None, UPLOADS_DIR, memory_name=f'{sid}_{secrets.token_hex(3)}')
+        self.subscribers: set[Subscriber] = set()
+        self.subs_lock = threading.Lock()
+        self.last_access = time.time()
+
+    def close(self) -> None:
+        self.db.close()
+
+
+_demo_sandboxes: dict[str, DemoSandbox] = {}
+_demo_sandboxes_lock = threading.Lock()
+
+
+def _prune_demo_sandboxes_locked(now: float) -> None:
+    expired = [
+        k
+        for k, sb in _demo_sandboxes.items()
+        if (now - sb.last_access) > DEMO_SANDBOX_TTL_S and not sb.subscribers
+    ]
+    for k in expired:
+        sb = _demo_sandboxes.pop(k, None)
+        if sb:
+            sb.close()
+    while len(_demo_sandboxes) >= DEMO_SANDBOX_MAX:
+        # Descartar primero los sandboxes inactivos más antiguos
+        idle = [k for k, sb in _demo_sandboxes.items() if not sb.subscribers]
+        pool = idle if idle else list(_demo_sandboxes.keys())
+        oldest = min(pool, key=lambda k: _demo_sandboxes[k].last_access)
+        sb = _demo_sandboxes.pop(oldest, None)
+        if sb:
+            sb.close()
+
+
+def get_demo_sandbox(sid: str) -> DemoSandbox | None:
+    clean = str(sid or '').strip()
+    if not clean or not DEMO_SID_RE.match(clean):
+        return None
+    if not db.is_demo_mode():
+        return None
+    now = time.time()
+    with _demo_sandboxes_lock:
+        sb = _demo_sandboxes.get(clean)
+        if sb is not None:
+            sb.last_access = now
+            return sb
+        _prune_demo_sandboxes_locked(now)
+        sb = DemoSandbox(clean)
+        _demo_sandboxes[clean] = sb
+        return sb
+
+
+def discard_demo_sandbox(sid: str) -> bool:
+    clean = str(sid or '').strip()
+    if not clean:
+        return False
+    with _demo_sandboxes_lock:
+        sb = _demo_sandboxes.pop(clean, None)
+    if sb:
+        sb.close()
+        return True
+    return False
 
 
 def _on_push_expired(endpoint: str) -> None:
@@ -568,8 +642,10 @@ def get_enriched_staff_state(
     headers: Any = None,
     trusted_proxy: bool = False,
     port: int | None = None,
+    target_db: Database | None = None,
 ) -> dict[str, Any]:
-    st = db.get_staff_state(role=role)
+    use_db = target_db or db
+    st = use_db.get_staff_state(role=role)
     st['network'] = build_network_snapshot(
         role=role,
         headers=headers,
@@ -579,9 +655,16 @@ def get_enriched_staff_state(
     return st
 
 
-def broadcast_updates() -> None:
-    with subs_lock:
-        current_subs = list(subscribers)
+def broadcast_updates(
+    target_db: Database | None = None,
+    target_subs: set[Subscriber] | None = None,
+    target_lock: threading.Lock | None = None,
+) -> None:
+    use_db = target_db or db
+    use_subs = target_subs if target_subs is not None else subscribers
+    use_lock = target_lock if target_lock is not None else subs_lock
+    with use_lock:
+        current_subs = list(use_subs)
     if not current_subs:
         return
 
@@ -594,12 +677,12 @@ def broadcast_updates() -> None:
             eff_scope = sub.scope
             if eff_scope == 'demo_admin':
                 if demo_on is None:
-                    demo_on = db.is_demo_mode()
+                    demo_on = use_db.is_demo_mode()
                 if not demo_on:
                     eff_scope = 'staff'
             if eff_scope not in staff_cache:
                 staff_cache[eff_scope] = json.dumps(
-                    get_enriched_staff_state(role=eff_scope),
+                    get_enriched_staff_state(role=eff_scope, target_db=use_db),
                     ensure_ascii=False,
                 )
             sub.enqueue(staff_cache[eff_scope])
@@ -607,7 +690,7 @@ def broadcast_updates() -> None:
             key = (sub.qr_token, sub.legacy_code)
             if key not in client_cache:
                 client_cache[key] = json.dumps(
-                    db.get_client_state(sub.qr_token, sub.legacy_code),
+                    use_db.get_client_state(sub.qr_token, sub.legacy_code),
                     ensure_ascii=False,
                 )
             sub.enqueue(client_cache[key])
@@ -1030,12 +1113,28 @@ class Handler(SimpleHTTPRequestHandler):
 
     # ---------- Autorización y Rate-Limiting ----------
 
-    def _request_role(self, qs: dict[str, list[str]] | None = None) -> str:
-        auth = self.headers.get('X-Auth-Token') or ((qs or {}).get('token') or [''])[0]
-        return resolve_role(auth)
+    def _extract_demo_sid(self, qs: dict[str, list[str]] | None = None) -> str:
+        raw = (self.headers.get('X-Demo-Session') or ((qs or {}).get('demoSid') or [''])[0] or '').strip()
+        return raw if DEMO_SID_RE.match(raw) else ''
 
-    def _admin_or_demo(self, qs: dict[str, list[str]] | None = None) -> bool:
-        return self._request_role(qs) in ('admin', 'demo_admin') or db.is_demo_mode()
+    def _ctx(
+        self,
+        qs: dict[str, list[str]] | None = None,
+    ) -> tuple[Database, set[Subscriber], threading.Lock, bool]:
+        sid = self._extract_demo_sid(qs)
+        if sid:
+            sb = get_demo_sandbox(sid)
+            if sb is not None:
+                return sb.db, sb.subscribers, sb.subs_lock, True
+        return db, subscribers, subs_lock, False
+
+    def _request_role(self, qs: dict[str, list[str]] | None = None, target_db: Database | None = None) -> str:
+        auth = self.headers.get('X-Auth-Token') or ((qs or {}).get('token') or [''])[0]
+        return resolve_role(auth, target_db=target_db)
+
+    def _admin_or_demo(self, qs: dict[str, list[str]] | None = None, target_db: Database | None = None) -> bool:
+        use_db = target_db or db
+        return self._request_role(qs, target_db=use_db) in ('admin', 'demo_admin') or use_db.is_demo_mode()
 
     def _auth_rate_limited(self) -> bool:
         ip = self._client_ip()
@@ -1202,6 +1301,9 @@ class Handler(SimpleHTTPRequestHandler):
             )
 
         if path == '/api/leads':
+            tdb, _, _, is_sb = self._ctx(qs)
+            if is_sb:
+                return self.send_json(200, {'ok': True, 'leads': tdb.get_demo_leads()})
             role = self._request_role(qs)
             if role == 'admin':
                 try:
@@ -1250,15 +1352,16 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_bytes(200, svg, 'image/svg+xml; charset=utf-8', compressible=True)
 
         if path == '/api/qrs':
-            role = self._request_role(qs)
-            if not db.is_demo_mode() and role not in STAFF_ROLES:
+            tdb, _, _, is_sb = self._ctx(qs)
+            role = self._request_role(qs, target_db=tdb)
+            if not tdb.is_demo_mode() and role not in STAFF_ROLES:
                 return self.send_json(
                     401,
                     {'ok': False, 'error': 'Sesión de personal requerida para ver los códigos QR'},
                 )
             net = self._network_snapshot(role=role)
             base = net['baseUrl']
-            st = db.get_staff_state(role='staff')
+            st = tdb.get_staff_state(role='staff')
             blocks_out = []
             try:
                 for b in st['blocks']:
@@ -1310,13 +1413,15 @@ class Handler(SimpleHTTPRequestHandler):
             )
 
         if path == '/api/client-state':
+            tdb, _, _, _ = self._ctx(qs)
             tok = (qs.get('t') or [''])[0]
             mesa = (qs.get('mesa') or [''])[0]
-            return self.send_json(200, db.get_client_state(tok, mesa))
+            return self.send_json(200, tdb.get_client_state(tok, mesa))
 
         if path == '/api/staff-state':
-            role = self._request_role(qs)
-            if role == 'client' and not db.is_demo_mode():
+            tdb, _, _, _ = self._ctx(qs)
+            role = self._request_role(qs, target_db=tdb)
+            if role == 'client' and not tdb.is_demo_mode():
                 return self.send_json(401, {'ok': False, 'error': 'Sesión requerida'})
             eff_role = _staff_scope_for_role(role)
             return self.send_json(
@@ -1326,12 +1431,14 @@ class Handler(SimpleHTTPRequestHandler):
                     headers=self.headers,
                     trusted_proxy=self._is_trusted_proxy(),
                     port=self._server_port(),
+                    target_db=tdb,
                 ),
             )
 
         if path == '/api/waiters-public':
             # Lista mínima de mozos para la pantalla de ingreso del celular del mozo
-            st = db.get_staff_state(role='staff')
+            tdb, _, _, _ = self._ctx(qs)
+            st = tdb.get_staff_state(role='staff')
             demo_on = bool(st['restaurant']['demoMode'])
             return self.send_json(
                 200,
@@ -1355,15 +1462,26 @@ class Handler(SimpleHTTPRequestHandler):
             return self.send_json(200, {'ok': True, 'publicKey': VAPID_KEYS['publicKey']})
 
         if path == '/api/events':
+            tdb, tsubs, tlock, _ = self._ctx(qs)
             scope = (qs.get('scope') or ['client'])[0]
             if scope in ('staff', 'admin', 'demo_admin'):
-                role = self._request_role(qs)
-                if role == 'client' and not db.is_demo_mode():
+                role = self._request_role(qs, target_db=tdb)
+                if role == 'client' and not tdb.is_demo_mode():
                     return self.send_json(401, {'ok': False, 'error': 'No autorizado'})
-                return self._stream_events(Subscriber(_staff_scope_for_role(role)))
+                return self._stream_events(
+                    Subscriber(_staff_scope_for_role(role)),
+                    target_db=tdb,
+                    target_subs=tsubs,
+                    target_lock=tlock,
+                )
             qr_tok = (qs.get('t') or [''])[0]
             mesa = (qs.get('mesa') or [''])[0]
-            return self._stream_events(Subscriber('client', qr_tok, mesa))
+            return self._stream_events(
+                Subscriber('client', qr_tok, mesa),
+                target_db=tdb,
+                target_subs=tsubs,
+                target_lock=tlock,
+            )
 
         if self._try_serve_static_compressed(path, head_only=False):
             return
@@ -1404,6 +1522,13 @@ class Handler(SimpleHTTPRequestHandler):
             broadcast_updates()
             return self.send_json(200, {'ok': True, 'lead': lead})
 
+        if path == '/api/demo/discard':
+            sid = self._extract_demo_sid(parse_qs(parsed.query)) or str(body.get('demoSid') or '').strip()
+            discarded = discard_demo_sandbox(sid)
+            return self.send_json(200, {'ok': True, 'discarded': discarded})
+
+        tdb, tsubs, tlock, is_sb = self._ctx(parse_qs(parsed.query))
+
         if path in ('/api/auth/admin', '/api/auth/waiter', '/api/auth/kitchen'):
             if self._auth_rate_limited():
                 return self.send_json(
@@ -1413,10 +1538,10 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path == '/api/auth/admin':
             if body.get('demo'):
-                if db.is_demo_mode():
+                if tdb.is_demo_mode():
                     return self.send_json(
                         200,
-                        {'ok': True, 'token': create_staff_token('demo_admin'), 'role': 'demo_admin'},
+                        {'ok': True, 'token': create_staff_token('demo_admin', target_db=tdb), 'role': 'demo_admin'},
                     )
                 self._record_auth_failure()
                 return self.send_json(
@@ -1424,17 +1549,19 @@ class Handler(SimpleHTTPRequestHandler):
                     {'ok': False, 'error': 'El Modo Demostración está desactivado; ingresá el PIN del encargado'},
                 )
             pin = str(body.get('pin') or '')
-            if db.verify_admin_pin(pin):
+            if not is_sb and db.verify_admin_pin(pin):
                 return self.send_json(200, {'ok': True, 'token': make_admin_token(), 'role': 'admin'})
+            if is_sb and tdb.verify_admin_pin(pin):
+                return self.send_json(200, {'ok': True, 'token': create_staff_token('demo_admin', target_db=tdb), 'role': 'demo_admin'})
             self._record_auth_failure()
             return self.send_json(401, {'ok': False, 'error': 'PIN de encargado incorrecto'})
 
         if path == '/api/auth/waiter':
             try:
-                w = db.verify_waiter_login(str(body.get('waiterId') or ''), str(body.get('pin') or ''))
+                w = tdb.verify_waiter_login(str(body.get('waiterId') or ''), str(body.get('pin') or ''))
                 return self.send_json(
                     200,
-                    {'ok': True, 'waiter': w, 'token': create_staff_token('waiter', waiter_id=w['id']), 'role': 'waiter'},
+                    {'ok': True, 'waiter': w, 'token': create_staff_token('waiter', waiter_id=w['id'], target_db=tdb), 'role': 'waiter'},
                 )
             except ActionError as e:
                 self._record_auth_failure()
@@ -1442,16 +1569,16 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path == '/api/auth/kitchen':
             if body.get('pin'):
-                if not db.verify_admin_pin(str(body.get('pin'))):
+                if not tdb.verify_admin_pin(str(body.get('pin'))):
                     self._record_auth_failure()
                     return self.send_json(401, {'ok': False, 'error': 'PIN incorrecto'})
-            elif not db.is_demo_mode():
+            elif not tdb.is_demo_mode():
                 self._record_auth_failure()
                 return self.send_json(401, {'ok': False, 'error': 'Ingresá el PIN del local para abrir Cocina/Barra'})
-            return self.send_json(200, {'ok': True, 'token': create_staff_token('kitchen'), 'role': 'kitchen'})
+            return self.send_json(200, {'ok': True, 'token': create_staff_token('kitchen', target_db=tdb), 'role': 'kitchen'})
 
         auth_header = self.headers.get('X-Auth-Token') or ''
-        role = resolve_role(auth_header)
+        role = resolve_role(auth_header, target_db=tdb)
 
         if path == '/api/tunnel/start':
             if role != 'admin':
@@ -1524,20 +1651,22 @@ class Handler(SimpleHTTPRequestHandler):
             if idem_hdr and not payload.get('clientRequestId') and not payload.get('client_request_id'):
                 payload['clientRequestId'] = idem_hdr
             try:
-                result = db.execute('order.create', payload, role=role)
+                result = tdb.execute('order.create', payload, role=role)
                 dedup = bool(isinstance(result, dict) and result.get('deduplicated'))
                 if not dedup:
-                    flush_pending_webpush()
-                    broadcast_updates()
+                    if not is_sb:
+                        flush_pending_webpush()
+                    broadcast_updates(target_db=tdb, target_subs=tsubs, target_lock=tlock)
                 if role in STAFF_ROLES:
                     state_out = get_enriched_staff_state(
                         role=_staff_scope_for_role(role),
                         headers=self.headers,
                         trusted_proxy=self._is_trusted_proxy(),
                         port=self._server_port(),
+                        target_db=tdb,
                     )
                 else:
-                    state_out = db.get_client_state(
+                    state_out = tdb.get_client_state(
                         str(payload.get('qrToken') or ''),
                         str(payload.get('mesa') or ''),
                     )
@@ -1650,22 +1779,24 @@ class Handler(SimpleHTTPRequestHandler):
                 idem_hdr = (self.headers.get('Idempotency-Key') or '').strip()
                 if idem_hdr and not payload.get('clientRequestId') and not payload.get('client_request_id'):
                     payload['clientRequestId'] = idem_hdr
-            result = db.execute(action_type, payload, role=role)
+            result = tdb.execute(action_type, payload, role=role)
             dedup = bool(isinstance(result, dict) and result.get('deduplicated'))
             if not dedup:
-                flush_pending_webpush()
-                broadcast_updates()
+                if not is_sb:
+                    flush_pending_webpush()
+                broadcast_updates(target_db=tdb, target_subs=tsubs, target_lock=tlock)
             if role in STAFF_ROLES or (
-                db.is_demo_mode() and action_type not in ('order.create', 'call.create')
+                tdb.is_demo_mode() and action_type not in ('order.create', 'call.create')
             ):
                 state_out = get_enriched_staff_state(
                     role=_staff_scope_for_role(role),
                     headers=self.headers,
                     trusted_proxy=self._is_trusted_proxy(),
                     port=self._server_port(),
+                    target_db=tdb,
                 )
             else:
-                state_out = db.get_client_state(
+                state_out = tdb.get_client_state(
                     str(payload.get('qrToken') or ''),
                     str(payload.get('mesa') or ''),
                 )
@@ -1677,7 +1808,17 @@ class Handler(SimpleHTTPRequestHandler):
         except (ValueError, TypeError) as e:
             return self.send_json(400, {'ok': False, 'error': f'Datos inválidos: {e}'})
 
-    def _stream_events(self, sub: Subscriber) -> None:
+    def _stream_events(
+        self,
+        sub: Subscriber,
+        target_db: Database | None = None,
+        target_subs: set[Subscriber] | None = None,
+        target_lock: threading.Lock | None = None,
+    ) -> None:
+        use_db = target_db or db
+        use_subs = target_subs if target_subs is not None else subscribers
+        use_lock = target_lock if target_lock is not None else subs_lock
+
         self.send_response(200)
         self.send_header('Content-Type', 'text/event-stream; charset=utf-8')
         self.send_header('Cache-Control', 'no-cache, no-transform')
@@ -1691,14 +1832,15 @@ class Handler(SimpleHTTPRequestHandler):
                 headers=self.headers,
                 trusted_proxy=self._is_trusted_proxy(),
                 port=self._server_port(),
+                target_db=use_db,
             )
             if sub.scope in ('admin', 'demo_admin', 'staff')
-            else db.get_client_state(sub.qr_token, sub.legacy_code)
+            else use_db.get_client_state(sub.qr_token, sub.legacy_code)
         )
         sub.enqueue(json.dumps(initial, ensure_ascii=False))
 
-        with subs_lock:
-            subscribers.add(sub)
+        with use_lock:
+            use_subs.add(sub)
         try:
             self.wfile.write(b'retry: 3000\n\n')
             self.wfile.flush()
@@ -1713,8 +1855,8 @@ class Handler(SimpleHTTPRequestHandler):
             pass
         finally:
             self.close_connection = True
-            with subs_lock:
-                subscribers.discard(sub)
+            with use_lock:
+                use_subs.discard(sub)
 
 
 class SaleListoHTTPServer(ThreadingHTTPServer):

@@ -803,6 +803,33 @@ def run_suite() -> None:
             assert r_code == 200, f'Ruta {route} devolvio {r_code}'
         fx_code, fx_data = api.get_json('/api/exchange-rate')
         assert fx_code == 200 and fx_data.get('ok') is True and fx_data.get('pair') == 'USD-ARS' and float(fx_data.get('rate') or 0) >= 100.0, f'FX invalido: {fx_data}'
+
+        # Sandboxes efimeros por visita en /demo: aislamiento total entre sesiones y sin tocar salelisto.db
+        sb_a = {'X-Demo-Session': 'sb_alpha_0001'}
+        sb_b = {'X-Demo-Session': 'sb_beta_0002'}
+        _, qrs_a = api.get_json('/api/qrs?demoSid=sb_alpha_0001')
+        _, qrs_b = api.get_json('/api/qrs?demoSid=sb_beta_0002')
+        tok_a = qrs_a['blocks'][0]['tables'][0]['qrToken']
+        st_a0_code, _, st_a0_raw = api.request('GET', '/api/staff-state', headers=sb_a)
+        assert st_a0_code == 200
+        st_a0 = json.loads(st_a0_raw.decode('utf-8'))
+        assert len(st_a0['orders']) == 0, 'Sandbox nuevo debe arrancar con 0 pedidos'
+        item_a = st_a0['items'][0]['id']
+        ord_a_code, _, ord_a_raw = api.request(
+            'POST',
+            '/api/orders',
+            body={'qrToken': tok_a, 'items': [{'itemId': item_a, 'qty': 1}]},
+            headers=sb_a,
+        )
+        assert ord_a_code == 200 and json.loads(ord_a_raw.decode('utf-8')).get('ok') is True
+        _, _, st_a1_raw = api.request('GET', '/api/staff-state', headers=sb_a)
+        _, _, st_b1_raw = api.request('GET', '/api/staff-state', headers=sb_b)
+        assert len(json.loads(st_a1_raw.decode('utf-8'))['orders']) == 1
+        assert len(json.loads(st_b1_raw.decode('utf-8'))['orders']) == 0, 'Sandbox B no debe ver pedidos de Sandbox A'
+        disc_code, _, disc_raw = api.request('POST', '/api/demo/discard', body={'demoSid': 'sb_alpha_0001'})
+        assert disc_code == 200 and json.loads(disc_raw.decode('utf-8')).get('discarded') is True
+        _, _, st_a2_raw = api.request('GET', '/api/staff-state', headers=sb_a)
+        assert len(json.loads(st_a2_raw.decode('utf-8'))['orders']) == 0, 'Sandbox descartado debe reiniciar limpio'
         d_head, _, d_body = api.request('HEAD', '/demo')
         assert d_head == 200 and len(d_body) == 0, f'HEAD /demo fallo ({d_head})'
         conn_r = http.client.HTTPConnection('127.0.0.1', int(api.base_url.rsplit(':', 1)[-1]), timeout=5)

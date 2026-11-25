@@ -2,16 +2,16 @@
 <html lang="es">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · Demostración Interactiva en Vivo</title>
-  <meta name="description" content="Descubra paso a paso cómo funciona SaleListo en tiempo real: pedidos en la mesa por QR, avisos al mozo y pantallas de Cocina, Barra y Mostrador.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>SaleListo · Demostración Interactiva</title>
+  <meta name="description" content="Explore en vivo cómo funciona SaleListo: pedido en la mesa por QR, aviso al mozo y pantallas de Mostrador, Cocina y Barra en un entorno independiente.">
   <link rel="canonical" href="https://salelisto.com/demo.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
   <meta property="og:site_name" content="SaleListo">
   <meta property="og:url" content="https://salelisto.com/demo.html">
-  <meta property="og:title" content="SaleListo · Demostración Interactiva en Vivo">
-  <meta property="og:description" content="Pruebe SaleListo en vivo: pedidos por QR en la mesa, separación automática entre Cocina y Barra, avisos al mozo y cobro en un solo traslado.">
+  <meta property="og:title" content="SaleListo · Demostración Interactiva">
+  <meta property="og:description" content="Pruebe SaleListo en vivo: pedidos desde la mesa por QR, separación automática entre Cocina y Barra y cobro en un solo traslado.">
   <meta property="og:image" content="https://salelisto.com/og-salelisto.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
@@ -37,502 +37,181 @@
       flex-direction: column;
     }
 
-    /* Cabecera superior despejada */
-    .bar {
+    /* ---------- Barra superior única y despejada ---------- */
+    .topbar {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 18px;
-      min-height: 54px;
+      gap: 12px;
+      padding: 10px 20px;
+      min-height: 58px;
       background: var(--dark-surface);
       border-bottom: 1px solid var(--dark-line);
       flex: none;
     }
-    .bar-brand {
+    .brand {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      flex: none;
-    }
-    .bar-logo {
-      display: inline-flex;
-      align-items: center;
-      padding: 0;
-      border: 0;
       text-decoration: none;
-    }
-    .bar-logo img {
-      height: 29px;
-      display: block;
       flex: none;
     }
-    .bar-sep {
-      color: rgba(250, 247, 242, 0.28);
-      font-weight: 700;
+    .brand img {
+      height: 30px;
+      display: block;
     }
-    .bar-subtitle {
-      font-size: 13.5px;
-      font-weight: 700;
-      color: rgba(250, 247, 242, 0.84);
-      white-space: nowrap;
-    }
-    .bar-primary,
-    .bar-secondary {
+    .top-center {
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      margin-left: 8px;
     }
-    .bar .grow {
+    .top-spacer {
       flex: 1;
       min-width: 8px;
     }
-    .bar-ghost,
-    .bar-link {
+    .top-right {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 6px;
-      color: rgba(250, 247, 242, 0.86);
-      font-size: 12.5px;
-      font-weight: 600;
-      text-decoration: none;
-      padding: 7px 11px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--dark-line);
-      background: transparent;
-      white-space: nowrap;
-      transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
-    }
-    .bar-ghost:hover,
-    .bar-link:hover {
-      background: rgba(250, 247, 242, 0.08);
-      border-color: rgba(250, 247, 242, 0.28);
-      color: #ffffff;
-    }
-    .bar-ghost.active {
-      background: rgba(250, 247, 242, 0.14);
-      border-color: rgba(250, 247, 242, 0.36);
-      color: #ffffff;
-    }
-    .bar-ghost[disabled] {
-      opacity: 0.55;
-      pointer-events: none;
+      gap: 8px;
+      flex: none;
     }
 
-    .sim-btn {
+    .cta-tour {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      padding: 8px 16px;
+      gap: 8px;
+      height: 38px;
+      padding: 0 18px;
       border-radius: var(--radius-pill);
-      font-size: 13px;
-      font-weight: 800;
       background: linear-gradient(135deg, #D9412B 0%, #E85A3C 100%);
       color: #ffffff;
-      box-shadow: 0 4px 16px rgba(217, 65, 43, 0.38);
+      font-size: 13.5px;
+      font-weight: 800;
       white-space: nowrap;
+      box-shadow: 0 4px 16px rgba(217, 65, 43, 0.36);
       transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
     }
-    .sim-btn:hover {
+    .cta-tour:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(217, 65, 43, 0.52);
+      box-shadow: 0 6px 20px rgba(217, 65, 43, 0.5);
     }
-    .sim-btn:active {
-      transform: scale(0.985);
-    }
-    .sim-btn.is-running {
-      background: rgba(217, 65, 43, 0.18);
+    .cta-tour.is-running {
+      background: rgba(217, 65, 43, 0.22);
       color: #FFD0C6;
       border: 1px solid rgba(232, 90, 60, 0.65);
-      box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.14);
+      box-shadow: none;
     }
-    .sim-btn.is-running:hover {
-      background: rgba(217, 65, 43, 0.28);
-      box-shadow: 0 0 0 4px rgba(217, 65, 43, 0.2);
-    }
-    .sim-btn.is-paused {
+    .cta-tour.is-paused {
       background: linear-gradient(135deg, #2F8A57 0%, #38A169 100%);
       box-shadow: 0 4px 16px rgba(47, 138, 87, 0.36);
     }
 
-    /* Barra secundaria desplegable de opciones avanzadas */
-    .options-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px 14px;
-      flex-wrap: wrap;
-      padding: 9px 18px;
-      background: #1F1B18;
-      border-bottom: 1px solid var(--dark-line);
-      flex: none;
-      animation: fade-strip var(--dur-fast) var(--ease-out);
-    }
-    .opt-field {
+    .top-btn {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      font-weight: 600;
-      color: rgba(250, 247, 242, 0.78);
-      max-width: 100%;
-    }
-    .opt-field select {
-      background: var(--dark-bg);
-      border: 1px solid var(--dark-line);
-      color: var(--dark-ink);
-      padding: 6px 10px;
+      justify-content: center;
+      gap: 6px;
+      height: 38px;
+      padding: 0 13px;
       border-radius: var(--radius-control);
-      font-size: 12.5px;
-      font-weight: 600;
-      max-width: 220px;
-    }
-    .opt-sep {
-      width: 1px;
-      height: 22px;
-      background: var(--dark-line);
-    }
-    .opt-links {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .opt-close {
-      margin-left: auto;
-      font-size: 12px;
+      border: 1px solid var(--dark-line);
+      background: transparent;
+      color: rgba(250, 247, 242, 0.86);
+      font-size: 13px;
       font-weight: 700;
-      color: rgba(250, 247, 242, 0.65);
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
     }
-    .opt-close:hover {
+    .top-btn:hover {
       background: rgba(250, 247, 242, 0.08);
+      border-color: rgba(250, 247, 242, 0.28);
       color: #ffffff;
     }
+    .top-btn.active {
+      background: rgba(250, 247, 242, 0.14);
+      border-color: rgba(250, 247, 242, 0.4);
+      color: #ffffff;
+    }
+    .top-btn[disabled] {
+      opacity: 0.5;
+      pointer-events: none;
+    }
 
-    /* Franja guía amigable y narración paso a paso */
-    .sim-strip {
+    /* ---------- Franja de progreso (SOLO visible durante la simulación o error) ---------- */
+    .tour-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px 14px;
-      flex-wrap: wrap;
-      padding: 9px 18px;
-      background: #231E1B;
-      border-bottom: 1px solid var(--dark-line);
-      font-size: 13px;
+      gap: 12px;
+      padding: 9px 20px;
+      background: #271E1A;
+      border-bottom: 1px solid rgba(232, 90, 60, 0.42);
       flex: none;
-      transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
-      animation: fade-strip var(--dur-fast) var(--ease-out);
+      animation: slide-in 180ms var(--ease-out);
     }
-    .sim-strip.is-active {
-      background: #28201C;
-      border-bottom-color: rgba(232, 90, 60, 0.48);
+    .tour-bar.is-done {
+      background: #1B2721;
+      border-bottom-color: rgba(47, 138, 87, 0.45);
     }
-    @keyframes fade-strip {
+    @keyframes slide-in {
       from { opacity: 0; transform: translateY(-4px); }
     }
-    .sim-main {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
+    .tour-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #FAF7F2;
+      line-height: 1.35;
       min-width: 0;
-    }
-    .sim-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: var(--accent);
-      flex: none;
-      box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.22);
-    }
-    .sim-strip.is-done .sim-dot {
-      background: var(--ok);
-      box-shadow: 0 0 0 3px rgba(47, 138, 87, 0.24);
-    }
-    .sim-msg {
       flex: 1;
-      min-width: 0;
-      font-weight: 500;
-      color: rgba(250, 247, 242, 0.92);
-      line-height: 1.4;
     }
-    .sim-msg strong {
+    .tour-text strong {
       color: #FFB4A6;
       font-weight: 800;
     }
-    .sim-strip.is-done .sim-msg strong {
-      color: #9AE6B4;
+    .tour-bar.is-done .tour-text strong {
+      color: #8CE0B1;
     }
-    .sim-paused-pill {
+    .tour-dots {
       display: inline-flex;
       align-items: center;
-      padding: 2px 8px;
-      border-radius: var(--radius-pill);
-      font-size: 11px;
-      font-weight: 800;
-      background: rgba(217, 119, 6, 0.22);
-      color: #FCD34D;
-      border: 1px solid rgba(217, 119, 6, 0.45);
-      white-space: nowrap;
+      gap: 6px;
       flex: none;
     }
-    .sim-inline-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      margin-left: 8px;
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      background: rgba(217, 65, 43, 0.22);
-      border: 1px solid rgba(232, 90, 60, 0.52);
-      color: #FFD0C6;
-      font-size: 12px;
-      font-weight: 800;
-      white-space: nowrap;
-      vertical-align: baseline;
-      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
-    }
-    .sim-inline-cta:hover {
-      background: var(--accent);
-      color: #ffffff;
-      border-color: var(--accent);
-    }
-    .sim-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: none;
-    }
-    .sim-steps {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-    }
-    .sim-step {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 11.5px;
-      font-weight: 700;
-      background: rgba(250, 247, 242, 0.06);
-      color: rgba(250, 247, 242, 0.62);
-      border: 1px solid rgba(250, 247, 242, 0.08);
-      white-space: nowrap;
-      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
-    }
-    .sim-step:hover {
-      background: rgba(250, 247, 242, 0.12);
-      color: #ffffff;
-      border-color: rgba(250, 247, 242, 0.22);
-    }
-    .sim-step.current {
-      background: rgba(217, 65, 43, 0.24);
-      color: #FFD0C6;
-      border-color: rgba(232, 90, 60, 0.65);
-    }
-    .sim-step.done {
-      background: rgba(47, 138, 87, 0.22);
-      color: #9AE6B4;
-      border-color: rgba(47, 138, 87, 0.48);
-    }
-    .sim-close {
+    .t-dot {
       width: 26px;
-      height: 26px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(250, 247, 242, 0.16);
+      transition: background var(--dur-fast) var(--ease-out);
+    }
+    .t-dot.current { background: #E85A3C; }
+    .t-dot.done { background: #2F8A57; }
+    .tour-close {
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: grid;
       place-items: center;
-      color: rgba(250, 247, 242, 0.62);
-      font-size: 13px;
+      color: rgba(250, 247, 242, 0.7);
+      font-size: 14px;
       flex: none;
     }
-    .sim-close:hover {
+    .tour-close:hover {
       background: rgba(250, 247, 242, 0.12);
       color: #ffffff;
     }
-    .sim-retry {
-      margin-left: 8px;
-      padding: 4px 11px;
+    .retry-btn {
+      margin-left: 10px;
+      padding: 4px 12px;
       border-radius: var(--radius-pill);
       background: var(--accent);
       color: #ffffff;
-      font-size: 12px;
+      font-size: 12.5px;
       font-weight: 800;
     }
-    .sim-retry:hover {
-      background: var(--accent-hover);
-    }
 
-    /* Escenario de las 3 pantallas */
-    .stage {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 304px 304px minmax(0, 1fr);
-      gap: 14px;
-      padding: 12px 18px 18px;
-      min-height: 0;
-    }
-    .col-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 0;
-      min-width: 0;
-      transition: opacity var(--dur-ui) var(--ease-out);
-    }
-    .stage.has-spotlight .col-wrap:not(.is-spotlight) {
-      opacity: 0.72;
-    }
-    .stage.has-spotlight .col-wrap:not(.is-spotlight):hover {
-      opacity: 1;
-    }
-    .col-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px 10px;
-      flex-wrap: wrap;
-      min-height: 36px;
-      min-width: 0;
-    }
-    .col-title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-    .label {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(250, 247, 242, 0.88);
-      transition: color var(--dur-ui) var(--ease-out);
-    }
-    .sublabel {
-      font-size: 11.5px;
-      font-weight: 500;
-      color: rgba(250, 247, 242, 0.56);
-      line-height: 1.25;
-    }
-    .col-wrap.is-spotlight .label {
-      color: #FFB4A6;
-    }
-    .col-wrap.is-spotlight .sublabel {
-      color: rgba(250, 247, 242, 0.8);
-    }
-
-    .phone {
-      flex: 1;
-      border-radius: 36px;
-      padding: 9px;
-      background: #12100e;
-      box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42);
-      min-height: 0;
-      display: flex;
-      overflow: hidden;
-      transition: box-shadow var(--dur-ui) var(--ease-out);
-    }
-    .phone-screen {
-      position: relative;
-      flex: 1;
-      border-radius: 27px;
-      overflow: hidden;
-      background: var(--bg);
-      min-height: 0;
-    }
-    .phone-screen iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: 0;
-      background: var(--bg);
-      width: 136%;
-      height: 136%;
-      transform: scale(0.735294);
-      transform-origin: 0 0;
-    }
-
-    .panel {
-      position: relative;
-      flex: 1;
-      border-radius: var(--radius-card);
-      overflow: hidden;
-      box-shadow: 0 0 0 1px var(--dark-line);
-      min-height: 0;
-      background: var(--bg);
-      transition: box-shadow var(--dur-ui) var(--ease-out);
-    }
-    .panel iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      border: 0;
-      background: var(--bg);
-      width: 140%;
-      height: 140%;
-      transform: scale(0.7142857);
-      transform-origin: 0 0;
-    }
-
-    /* Halo luminoso durante el recorrido guiado */
-    .col-wrap.is-spotlight .phone,
-    .col-wrap.is-spotlight .panel {
-      box-shadow:
-        0 0 0 2.5px #E85A3C,
-        0 0 0 7px rgba(217, 65, 43, 0.22),
-        0 18px 46px rgba(217, 65, 43, 0.28);
-      animation: spotlight-pulse 2.2s var(--ease-out) infinite;
-    }
-    @keyframes spotlight-pulse {
-      0%, 100% {
-        box-shadow:
-          0 0 0 2.5px #E85A3C,
-          0 0 0 6px rgba(217, 65, 43, 0.2),
-          0 16px 42px rgba(217, 65, 43, 0.24);
-      }
-      50% {
-        box-shadow:
-          0 0 0 3px #FF7A5E,
-          0 0 0 9px rgba(217, 65, 43, 0.28),
-          0 20px 52px rgba(217, 65, 43, 0.34);
-      }
-    }
-
-    .r-tabs {
-      display: flex;
-      gap: 4px;
-      background: var(--dark-surface);
-      padding: 3px;
-      border-radius: var(--radius-control);
-      border: 1px solid var(--dark-line);
-      flex-wrap: wrap;
-      max-width: 100%;
-    }
-    .r-tab {
-      padding: 5px 10px;
-      border-radius: var(--radius-sm);
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(250, 247, 242, 0.74);
-      white-space: nowrap;
-      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
-    }
-    .r-tab:hover {
-      color: #ffffff;
-      background: rgba(250, 247, 242, 0.08);
-    }
-    .r-tab.active {
-      background: var(--accent);
-      color: #ffffff;
-    }
-
-    /* Switcher de pantallas exclusivo para celular y tablet */
+    /* ---------- Selector de pantalla en celular / tablet ---------- */
     .mobile-switcher {
       display: none;
       gap: 6px;
@@ -544,12 +223,12 @@
     .m-tab {
       position: relative;
       flex: 1;
-      padding: 9px 6px;
+      height: 40px;
       border-radius: 10px;
-      font-size: 12.5px;
+      font-size: 13.5px;
       font-weight: 800;
       background: var(--dark-surface);
-      color: rgba(250, 247, 242, 0.76);
+      color: rgba(250, 247, 242, 0.78);
       border: 1px solid var(--dark-line);
       text-align: center;
       white-space: nowrap;
@@ -560,93 +239,332 @@
       color: #ffffff;
       border-color: var(--accent);
     }
-    .m-tab.is-step-target:not(.active) {
-      border-color: rgba(232, 90, 60, 0.72);
+    .m-tab.is-target:not(.active) {
+      border-color: #E85A3C;
       color: #FFD0C6;
     }
-    .m-tab.is-step-target:not(.active)::after {
-      content: '';
-      position: absolute;
-      top: 5px;
-      right: 6px;
-      width: 6px;
-      height: 6px;
+
+    /* ---------- Escenario principal: grande, limpio y protagonista ---------- */
+    .stage {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 320px 312px minmax(0, 1fr);
+      gap: 16px;
+      padding: 14px 20px 18px;
+      min-height: 0;
+    }
+    .col-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 0;
+      min-width: 0;
+      transition: opacity var(--dur-ui) var(--ease-out);
+    }
+    .stage.has-spotlight .col-wrap:not(.is-spotlight) {
+      opacity: 0.65;
+    }
+    .stage.has-spotlight .col-wrap:not(.is-spotlight):hover {
+      opacity: 1;
+    }
+    .col-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 36px;
+      min-width: 0;
+    }
+    .col-title {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      min-width: 0;
+    }
+    .col-num {
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
-      background: #E85A3C;
+      background: rgba(250, 247, 242, 0.12);
+      color: #FAF7F2;
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-grid;
+      place-items: center;
+      flex: none;
+    }
+    .col-wrap.is-spotlight .col-num {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .col-name {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      color: #FAF7F2;
+      white-space: nowrap;
+    }
+    .col-hint {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: rgba(250, 247, 242, 0.56);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .only-mobile { display: none; }
-    .only-desktop { display: inline; }
+    /* Solo 3 pestañas grandes y claras en la columna Local */
+    .r-tabs {
+      display: inline-flex;
+      gap: 4px;
+      padding: 3px;
+      border-radius: var(--radius-control);
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-line);
+      flex: none;
+    }
+    .r-tab {
+      padding: 6px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 800;
+      color: rgba(250, 247, 242, 0.75);
+      white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .r-tab:hover {
+      color: #ffffff;
+      background: rgba(250, 247, 242, 0.08);
+    }
+    .r-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .local-extra-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(217, 65, 43, 0.18);
+      color: #FFD0C6;
+      font-size: 12px;
+      font-weight: 700;
+    }
 
-    @media (max-width: 1260px) and (min-width: 1025px) {
-      body { height: auto; overflow-y: auto; }
-      .stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; }
-      .phone { height: 740px; }
-      .phone-screen iframe { width: 100%; height: 100%; transform: none; }
-      .panel { height: 820px; }
-      .panel iframe { width: 100%; height: 100%; transform: none; }
-      .col-wrap.wide { grid-column: 1 / -1; }
+    .phone {
+      flex: 1;
+      border-radius: 34px;
+      padding: 8px;
+      background: #12100e;
+      box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42);
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+      transition: box-shadow var(--dur-ui) var(--ease-out);
+    }
+    .phone-screen {
+      position: relative;
+      flex: 1;
+      border-radius: 26px;
+      overflow: hidden;
+      background: var(--bg);
+      min-height: 0;
+    }
+    .phone-screen iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      background: var(--bg);
+      width: 125%;
+      height: 125%;
+      transform: scale(0.8);
+      transform-origin: 0 0;
+    }
+
+    .panel {
+      position: relative;
+      flex: 1;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--dark-line);
+      min-height: 0;
+      background: var(--dark-bg);
+      transition: box-shadow var(--dur-ui) var(--ease-out);
+    }
+    .panel iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      background: var(--dark-bg);
+      width: 122%;
+      height: 122%;
+      transform: scale(0.81967);
+      transform-origin: 0 0;
+    }
+
+    .col-wrap.is-spotlight .phone,
+    .col-wrap.is-spotlight .panel {
+      box-shadow:
+        0 0 0 2.5px #E85A3C,
+        0 0 0 7px rgba(217, 65, 43, 0.22),
+        0 18px 46px rgba(217, 65, 43, 0.28);
+    }
+
+    /* ---------- Panel lateral dedicado de Ajustes ---------- */
+    .settings-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(0, 0, 0, 0.56);
+    }
+    .settings-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 90;
+      width: min(370px, 92vw);
+      background: var(--dark-surface);
+      color: var(--dark-ink);
+      border-left: 1px solid var(--dark-line);
+      box-shadow: -16px 0 48px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+    }
+    .sd-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--dark-line);
+    }
+    .sd-head h2 {
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .sd-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(250, 247, 242, 0.08);
+      color: #FAF7F2;
+      font-size: 16px;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+    }
+    .sd-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+    .sd-group {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .sd-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: rgba(250, 247, 242, 0.55);
+    }
+    .sd-seg {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 4px;
+      background: var(--dark-bg);
+      border: 1px solid var(--dark-line);
+      border-radius: 12px;
+    }
+    .sd-seg button {
+      height: 38px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(250, 247, 242, 0.72);
+    }
+    .sd-seg button.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
+    .sd-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(250, 247, 242, 0.85);
+    }
+    .sd-field select {
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      background: var(--dark-bg);
+      border: 1px solid var(--dark-line);
+      color: var(--dark-ink);
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .sd-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sd-stack .top-btn {
+      width: 100%;
+      justify-content: flex-start;
+      height: 42px;
+    }
+    .sd-note {
+      margin-top: auto;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(250, 247, 242, 0.05);
+      border: 1px solid var(--dark-line);
+      font-size: 12.5px;
+      line-height: 1.45;
+      color: rgba(250, 247, 242, 0.68);
+    }
+
+    @media (max-width: 1280px) and (min-width: 1025px) {
+      .stage {
+        grid-template-columns: 290px 286px minmax(0, 1fr);
+        gap: 12px;
+        padding: 12px 14px 14px;
+      }
+      .col-hint { display: none; }
     }
 
     @media (max-width: 1024px) {
-      .only-mobile { display: inline; }
-      .only-desktop { display: none; }
-      body { height: 100vh; height: 100dvh; overflow: hidden; }
+      .topbar {
+        padding: 8px 12px;
+        min-height: 52px;
+        gap: 8px;
+      }
+      .brand img { height: 24px; }
+      .top-center { margin-left: auto; gap: 6px; }
+      .top-spacer { display: none; }
+      .cta-tour { height: 34px; padding: 0 12px; font-size: 12.5px; }
+      .cta-tour .hide-sm { display: none; }
+      .top-btn { height: 34px; padding: 0 9px; font-size: 12px; }
+      .top-btn .hide-sm { display: none; }
+      .top-exit { display: none; }
 
-      .bar {
-        flex-wrap: wrap;
-        justify-content: space-between;
+      .tour-bar {
         padding: 8px 12px;
         gap: 8px;
-        min-height: auto;
       }
-      .bar-brand { order: 1; }
-      .bar-logo img { height: 25px; }
-      .bar-sep,
-      .bar-subtitle,
-      .bar .grow { display: none; }
-      .bar-secondary { order: 2; gap: 6px; }
-      .bar-primary { order: 3; width: 100%; gap: 8px; }
-      .bar-primary .sim-btn { flex: 1; padding: 8px 12px; font-size: 12.5px; }
-      .bar-ghost,
-      .bar-link { padding: 6px 9px; font-size: 12px; }
-
-      .options-bar {
-        padding: 9px 12px;
-        gap: 8px 10px;
-        max-height: 44vh;
-        overflow-y: auto;
-      }
-      .opt-sep { display: none; }
-      .opt-field { width: 100%; justify-content: space-between; }
-      .opt-field select { flex: 1; max-width: none; min-width: 0; }
-      .opt-links { width: 100%; }
-      .opt-links .bar-ghost { flex: 1; }
-      .opt-close { width: 100%; text-align: center; background: rgba(250, 247, 242, 0.06); }
-
-      .sim-strip {
-        padding: 7px 12px;
-        gap: 6px 8px;
-        font-size: 12px;
-      }
-      .sim-main { width: 100%; align-items: flex-start; gap: 8px; }
-      .sim-dot { margin-top: 5px; }
-      .sim-controls { width: 100%; justify-content: space-between; gap: 6px; }
-      .sim-steps {
-        flex: 1;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 4px;
-      }
-      .sim-step {
-        justify-content: center;
-        padding: 4px 4px;
-        font-size: 11px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .step-more { display: none; }
-      .sim-inline-cta { margin-left: 0; margin-top: 4px; }
+      .tour-text { font-size: 12.5px; }
+      .tour-dots { display: none; }
 
       .mobile-switcher { display: flex; }
 
@@ -655,394 +573,360 @@
         display: flex;
         flex-direction: column;
         padding: 8px 10px 10px;
+        gap: 0;
         min-height: 0;
         overflow: hidden;
       }
       .stage.has-spotlight .col-wrap:not(.is-spotlight) { opacity: 1; }
-      .col-wrap { display: none; flex: 1; min-height: 0; gap: 6px; }
+      .col-wrap { display: none; flex: 1; min-height: 0; gap: 8px; }
       .col-wrap.m-active { display: flex; }
+      .col-wrap[data-pane="client"] .col-head,
+      .col-wrap[data-pane="waiter"] .col-head { display: none; }
+      .col-wrap[data-pane="local"] .col-title { display: none; }
       .col-head { min-height: auto; }
-      .col-wrap .label { display: none; }
-      .col-wrap[data-pane="local"] .col-title-group { display: none; }
-      .col-wrap .sublabel { font-size: 11.5px; padding-left: 2px; }
+      .r-tabs { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+      .r-tab { text-align: center; padding: 7px 6px; font-size: 13px; }
 
-      .phone { flex: 1; height: auto; border-radius: 20px; padding: 4px; }
-      .phone-screen { border-radius: 16px; }
+      .phone { flex: 1; border-radius: 18px; padding: 3px; }
+      .phone-screen { border-radius: 15px; }
+      .panel { flex: 1; border-radius: 14px; }
       .phone-screen iframe,
       .panel iframe { width: 100%; height: 100%; transform: none; }
-      .panel { flex: 1; height: auto; border-radius: 14px; }
-
       .col-wrap.is-spotlight .phone,
       .col-wrap.is-spotlight .panel {
-        box-shadow: 0 0 0 2px #E85A3C, 0 0 0 4px rgba(217, 65, 43, 0.25);
-        animation: none;
+        box-shadow: 0 0 0 2px #E85A3C;
       }
-
-      .r-tabs {
-        width: 100%;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        gap: 4px;
-      }
-      .r-tabs::-webkit-scrollbar { display: none; }
-      .r-tab { flex: 0 0 auto; white-space: nowrap; text-align: center; padding: 6px 10px; font-size: 12px; }
-    }
-
-    @media (max-width: 480px) {
-      .hide-xs { display: none; }
-      .bar-ghost,
-      .bar-link { padding: 5px 8px; font-size: 11.5px; }
     }
   </style>
 </head>
 <body>
-  <header class="bar">
-    <div class="bar-brand">
-      <a class="bar-logo" href="/" aria-label="Volver al sitio principal de SaleListo">
-        <img src="logo-dark.svg" alt="SaleListo">
-      </a>
-      <span class="bar-sep" aria-hidden="true">·</span>
-      <span class="bar-subtitle">Demo en vivo</span>
-    </div>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Volver al inicio de SaleListo">
+      <img src="logo-dark.svg" alt="SaleListo">
+    </a>
 
-    <div class="bar-primary">
-      <button type="button" class="sim-btn" id="simPeakBtn" title="Muestra en vivo cómo circula un pedido real por todo el local">
+    <div class="top-center">
+      <button type="button" class="cta-tour" id="simPeakBtn">
         <span class="sim-icon" aria-hidden="true">▶</span>
-        <span class="sim-label">Ver <span class="hide-xs">cómo funciona </span>paso a paso</span>
+        <span class="sim-label">Probar <span class="hide-sm">un pedido paso a paso</span></span>
       </button>
-      <button type="button" class="bar-ghost" id="clearDemoBtn" title="Reinicia las mesas abiertas para comenzar de nuevo">
-        ↺ Reiniciar
+      <button type="button" class="top-btn" id="clearDemoBtn" title="Comenzar una prueba limpia desde cero">
+        ↺ <span class="hide-sm">Reiniciar</span>
       </button>
     </div>
 
-    <span class="grow"></span>
+    <span class="top-spacer"></span>
 
-    <div class="bar-secondary">
-      <button type="button" class="bar-ghost" id="optionsToggleBtn" aria-expanded="false" aria-controls="optionsBar">
-        ⚙ Opciones
+    <div class="top-right">
+      <button type="button" class="top-btn" id="settingsBtn" aria-expanded="false" aria-controls="settingsDrawer">
+        ⚙ <span class="hide-sm">Ajustes</span>
       </button>
-      <a class="bar-link" href="/">Volver al sitio</a>
+      <a class="top-btn top-exit" href="/">Salir</a>
     </div>
   </header>
 
-  <section class="options-bar" id="optionsBar" hidden aria-label="Opciones avanzadas de la demostración">
-    <label class="opt-field">
-      <span>Mesa:</span>
-      <select id="clientTableSel" aria-label="Seleccionar mesa de prueba"></select>
-    </label>
-    <label class="opt-field">
-      <span>Mozo:</span>
-      <select id="waiterSel" aria-label="Seleccionar mozo de prueba"></select>
-    </label>
-    <span class="opt-sep" aria-hidden="true"></span>
-    <div class="opt-links">
-      <a class="bar-ghost" href="pase.html" target="_blank" rel="noopener">🛎️ Abrir Mostrador aparte ↗</a>
-      <a class="bar-ghost" href="operacion.html">Acceso Local</a>
+  <div class="tour-bar" id="tourBar" hidden aria-live="polite">
+    <div class="tour-text" id="tourMsg"></div>
+    <div class="tour-dots" id="tourDots" aria-hidden="true">
+      <span class="t-dot" data-dot="1"></span>
+      <span class="t-dot" data-dot="2"></span>
+      <span class="t-dot" data-dot="3"></span>
+      <span class="t-dot" data-dot="4"></span>
     </div>
-    <button type="button" class="opt-close" id="optionsCloseBtn" aria-label="Cerrar opciones">Cerrar</button>
-  </section>
+    <button type="button" class="tour-close" id="tourCloseBtn" aria-label="Cerrar aviso">✕</button>
+  </div>
 
-  <nav class="mobile-switcher" id="mobileSwitcher" aria-label="Cambiar pantalla de la demostración">
+  <nav class="mobile-switcher" id="mobileSwitcher" aria-label="Elegir pantalla">
     <button type="button" class="m-tab active" data-pane="client">1. Cliente</button>
     <button type="button" class="m-tab" data-pane="waiter">2. Mozo</button>
     <button type="button" class="m-tab" data-pane="local">3. Local</button>
   </nav>
 
-  <div class="sim-strip" id="simStrip" aria-live="polite">
-    <div class="sim-main">
-      <span class="sim-dot" aria-hidden="true"></span>
-      <div class="sim-msg" id="simMsg">
-        Pruebe el recorrido guiado o haga un pedido directo <span class="only-desktop">en la pantalla de la izquierda</span><span class="only-mobile">en la pantalla de Cliente</span> para ver cómo se actualiza todo en tiempo real.
-        <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>
-      </div>
-      <span class="sim-paused-pill" id="simPausedPill" hidden>En pausa</span>
-    </div>
-    <div class="sim-controls">
-      <div class="sim-steps" id="simSteps" aria-label="Pasos del recorrido guiado">
-        <button type="button" class="sim-step" data-step="1">1 · Mesa</button>
-        <button type="button" class="sim-step" data-step="2">2 · Cocina<span class="step-more"> y Barra</span></button>
-        <button type="button" class="sim-step" data-step="3">3 · Aviso<span class="step-more"> al mozo</span></button>
-        <button type="button" class="sim-step" data-step="4">4 · Cuenta</button>
-      </div>
-      <button type="button" class="sim-close" id="simCloseBtn" aria-label="Ocultar guía" title="Ocultar guía">✕</button>
-    </div>
-  </div>
-
   <main class="stage" id="demoStage">
-    <div class="col-wrap m-active" data-pane="client">
+    <section class="col-wrap m-active" data-pane="client">
       <div class="col-head">
-        <div class="col-title-group">
-          <span class="label">1 · Cliente en la mesa</span>
-          <span class="sublabel">Pide y solicita la cuenta por QR</span>
+        <div class="col-title">
+          <span class="col-num">1</span>
+          <span class="col-name">Cliente</span>
+          <span class="col-hint">Pide desde la mesa</span>
         </div>
       </div>
       <div class="phone">
         <div class="phone-screen">
-          <iframe id="clientFrame" title="Pantalla del cliente en la mesa"></iframe>
+          <iframe id="clientFrame" title="Vista del cliente en la mesa"></iframe>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="col-wrap" data-pane="waiter">
+    <section class="col-wrap" data-pane="waiter">
       <div class="col-head">
-        <div class="col-title-group">
-          <span class="label">2 · Aviso al mozo</span>
-          <span class="sublabel">Recibe alertas cuando el pedido está listo</span>
+        <div class="col-title">
+          <span class="col-num">2</span>
+          <span class="col-name">Mozo</span>
+          <span class="col-hint">Recibe el aviso</span>
         </div>
       </div>
       <div class="phone">
         <div class="phone-screen">
-          <iframe id="waiterFrame" title="Pantalla de avisos al mozo"></iframe>
+          <iframe id="waiterFrame" title="Vista del mozo"></iframe>
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="col-wrap wide" data-pane="local">
+    <section class="col-wrap wide" data-pane="local">
       <div class="col-head">
-        <div class="col-title-group">
-          <span class="label">3 · Pantallas del local</span>
-          <span class="sublabel">Mostrador, cocina, barra, despacho y encargado</span>
+        <div class="col-title">
+          <span class="col-num">3</span>
+          <span class="col-name">Local</span>
+          <span class="local-extra-pill" id="localExtraBadge" hidden></span>
         </div>
-        <div class="r-tabs" id="rightTabs" role="tablist" aria-label="Pantallas del local">
-          <button class="r-tab active" type="button" role="tab" aria-selected="true" data-src="pase.html" title="Mostrador de mozos: pedidos listos y llamados">🛎️ Mostrador</button>
-          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
-          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=barra">🍸 Barra</button>
-          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=mostrador">🍣 Despacho</button>
-          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
+        <div class="r-tabs" id="rightTabs" role="tablist" aria-label="Pantallas del establecimiento">
+          <button class="r-tab active" type="button" data-view="pase">🛎️ Mostrador</button>
+          <button class="r-tab" type="button" data-view="cocina">🍳 Cocina</button>
+          <button class="r-tab" type="button" data-view="barra">🍸 Barra</button>
         </div>
       </div>
       <div class="panel">
-        <iframe id="rightFrame" src="pase.html" title="Pantallas del local"></iframe>
+        <iframe id="rightFrame" title="Pantallas del establecimiento"></iframe>
       </div>
-    </div>
+    </section>
   </main>
+
+  <!-- Panel dedicado de Ajustes -->
+  <div class="settings-backdrop" id="settingsBackdrop" hidden></div>
+  <aside class="settings-drawer" id="settingsDrawer" aria-label="Ajustes de la demostración" hidden>
+    <div class="sd-head">
+      <h2>⚙ Ajustes</h2>
+      <button type="button" class="sd-close" id="settingsCloseBtn" aria-label="Cerrar ajustes">✕</button>
+    </div>
+    <div class="sd-body">
+      <div class="sd-group">
+        <span class="sd-label">Tema del Mostrador</span>
+        <div class="sd-seg" role="group" aria-label="Tema del mostrador">
+          <button type="button" class="active" data-theme="dark" id="themeDarkBtn">🌙 Oscuro</button>
+          <button type="button" data-theme="light" id="themeLightBtn">☀️ Claro</button>
+        </div>
+      </div>
+
+      <div class="sd-group">
+        <span class="sd-label">Mesa y personal en pantalla</span>
+        <label class="sd-field">
+          <span>Mesa del cliente</span>
+          <select id="clientTableSel"></select>
+        </label>
+        <label class="sd-field">
+          <span>Mozo visible</span>
+          <select id="waiterSel"></select>
+        </label>
+      </div>
+
+      <div class="sd-group">
+        <span class="sd-label">Vistas adicionales del local</span>
+        <div class="sd-stack">
+          <button type="button" class="top-btn" data-extra-view="encargado">🖥️ Ver Panel de Administración</button>
+          <button type="button" class="top-btn" data-extra-view="mostrador">🍣 Ver estación de Despacho</button>
+          <a class="top-btn" href="operacion.html">🔒 Ir a Acceso Local</a>
+          <a class="top-btn" href="/">← Volver al sitio principal</a>
+        </div>
+      </div>
+
+      <p class="sd-note">
+        Esta prueba corre en un entorno temporal exclusivo de su sesión. Al reiniciar o cerrar la ventana no se guarda ningún dato.
+      </p>
+    </div>
+  </aside>
 
   <script>
     (async () => {
-      let adminToken = sessionStorage.getItem('salelisto:adminToken') || '';
-      let simRunId = 0;
-      let simRunning = false;
-      let simPaused = false;
-      let hasCompletedTour = false;
-      let currentRightSrc = 'pase.html';
+      const $ = (sel) => document.querySelector(sel);
 
-      const WELCOME_HTML = 'Pruebe el recorrido guiado o haga un pedido directo <span class="only-desktop">en la pantalla de la izquierda</span><span class="only-mobile">en la pantalla de Cliente</span> para ver cómo se actualiza todo en tiempo real. <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>';
-
-      const STEP_CONFIG = {
-        1: {
-          panes: ['client'],
-          mobilePane: 'client',
-          rightSrc: null,
-          html: '<strong>1/4 · Pedido en la mesa:</strong> El cliente escanea el QR de la mesa y pide comida y bebidas. El sistema separa cada cosa automáticamente.',
-        },
-        2: {
-          panes: ['local'],
-          mobilePane: 'local',
-          rightSrc: 'cocina.html?estacion=cocina',
-          html: '<strong>2/4 · Cocina y Barra reciben:</strong> La comida llega directo a Cocina y las bebidas a Barra, cada área ve solo lo suyo.',
-        },
-        3: {
-          panes: ['waiter', 'local'],
-          mobilePane: 'waiter',
-          rightSrc: 'pase.html',
-          html: '<strong>3/4 · Aviso al mozo y mostrador:</strong> Cocina y Barra marcan "Listo". El aviso aparece en el mostrador y en la pulsera del mozo para retirar sin demoras.',
-        },
-        4: {
-          panes: ['client', 'local'],
-          mobilePane: 'local',
-          rightSrc: 'pase.html',
-          html: '<strong>4/4 · Cuenta en un solo traslado:</strong> El cliente solicita la cuenta indicando medio de pago y propina. El mozo cobra en un solo traslado.',
-        },
-      };
-
-      const stage = document.getElementById('demoStage');
-      const tSel = document.getElementById('clientTableSel');
-      const wSel = document.getElementById('waiterSel');
-      const cFrame = document.getElementById('clientFrame');
-      const wFrame = document.getElementById('waiterFrame');
-      const rFrame = document.getElementById('rightFrame');
-      const rightTabs = document.getElementById('rightTabs');
-      const simBtn = document.getElementById('simPeakBtn');
-      const clearBtn = document.getElementById('clearDemoBtn');
-      const optionsToggleBtn = document.getElementById('optionsToggleBtn');
-      const optionsCloseBtn = document.getElementById('optionsCloseBtn');
-      const optionsBar = document.getElementById('optionsBar');
-      const simStrip = document.getElementById('simStrip');
-      const simMsg = document.getElementById('simMsg');
-      const simPausedPill = document.getElementById('simPausedPill');
-      const simSteps = document.getElementById('simSteps');
-      const mobileSwitcher = document.getElementById('mobileSwitcher');
-
-      function setOptionsOpen(open) {
-        optionsBar.hidden = !open;
-        optionsToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        optionsToggleBtn.classList.toggle('active', open);
-      }
-      optionsToggleBtn.onclick = () => setOptionsOpen(optionsBar.hidden);
-      optionsCloseBtn.onclick = () => setOptionsOpen(false);
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !optionsBar.hidden) {
-          setOptionsOpen(false);
-          optionsToggleBtn.focus();
-        }
-      });
-
-      function setMainBtnState(state) {
-        simBtn.classList.remove('is-running', 'is-paused');
-        if (state === 'running') {
-          simBtn.classList.add('is-running');
-          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">⏸</span><span class="sim-label">Pausar recorrido</span>';
-          simPausedPill.hidden = true;
-        } else if (state === 'paused') {
-          simBtn.classList.add('is-paused');
-          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">▶</span><span class="sim-label">Continuar recorrido</span>';
-          simPausedPill.hidden = false;
-        } else {
-          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">▶</span><span class="sim-label">Ver <span class="hide-xs">cómo funciona </span>paso a paso</span>';
-          simPausedPill.hidden = true;
-        }
-      }
-
-      function setSpotlight(panes = []) {
-        const set = new Set(panes);
-        stage.classList.toggle('has-spotlight', set.size > 0);
-        document.querySelectorAll('.col-wrap[data-pane]').forEach((col) => {
-          col.classList.toggle('is-spotlight', set.has(col.dataset.pane));
-        });
-        document.querySelectorAll('.m-tab[data-pane]').forEach((tab) => {
-          tab.classList.toggle('is-step-target', set.has(tab.dataset.pane));
-        });
-      }
-
-      function setMobilePane(pane) {
-        document.querySelectorAll('.m-tab').forEach((b) => {
-          b.classList.toggle('active', b.dataset.pane === pane);
-        });
-        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => {
-          c.classList.toggle('m-active', c.dataset.pane === pane);
-        });
-      }
-
-      if (mobileSwitcher) {
-        mobileSwitcher.onclick = (e) => {
-          const btn = e.target.closest('[data-pane]');
-          if (btn) setMobilePane(btn.dataset.pane);
-        };
-      }
-
-      function selectRightTab(targetSrc) {
-        if (!targetSrc) return;
-        let matched = null;
-        document.querySelectorAll('.r-tab').forEach((tab) => {
-          const isMatch = tab.dataset.src === targetSrc;
-          tab.classList.toggle('active', isMatch);
-          tab.setAttribute('aria-selected', isMatch ? 'true' : 'false');
-          if (isMatch) matched = tab;
-        });
-        if (matched && rightTabs.scrollWidth > rightTabs.clientWidth) {
-          const targetLeft = matched.offsetLeft - Math.max(0, (rightTabs.clientWidth - matched.clientWidth) / 2);
-          rightTabs.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
-        }
-        if (currentRightSrc !== targetSrc) {
-          currentRightSrc = targetSrc;
-          rFrame.src = targetSrc;
-        }
-      }
-
-      rightTabs.onclick = (e) => {
-        const b = e.target.closest('[data-src]');
-        if (!b) return;
-        selectRightTab(b.dataset.src);
-      };
-
-      function setStepUI(currentStep, htmlMsg, finished = false, activeHighlight = true) {
-        simStrip.hidden = false;
-        simStrip.classList.toggle('is-active', activeHighlight && !finished && currentStep > 0);
-        simStrip.classList.toggle('is-done', finished);
-        document.querySelectorAll('.sim-step').forEach((el) => {
-          const n = Number(el.dataset.step);
-          el.classList.toggle('done', finished ? true : (currentStep > 0 && n < currentStep));
-          el.classList.toggle('current', !finished && n === currentStep);
-        });
-        simMsg.innerHTML = htmlMsg;
-      }
-
-      function applyStepVisuals(stepNum, { includeStartCta = false, markPriorDone = true } = {}) {
-        const cfg = STEP_CONFIG[stepNum];
-        if (!cfg) return;
-        if (cfg.rightSrc) selectRightTab(cfg.rightSrc);
-        setSpotlight(cfg.panes);
-        setMobilePane(cfg.mobilePane);
-
-        const cta = includeStartCta
-          ? ' <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>'
-          : '';
-        simStrip.hidden = false;
-        simStrip.classList.add('is-active');
-        simStrip.classList.remove('is-done');
-        document.querySelectorAll('.sim-step').forEach((el) => {
-          const n = Number(el.dataset.step);
-          el.classList.toggle('done', markPriorDone && n < stepNum);
-          el.classList.toggle('current', n === stepNum);
-        });
-        simMsg.innerHTML = cfg.html + cta;
-      }
-
-      async function ensureAdminToken() {
-        if (adminToken) return adminToken;
+      // Genera un entorno efímero privado en memoria del servidor por cada apertura o reinicio
+      function newSandboxId() {
         try {
-          const r = await fetch('api/auth/admin', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ demo: true }),
-          }).then((x) => x.json());
-          if (r && r.ok && r.token) {
-            adminToken = r.token;
-            sessionStorage.setItem('salelisto:adminToken', adminToken);
-            return adminToken;
+          if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+            return 'sb_' + window.crypto.randomUUID().replace(/-/g, '').slice(0, 20);
           }
         } catch (_) {}
-        const pin = prompt('Modo de local activo. Ingrese el PIN del encargado para acceder a la demostración:') || '';
-        if (!pin) throw new Error('PIN requerido');
-        const r2 = await fetch('api/auth/admin', {
+        return 'sb_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 12);
+      }
+
+      let demoSid = newSandboxId();
+      let adminToken = '';
+      let currentTheme = 'dark';
+      let currentLocalView = 'pase';
+
+      let tourRunId = 0;
+      let tourState = 'idle'; // 'idle' | 'running' | 'paused'
+      let pauseWaiter = null;
+
+      const stage = $('#demoStage');
+      const tSel = $('#clientTableSel');
+      const wSel = $('#waiterSel');
+      const cFrame = $('#clientFrame');
+      const wFrame = $('#waiterFrame');
+      const rFrame = $('#rightFrame');
+      const simBtn = $('#simPeakBtn');
+      const clearBtn = $('#clearDemoBtn');
+      const tourBar = $('#tourBar');
+      const tourMsg = $('#tourMsg');
+      const localExtraBadge = $('#localExtraBadge');
+
+      const LOCAL_VIEWS = {
+        pase: { url: () => `pase.html?embed=1&demoSid=${encodeURIComponent(demoSid)}&tema=${currentTheme}`, tab: 'pase', extraLabel: '' },
+        cocina: { url: () => `cocina.html?estacion=cocina&embed=1&demoSid=${encodeURIComponent(demoSid)}`, tab: 'cocina', extraLabel: '' },
+        barra: { url: () => `cocina.html?estacion=barra&embed=1&demoSid=${encodeURIComponent(demoSid)}`, tab: 'barra', extraLabel: '' },
+        mostrador: { url: () => `cocina.html?estacion=mostrador&embed=1&demoSid=${encodeURIComponent(demoSid)}`, tab: '', extraLabel: 'Despacho' },
+        encargado: { url: () => `restaurante.html?demo=1&embed=1&demoSid=${encodeURIComponent(demoSid)}`, tab: '', extraLabel: 'Panel Encargado' },
+      };
+
+      const isMobile = () => window.matchMedia('(max-width: 1024px)').matches;
+
+      function demoHeaders(extra = {}) {
+        return { 'X-Demo-Session': demoSid, ...extra };
+      }
+
+      function discardSandbox(sid) {
+        if (!sid) return;
+        try {
+          const payload = JSON.stringify({ demoSid: sid });
+          if (navigator.sendBeacon) {
+            navigator.sendBeacon('/api/demo/discard', new Blob([payload], { type: 'application/json' }));
+            return;
+          }
+          fetch('/api/demo/discard', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            keepalive: true,
+          }).catch(() => {});
+        } catch (_) {}
+      }
+      window.addEventListener('pagehide', () => discardSandbox(demoSid));
+
+      // ---------- Panel de Ajustes ----------
+      function setSettingsOpen(open) {
+        $('#settingsBackdrop').hidden = !open;
+        $('#settingsDrawer').hidden = !open;
+        $('#settingsBtn').classList.toggle('active', Boolean(open));
+        $('#settingsBtn').setAttribute('aria-expanded', String(Boolean(open)));
+      }
+      $('#settingsBtn').onclick = () => setSettingsOpen($('#settingsDrawer').hidden);
+      $('#settingsCloseBtn').onclick = () => setSettingsOpen(false);
+      $('#settingsBackdrop').onclick = () => setSettingsOpen(false);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') setSettingsOpen(false);
+      });
+
+      // ---------- Tema Oscuro / Claro del Mostrador ----------
+      function applyLocalTheme(theme) {
+        currentTheme = theme === 'light' ? 'light' : 'dark';
+        $('#themeDarkBtn').classList.toggle('active', currentTheme === 'dark');
+        $('#themeLightBtn').classList.toggle('active', currentTheme === 'light');
+        try {
+          if (rFrame.contentWindow) {
+            rFrame.contentWindow.postMessage({ type: 'salelisto:theme', theme: currentTheme }, window.location.origin);
+          }
+        } catch (_) {}
+      }
+      $('#themeDarkBtn').onclick = () => applyLocalTheme('dark');
+      $('#themeLightBtn').onclick = () => applyLocalTheme('light');
+
+      // ---------- Cambio de vistas ----------
+      function setMobilePane(pane) {
+        document.querySelectorAll('.m-tab').forEach((b) => b.classList.toggle('active', b.dataset.pane === pane));
+        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => c.classList.toggle('m-active', c.dataset.pane === pane));
+      }
+
+      $('#mobileSwitcher').onclick = (e) => {
+        const b = e.target.closest('[data-pane]');
+        if (b) setMobilePane(b.dataset.pane);
+      };
+
+      function setLocalView(key) {
+        const spec = LOCAL_VIEWS[key] || LOCAL_VIEWS.pase;
+        currentLocalView = key in LOCAL_VIEWS ? key : 'pase';
+        document.querySelectorAll('.r-tab').forEach((b) => b.classList.toggle('active', b.dataset.view === spec.tab));
+        if (spec.extraLabel) {
+          localExtraBadge.textContent = spec.extraLabel;
+          localExtraBadge.hidden = false;
+        } else {
+          localExtraBadge.hidden = true;
+        }
+        rFrame.src = spec.url();
+      }
+
+      $('#rightTabs').onclick = (e) => {
+        const b = e.target.closest('[data-view]');
+        if (b) setLocalView(b.dataset.view);
+      };
+
+      document.querySelectorAll('[data-extra-view]').forEach((btn) => {
+        btn.onclick = () => {
+          setLocalView(btn.dataset.extraView);
+          setSettingsOpen(false);
+          if (isMobile()) setMobilePane('local');
+        };
+      });
+
+      function setSpotlight(panes = [], mobilePrimary = '') {
+        const list = Array.isArray(panes) ? panes : [];
+        stage.classList.toggle('has-spotlight', list.length > 0);
+        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => {
+          c.classList.toggle('is-spotlight', list.includes(c.dataset.pane));
+        });
+        document.querySelectorAll('.m-tab').forEach((b) => {
+          b.classList.toggle('is-target', list.includes(b.dataset.pane));
+        });
+        if (isMobile() && mobilePrimary) setMobilePane(mobilePrimary);
+      }
+
+      // ---------- API del sandbox ----------
+      async function ensureAdminToken() {
+        if (adminToken) return adminToken;
+        const r = await fetch('api/auth/admin', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pin }),
+          headers: demoHeaders({ 'Content-Type': 'application/json' }),
+          body: JSON.stringify({ demo: true }),
         }).then((x) => x.json());
-        if (!r2.ok) throw new Error(r2.error || 'PIN incorrecto');
-        adminToken = r2.token;
-        sessionStorage.setItem('salelisto:adminToken', adminToken);
+        if (!r || !r.ok || !r.token) throw new Error(r?.error || 'No se pudo iniciar la sesión de prueba');
+        adminToken = r.token;
         return adminToken;
       }
 
-      async function fetchQrsSafe() {
-        let res = await fetch('api/qrs', {
-          headers: adminToken ? { 'X-Auth-Token': adminToken } : {},
+      async function apiAct(type, payload = {}) {
+        const tok = await ensureAdminToken();
+        const res = await fetch('api/action', {
+          method: 'POST',
+          headers: demoHeaders({ 'Content-Type': 'application/json', 'X-Auth-Token': tok }),
+          body: JSON.stringify({ type, payload }),
         });
-        if (res.status === 401) {
-          adminToken = '';
-          const tok = await ensureAdminToken();
-          res = await fetch('api/qrs', { headers: { 'X-Auth-Token': tok } });
-        }
-        if (!res.ok) throw new Error('No se pudieron cargar las mesas de prueba');
-        return res.json();
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Error en la operación');
+        return data;
       }
 
       const syncClient = () => {
-        if (tSel.value) cFrame.src = `cliente.html?t=${encodeURIComponent(tSel.value)}`;
+        if (tSel.value) {
+          cFrame.src = `cliente.html?t=${encodeURIComponent(tSel.value)}&embed=1&demoSid=${encodeURIComponent(demoSid)}`;
+        }
       };
       const syncWaiter = () => {
-        wFrame.src = wSel.value ? `mozo.html?waiter=${encodeURIComponent(wSel.value)}` : 'mozo.html';
+        const base = wSel.value ? `mozo.html?waiter=${encodeURIComponent(wSel.value)}` : 'mozo.html?';
+        const sep = base.includes('?') && !base.endsWith('?') ? '&' : '';
+        wFrame.src = `${base}${sep}embed=1&demoSid=${encodeURIComponent(demoSid)}`;
       };
 
-      const initDemoData = async () => {
+      async function bootSandbox(initialView = 'pase') {
+        adminToken = '';
+        setSpotlight([]);
         try {
           const [qrs, wpub] = await Promise.all([
-            fetchQrsSafe(),
-            fetch('api/waiters-public').then((r) => {
-              if (!r.ok) throw new Error('No se pudieron cargar los mozos de prueba');
+            fetch('api/qrs', { headers: demoHeaders() }).then((r) => {
+              if (!r.ok) throw new Error('Error ' + r.status);
+              return r.json();
+            }),
+            fetch('api/waiters-public', { headers: demoHeaders() }).then((r) => {
+              if (!r.ok) throw new Error('Error ' + r.status);
               return r.json();
             }),
           ]);
@@ -1056,309 +940,206 @@
               tSel.add(new Option(`${b.name} · Mesa ${t.code}`, t.qrToken));
             });
           });
-
           const terrazaIdx = allTables.findIndex((t) => /terraza|exterior|patio/i.test(t.blockName));
           if (terrazaIdx >= 0) tSel.selectedIndex = terrazaIdx;
-          else if (tSel.options.length > 3) tSel.selectedIndex = 3;
+          else if (tSel.options.length > 0) tSel.selectedIndex = 0;
 
           (wpub.waiters || []).forEach((w) => {
-            wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera)'}`, w.id));
+            wSel.add(new Option(`${w.name}${w.available ? '' : ' (fuera de turno)'}`, w.id));
           });
           const sofiaIdx = (wpub.waiters || []).findIndex((w) => w.available && /sof/i.test(w.name));
           if (sofiaIdx >= 0) wSel.selectedIndex = sofiaIdx;
 
           syncClient();
           syncWaiter();
-          if (!simRunning && !hasCompletedTour) {
-            setStepUI(0, WELCOME_HTML, false, false);
-          }
-        } catch (_) {
-          setSpotlight([]);
-          setStepUI(
-            0,
-            'No fue posible conectar con el sistema de demostración. Verifique la conexión e intente nuevamente. <button type="button" class="sim-retry" id="retryDemoBtn">Reintentar</button>',
-            false,
-            false
-          );
-          const retryBtn = document.getElementById('retryDemoBtn');
-          if (retryBtn) retryBtn.onclick = initDemoData;
+          setLocalView(initialView);
+          tourBar.hidden = true;
+        } catch (err) {
+          tourBar.classList.remove('is-done');
+          tourBar.hidden = false;
+          tourMsg.innerHTML = `⚠️ No fue posible iniciar la demostración (${err.message || 'sin conexión'}). <button type="button" class="retry-btn" id="retryDemoBtn">Reintentar</button>`;
+          $('#retryDemoBtn')?.addEventListener('click', () => bootSandbox(currentLocalView));
         }
-      };
+      }
 
       tSel.onchange = () => {
         syncClient();
-        setMobilePane('client');
+        setSettingsOpen(false);
+        if (isMobile()) setMobilePane('client');
       };
       wSel.onchange = () => {
         syncWaiter();
-        setMobilePane('waiter');
+        setSettingsOpen(false);
+        if (isMobile()) setMobilePane('waiter');
       };
-      await initDemoData();
 
-      const viewMap = {
-        pase: 'pase.html',
-        cocina: 'cocina.html?estacion=cocina',
-        barra: 'cocina.html?estacion=barra',
-        mostrador: 'cocina.html?estacion=mostrador',
-        despacho: 'cocina.html?estacion=mostrador',
-        encargado: 'restaurante.html?demo=1',
-      };
-      const initVista = new URLSearchParams(location.search).get('vista');
-      if (initVista && viewMap[initVista]) {
-        selectRightTab(viewMap[initVista]);
-        setMobilePane('local');
-      }
-
-      async function apiAct(type, payload = {}) {
-        const tok = await ensureAdminToken();
-        const res = await fetch('api/action', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(tok ? { 'X-Auth-Token': tok } : {}),
-          },
-          body: JSON.stringify({ type, payload }),
-        });
-        if (res.status === 401) {
-          adminToken = '';
-          sessionStorage.removeItem('salelisto:adminToken');
-          const tok2 = await ensureAdminToken();
-          const res2 = await fetch('api/action', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(tok2 ? { 'X-Auth-Token': tok2 } : {}),
-            },
-            body: JSON.stringify({ type, payload }),
-          }).then((r) => r.json());
-          if (!res2.ok) throw new Error(res2.error || 'No fue posible completar la acción');
-          return res2;
+      // ---------- Recorrido guiado paso a paso ----------
+      function syncTourBtn() {
+        const ico = simBtn.querySelector('.sim-icon');
+        const lbl = simBtn.querySelector('.sim-label');
+        simBtn.classList.toggle('is-running', tourState === 'running');
+        simBtn.classList.toggle('is-paused', tourState === 'paused');
+        if (tourState === 'running') {
+          ico.textContent = '⏸';
+          lbl.innerHTML = 'Pausar';
+        } else if (tourState === 'paused') {
+          ico.textContent = '▶';
+          lbl.innerHTML = 'Seguir';
+        } else {
+          ico.textContent = '▶';
+          lbl.innerHTML = 'Probar <span class="hide-sm">un pedido paso a paso</span>';
         }
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || 'No fue posible completar la acción');
-        return data;
       }
 
-      async function waitPausable(ms, myRun) {
-        let remaining = ms;
-        const tick = 100;
-        while (remaining > 0) {
-          if (myRun !== simRunId) return false;
-          if (simPaused) {
-            await new Promise((r) => setTimeout(r, tick));
+      function showTourStep(stepNum, html, done = false) {
+        tourBar.hidden = false;
+        tourBar.classList.toggle('is-done', done);
+        tourMsg.innerHTML = html;
+        document.querySelectorAll('.t-dot').forEach((d) => {
+          const n = Number(d.dataset.dot);
+          d.classList.toggle('done', done ? true : n < stepNum);
+          d.classList.toggle('current', !done && n === stepNum);
+        });
+      }
+
+      async function pauseableWait(ms, runId) {
+        const step = 100;
+        let elapsed = 0;
+        while (elapsed < ms) {
+          if (runId !== tourRunId) return false;
+          if (tourState === 'paused') {
+            await new Promise((r) => { pauseWaiter = r; });
             continue;
           }
-          const slice = Math.min(tick, remaining);
-          await new Promise((r) => setTimeout(r, slice));
-          remaining -= slice;
+          await new Promise((r) => setTimeout(r, Math.min(step, ms - elapsed)));
+          elapsed += step;
         }
-        return myRun === simRunId;
+        return runId === tourRunId;
       }
 
-      async function waitIfPaused(myRun) {
-        while (simPaused && myRun === simRunId) {
-          await new Promise((r) => setTimeout(r, 100));
-        }
-        return myRun === simRunId;
+      function stopTour(clearBar = false) {
+        tourRunId++;
+        tourState = 'idle';
+        if (pauseWaiter) { const fn = pauseWaiter; pauseWaiter = null; fn(); }
+        syncTourBtn();
+        setSpotlight([]);
+        if (clearBar) tourBar.hidden = true;
       }
+
+      $('#tourCloseBtn').onclick = () => stopTour(true);
 
       async function runGuidedTour() {
-        const myRun = ++simRunId;
-        simRunning = true;
-        simPaused = false;
-        setOptionsOpen(false);
-        setMainBtnState('running');
-        applyStepVisuals(1, { markPriorDone: true });
+        const myRun = ++tourRunId;
+        tourState = 'running';
+        syncTourBtn();
 
         try {
           const tok = await ensureAdminToken();
           const st = await fetch('api/staff-state', {
-            headers: tok ? { 'X-Auth-Token': tok } : {},
-          }).then((r) => {
-            if (!r.ok) throw new Error('No fue posible conectar con el sistema de demostración');
-            return r.json();
-          });
-          if (!(await waitIfPaused(myRun))) return;
+            headers: demoHeaders({ 'X-Auth-Token': tok }),
+          }).then((r) => r.json());
 
           const availItems = (st.items || []).filter((i) => i.available);
           const kitchenItems = availItems.filter((i) => i.effectiveStation !== 'barra');
           const barItems = availItems.filter((i) => i.effectiveStation === 'barra');
           if (!kitchenItems.length || !barItems.length) {
-            throw new Error('Se necesita al menos un plato de cocina y una bebida de barra disponibles para el recorrido.');
+            throw new Error('Faltan productos de ejemplo disponibles');
           }
 
           const activeTables = (st.tables || []).filter((t) => t.active);
           const primaryTable = activeTables.find((t) => t.qrToken === tSel.value) || activeTables[0];
-          const secondaryTable = activeTables.find((t) => t.id !== primaryTable.id && t.blockId !== primaryTable.blockId)
-            || activeTables.find((t) => t.id !== primaryTable.id)
-            || primaryTable;
-          const callTable = activeTables.find((t) => t.id !== primaryTable.id && t.id !== secondaryTable.id) || secondaryTable;
+          const dish = kitchenItems.find((i) => /ramen/i.test(i.name)) || kitchenItems[0];
+          const drink = barItems.find((i) => /gin|yuzu/i.test(i.name)) || barItems[0];
 
-          const dish1 = kitchenItems.find((i) => /ramen/i.test(i.name)) || kitchenItems[0];
-          const dish2 = kitchenItems.find((i) => i.id !== dish1.id) || dish1;
-          const drink1 = barItems.find((i) => /gin|yuzu/i.test(i.name)) || barItems[0];
-          const drink2 = barItems.find((i) => i.id !== drink1.id) || drink1;
-
-          // Paso 1: Pedido en la mesa (comida + bebida separadas automáticamente)
+          // Paso 1: Cliente pide desde el QR
+          setSpotlight(['client'], 'client');
+          showTourStep(1, `<strong>Paso 1 de 4 · Pedido en la mesa:</strong> Mesa ${primaryTable.code} pide platos y bebidas desde el QR.`);
           const r1 = await apiAct('order.create', {
             qrToken: primaryTable.qrToken,
             items: [
-              { itemId: dish1.id, qty: 2, note: '1 sin verdeo' },
-              { itemId: drink1.id, qty: 2, note: 'Poco hielo' },
+              { itemId: dish.id, qty: 2, note: '1 sin verdeo' },
+              { itemId: drink.id, qty: 2, note: 'Poco hielo' },
             ],
           });
-          const r2 = secondaryTable.id !== primaryTable.id
-            ? await apiAct('order.create', {
-                qrToken: secondaryTable.qrToken,
-                items: [
-                  { itemId: dish2.id, qty: 1, note: '' },
-                  { itemId: drink2.id, qty: 2, note: '' },
-                ],
-              })
-            : null;
 
-          const updatedTbl = (r1.state?.tables || []).find((t) => t.id === primaryTable.id);
-          const assignedWid = updatedTbl?.waiterId;
+          const assignedWid = (r1.state?.tables || []).find((t) => t.id === primaryTable.id)?.waiterId;
           if (assignedWid && wSel.value !== assignedWid) {
             wSel.value = assignedWid;
             syncWaiter();
           }
 
-          if (!(await waitPausable(2400, myRun))) return;
+          if (!(await pauseableWait(2200, myRun))) return;
 
-          // Paso 2: Cocina y Barra reciben cada área lo suyo, y luego marcan Listo
-          applyStepVisuals(2, { markPriorDone: true });
-          if (!(await waitPausable(1850, myRun))) return;
+          // Paso 2: Cocina recibe únicamente los platos (Barra recibe bebidas por separado)
+          setLocalView('cocina');
+          setSpotlight(['local'], 'local');
+          showTourStep(2, '<strong>Paso 2 de 4 · Cocina y Barra:</strong> Cada estación recibe únicamente lo suyo en su propia pantalla.');
+          if (!(await pauseableWait(2200, myRun))) return;
 
-          const createdPrimary = r1.result?.orderIds || [];
-          for (const oid of createdPrimary) {
+          const createdIds = r1.result?.orderIds || [];
+          for (const oid of createdIds) {
             await apiAct('order.status', { orderId: oid, status: 'listo' });
           }
-          const createdSecondary = r2?.result?.orderIds || [];
-          if (createdSecondary[0]) {
-            await apiAct('order.status', { orderId: createdSecondary[0], status: 'listo' });
-          }
-          if (createdSecondary[1]) {
-            await apiAct('order.status', { orderId: createdSecondary[1], status: 'cocina' });
-          }
 
-          if (!(await waitPausable(650, myRun))) return;
+          // Paso 3: Listo para retirar en Mostrador y Mozo
+          setLocalView('pase');
+          setSpotlight(['waiter', 'local'], 'waiter');
+          showTourStep(3, '<strong>Paso 3 de 4 · Pedido listo:</strong> El mozo recibe el aviso en su pantalla y en el mostrador del local.');
+          if (!(await pauseableWait(2400, myRun))) return;
 
-          // Paso 3: Aviso al mozo y mostrador + llamado de atención de otra mesa
-          applyStepVisuals(3, { markPriorDone: true });
-          await apiAct('call.create', {
-            qrToken: callTable.qrToken,
-            type: 'mozo',
-            reason: 'Agua / Hielo',
-          });
-
-          if (!(await waitPausable(2500, myRun))) return;
-
-          // Paso 4: Cuenta en un solo traslado con medio de pago y propina
-          applyStepVisuals(4, { markPriorDone: true });
+          // Paso 4: Cliente solicita la cuenta con medio de pago y propina
+          setSpotlight(['client', 'local'], 'local');
+          showTourStep(4, `<strong>Paso 4 de 4 · Cuenta en un viaje:</strong> Mesa ${primaryTable.code} solicita la cuenta con Tarjeta y 10% de propina.`);
           await apiAct('call.create', {
             qrToken: primaryTable.qrToken,
             type: 'cuenta',
             payment: 'Tarjeta',
             tip: 10,
           });
+          if (!(await pauseableWait(2200, myRun))) return;
 
-          if (!(await waitPausable(2500, myRun))) return;
-
-          // Cierre del recorrido guiado
-          hasCompletedTour = true;
+          tourState = 'idle';
+          syncTourBtn();
           setSpotlight([]);
-          setStepUI(
-            4,
-            '<strong>Recorrido completado.</strong> Ahora puede probar libremente: sume un plato desde la mesa o confirme entregas en el mostrador.',
-            true
-          );
+          showTourStep(4, '<strong>✔ Demostración lista:</strong> ahora puede sumar platos desde Cliente o confirmar entregas y cobros en Mozo o Mostrador.', true);
         } catch (err) {
-          if (myRun !== simRunId) return;
+          tourState = 'idle';
+          syncTourBtn();
           setSpotlight([]);
-          setStepUI(
-            0,
-            `${err.message || 'No fue posible iniciar el recorrido en este momento.'} <button type="button" class="sim-retry" data-start-tour>Reintentar</button>`,
-            false,
-            false
-          );
-        } finally {
-          if (myRun === simRunId) {
-            simRunning = false;
-            simPaused = false;
-            setMainBtnState('idle');
-          }
+          showTourStep(1, `⚠️ ${err.message || 'No fue posible ejecutar la demostración'}`);
         }
       }
 
       simBtn.onclick = () => {
-        if (simRunning && !simPaused) {
-          simPaused = true;
-          setMainBtnState('paused');
+        if (tourState === 'running') {
+          tourState = 'paused';
+          syncTourBtn();
           return;
         }
-        if (simRunning && simPaused) {
-          simPaused = false;
-          setMainBtnState('running');
+        if (tourState === 'paused') {
+          tourState = 'running';
+          syncTourBtn();
+          if (pauseWaiter) { const fn = pauseWaiter; pauseWaiter = null; fn(); }
           return;
         }
         runGuidedTour();
       };
 
-      simStrip.addEventListener('click', (e) => {
-        const startTrigger = e.target.closest('[data-start-tour]');
-        if (startTrigger) {
-          runGuidedTour();
-          return;
-        }
-        const stepBtn = e.target.closest('.sim-step[data-step]');
-        if (stepBtn) {
-          const stepNum = Number(stepBtn.dataset.step);
-          simRunId++;
-          simRunning = false;
-          simPaused = false;
-          setMainBtnState('idle');
-          applyStepVisuals(stepNum, {
-            includeStartCta: !hasCompletedTour,
-            markPriorDone: hasCompletedTour,
-          });
-        }
-      });
-
-      document.getElementById('simCloseBtn').onclick = () => {
-        simStrip.hidden = true;
-        if (!simRunning) {
-          setSpotlight([]);
-        }
-      };
-
       clearBtn.onclick = async () => {
-        simRunId++;
-        simRunning = false;
-        simPaused = false;
-        hasCompletedTour = false;
+        stopTour(true);
         clearBtn.disabled = true;
-        setMainBtnState('idle');
-        setSpotlight([]);
-        try {
-          await apiAct('data.clear_open_turn', {});
-          setStepUI(
-            0,
-            '<strong>Demo reiniciada.</strong> Las mesas abiertas quedaron listas para comenzar de nuevo. <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>',
-            false,
-            false
-          );
-        } catch (_) {
-          setStepUI(
-            0,
-            'No fue posible reiniciar las mesas abiertas en este momento. Intente nuevamente.',
-            false,
-            false
-          );
-        } finally {
-          clearBtn.disabled = false;
-        }
+        const oldSid = demoSid;
+        demoSid = newSandboxId();
+        discardSandbox(oldSid);
+        await bootSandbox('pase');
+        clearBtn.disabled = false;
       };
+
+      // Inicio limpio en sandbox nuevo
+      const initVista = new URLSearchParams(location.search).get('vista');
+      const startView = initVista && LOCAL_VIEWS[initVista] ? initVista : 'pase';
+      await bootSandbox(startView);
+      if (initVista && isMobile()) setMobilePane('local');
     })();
   </script>
 </body>

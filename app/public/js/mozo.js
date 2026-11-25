@@ -1,7 +1,8 @@
 (async () => {
   const params = new URLSearchParams(location.search);
-  const preselectWaiter = params.get('waiter') || sessionStorage.getItem('salelisto:waiterId') || '';
-  const savedToken = sessionStorage.getItem('salelisto:waiterToken') || '';
+  const demoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
+  const preselectWaiter = params.get('waiter') || (demoSid ? '' : (sessionStorage.getItem('salelisto:waiterId') || ''));
+  const savedToken = demoSid ? '' : (sessionStorage.getItem('salelisto:waiterToken') || '');
 
   const $ = (sel) => document.querySelector(sel);
   let state = null;
@@ -18,10 +19,10 @@
   let activeStream = null;
   let unsubState = null;
 
-  registerSaleListoSW();
+  if (!demoSid) registerSaleListoSW();
 
   // Estado colapsable de la tarjeta Modo Pulsera
-  let wristCollapsedPref = localStorage.getItem('salelisto:wristCollapsed'); // '1' | '0' | null
+  let wristCollapsedPref = demoSid ? '0' : localStorage.getItem('salelisto:wristCollapsed'); // '1' | '0' | null
   function applyWristCollapsed(collapsed) {
     const card = $('#wristCard');
     const head = $('#wristToggleHead');
@@ -115,15 +116,19 @@
       const res = await apiPost('api/auth/waiter', { waiterId, pin });
       myId = res.waiter.id;
       setAuthToken(res.token);
-      sessionStorage.setItem('salelisto:waiterId', myId);
-      sessionStorage.setItem('salelisto:waiterToken', res.token);
-      history.replaceState(null, '', `mozo.html?waiter=${encodeURIComponent(myId)}`);
-      unlockAudio();
-      requestPushPermission();
+      if (!demoSid) {
+        sessionStorage.setItem('salelisto:waiterId', myId);
+        sessionStorage.setItem('salelisto:waiterToken', res.token);
+        history.replaceState(null, '', `mozo.html?waiter=${encodeURIComponent(myId)}`);
+        unlockAudio();
+        requestPushPermission();
+      }
       await bootApp();
     } catch (err) {
-      sessionStorage.removeItem('salelisto:waiterId');
-      sessionStorage.removeItem('salelisto:waiterToken');
+      if (!demoSid) {
+        sessionStorage.removeItem('salelisto:waiterId');
+        sessionStorage.removeItem('salelisto:waiterToken');
+      }
       toast(`⚠️ ${err.message}`);
       await showLoginScreen();
     }
@@ -431,6 +436,8 @@
       $('#mview-alerts').hidden = mtab !== 'alerts';
       $('#mview-tables').hidden = mtab !== 'tables';
       $('#mview-order').hidden = mtab !== 'order';
+      const setView = $('#mview-settings');
+      if (setView) setView.hidden = mtab !== 'settings';
       renderPadBar();
     };
 

@@ -9,8 +9,14 @@
     Transferencia: '🏦',
   };
 
+  const demoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
+  const isEmbed = typeof isDemoEmbed === 'function' ? isDemoEmbed() : false;
+  if (isEmbed) document.body.classList.add('is-embed');
+
   let state = null;
-  let theme = localStorage.getItem('salelisto:paseTheme') === 'light' ? 'light' : 'dark';
+  let theme = demoSid
+    ? (urlParams.get('tema') === 'light' ? 'light' : 'dark')
+    : (localStorage.getItem('salelisto:paseTheme') === 'light' ? 'light' : 'dark');
   let sectorParamRaw = (urlParams.get('bloque') || '').trim();
   let sectorFilter = 'all';
   let expandIdleCols = false;
@@ -27,17 +33,38 @@
   let orderSearch = '';
   let counterCart = []; // [{ key, itemId, qty, note }]
 
-  // Activar Screen Wake Lock con reintento en visibilitychange
-  enableScreenWakeLock();
+  // Activar Screen Wake Lock con reintento en visibilitychange (no necesario dentro de demo embebida)
+  if (!isEmbed) enableScreenWakeLock();
 
-  // ---------- Tema Oscuro / Claro en 1 clic ----------
+  // ---------- Panel de Ajustes ----------
+  function setSettingsOpen(open) {
+    const bd = $('#pSettingsBackdrop');
+    const dr = $('#pSettingsDrawer');
+    const btn = $('#pSettingsBtn');
+    if (bd) bd.hidden = !open;
+    if (dr) dr.hidden = !open;
+    if (btn) btn.setAttribute('aria-expanded', String(Boolean(open)));
+  }
+  $('#pSettingsBtn')?.addEventListener('click', () => {
+    const dr = $('#pSettingsDrawer');
+    setSettingsOpen(dr ? dr.hidden : true);
+  });
+  $('#pSettingsClose')?.addEventListener('click', () => setSettingsOpen(false));
+  $('#pSettingsBackdrop')?.addEventListener('click', () => setSettingsOpen(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setSettingsOpen(false);
+  });
+
+  // ---------- Tema Oscuro / Claro ----------
   function applyTheme(nextTheme) {
     theme = nextTheme === 'light' ? 'light' : 'dark';
     document.body.dataset.theme = theme;
-    localStorage.setItem('salelisto:paseTheme', theme);
+    if (!demoSid) {
+      try { localStorage.setItem('salelisto:paseTheme', theme); } catch (_) {}
+    }
     const btn = $('#pThemeBtn');
     if (btn) {
-      btn.textContent = theme === 'dark' ? '☀️ Modo Claro' : '🌙 Modo Oscuro';
+      btn.textContent = theme === 'dark' ? '☀️ Cambiar a Modo Claro' : '🌙 Cambiar a Modo Oscuro';
     }
   }
   applyTheme(theme);
@@ -45,6 +72,13 @@
   $('#pThemeBtn').onclick = () => {
     applyTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  window.addEventListener('message', (ev) => {
+    if (ev.origin !== window.location.origin) return;
+    if (ev.data && ev.data.type === 'salelisto:theme') {
+      applyTheme(ev.data.theme);
+    }
+  });
 
   // ---------- Reloj en vivo ----------
   function updateClock() {
@@ -104,7 +138,9 @@
   }
 
   // ---------- Autenticación igual a cocina.html ----------
-  let token = sessionStorage.getItem('salelisto:kdsToken') || sessionStorage.getItem('salelisto:adminToken') || '';
+  let token = demoSid
+    ? ''
+    : (sessionStorage.getItem('salelisto:kdsToken') || sessionStorage.getItem('salelisto:adminToken') || '');
   if (token) setAuthToken(token);
 
   function askPinViaGate() {
@@ -144,7 +180,7 @@
       const res = await apiPost('api/auth/kitchen', {});
       token = res.token;
       setAuthToken(token);
-      sessionStorage.setItem('salelisto:kdsToken', token);
+      if (!demoSid) sessionStorage.setItem('salelisto:kdsToken', token);
       $('#pPinGate').hidden = true;
       $('#pApp').hidden = false;
       return true;
@@ -193,6 +229,7 @@
       const match = blocks.find((b) => b.id === sectorParamRaw || normalizeSearch(b.name) === normParam);
       if (match) return match.id;
     }
+    if (demoSid) return 'all';
     const saved = localStorage.getItem('salelisto:paseBlock') || 'all';
     if (saved !== 'all' && blocks.some((b) => b.id === saved)) return saved;
     return 'all';

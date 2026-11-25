@@ -151,17 +151,32 @@ def new_qr_token() -> str:
 
 
 class Database:
-    def __init__(self, db_path: Path, uploads_dir: Path):
-        self.db_path = db_path
+    def __init__(self, db_path: Path | None, uploads_dir: Path, memory_name: str = ''):
+        self._mem_uri = f'file:slsb_{memory_name}?mode=memory&cache=shared' if memory_name else ''
+        self._mem_anchor: sqlite3.Connection | None = None
+        self.db_path = Path(':memory:') if self._mem_uri else (db_path or Path(':memory:'))
         self.uploads_dir = uploads_dir
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self.uploads_dir.mkdir(parents=True, exist_ok=True)
+        if not self._mem_uri:
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            self.uploads_dir.mkdir(parents=True, exist_ok=True)
+        else:
+            # Mantener una conexión ancla abierta preserva la base SQLite en memoria compartida
+            self._mem_anchor = sqlite3.connect(self._mem_uri, uri=True, check_same_thread=False)
         self.lock = threading.RLock()
         self.version = 1
         self._tx_notifications: list[dict[str, Any]] | None = None
         self._pending_push_notifications: list[dict[str, Any]] = []
         self._demo_leads: list[dict[str, Any]] = self._default_demo_leads()
         self._init_schema()
+
+    def close(self) -> None:
+        with self.lock:
+            if self._mem_anchor is not None:
+                try:
+                    self._mem_anchor.close()
+                except Exception:
+                    pass
+                self._mem_anchor = None
 
     @staticmethod
     def _default_demo_leads() -> list[dict[str, Any]]:
@@ -194,6 +209,11 @@ class Database:
         ]
 
     def _connect(self) -> sqlite3.Connection:
+        if self._mem_uri:
+            conn = sqlite3.connect(self._mem_uri, uri=True, check_same_thread=False)
+            conn.row_factory = sqlite3.Row
+            conn.execute('PRAGMA foreign_keys = ON')
+            return conn
         conn = sqlite3.connect(str(self.db_path), check_same_thread=False)
         conn.row_factory = sqlite3.Row
         conn.execute('PRAGMA foreign_keys = ON')

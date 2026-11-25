@@ -167,10 +167,21 @@ body { background: var(--bg); }
 
 .m-tabbar {
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
-  max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr);
+  max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr);
   background: var(--surface); border-top: 1px solid var(--line);
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
 }
+.m-settings-wrap {
+  padding: 14px; display: flex; flex-direction: column; gap: 12px;
+}
+.m-settings-wrap .wrist-card { margin: 0; }
+.m-set-card {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card);
+  padding: 14px; box-shadow: var(--shadow-xs); display: flex; flex-direction: column; gap: 8px;
+}
+.m-set-card h3 { font-size: 14.5px; font-weight: 800; color: var(--ink); }
+.m-set-card p { font-size: 12.5px; color: var(--ink-2); line-height: 1.45; }
+.m-set-full { width: 100%; justify-content: center; min-height: 42px; }
 .m-tab {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 6px 0; font-size: 12px; font-weight: 700; color: var(--ink-3); position: relative;
