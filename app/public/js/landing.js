@@ -6,12 +6,24 @@
 
   var WA_NUMBER = '541138436571';
   var SALES_EMAIL = 'ventas@salelisto.com';
-  var USD_ARS = 1575;
+  var USD_ARS = 1615;
+  var FX_META = { rate: USD_ARS, source: 'Dólar oficial venta', updatedAt: '', live: false };
+  var FX_CACHE_KEY = 'salelisto:fx_usd_ars_v1';
+  var FX_CACHE_MS = 15 * 60 * 1000;
+
+  function roundArs(val) {
+    return Math.round(val / 100) * 100;
+  }
+
   var PLAN_COST = [
-    { max: 12, name: 'Barra / Café', ars: 55125, usd: 35 },
-    { max: 30, name: 'Salón / Bistró', ars: 102375, usd: 65 },
-    { max: Infinity, name: 'Gran Salón / Multisede', ars: 173250, usd: 110 }
+    { max: 12, name: 'Barra / Café', usd: 35, ars: roundArs(35 * USD_ARS) },
+    { max: 30, name: 'Salón / Bistró', usd: 65, ars: roundArs(65 * USD_ARS) },
+    { max: Infinity, name: 'Gran Salón / Multisede', usd: 110, ars: roundArs(110 * USD_ARS) }
   ];
+
+  function syncPlanCosts() {
+    PLAN_COST.forEach(function (p) { p.ars = roundArs(p.usd * USD_ARS); });
+  }
 
   var currentCur = 'ars';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -215,7 +227,7 @@
       } else {
         spot.muted = true;
         spotSound.setAttribute('aria-pressed', 'false');
-        label.textContent = 'Escuchar';
+        label.textContent = 'Activar audio';
         ico.textContent = '🔊';
       }
     });
@@ -282,15 +294,15 @@
         tWaiter.classList.add('is-leaving');
         terraza.classList.add('is-off');
         status.className = 'pill pill-accent';
-        status.textContent = 'Martín cortó turno';
-        msg.textContent = 'Reasignando las 4 mesas abiertas de Terraza...';
+        status.textContent = 'Martín finalizó su turno';
+        msg.textContent = 'Reasignando las 4 mesas activas de Terraza...';
         setTimeout(function () {
           tWaiter.className = 'waiter w3';
           tWaiter.textContent = 'Sofía';
           terraza.classList.remove('is-off');
           status.className = 'pill pill-ok';
           status.textContent = 'Reasignado automáticamente';
-          msg.textContent = 'Sofía suma Terraza junto a Vereda: nadie queda sin atender.';
+          msg.textContent = 'Sofía asume Terraza junto a Vereda para mantener la atención sin interrupciones.';
           balanceBtn.textContent = 'Reiniciar simulación';
           reassigned = true; busy = false;
         }, delay + 700);
@@ -299,9 +311,9 @@
         setTimeout(function () {
           tWaiter.className = 'waiter w2';
           tWaiter.textContent = 'Martín';
-          status.textContent = '5 bloques en equilibrio';
-          msg.textContent = 'Cada mozo con su sector y una carga pareja.';
-          balanceBtn.textContent = 'Simular: Martín corta turno';
+          status.textContent = '5 sectores en equilibrio';
+          msg.textContent = 'Cada mozo opera su sector con carga equilibrada.';
+          balanceBtn.textContent = 'Simular: Martín finaliza turno';
           reassigned = false; busy = false;
         }, delay);
       }
@@ -407,7 +419,7 @@
     $('#roi-mult').textContent = (mult >= 10 ? Math.round(mult) : mult.toFixed(1).replace('.', ',')) + 'x';
     $('#roi-rot').textContent = '+ ' + rotDisplay;
     $('#roi-rounds').textContent = '+ ' + roundsDisplay;
-    $('#roi-rot-note').textContent = fmtNum(extraTables) + ' mesas más atendidas por mes, contribución neta';
+    $('#roi-rot-note').textContent = fmtNum(extraTables) + ' mesas adicionales atendidas por mes, contribución neta';
     $('#roi-plan').textContent = plan.name;
     $('#roi-cost').textContent = '- ' + costDisplay;
     var maxPart = Math.max(rotNet, roundsNet) || 1;
@@ -420,8 +432,8 @@
     // Si la calculadora está en planes.html (sin formulario local), pasar los datos por URL al piloto
     var roiCtaEl = $('#roi-cta');
     if (roiCtaEl && !$('#lead-form')) {
-      var msgTxt = 'Calculé con la calculadora ROI: ' + M + ' mesas, ticket ' + fmtMoney(T) +
-        ', ' + S + ' turnos fuertes por semana. Ganancia neta estimada ' + netDisplay + '/mes.';
+      var msgTxt = 'Estimación realizada con la calculadora ROI: ' + M + ' mesas, ticket promedio ' + fmtMoney(T) +
+        ', ' + S + ' turnos pico por semana. Contribución neta estimada: ' + netDisplay + '/mes.';
       roiCtaEl.href = '/?plan=' + encodeURIComponent(plan.name) +
         '&mesas=' + encodeURIComponent(String(M)) +
         '&msg=' + encodeURIComponent(msgTxt) + '#piloto';
@@ -460,29 +472,109 @@
     });
   }
 
-  /* ---------- 8. Moneda sincronizada entre Planes y Calculadora ROI ---------- */
+  /* ---------- 8. Moneda sincronizada + cotización USD/ARS en vivo ---------- */
   var curBtns = $all('.cur-btn');
+
+  function formatFxStamp(iso) {
+    if (!iso) return '';
+    try {
+      var d = new Date(iso);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleString('es-AR', {
+        timeZone: 'America/Argentina/Buenos_Aires',
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+      });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  function updateFxNotes() {
+    var rateTxt = fmtNum(USD_ARS);
+    var stamp = formatFxStamp(FX_META.updatedAt);
+    var suffix = FX_META.live
+      ? (' (' + (FX_META.source || 'Dólar oficial venta') + (stamp ? ' · ' + stamp : '') + ')')
+      : ' (cotización de referencia)';
+    $all('.fx-rate-note').forEach(function (el) {
+      el.textContent = '1 USD = ARS ' + rateTxt + suffix;
+    });
+  }
+
   function setCurrency(cur) {
     currentCur = cur === 'usd' ? 'usd' : 'ars';
+    syncPlanCosts();
     curBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.cur === currentCur)); });
     $all('.price[data-usd]').forEach(function (el) {
-      el.textContent = currentCur === 'usd' ? fmtUSD(+el.dataset.usd) : fmtARS(+el.dataset.ars);
+      var usd = +el.dataset.usd;
+      var ars = roundArs(usd * USD_ARS);
+      el.dataset.ars = String(ars);
+      el.textContent = currentCur === 'usd' ? fmtUSD(usd) : fmtARS(ars);
     });
     $all('.plan-alt[data-usd-alt]').forEach(function (el) {
       var usd = +el.dataset.usdAlt;
       var suffix = el.textContent.indexOf('sucursal') > -1 ? ', por sucursal' : '';
       el.textContent = currentCur === 'usd'
-        ? 'ARS ' + fmtNum(usd * USD_ARS) + '/mes en pesos' + suffix
+        ? 'ARS ' + fmtNum(roundArs(usd * USD_ARS)) + '/mes en pesos' + suffix
         : 'USD ' + usd + '/mes de referencia' + suffix;
     });
+    updateFxNotes();
     calcROI();
   }
   curBtns.forEach(function (b) { b.addEventListener('click', function () { setCurrency(b.dataset.cur); }); });
 
+  function applyLiveFx(data) {
+    if (!data || !isFinite(+data.rate) || +data.rate < 100) return;
+    USD_ARS = +data.rate;
+    FX_META = {
+      rate: USD_ARS,
+      source: String(data.source || 'Dólar oficial venta'),
+      updatedAt: String(data.updatedAt || ''),
+      live: !!data.live
+    };
+    setCurrency(currentCur);
+  }
+
+  function loadLiveFx() {
+    try {
+      var raw = sessionStorage.getItem(FX_CACHE_KEY);
+      if (raw) {
+        var cached = JSON.parse(raw);
+        if (cached && cached.ts && (Date.now() - cached.ts < FX_CACHE_MS) && cached.data) {
+          applyLiveFx(cached.data);
+          return;
+        }
+      }
+    } catch (e) { /* sin acción */ }
+
+    if (location.protocol === 'file:' || !window.fetch) {
+      setCurrency(currentCur);
+      return;
+    }
+
+    fetch('api/exchange-rate', { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) {
+        if (!data || !data.ok) return;
+        applyLiveFx(data);
+        try {
+          sessionStorage.setItem(FX_CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data }));
+        } catch (e) { /* sin acción */ }
+      })
+      .catch(function () { /* mantiene referencia por defecto */ });
+  }
+
   if (rTables && rTicket && rShifts) {
     applyRoiUrlParams();
     [rTables, rTicket, rShifts].forEach(function (inp) { inp.addEventListener('input', calcROI); });
-    setCurrency(currentCur);
+  }
+  setCurrency(currentCur);
+  loadLiveFx();
+
+  if (rTables && rTicket && rShifts) {
 
     var roiCta = $('#roi-cta');
     if (roiCta) roiCta.addEventListener('click', function () {
@@ -490,8 +582,8 @@
       prefillLead({
         plan: roiState.plan,
         tables: roiState.tables,
-        message: 'Calculé con la calculadora ROI: ' + roiState.tables + ' mesas, ticket ' + fmtMoney(roiState.ticket) +
-          ', ' + roiState.shifts + ' turnos fuertes por semana. Ganancia neta estimada ' + roiState.netDisplay + '/mes.'
+        message: 'Estimación realizada con la calculadora ROI: ' + roiState.tables + ' mesas, ticket promedio ' + fmtMoney(roiState.ticket) +
+          ', ' + roiState.shifts + ' turnos pico por semana. Contribución neta estimada: ' + roiState.netDisplay + '/mes.'
       });
     });
 
@@ -510,7 +602,7 @@
           roiCopyBtn.textContent = '✔ Enlace copiado al portapapeles';
           setTimeout(function () { roiCopyBtn.textContent = prev; }, 2600);
         }).catch(function () {
-          window.prompt('Copiá este enlace personalizado:', shareUrl);
+          window.prompt('Copie este enlace personalizado:', shareUrl);
         });
       });
     }
@@ -572,19 +664,19 @@
   }
 
   function leadSummaryText(lead) {
-    var lines = ['Hola SaleListo, quiero solicitar el Piloto de 14 días.'];
+    var lines = ['Hola SaleListo, deseo solicitar la prueba piloto de 14 días.'];
     lines.push('Nombre: ' + lead.name);
-    lines.push('Local: ' + lead.restaurantName);
+    lines.push('Establecimiento: ' + lead.restaurantName);
     if (lead.zone) lines.push('Zona: ' + lead.zone);
     if (lead.tablesCount) lines.push('Mesas: ' + lead.tablesCount);
     lines.push('Contacto: ' + lead.contact);
     if (lead.planInterest) lines.push('Plan de interés: ' + lead.planInterest);
-    if (lead.message) lines.push('Comentario: ' + lead.message);
+    if (lead.message) lines.push('Detalle: ' + lead.message);
     return lines.join('\n');
   }
   function waLink(text) { return 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(text); }
   function mailLink(lead, text) {
-    return 'mailto:' + SALES_EMAIL + '?subject=' + encodeURIComponent('Piloto SaleListo · ' + lead.restaurantName) +
+    return 'mailto:' + SALES_EMAIL + '?subject=' + encodeURIComponent('Solicitud de prueba piloto · ' + lead.restaurantName) +
       '&body=' + encodeURIComponent(text);
   }
 
@@ -600,9 +692,9 @@
     if (lead.contact && !/@/.test(lead.contact) && lead.contact.replace(/\D/g, '').length < 8) {
       contactEl.setAttribute('aria-invalid', 'true');
       missing.push(contactEl);
-      return { ok: false, msg: 'Revisá el contacto: dejanos un WhatsApp con código de área o un email válido.', first: contactEl };
+      return { ok: false, msg: 'Verifique el dato de contacto: ingrese un número de WhatsApp con código de área o un correo electrónico válido.', first: contactEl };
     }
-    if (missing.length) return { ok: false, msg: 'Completá tu nombre, el nombre del local y un WhatsApp o email.', first: missing[0] };
+    if (missing.length) return { ok: false, msg: 'Complete su nombre, el nombre del establecimiento y un medio de contacto.', first: missing[0] };
     return { ok: true };
   }
 
@@ -612,15 +704,15 @@
     var wa = waLink(text);
     var doneWa = $('#done-wa');
     doneWa.href = wa;
-    doneWa.textContent = '💬 Abrir WhatsApp ahora mismo';
+    doneWa.textContent = '💬 Contactar por WhatsApp';
     $('#done-mail').href = mailLink(lead, text);
-    $('#done-title').textContent = savedOnServer ? '¡Listo! Recibimos tu solicitud.' : 'Tu solicitud está lista para enviar.';
+    $('#done-title').textContent = savedOnServer ? 'Solicitud registrada.' : 'Solicitud preparada para envío.';
     $('#done-text').textContent = savedOnServer
-      ? 'Tu consulta quedó registrada. Tocá abajo si querés abrir WhatsApp ahora mismo.'
-      : 'Tocá el botón verde de abajo para enviarnos tu resumen precargado ahora mismo por WhatsApp.';
+      ? 'Su consulta fue registrada correctamente. Si lo desea, puede iniciar contacto directo por WhatsApp.'
+      : 'Seleccione el botón inferior para remitir el resumen de su solicitud por WhatsApp.';
     var sum = $('#done-summary');
     sum.innerHTML = '';
-    [['Local', lead.restaurantName], ['Zona', lead.zone], ['Mesas', lead.tablesCount], ['Contacto', lead.contact], ['Plan', lead.planInterest]]
+    [['Establecimiento', lead.restaurantName], ['Zona', lead.zone], ['Mesas', lead.tablesCount], ['Contacto', lead.contact], ['Plan', lead.planInterest]]
       .forEach(function (r) {
         if (!r[1]) return;
         var row = document.createElement('div');
@@ -689,8 +781,8 @@
             submitBtn.disabled = false;
             submitBtn.textContent = original;
             errBox.textContent = String((data && data.error) || (res.status === 429
-              ? 'Recibimos varias consultas seguidas. Probá de nuevo en unos minutos o escribinos directo por WhatsApp.'
-              : 'Revisá los datos ingresados e intentá nuevamente.'));
+              ? 'Se han registrado múltiples envíos consecutivos. Intente nuevamente en unos minutos o comuníquese por WhatsApp.'
+              : 'Verifique los datos ingresados e intente nuevamente.'));
             errBox.hidden = false;
             return;
           }

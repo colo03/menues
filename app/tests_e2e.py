@@ -57,6 +57,7 @@ def _cleanup_pycache() -> None:
 atexit.register(_cleanup_pycache)
 
 # Aislar DATA_DIR ANTES de importar server.py para no tocar jamas app/data/
+os.environ['SALELISTO_OFFLINE_FX'] = '1'
 _TMP_CTX = tempfile.TemporaryDirectory(prefix='salelisto_e2e_')
 os.environ['DATA_DIR'] = _TMP_CTX.name
 
@@ -796,9 +797,12 @@ def run_suite() -> None:
             '/operacion',
             '/api/qrs',
             '/api/health',
+            '/api/exchange-rate',
         ):
             r_code, _, _ = api.request('GET', route)
             assert r_code == 200, f'Ruta {route} devolvio {r_code}'
+        fx_code, fx_data = api.get_json('/api/exchange-rate')
+        assert fx_code == 200 and fx_data.get('ok') is True and fx_data.get('pair') == 'USD-ARS' and float(fx_data.get('rate') or 0) >= 100.0, f'FX invalido: {fx_data}'
         d_head, _, d_body = api.request('HEAD', '/demo')
         assert d_head == 200 and len(d_body) == 0, f'HEAD /demo fallo ({d_head})'
         conn_r = http.client.HTTPConnection('127.0.0.1', int(api.base_url.rsplit(':', 1)[-1]), timeout=5)

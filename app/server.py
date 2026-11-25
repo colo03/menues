@@ -30,6 +30,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
+import urllib.request
 
 from db import (
     AR_TZ,
@@ -90,6 +91,106 @@ SAFE_HOST_RE = re.compile(r'^[A-Za-z0-9.\[\]:-]{1,253}$')
 SHORT_QR_PATH_RE = re.compile(r'^/q/([A-Za-z0-9_-]{1,64})/?$')
 GZIP_MIN_BYTES = 512
 SSE_KEEPALIVE_S = 15
+
+# Cotización USD -> ARS en vivo (Dólar oficial venta) con caché de 30 min y respaldo automático
+FX_DEFAULT_RATE = 1615.0
+FX_DEFAULT_BUY = 1565.0
+FX_CACHE_TTL_S = 1800
+FX_RETRY_TTL_S = 300
+_fx_lock = threading.Lock()
+_fx_cache: dict[str, Any] = {
+    'fetchedAt': 0.0,
+    'ttl': 0.0,
+    'payload': {
+        'ok': True,
+        'pair': 'USD-ARS',
+        'rate': FX_DEFAULT_RATE,
+        'buy': FX_DEFAULT_BUY,
+        'source': 'Dólar oficial venta (referencia)',
+        'updatedAt': '',
+        'live': False,
+    },
+}
+
+
+def _fetch_live_usd_ars() -> dict[str, Any] | None:
+    """Consulta la cotización oficial venta USD/ARS en vivo con dos proveedores públicos."""
+    # 1. DolarAPI oficial
+    try:
+        req = urllib.request.Request(
+            'https://dolarapi.com/v1/dolares/oficial',
+            headers={'User-Agent': 'SaleListo/1.0', 'Accept': 'application/json'},
+        )
+        with urllib.request.urlopen(req, timeout=3.5) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode('utf-8'))
+                venta = float(data.get('venta') or 0)
+                compra = float(data.get('compra') or 0)
+                if 100.0 <= venta <= 100000.0:
+                    return {
+                        'ok': True,
+                        'pair': 'USD-ARS',
+                        'rate': round(venta, 2),
+                        'buy': round(compra, 2) if compra > 0 else round(venta, 2),
+                        'source': 'Dólar oficial venta',
+                        'updatedAt': str(data.get('fechaActualizacion') or ''),
+                        'live': True,
+                    }
+    except Exception:
+        pass
+
+    # 2. Respaldo Bluelytics oficial
+    try:
+        req = urllib.request.Request(
+            'https://api.bluelytics.com.ar/v2/latest',
+            headers={'User-Agent': 'SaleListo/1.0', 'Accept': 'application/json'},
+        )
+        with urllib.request.urlopen(req, timeout=3.5) as resp:
+            if resp.status == 200:
+                data = json.loads(resp.read().decode('utf-8'))
+                of = data.get('oficial') or {}
+                venta = float(of.get('value_sell') or 0)
+                compra = float(of.get('value_buy') or 0)
+                if 100.0 <= venta <= 100000.0:
+                    return {
+                        'ok': True,
+                        'pair': 'USD-ARS',
+                        'rate': round(venta, 2),
+                        'buy': round(compra, 2) if compra > 0 else round(venta, 2),
+                        'source': 'Dólar oficial venta',
+                        'updatedAt': str(data.get('last_update') or ''),
+                        'live': True,
+                    }
+    except Exception:
+        pass
+
+    return None
+
+
+def get_usd_ars_rate(force: bool = False) -> dict[str, Any]:
+    now = time.time()
+    offline = (os.environ.get('SALELISTO_OFFLINE_FX') or '').strip().lower() in ('1', 'true', 'yes')
+    with _fx_lock:
+        age = now - float(_fx_cache['fetchedAt'])
+        if not force and _fx_cache['fetchedAt'] > 0 and age < float(_fx_cache['ttl']):
+            return dict(_fx_cache['payload'])
+        if offline:
+            _fx_cache['fetchedAt'] = now
+            _fx_cache['ttl'] = FX_CACHE_TTL_S
+            return dict(_fx_cache['payload'])
+
+    fresh = _fetch_live_usd_ars()
+    with _fx_lock:
+        _fx_cache['fetchedAt'] = time.time()
+        if fresh:
+            _fx_cache['payload'] = fresh
+            _fx_cache['ttl'] = FX_CACHE_TTL_S
+        else:
+            prev = dict(_fx_cache['payload'])
+            prev['live'] = False
+            _fx_cache['payload'] = prev
+            _fx_cache['ttl'] = FX_RETRY_TTL_S
+        return dict(_fx_cache['payload'])
 
 COMPRESSIBLE_MIME_TYPES = {
     'application/json',
@@ -1116,6 +1217,17 @@ class Handler(SimpleHTTPRequestHandler):
             if not self._admin_or_demo(qs):
                 return self.send_json(401, {'ok': False, 'error': 'Se requiere acceso de encargado (PIN)'})
             return self._send_sessions_csv(qs)
+
+        if path == '/api/exchange-rate':
+            fx = get_usd_ars_rate()
+            raw = json.dumps(fx, ensure_ascii=False).encode('utf-8')
+            return self.send_bytes(
+                200,
+                raw,
+                'application/json; charset=utf-8',
+                extra_headers={'Cache-Control': 'public, max-age=300'},
+                compressible=True,
+            )
 
         if path == '/api/info':
             net = self._network_snapshot(role='client')

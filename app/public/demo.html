@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · Demo Interactiva en Tiempo Real</title>
-  <meta name="description" content="Probá el circuito completo de SaleListo en tiempo real: celular del comensal por QR, app de mozo con Modo Pulsera, Estación de Pase y monitores de Cocina, Barra y Mostrador.">
+  <title>SaleListo · Demostración Interactiva en Vivo</title>
+  <meta name="description" content="Descubra paso a paso cómo funciona SaleListo en tiempo real: pedidos en la mesa por QR, avisos al mozo y pantallas de Cocina, Barra y Mostrador.">
   <link rel="canonical" href="https://salelisto.com/demo.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="es_AR">
   <meta property="og:site_name" content="SaleListo">
   <meta property="og:url" content="https://salelisto.com/demo.html">
-  <meta property="og:title" content="SaleListo · Demo Interactiva en Tiempo Real">
-  <meta property="og:description" content="Probá la hora pico en vivo en 1 clic: carta QR, Cocina y Barra separadas, Estación de Mozos fija y cuenta resuelta en un solo viaje.">
+  <meta property="og:title" content="SaleListo · Demostración Interactiva en Vivo">
+  <meta property="og:description" content="Pruebe SaleListo en vivo: pedidos por QR en la mesa, separación automática entre Cocina y Barra, avisos al mozo y cobro en un solo traslado.">
   <meta property="og:image" content="https://salelisto.com/og-salelisto.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
@@ -23,220 +23,799 @@
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    body { background: var(--dark-bg); color: var(--dark-ink); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      background: var(--dark-bg);
+      color: var(--dark-ink);
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Cabecera superior despejada */
     .bar {
-      display: flex; align-items: center; gap: 10px; padding: 9px 18px; min-height: 54px;
-      background: var(--dark-surface); border-bottom: 1px solid var(--dark-line); flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 18px;
+      min-height: 54px;
+      background: var(--dark-surface);
+      border-bottom: 1px solid var(--dark-line);
+      flex: none;
     }
-    .bar-brand { display: inline-flex; align-items: center; gap: 10px; }
-    .bar-sep { color: rgba(250, 247, 242, 0.28); font-weight: 700; }
-    .bar strong { font-size: 14px; font-weight: 700; color: rgba(250, 247, 242, 0.9); }
-    .bar .grow { flex: 1; min-width: 8px; }
-    .bar select {
-      background: var(--dark-bg); border: 1px solid var(--dark-line); color: var(--dark-ink);
-      padding: 6px 10px; border-radius: var(--radius-control); font-size: 12.5px; font-weight: 600;
+    .bar-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      flex: none;
     }
-    .bar label { font-size: 12px; color: rgba(250, 247, 242, 0.75); display: inline-flex; align-items: center; gap: 6px; }
-    .bar a, .bar .bar-ghost {
-      color: rgba(250, 247, 242, 0.86); font-size: 12.5px; text-decoration: none; font-weight: 600;
-      padding: 6px 10px; border-radius: var(--radius-sm); border: 1px solid var(--dark-line);
-      background: transparent; transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    .bar-logo {
+      display: inline-flex;
+      align-items: center;
+      padding: 0;
+      border: 0;
+      text-decoration: none;
+    }
+    .bar-logo img {
+      height: 29px;
+      display: block;
+      flex: none;
+    }
+    .bar-sep {
+      color: rgba(250, 247, 242, 0.28);
+      font-weight: 700;
+    }
+    .bar-subtitle {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: rgba(250, 247, 242, 0.84);
       white-space: nowrap;
     }
-    .bar a:hover, .bar .bar-ghost:hover { background: rgba(250, 247, 242, 0.08); border-color: rgba(250, 247, 242, 0.28); }
+    .bar-primary,
+    .bar-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .bar .grow {
+      flex: 1;
+      min-width: 8px;
+    }
+    .bar-ghost,
+    .bar-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: rgba(250, 247, 242, 0.86);
+      font-size: 12.5px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--dark-line);
+      background: transparent;
+      white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .bar-ghost:hover,
+    .bar-link:hover {
+      background: rgba(250, 247, 242, 0.08);
+      border-color: rgba(250, 247, 242, 0.28);
+      color: #ffffff;
+    }
+    .bar-ghost.active {
+      background: rgba(250, 247, 242, 0.14);
+      border-color: rgba(250, 247, 242, 0.36);
+      color: #ffffff;
+    }
+    .bar-ghost[disabled] {
+      opacity: 0.55;
+      pointer-events: none;
+    }
 
     .sim-btn {
-      display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px;
-      border-radius: var(--radius-pill); font-size: 13px; font-weight: 800;
-      background: linear-gradient(135deg, #D9412B 0%, #E85A3C 100%); color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 8px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #D9412B 0%, #E85A3C 100%);
+      color: #ffffff;
       box-shadow: 0 4px 16px rgba(217, 65, 43, 0.38);
-      transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
       white-space: nowrap;
+      transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
     }
-    .sim-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(217, 65, 43, 0.5); }
-    .sim-btn:active { transform: scale(0.98); }
-    .sim-btn[disabled] { opacity: 0.68; pointer-events: none; }
+    .sim-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(217, 65, 43, 0.52);
+    }
+    .sim-btn:active {
+      transform: scale(0.985);
+    }
+    .sim-btn.is-running {
+      background: rgba(217, 65, 43, 0.18);
+      color: #FFD0C6;
+      border: 1px solid rgba(232, 90, 60, 0.65);
+      box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.14);
+    }
+    .sim-btn.is-running:hover {
+      background: rgba(217, 65, 43, 0.28);
+      box-shadow: 0 0 0 4px rgba(217, 65, 43, 0.2);
+    }
+    .sim-btn.is-paused {
+      background: linear-gradient(135deg, #2F8A57 0%, #38A169 100%);
+      box-shadow: 0 4px 16px rgba(47, 138, 87, 0.36);
+    }
 
-    /* Barra narradora paso a paso del Simulador de Hora Pico */
-    .sim-strip {
-      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-      padding: 8px 18px; background: #231E1B; border-bottom: 1px solid var(--dark-line);
-      font-size: 12.5px; animation: fade-strip var(--dur-fast) var(--ease-out);
+    /* Barra secundaria desplegable de opciones avanzadas */
+    .options-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px 14px;
+      flex-wrap: wrap;
+      padding: 9px 18px;
+      background: #1F1B18;
+      border-bottom: 1px solid var(--dark-line);
+      flex: none;
+      animation: fade-strip var(--dur-fast) var(--ease-out);
     }
-    @keyframes fade-strip { from { opacity: 0; transform: translateY(-4px); } }
-    .sim-steps { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .opt-field {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(250, 247, 242, 0.78);
+      max-width: 100%;
+    }
+    .opt-field select {
+      background: var(--dark-bg);
+      border: 1px solid var(--dark-line);
+      color: var(--dark-ink);
+      padding: 6px 10px;
+      border-radius: var(--radius-control);
+      font-size: 12.5px;
+      font-weight: 600;
+      max-width: 220px;
+    }
+    .opt-sep {
+      width: 1px;
+      height: 22px;
+      background: var(--dark-line);
+    }
+    .opt-links {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .opt-close {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(250, 247, 242, 0.65);
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+    }
+    .opt-close:hover {
+      background: rgba(250, 247, 242, 0.08);
+      color: #ffffff;
+    }
+
+    /* Franja guía amigable y narración paso a paso */
+    .sim-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px 14px;
+      flex-wrap: wrap;
+      padding: 9px 18px;
+      background: #231E1B;
+      border-bottom: 1px solid var(--dark-line);
+      font-size: 13px;
+      flex: none;
+      transition: border-color var(--dur-ui) var(--ease-out), background var(--dur-ui) var(--ease-out);
+      animation: fade-strip var(--dur-fast) var(--ease-out);
+    }
+    .sim-strip.is-active {
+      background: #28201C;
+      border-bottom-color: rgba(232, 90, 60, 0.48);
+    }
+    @keyframes fade-strip {
+      from { opacity: 0; transform: translateY(-4px); }
+    }
+    .sim-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+    .sim-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex: none;
+      box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.22);
+    }
+    .sim-strip.is-done .sim-dot {
+      background: var(--ok);
+      box-shadow: 0 0 0 3px rgba(47, 138, 87, 0.24);
+    }
+    .sim-msg {
+      flex: 1;
+      min-width: 0;
+      font-weight: 500;
+      color: rgba(250, 247, 242, 0.92);
+      line-height: 1.4;
+    }
+    .sim-msg strong {
+      color: #FFB4A6;
+      font-weight: 800;
+    }
+    .sim-strip.is-done .sim-msg strong {
+      color: #9AE6B4;
+    }
+    .sim-paused-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(217, 119, 6, 0.22);
+      color: #FCD34D;
+      border: 1px solid rgba(217, 119, 6, 0.45);
+      white-space: nowrap;
+      flex: none;
+    }
+    .sim-inline-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: 8px;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: rgba(217, 65, 43, 0.22);
+      border: 1px solid rgba(232, 90, 60, 0.52);
+      color: #FFD0C6;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+      vertical-align: baseline;
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .sim-inline-cta:hover {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    .sim-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: none;
+    }
+    .sim-steps {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
     .sim-step {
-      display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px;
-      border-radius: var(--radius-pill); font-size: 11.5px; font-weight: 700;
-      background: rgba(250, 247, 242, 0.06); color: rgba(250, 247, 242, 0.46);
-      border: 1px solid transparent; transition: all var(--dur-fast) var(--ease-out);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(250, 247, 242, 0.06);
+      color: rgba(250, 247, 242, 0.62);
+      border: 1px solid rgba(250, 247, 242, 0.08);
+      white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    }
+    .sim-step:hover {
+      background: rgba(250, 247, 242, 0.12);
+      color: #ffffff;
+      border-color: rgba(250, 247, 242, 0.22);
     }
     .sim-step.current {
-      background: rgba(217, 65, 43, 0.22); color: #FFB4A6; border-color: rgba(217, 65, 43, 0.55);
+      background: rgba(217, 65, 43, 0.24);
+      color: #FFD0C6;
+      border-color: rgba(232, 90, 60, 0.65);
     }
     .sim-step.done {
-      background: rgba(47, 138, 87, 0.22); color: #8CE0B1; border-color: rgba(47, 138, 87, 0.45);
+      background: rgba(47, 138, 87, 0.22);
+      color: #9AE6B4;
+      border-color: rgba(47, 138, 87, 0.48);
     }
-    .sim-msg { flex: 1; min-width: 220px; font-weight: 600; color: var(--dark-ink); }
-    .sim-msg strong { color: #FFB4A6; }
     .sim-close {
-      width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
-      color: rgba(250, 247, 242, 0.6); font-size: 13px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: rgba(250, 247, 242, 0.62);
+      font-size: 13px;
+      flex: none;
     }
-    .sim-close:hover { background: rgba(250, 247, 242, 0.1); color: #ffffff; }
+    .sim-close:hover {
+      background: rgba(250, 247, 242, 0.12);
+      color: #ffffff;
+    }
+    .sim-retry {
+      margin-left: 8px;
+      padding: 4px 11px;
+      border-radius: var(--radius-pill);
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .sim-retry:hover {
+      background: var(--accent-hover);
+    }
 
+    /* Escenario de las 3 pantallas */
     .stage {
-      flex: 1; display: grid; grid-template-columns: 304px 304px 1fr; gap: 14px;
-      padding: 12px 18px 18px; min-height: 0;
+      flex: 1;
+      display: grid;
+      grid-template-columns: 304px 304px minmax(0, 1fr);
+      gap: 14px;
+      padding: 12px 18px 18px;
+      min-height: 0;
     }
-    .col-wrap { display: flex; flex-direction: column; gap: 8px; min-height: 0; min-width: 0; }
-    .col-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .label { font-size: 11.5px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(250, 247, 242, 0.62); }
+    .col-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+      min-width: 0;
+      transition: opacity var(--dur-ui) var(--ease-out);
+    }
+    .stage.has-spotlight .col-wrap:not(.is-spotlight) {
+      opacity: 0.72;
+    }
+    .stage.has-spotlight .col-wrap:not(.is-spotlight):hover {
+      opacity: 1;
+    }
+    .col-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px 10px;
+      flex-wrap: wrap;
+      min-height: 36px;
+      min-width: 0;
+    }
+    .col-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(250, 247, 242, 0.88);
+      transition: color var(--dur-ui) var(--ease-out);
+    }
+    .sublabel {
+      font-size: 11.5px;
+      font-weight: 500;
+      color: rgba(250, 247, 242, 0.56);
+      line-height: 1.25;
+    }
+    .col-wrap.is-spotlight .label {
+      color: #FFB4A6;
+    }
+    .col-wrap.is-spotlight .sublabel {
+      color: rgba(250, 247, 242, 0.8);
+    }
 
     .phone {
-      flex: 1; border-radius: 36px; padding: 9px; background: #12100e;
-      box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42); min-height: 0;
-      display: flex; overflow: hidden;
+      flex: 1;
+      border-radius: 36px;
+      padding: 9px;
+      background: #12100e;
+      box-shadow: 0 0 0 1.5px var(--dark-line), 0 20px 56px rgba(0, 0, 0, 0.42);
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+      transition: box-shadow var(--dur-ui) var(--ease-out);
     }
     .phone-screen {
-      position: relative; flex: 1; border-radius: 27px; overflow: hidden; background: var(--bg); min-height: 0;
+      position: relative;
+      flex: 1;
+      border-radius: 27px;
+      overflow: hidden;
+      background: var(--bg);
+      min-height: 0;
     }
     .phone-screen iframe {
-      position: absolute; top: 0; left: 0; border: 0; background: var(--bg);
-      width: 136%; height: 136%; transform: scale(0.735294); transform-origin: 0 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      background: var(--bg);
+      width: 136%;
+      height: 136%;
+      transform: scale(0.735294);
+      transform-origin: 0 0;
     }
 
     .panel {
-      position: relative; flex: 1; border-radius: var(--radius-card); overflow: hidden;
-      box-shadow: 0 0 0 1px var(--dark-line); min-height: 0; background: var(--bg);
+      position: relative;
+      flex: 1;
+      border-radius: var(--radius-card);
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--dark-line);
+      min-height: 0;
+      background: var(--bg);
+      transition: box-shadow var(--dur-ui) var(--ease-out);
     }
     .panel iframe {
-      position: absolute; top: 0; left: 0; border: 0; background: var(--bg);
-      width: 140%; height: 140%; transform: scale(0.7142857); transform-origin: 0 0;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      background: var(--bg);
+      width: 140%;
+      height: 140%;
+      transform: scale(0.7142857);
+      transform-origin: 0 0;
     }
 
-    .r-tabs { display: flex; gap: 4px; background: var(--dark-surface); padding: 3px; border-radius: var(--radius-control); border: 1px solid var(--dark-line); flex-wrap: wrap; }
-    .r-tab { padding: 5px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; color: rgba(250, 247, 242, 0.7); transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
-    .r-tab.active { background: var(--accent); color: #ffffff; }
+    /* Halo luminoso durante el recorrido guiado */
+    .col-wrap.is-spotlight .phone,
+    .col-wrap.is-spotlight .panel {
+      box-shadow:
+        0 0 0 2.5px #E85A3C,
+        0 0 0 7px rgba(217, 65, 43, 0.22),
+        0 18px 46px rgba(217, 65, 43, 0.28);
+      animation: spotlight-pulse 2.2s var(--ease-out) infinite;
+    }
+    @keyframes spotlight-pulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 2.5px #E85A3C,
+          0 0 0 6px rgba(217, 65, 43, 0.2),
+          0 16px 42px rgba(217, 65, 43, 0.24);
+      }
+      50% {
+        box-shadow:
+          0 0 0 3px #FF7A5E,
+          0 0 0 9px rgba(217, 65, 43, 0.28),
+          0 20px 52px rgba(217, 65, 43, 0.34);
+      }
+    }
+
+    .r-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--dark-surface);
+      padding: 3px;
+      border-radius: var(--radius-control);
+      border: 1px solid var(--dark-line);
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+    .r-tab {
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(250, 247, 242, 0.74);
+      white-space: nowrap;
+      transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .r-tab:hover {
+      color: #ffffff;
+      background: rgba(250, 247, 242, 0.08);
+    }
+    .r-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+    }
 
     /* Switcher de pantallas exclusivo para celular y tablet */
     .mobile-switcher {
-      display: none; gap: 6px; padding: 8px 12px;
-      background: #171412; border-bottom: 1px solid var(--dark-line);
+      display: none;
+      gap: 6px;
+      padding: 8px 12px;
+      background: #171412;
+      border-bottom: 1px solid var(--dark-line);
+      flex: none;
     }
     .m-tab {
-      flex: 1; padding: 9px 8px; border-radius: 10px; font-size: 12.5px; font-weight: 800;
-      background: var(--dark-surface); color: rgba(250, 247, 242, 0.72);
-      border: 1px solid var(--dark-line); text-align: center; white-space: nowrap;
+      position: relative;
+      flex: 1;
+      padding: 9px 6px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 800;
+      background: var(--dark-surface);
+      color: rgba(250, 247, 242, 0.76);
+      border: 1px solid var(--dark-line);
+      text-align: center;
+      white-space: nowrap;
       transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
     }
-    .m-tab.active { background: var(--accent); color: #ffffff; border-color: var(--accent); }
-
-    .sim-retry {
-      margin-left: 10px; padding: 4px 10px; border-radius: var(--radius-pill);
-      background: var(--accent); color: #ffffff; font-size: 12px; font-weight: 800;
+    .m-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+    .m-tab.is-step-target:not(.active) {
+      border-color: rgba(232, 90, 60, 0.72);
+      color: #FFD0C6;
+    }
+    .m-tab.is-step-target:not(.active)::after {
+      content: '';
+      position: absolute;
+      top: 5px;
+      right: 6px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #E85A3C;
     }
 
+    .only-mobile { display: none; }
+    .only-desktop { display: inline; }
+
     @media (max-width: 1260px) and (min-width: 1025px) {
-      body { height: auto; overflow: auto; }
-      .stage { grid-template-columns: 1fr 1fr; height: auto; }
+      body { height: auto; overflow-y: auto; }
+      .stage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); height: auto; }
       .phone { height: 740px; }
       .phone-screen iframe { width: 100%; height: 100%; transform: none; }
       .panel { height: 820px; }
       .panel iframe { width: 100%; height: 100%; transform: none; }
       .col-wrap.wide { grid-column: 1 / -1; }
     }
+
     @media (max-width: 1024px) {
+      .only-mobile { display: inline; }
+      .only-desktop { display: none; }
       body { height: 100vh; height: 100dvh; overflow: hidden; }
-      .bar { padding: 8px 12px; gap: 6px 8px; min-height: auto; }
-      .bar-brand strong, .bar-sep, .bar .grow, .bar .bar-desktop-only { display: none; }
-      .bar label { font-size: 11.5px; }
-      .bar select { padding: 5px 8px; font-size: 12px; max-width: 138px; }
-      .sim-btn { padding: 6px 11px; font-size: 12px; }
-      .bar a, .bar .bar-ghost { padding: 5px 8px; font-size: 11.5px; }
-      .sim-strip { padding: 6px 12px; font-size: 12px; }
-      .sim-steps { display: none; }
-      .mobile-switcher { display: flex; }
-      .stage {
-        flex: 1; display: flex; flex-direction: column;
-        padding: 8px 10px 10px; min-height: 0; overflow: hidden;
+
+      .bar {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 8px 12px;
+        gap: 8px;
+        min-height: auto;
       }
+      .bar-brand { order: 1; }
+      .bar-logo img { height: 25px; }
+      .bar-sep,
+      .bar-subtitle,
+      .bar .grow { display: none; }
+      .bar-secondary { order: 2; gap: 6px; }
+      .bar-primary { order: 3; width: 100%; gap: 8px; }
+      .bar-primary .sim-btn { flex: 1; padding: 8px 12px; font-size: 12.5px; }
+      .bar-ghost,
+      .bar-link { padding: 6px 9px; font-size: 12px; }
+
+      .options-bar {
+        padding: 9px 12px;
+        gap: 8px 10px;
+        max-height: 44vh;
+        overflow-y: auto;
+      }
+      .opt-sep { display: none; }
+      .opt-field { width: 100%; justify-content: space-between; }
+      .opt-field select { flex: 1; max-width: none; min-width: 0; }
+      .opt-links { width: 100%; }
+      .opt-links .bar-ghost { flex: 1; }
+      .opt-close { width: 100%; text-align: center; background: rgba(250, 247, 242, 0.06); }
+
+      .sim-strip {
+        padding: 7px 12px;
+        gap: 6px 8px;
+        font-size: 12px;
+      }
+      .sim-main { width: 100%; align-items: flex-start; gap: 8px; }
+      .sim-dot { margin-top: 5px; }
+      .sim-controls { width: 100%; justify-content: space-between; gap: 6px; }
+      .sim-steps {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 4px;
+      }
+      .sim-step {
+        justify-content: center;
+        padding: 4px 4px;
+        font-size: 11px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .step-more { display: none; }
+      .sim-inline-cta { margin-left: 0; margin-top: 4px; }
+
+      .mobile-switcher { display: flex; }
+
+      .stage {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 8px 10px 10px;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .stage.has-spotlight .col-wrap:not(.is-spotlight) { opacity: 1; }
       .col-wrap { display: none; flex: 1; min-height: 0; gap: 6px; }
       .col-wrap.m-active { display: flex; }
+      .col-head { min-height: auto; }
       .col-wrap .label { display: none; }
+      .col-wrap[data-pane="local"] .col-title-group { display: none; }
+      .col-wrap .sublabel { font-size: 11.5px; padding-left: 2px; }
+
       .phone { flex: 1; height: auto; border-radius: 20px; padding: 4px; }
       .phone-screen { border-radius: 16px; }
-      .phone-screen iframe, .panel iframe { width: 100%; height: 100%; transform: none; }
+      .phone-screen iframe,
+      .panel iframe { width: 100%; height: 100%; transform: none; }
       .panel { flex: 1; height: auto; border-radius: 14px; }
-      .r-tabs { width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; }
+
+      .col-wrap.is-spotlight .phone,
+      .col-wrap.is-spotlight .panel {
+        box-shadow: 0 0 0 2px #E85A3C, 0 0 0 4px rgba(217, 65, 43, 0.25);
+        animation: none;
+      }
+
+      .r-tabs {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 4px;
+      }
       .r-tabs::-webkit-scrollbar { display: none; }
       .r-tab { flex: 0 0 auto; white-space: nowrap; text-align: center; padding: 6px 10px; font-size: 12px; }
+    }
+
+    @media (max-width: 480px) {
+      .hide-xs { display: none; }
+      .bar-ghost,
+      .bar-link { padding: 5px 8px; font-size: 11.5px; }
     }
   </style>
 </head>
 <body>
   <header class="bar">
     <div class="bar-brand">
-      <a href="/" style="border:0;padding:0;display:inline-flex" aria-label="Volver al inicio"><img src="logo-dark.svg" alt="SaleListo" style="height:30px;display:block;flex:none"></a>
-      <span class="bar-sep">·</span>
-      <strong>Circuito en Vivo</strong>
+      <a class="bar-logo" href="/" aria-label="Volver al sitio principal de SaleListo">
+        <img src="logo-dark.svg" alt="SaleListo">
+      </a>
+      <span class="bar-sep" aria-hidden="true">·</span>
+      <span class="bar-subtitle">Demo en vivo</span>
     </div>
 
-    <button type="button" class="sim-btn" id="simPeakBtn" title="Dispara una secuencia automática en vivo en las 3 pantallas">
-      ⚡ Simular Hora Pico
-    </button>
-    <button type="button" class="bar-ghost" id="clearDemoBtn" title="Limpia únicamente las mesas abiertas sin borrar el historial cerrado del día">
-      ↺ Limpiar
-    </button>
+    <div class="bar-primary">
+      <button type="button" class="sim-btn" id="simPeakBtn" title="Muestra en vivo cómo circula un pedido real por todo el local">
+        <span class="sim-icon" aria-hidden="true">▶</span>
+        <span class="sim-label">Ver <span class="hide-xs">cómo funciona </span>paso a paso</span>
+      </button>
+      <button type="button" class="bar-ghost" id="clearDemoBtn" title="Reinicia las mesas abiertas para comenzar de nuevo">
+        ↺ Reiniciar
+      </button>
+    </div>
 
     <span class="grow"></span>
-    <label>📱 <select id="clientTableSel" aria-label="Mesa del cliente"></select></label>
-    <label>⌚ <select id="waiterSel" aria-label="Mozo seleccionado"></select></label>
-    <a class="bar-desktop-only" href="pase.html" target="_blank">🛎️ Pase ↗</a>
-    <a class="bar-desktop-only" href="operacion.html">Acceso Local</a>
-    <a href="/">Inicio</a>
+
+    <div class="bar-secondary">
+      <button type="button" class="bar-ghost" id="optionsToggleBtn" aria-expanded="false" aria-controls="optionsBar">
+        ⚙ Opciones
+      </button>
+      <a class="bar-link" href="/">Volver al sitio</a>
+    </div>
   </header>
 
-  <nav class="mobile-switcher" id="mobileSwitcher" aria-label="Elegir pantalla de la demo">
-    <button type="button" class="m-tab active" data-pane="client">📱 Cliente</button>
-    <button type="button" class="m-tab" data-pane="waiter">⌚ Mozo</button>
-    <button type="button" class="m-tab" data-pane="local">🛎️ Local</button>
+  <section class="options-bar" id="optionsBar" hidden aria-label="Opciones avanzadas de la demostración">
+    <label class="opt-field">
+      <span>Mesa:</span>
+      <select id="clientTableSel" aria-label="Seleccionar mesa de prueba"></select>
+    </label>
+    <label class="opt-field">
+      <span>Mozo:</span>
+      <select id="waiterSel" aria-label="Seleccionar mozo de prueba"></select>
+    </label>
+    <span class="opt-sep" aria-hidden="true"></span>
+    <div class="opt-links">
+      <a class="bar-ghost" href="pase.html" target="_blank" rel="noopener">🛎️ Abrir Mostrador aparte ↗</a>
+      <a class="bar-ghost" href="operacion.html">Acceso Local</a>
+    </div>
+    <button type="button" class="opt-close" id="optionsCloseBtn" aria-label="Cerrar opciones">Cerrar</button>
+  </section>
+
+  <nav class="mobile-switcher" id="mobileSwitcher" aria-label="Cambiar pantalla de la demostración">
+    <button type="button" class="m-tab active" data-pane="client">1. Cliente</button>
+    <button type="button" class="m-tab" data-pane="waiter">2. Mozo</button>
+    <button type="button" class="m-tab" data-pane="local">3. Local</button>
   </nav>
 
-  <div class="sim-strip" id="simStrip" hidden aria-live="polite">
-    <div class="sim-steps" id="simSteps">
-      <span class="sim-step" data-step="1">1 · Pedido mixto QR</span>
-      <span class="sim-step" data-step="2">2 · Cocina + Barra listos</span>
-      <span class="sim-step" data-step="3">3 · Llamado en salón</span>
-      <span class="sim-step" data-step="4">4 · Cuenta + vuelto en 1 viaje</span>
+  <div class="sim-strip" id="simStrip" aria-live="polite">
+    <div class="sim-main">
+      <span class="sim-dot" aria-hidden="true"></span>
+      <div class="sim-msg" id="simMsg">
+        Pruebe el recorrido guiado o haga un pedido directo <span class="only-desktop">en la pantalla de la izquierda</span><span class="only-mobile">en la pantalla de Cliente</span> para ver cómo se actualiza todo en tiempo real.
+        <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>
+      </div>
+      <span class="sim-paused-pill" id="simPausedPill" hidden>En pausa</span>
     </div>
-    <div class="sim-msg" id="simMsg">Listo para simular hora pico en tiempo real.</div>
-    <button type="button" class="sim-close" id="simCloseBtn" aria-label="Ocultar barra de simulación">✕</button>
+    <div class="sim-controls">
+      <div class="sim-steps" id="simSteps" aria-label="Pasos del recorrido guiado">
+        <button type="button" class="sim-step" data-step="1">1 · Mesa</button>
+        <button type="button" class="sim-step" data-step="2">2 · Cocina<span class="step-more"> y Barra</span></button>
+        <button type="button" class="sim-step" data-step="3">3 · Aviso<span class="step-more"> al mozo</span></button>
+        <button type="button" class="sim-step" data-step="4">4 · Cuenta</button>
+      </div>
+      <button type="button" class="sim-close" id="simCloseBtn" aria-label="Ocultar guía" title="Ocultar guía">✕</button>
+    </div>
   </div>
 
-  <main class="stage">
+  <main class="stage" id="demoStage">
     <div class="col-wrap m-active" data-pane="client">
-      <div class="col-head"><span class="label">1 · Celular del Cliente (QR de Mesa)</span></div>
-      <div class="phone"><div class="phone-screen"><iframe id="clientFrame" title="Vista Cliente"></iframe></div></div>
+      <div class="col-head">
+        <div class="col-title-group">
+          <span class="label">1 · Cliente en la mesa</span>
+          <span class="sublabel">Pide y solicita la cuenta por QR</span>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="phone-screen">
+          <iframe id="clientFrame" title="Pantalla del cliente en la mesa"></iframe>
+        </div>
+      </div>
     </div>
 
     <div class="col-wrap" data-pane="waiter">
-      <div class="col-head"><span class="label">2 · Mozo / Pulsera Vibradora (Opcional)</span></div>
-      <div class="phone"><div class="phone-screen"><iframe id="waiterFrame" title="Vista Mozo"></iframe></div></div>
+      <div class="col-head">
+        <div class="col-title-group">
+          <span class="label">2 · Aviso al mozo</span>
+          <span class="sublabel">Recibe alertas cuando el pedido está listo</span>
+        </div>
+      </div>
+      <div class="phone">
+        <div class="phone-screen">
+          <iframe id="waiterFrame" title="Pantalla de avisos al mozo"></iframe>
+        </div>
+      </div>
     </div>
 
     <div class="col-wrap wide" data-pane="local">
       <div class="col-head">
-        <span class="label">3 · Pantallas Fijas del Local</span>
-        <div class="r-tabs" id="rightTabs">
-          <button class="r-tab active" type="button" data-src="pase.html">🛎️ Pase</button>
-          <button class="r-tab" type="button" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
-          <button class="r-tab" type="button" data-src="cocina.html?estacion=barra">🍸 Barra</button>
-          <button class="r-tab" type="button" data-src="cocina.html?estacion=mostrador">🍣 Mostrador</button>
-          <button class="r-tab" type="button" data-src="restaurante.html?demo=1">🖥️ Panel</button>
+        <div class="col-title-group">
+          <span class="label">3 · Pantallas del local</span>
+          <span class="sublabel">Mostrador, cocina, barra, despacho y encargado</span>
+        </div>
+        <div class="r-tabs" id="rightTabs" role="tablist" aria-label="Pantallas del local">
+          <button class="r-tab active" type="button" role="tab" aria-selected="true" data-src="pase.html" title="Mostrador de mozos: pedidos listos y llamados">🛎️ Mostrador</button>
+          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=cocina">🍳 Cocina</button>
+          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=barra">🍸 Barra</button>
+          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="cocina.html?estacion=mostrador">🍣 Despacho</button>
+          <button class="r-tab" type="button" role="tab" aria-selected="false" data-src="restaurante.html?demo=1">🖥️ Encargado</button>
         </div>
       </div>
-      <div class="panel"><iframe id="rightFrame" src="pase.html" title="Pantallas Fijas del Local"></iframe></div>
+      <div class="panel">
+        <iframe id="rightFrame" src="pase.html" title="Pantallas del local"></iframe>
+      </div>
     </div>
   </main>
 
@@ -244,6 +823,172 @@
     (async () => {
       let adminToken = sessionStorage.getItem('salelisto:adminToken') || '';
       let simRunId = 0;
+      let simRunning = false;
+      let simPaused = false;
+      let hasCompletedTour = false;
+      let currentRightSrc = 'pase.html';
+
+      const WELCOME_HTML = 'Pruebe el recorrido guiado o haga un pedido directo <span class="only-desktop">en la pantalla de la izquierda</span><span class="only-mobile">en la pantalla de Cliente</span> para ver cómo se actualiza todo en tiempo real. <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>';
+
+      const STEP_CONFIG = {
+        1: {
+          panes: ['client'],
+          mobilePane: 'client',
+          rightSrc: null,
+          html: '<strong>1/4 · Pedido en la mesa:</strong> El cliente escanea el QR de la mesa y pide comida y bebidas. El sistema separa cada cosa automáticamente.',
+        },
+        2: {
+          panes: ['local'],
+          mobilePane: 'local',
+          rightSrc: 'cocina.html?estacion=cocina',
+          html: '<strong>2/4 · Cocina y Barra reciben:</strong> La comida llega directo a Cocina y las bebidas a Barra, cada área ve solo lo suyo.',
+        },
+        3: {
+          panes: ['waiter', 'local'],
+          mobilePane: 'waiter',
+          rightSrc: 'pase.html',
+          html: '<strong>3/4 · Aviso al mozo y mostrador:</strong> Cocina y Barra marcan "Listo". El aviso aparece en el mostrador y en la pulsera del mozo para retirar sin demoras.',
+        },
+        4: {
+          panes: ['client', 'local'],
+          mobilePane: 'local',
+          rightSrc: 'pase.html',
+          html: '<strong>4/4 · Cuenta en un solo traslado:</strong> El cliente solicita la cuenta indicando medio de pago y propina. El mozo cobra en un solo traslado.',
+        },
+      };
+
+      const stage = document.getElementById('demoStage');
+      const tSel = document.getElementById('clientTableSel');
+      const wSel = document.getElementById('waiterSel');
+      const cFrame = document.getElementById('clientFrame');
+      const wFrame = document.getElementById('waiterFrame');
+      const rFrame = document.getElementById('rightFrame');
+      const rightTabs = document.getElementById('rightTabs');
+      const simBtn = document.getElementById('simPeakBtn');
+      const clearBtn = document.getElementById('clearDemoBtn');
+      const optionsToggleBtn = document.getElementById('optionsToggleBtn');
+      const optionsCloseBtn = document.getElementById('optionsCloseBtn');
+      const optionsBar = document.getElementById('optionsBar');
+      const simStrip = document.getElementById('simStrip');
+      const simMsg = document.getElementById('simMsg');
+      const simPausedPill = document.getElementById('simPausedPill');
+      const simSteps = document.getElementById('simSteps');
+      const mobileSwitcher = document.getElementById('mobileSwitcher');
+
+      function setOptionsOpen(open) {
+        optionsBar.hidden = !open;
+        optionsToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        optionsToggleBtn.classList.toggle('active', open);
+      }
+      optionsToggleBtn.onclick = () => setOptionsOpen(optionsBar.hidden);
+      optionsCloseBtn.onclick = () => setOptionsOpen(false);
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !optionsBar.hidden) {
+          setOptionsOpen(false);
+          optionsToggleBtn.focus();
+        }
+      });
+
+      function setMainBtnState(state) {
+        simBtn.classList.remove('is-running', 'is-paused');
+        if (state === 'running') {
+          simBtn.classList.add('is-running');
+          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">⏸</span><span class="sim-label">Pausar recorrido</span>';
+          simPausedPill.hidden = true;
+        } else if (state === 'paused') {
+          simBtn.classList.add('is-paused');
+          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">▶</span><span class="sim-label">Continuar recorrido</span>';
+          simPausedPill.hidden = false;
+        } else {
+          simBtn.innerHTML = '<span class="sim-icon" aria-hidden="true">▶</span><span class="sim-label">Ver <span class="hide-xs">cómo funciona </span>paso a paso</span>';
+          simPausedPill.hidden = true;
+        }
+      }
+
+      function setSpotlight(panes = []) {
+        const set = new Set(panes);
+        stage.classList.toggle('has-spotlight', set.size > 0);
+        document.querySelectorAll('.col-wrap[data-pane]').forEach((col) => {
+          col.classList.toggle('is-spotlight', set.has(col.dataset.pane));
+        });
+        document.querySelectorAll('.m-tab[data-pane]').forEach((tab) => {
+          tab.classList.toggle('is-step-target', set.has(tab.dataset.pane));
+        });
+      }
+
+      function setMobilePane(pane) {
+        document.querySelectorAll('.m-tab').forEach((b) => {
+          b.classList.toggle('active', b.dataset.pane === pane);
+        });
+        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => {
+          c.classList.toggle('m-active', c.dataset.pane === pane);
+        });
+      }
+
+      if (mobileSwitcher) {
+        mobileSwitcher.onclick = (e) => {
+          const btn = e.target.closest('[data-pane]');
+          if (btn) setMobilePane(btn.dataset.pane);
+        };
+      }
+
+      function selectRightTab(targetSrc) {
+        if (!targetSrc) return;
+        let matched = null;
+        document.querySelectorAll('.r-tab').forEach((tab) => {
+          const isMatch = tab.dataset.src === targetSrc;
+          tab.classList.toggle('active', isMatch);
+          tab.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+          if (isMatch) matched = tab;
+        });
+        if (matched && rightTabs.scrollWidth > rightTabs.clientWidth) {
+          const targetLeft = matched.offsetLeft - Math.max(0, (rightTabs.clientWidth - matched.clientWidth) / 2);
+          rightTabs.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+        }
+        if (currentRightSrc !== targetSrc) {
+          currentRightSrc = targetSrc;
+          rFrame.src = targetSrc;
+        }
+      }
+
+      rightTabs.onclick = (e) => {
+        const b = e.target.closest('[data-src]');
+        if (!b) return;
+        selectRightTab(b.dataset.src);
+      };
+
+      function setStepUI(currentStep, htmlMsg, finished = false, activeHighlight = true) {
+        simStrip.hidden = false;
+        simStrip.classList.toggle('is-active', activeHighlight && !finished && currentStep > 0);
+        simStrip.classList.toggle('is-done', finished);
+        document.querySelectorAll('.sim-step').forEach((el) => {
+          const n = Number(el.dataset.step);
+          el.classList.toggle('done', finished ? true : (currentStep > 0 && n < currentStep));
+          el.classList.toggle('current', !finished && n === currentStep);
+        });
+        simMsg.innerHTML = htmlMsg;
+      }
+
+      function applyStepVisuals(stepNum, { includeStartCta = false, markPriorDone = true } = {}) {
+        const cfg = STEP_CONFIG[stepNum];
+        if (!cfg) return;
+        if (cfg.rightSrc) selectRightTab(cfg.rightSrc);
+        setSpotlight(cfg.panes);
+        setMobilePane(cfg.mobilePane);
+
+        const cta = includeStartCta
+          ? ' <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>'
+          : '';
+        simStrip.hidden = false;
+        simStrip.classList.add('is-active');
+        simStrip.classList.remove('is-done');
+        document.querySelectorAll('.sim-step').forEach((el) => {
+          const n = Number(el.dataset.step);
+          el.classList.toggle('done', markPriorDone && n < stepNum);
+          el.classList.toggle('current', n === stepNum);
+        });
+        simMsg.innerHTML = cfg.html + cta;
+      }
 
       async function ensureAdminToken() {
         if (adminToken) return adminToken;
@@ -259,7 +1004,7 @@
             return adminToken;
           }
         } catch (_) {}
-        const pin = prompt('Modo producción activo. Ingresá el PIN del encargado para abrir la demo:') || '';
+        const pin = prompt('Modo de local activo. Ingrese el PIN del encargado para acceder a la demostración:') || '';
         if (!pin) throw new Error('PIN requerido');
         const r2 = await fetch('api/auth/admin', {
           method: 'POST',
@@ -272,29 +1017,6 @@
         return adminToken;
       }
 
-      const tSel = document.getElementById('clientTableSel');
-      const wSel = document.getElementById('waiterSel');
-      const cFrame = document.getElementById('clientFrame');
-      const wFrame = document.getElementById('waiterFrame');
-      const rFrame = document.getElementById('rightFrame');
-      const simBtn = document.getElementById('simPeakBtn');
-      const clearBtn = document.getElementById('clearDemoBtn');
-      const simStrip = document.getElementById('simStrip');
-      const simMsg = document.getElementById('simMsg');
-
-      // Switcher de pantallas en celular / tablet
-      const setMobilePane = (pane) => {
-        document.querySelectorAll('.m-tab').forEach((b) => b.classList.toggle('active', b.dataset.pane === pane));
-        document.querySelectorAll('.col-wrap[data-pane]').forEach((c) => c.classList.toggle('m-active', c.dataset.pane === pane));
-      };
-      const mobileSwitcher = document.getElementById('mobileSwitcher');
-      if (mobileSwitcher) {
-        mobileSwitcher.onclick = (e) => {
-          const btn = e.target.closest('[data-pane]');
-          if (btn) setMobilePane(btn.dataset.pane);
-        };
-      }
-
       async function fetchQrsSafe() {
         let res = await fetch('api/qrs', {
           headers: adminToken ? { 'X-Auth-Token': adminToken } : {},
@@ -304,7 +1026,7 @@
           const tok = await ensureAdminToken();
           res = await fetch('api/qrs', { headers: { 'X-Auth-Token': tok } });
         }
-        if (!res.ok) throw new Error('Error cargando mesas de la demo (' + res.status + ')');
+        if (!res.ok) throw new Error('No se pudieron cargar las mesas de prueba');
         return res.json();
       }
 
@@ -320,7 +1042,7 @@
           const [qrs, wpub] = await Promise.all([
             fetchQrsSafe(),
             fetch('api/waiters-public').then((r) => {
-              if (!r.ok) throw new Error('Error cargando mozos (' + r.status + ')');
+              if (!r.ok) throw new Error('No se pudieron cargar los mozos de prueba');
               return r.json();
             }),
           ]);
@@ -347,17 +1069,30 @@
 
           syncClient();
           syncWaiter();
-          simStrip.hidden = true;
-        } catch (err) {
-          simStrip.hidden = false;
-          simMsg.innerHTML = `⚠️ No pudimos conectar con el servidor de demo (${err.message || 'sin respuesta'}). <button type="button" class="sim-retry" id="retryDemoBtn">Reintentar</button>`;
+          if (!simRunning && !hasCompletedTour) {
+            setStepUI(0, WELCOME_HTML, false, false);
+          }
+        } catch (_) {
+          setSpotlight([]);
+          setStepUI(
+            0,
+            'No fue posible conectar con el sistema de demostración. Verifique la conexión e intente nuevamente. <button type="button" class="sim-retry" id="retryDemoBtn">Reintentar</button>',
+            false,
+            false
+          );
           const retryBtn = document.getElementById('retryDemoBtn');
           if (retryBtn) retryBtn.onclick = initDemoData;
         }
       };
 
-      tSel.onchange = () => { syncClient(); setMobilePane('client'); };
-      wSel.onchange = () => { syncWaiter(); setMobilePane('waiter'); };
+      tSel.onchange = () => {
+        syncClient();
+        setMobilePane('client');
+      };
+      wSel.onchange = () => {
+        syncWaiter();
+        setMobilePane('waiter');
+      };
       await initDemoData();
 
       const viewMap = {
@@ -365,22 +1100,14 @@
         cocina: 'cocina.html?estacion=cocina',
         barra: 'cocina.html?estacion=barra',
         mostrador: 'cocina.html?estacion=mostrador',
+        despacho: 'cocina.html?estacion=mostrador',
         encargado: 'restaurante.html?demo=1',
       };
       const initVista = new URLSearchParams(location.search).get('vista');
       if (initVista && viewMap[initVista]) {
-        const targetSrc = viewMap[initVista];
-        document.querySelectorAll('.r-tab').forEach((x) => x.classList.toggle('active', x.dataset.src === targetSrc));
-        rFrame.src = targetSrc;
+        selectRightTab(viewMap[initVista]);
         setMobilePane('local');
       }
-
-      document.getElementById('rightTabs').onclick = (e) => {
-        const b = e.target.closest('[data-src]');
-        if (!b) return;
-        document.querySelectorAll('.r-tab').forEach((x) => x.classList.toggle('active', x === b));
-        rFrame.src = b.dataset.src;
-      };
 
       async function apiAct(type, payload = {}) {
         const tok = await ensureAdminToken();
@@ -404,46 +1131,60 @@
             },
             body: JSON.stringify({ type, payload }),
           }).then((r) => r.json());
-          if (!res2.ok) throw new Error(res2.error || 'Error en acción');
+          if (!res2.ok) throw new Error(res2.error || 'No fue posible completar la acción');
           return res2;
         }
         const data = await res.json();
-        if (!data.ok) throw new Error(data.error || 'Error en acción');
+        if (!data.ok) throw new Error(data.error || 'No fue posible completar la acción');
         return data;
       }
 
-      function setStepUI(currentStep, htmlMsg, finished = false) {
-        simStrip.hidden = false;
-        document.querySelectorAll('.sim-step').forEach((el) => {
-          const n = Number(el.dataset.step);
-          el.classList.toggle('done', finished ? true : n < currentStep);
-          el.classList.toggle('current', !finished && n === currentStep);
-        });
-        simMsg.innerHTML = htmlMsg;
+      async function waitPausable(ms, myRun) {
+        let remaining = ms;
+        const tick = 100;
+        while (remaining > 0) {
+          if (myRun !== simRunId) return false;
+          if (simPaused) {
+            await new Promise((r) => setTimeout(r, tick));
+            continue;
+          }
+          const slice = Math.min(tick, remaining);
+          await new Promise((r) => setTimeout(r, slice));
+          remaining -= slice;
+        }
+        return myRun === simRunId;
       }
 
-      const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+      async function waitIfPaused(myRun) {
+        while (simPaused && myRun === simRunId) {
+          await new Promise((r) => setTimeout(r, 100));
+        }
+        return myRun === simRunId;
+      }
 
-      document.getElementById('simCloseBtn').onclick = () => {
-        simStrip.hidden = true;
-      };
-
-      simBtn.onclick = async () => {
+      async function runGuidedTour() {
         const myRun = ++simRunId;
-        simBtn.disabled = true;
-        simBtn.textContent = '⚡ Simulando en vivo…';
+        simRunning = true;
+        simPaused = false;
+        setOptionsOpen(false);
+        setMainBtnState('running');
+        applyStepVisuals(1, { markPriorDone: true });
 
         try {
           const tok = await ensureAdminToken();
           const st = await fetch('api/staff-state', {
             headers: tok ? { 'X-Auth-Token': tok } : {},
-          }).then((r) => r.json());
+          }).then((r) => {
+            if (!r.ok) throw new Error('No fue posible conectar con el sistema de demostración');
+            return r.json();
+          });
+          if (!(await waitIfPaused(myRun))) return;
 
           const availItems = (st.items || []).filter((i) => i.available);
           const kitchenItems = availItems.filter((i) => i.effectiveStation !== 'barra');
           const barItems = availItems.filter((i) => i.effectiveStation === 'barra');
           if (!kitchenItems.length || !barItems.length) {
-            throw new Error('Se necesita al menos 1 plato de cocina y 1 bebida de barra disponibles');
+            throw new Error('Se necesita al menos un plato de cocina y una bebida de barra disponibles para el recorrido.');
           }
 
           const activeTables = (st.tables || []).filter((t) => t.active);
@@ -458,8 +1199,7 @@
           const drink1 = barItems.find((i) => /gin|yuzu/i.test(i.name)) || barItems[0];
           const drink2 = barItems.find((i) => i.id !== drink1.id) || drink1;
 
-          // Paso 1: Pedido mixto en la mesa del cliente + pedido en otro sector
-          setStepUI(1, `<strong>Paso 1/4:</strong> Mesa ${primaryTable.code} (${primaryTable.blockName}) pide platos y tragos por QR -&gt; se separan solos entre Cocina y Barra.`);
+          // Paso 1: Pedido en la mesa (comida + bebida separadas automáticamente)
           const r1 = await apiAct('order.create', {
             qrToken: primaryTable.qrToken,
             items: [
@@ -484,11 +1224,12 @@
             syncWaiter();
           }
 
-          await wait(950);
-          if (myRun !== simRunId) return;
+          if (!(await waitPausable(2400, myRun))) return;
 
-          // Paso 2: Barra y Cocina marcan listos los retiros
-          setStepUI(2, `<strong>Paso 2/4:</strong> Cocina y Barra marcan "¡Listo!" -&gt; se encienden los retiros por columna en la Estación de Mozos y vibra la pulsera.`);
+          // Paso 2: Cocina y Barra reciben cada área lo suyo, y luego marcan Listo
+          applyStepVisuals(2, { markPriorDone: true });
+          if (!(await waitPausable(1850, myRun))) return;
+
           const createdPrimary = r1.result?.orderIds || [];
           for (const oid of createdPrimary) {
             await apiAct('order.status', { orderId: oid, status: 'listo' });
@@ -501,22 +1242,20 @@
             await apiAct('order.status', { orderId: createdSecondary[1], status: 'cocina' });
           }
 
-          await wait(950);
-          if (myRun !== simRunId) return;
+          if (!(await waitPausable(650, myRun))) return;
 
-          // Paso 3: Llamado de atención en otra mesa del salón
-          setStepUI(3, `<strong>Paso 3/4:</strong> Mesa ${callTable.code} toca "Llamar al mozo" (Agua / Hielo) -&gt; alerta inmediata en la columna de su mozo.`);
+          // Paso 3: Aviso al mozo y mostrador + llamado de atención de otra mesa
+          applyStepVisuals(3, { markPriorDone: true });
           await apiAct('call.create', {
             qrToken: callTable.qrToken,
             type: 'mozo',
             reason: 'Agua / Hielo',
           });
 
-          await wait(950);
-          if (myRun !== simRunId) return;
+          if (!(await waitPausable(2500, myRun))) return;
 
-          // Paso 4: La mesa principal solicita la cuenta con Tarjeta + 10% propina
-          setStepUI(4, `<strong>Paso 4/4:</strong> Mesa ${primaryTable.code} solicita la cuenta desde su QR con Tarjeta + 10% propina -&gt; importe exacto listo para cobrar en 1 solo viaje.`);
+          // Paso 4: Cuenta en un solo traslado con medio de pago y propina
+          applyStepVisuals(4, { markPriorDone: true });
           await apiAct('call.create', {
             qrToken: primaryTable.qrToken,
             type: 'cuenta',
@@ -524,32 +1263,98 @@
             tip: 10,
           });
 
-          await wait(450);
-          if (myRun !== simRunId) return;
-          setStepUI(4, `<strong>✔ Hora pico activa en tiempo real:</strong> revisá el celular del cliente (Mesa ${primaryTable.code}), la app del mozo y las pestañas Pase / Cocina / Barra / Encargado.`, true);
+          if (!(await waitPausable(2500, myRun))) return;
+
+          // Cierre del recorrido guiado
+          hasCompletedTour = true;
+          setSpotlight([]);
+          setStepUI(
+            4,
+            '<strong>Recorrido completado.</strong> Ahora puede probar libremente: sume un plato desde la mesa o confirme entregas en el mostrador.',
+            true
+          );
         } catch (err) {
-          setStepUI(1, `⚠️ ${err.message || 'No se pudo completar la simulación'}`);
+          if (myRun !== simRunId) return;
+          setSpotlight([]);
+          setStepUI(
+            0,
+            `${err.message || 'No fue posible iniciar el recorrido en este momento.'} <button type="button" class="sim-retry" data-start-tour>Reintentar</button>`,
+            false,
+            false
+          );
         } finally {
           if (myRun === simRunId) {
-            simBtn.disabled = false;
-            simBtn.textContent = '⚡ Simular Hora Pico';
+            simRunning = false;
+            simPaused = false;
+            setMainBtnState('idle');
           }
+        }
+      }
+
+      simBtn.onclick = () => {
+        if (simRunning && !simPaused) {
+          simPaused = true;
+          setMainBtnState('paused');
+          return;
+        }
+        if (simRunning && simPaused) {
+          simPaused = false;
+          setMainBtnState('running');
+          return;
+        }
+        runGuidedTour();
+      };
+
+      simStrip.addEventListener('click', (e) => {
+        const startTrigger = e.target.closest('[data-start-tour]');
+        if (startTrigger) {
+          runGuidedTour();
+          return;
+        }
+        const stepBtn = e.target.closest('.sim-step[data-step]');
+        if (stepBtn) {
+          const stepNum = Number(stepBtn.dataset.step);
+          simRunId++;
+          simRunning = false;
+          simPaused = false;
+          setMainBtnState('idle');
+          applyStepVisuals(stepNum, {
+            includeStartCta: !hasCompletedTour,
+            markPriorDone: hasCompletedTour,
+          });
+        }
+      });
+
+      document.getElementById('simCloseBtn').onclick = () => {
+        simStrip.hidden = true;
+        if (!simRunning) {
+          setSpotlight([]);
         }
       };
 
       clearBtn.onclick = async () => {
         simRunId++;
+        simRunning = false;
+        simPaused = false;
+        hasCompletedTour = false;
         clearBtn.disabled = true;
-        simBtn.disabled = false;
-        simBtn.textContent = '⚡ Simular Hora Pico';
+        setMainBtnState('idle');
+        setSpotlight([]);
         try {
           await apiAct('data.clear_open_turn', {});
-          simStrip.hidden = false;
-          document.querySelectorAll('.sim-step').forEach((el) => el.classList.remove('done', 'current'));
-          simMsg.innerHTML = '↺ <strong>Turno demo reiniciado:</strong> las mesas abiertas quedaron limpias conservando el historial cerrado del día.';
-        } catch (err) {
-          simStrip.hidden = false;
-          simMsg.textContent = `⚠️ ${err.message}`;
+          setStepUI(
+            0,
+            '<strong>Demo reiniciada.</strong> Las mesas abiertas quedaron listas para comenzar de nuevo. <button type="button" class="sim-inline-cta" data-start-tour>▶ Iniciar recorrido</button>',
+            false,
+            false
+          );
+        } catch (_) {
+          setStepUI(
+            0,
+            'No fue posible reiniciar las mesas abiertas en este momento. Intente nuevamente.',
+            false,
+            false
+          );
         } finally {
           clearBtn.disabled = false;
         }
