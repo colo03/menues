@@ -25,8 +25,10 @@ body { background: var(--bg); }
   position: sticky; top: 0; z-index: 15;
   display: flex; justify-content: space-between; align-items: center; gap: 8px;
   padding: 12px 14px; background: var(--dark-bg); color: var(--dark-ink);
-  border-bottom: 1px solid var(--dark-line);
+  border-bottom: 2px solid var(--dark-line);
+  transition: border-color var(--dur-fast) var(--ease-out);
 }
+.m-top.has-urgent { border-bottom-color: var(--accent); }
 .m-who { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .m-avatar {
   width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #ffffff;
@@ -78,36 +80,106 @@ body { background: var(--bg); }
 .wrist-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .wrist-actions .btn-primary, .wrist-actions .btn-ok { flex: 1; }
 
-.m-section { padding: 16px 14px 4px; }
+.m-section { padding: 14px 14px 4px; }
 .m-section-head {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 10px;
 }
-.m-section-head h2 { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); }
+.m-section-head h2 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
 
+/* Banner de estado urgente vs estado tranquilo */
+.m-urgent-banner {
+  margin: 12px 14px 2px; padding: 12px 14px; border-radius: var(--radius-card);
+  background: linear-gradient(135deg, #D9412B 0%, #E85A3C 100%); color: #ffffff;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  box-shadow: 0 8px 24px rgba(217, 65, 43, 0.34);
+  animation: m-urgent-in 240ms var(--ease-out);
+}
+.m-urgent-banner strong { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; display: block; }
+.m-urgent-banner small { font-size: 12px; opacity: 0.9; font-weight: 600; display: block; }
+.m-urgent-count {
+  min-width: 34px; height: 34px; padding: 0 10px; border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.22); color: #ffffff;
+  font-size: 17px; font-weight: 800; display: inline-grid; place-items: center; flex: none;
+}
+@keyframes m-urgent-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+
+.m-calm-box {
+  margin: 14px 14px 6px; padding: 22px 16px; border-radius: var(--radius-card);
+  background: var(--surface); border: 1px solid var(--line);
+  text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.m-calm-ico {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--ok-soft); color: var(--ok);
+  display: grid; place-items: center; font-size: 22px; font-weight: 800; margin-bottom: 2px;
+}
+.m-calm-box strong { font-size: 17px; font-weight: 800; color: var(--ink); }
+.m-calm-box p { font-size: 13px; color: var(--ink-2); line-height: 1.4; }
+.m-prep-pill {
+  margin-top: 6px; padding: 6px 12px; border-radius: var(--radius-pill);
+  background: var(--surface-2); color: var(--ink-2); font-size: 12px; font-weight: 700;
+}
+
+/* Tarjetas accionables de alto contraste (el mozo DEBE actuar ahora) */
 .alert-card {
-  background: var(--surface); border-radius: var(--radius-card); padding: 14px; margin-bottom: 10px;
-  border: 1px solid var(--line); box-shadow: var(--shadow-card); border-left: 5px solid var(--ok);
+  background: var(--surface); border-radius: 16px; padding: 15px 15px 14px; margin-bottom: 12px;
+  border: 2px solid var(--line); border-left: 7px solid var(--ok);
+  box-shadow: 0 6px 20px rgba(28, 25, 23, 0.1);
 }
-.alert-card.barra { border-left-color: var(--bar); background: #fdfcff; }
-.alert-card.mostrador-ready { border-left-color: var(--counter); background: #f4fbfa; }
-.alert-card.cocina-ready { border-left-color: var(--ok); background: #f8fcf9; }
-.alert-card.call-mozo { border-left-color: var(--kitchen); background: var(--kitchen-soft); }
-.alert-card.call-cuenta { border-left-color: var(--accent); background: var(--accent-soft); }
-.alert-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; }
-.alert-top strong { font-size: 16px; }
-.alert-lines { font-size: 14px; color: var(--ink); margin: 6px 0 10px; }
-.alert-lines .note { font-size: 12px; color: var(--accent); font-weight: 600; display: block; margin-left: 18px; }
-.alert-actions { display: flex; gap: 8px; }
-.alert-actions .btn { flex: 1; }
+.alert-card.barra { border-color: rgba(109, 40, 217, 0.35); border-left-color: var(--bar); background: #ffffff; }
+.alert-card.mostrador-ready { border-color: rgba(15, 118, 110, 0.35); border-left-color: var(--counter); background: #ffffff; }
+.alert-card.cocina-ready { border-color: rgba(47, 138, 87, 0.38); border-left-color: var(--ok); background: #ffffff; }
+.alert-card.call-mozo { border-color: rgba(217, 119, 6, 0.45); border-left-color: var(--kitchen); background: #fffbf2; }
+.alert-card.call-cuenta { border-color: rgba(217, 65, 43, 0.48); border-left-color: var(--accent); background: #fff8f6; }
+.alert-action-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--radius-pill);
+  font-size: 11.5px; font-weight: 800; letter-spacing: 0.03em; text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.alert-card.barra .alert-action-tag { background: var(--bar-soft); color: var(--bar); }
+.alert-card.mostrador-ready .alert-action-tag { background: #dff6f3; color: #0f766e; }
+.alert-card.cocina-ready .alert-action-tag { background: var(--ok-soft); color: var(--ok); }
+.alert-card.call-mozo .alert-action-tag { background: var(--kitchen-soft); color: #9a5a00; }
+.alert-card.call-cuenta .alert-action-tag { background: var(--accent); color: #ffffff; }
 
-.notif-row {
-  background: var(--surface); border-radius: var(--radius-control); padding: 11px 13px; margin-bottom: 8px;
-  border: 1px solid var(--line); font-size: 13px;
+.alert-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+.alert-top strong { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+.alert-top small { font-size: 12px; font-weight: 700; color: var(--ink-3); white-space: nowrap; }
+.alert-sub { font-size: 13px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; }
+.alert-lines {
+  font-size: 15px; font-weight: 700; color: var(--ink); margin: 8px 0 12px;
+  padding: 9px 11px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line);
 }
-.notif-row.unread { border-color: var(--accent); background: #fffaf8; }
-.notif-row strong { display: block; font-size: 14px; margin-bottom: 2px; }
-.notif-row small { color: var(--ink-3); }
+.alert-lines > div + div { margin-top: 4px; }
+.alert-lines .note { font-size: 12.5px; color: var(--accent); font-weight: 700; display: block; margin-left: 18px; }
+.alert-bill-total { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; display: block; margin-top: 2px; }
+.alert-actions { display: flex; gap: 8px; margin-top: 10px; }
+.alert-actions .btn { flex: 1; min-height: 46px; font-size: 14.5px; font-weight: 800; }
+
+/* Registro pasivo de baja prioridad (solo informativo: pedidos en cocina) */
+.m-info-section {
+  margin: 10px 14px 0; padding-top: 12px; border-top: 1px dashed var(--line);
+}
+.m-info-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px;
+}
+.m-info-head span {
+  font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-3);
+}
+.notif-row {
+  background: transparent; border-radius: 8px; padding: 7px 10px; margin-bottom: 5px;
+  border: 1px solid var(--line); font-size: 12px; color: var(--ink-2); opacity: 0.8;
+}
+.notif-row strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 1px; }
+.notif-row small { color: var(--ink-3); font-size: 11px; }
+.notif-row.is-transfer {
+  background: var(--kitchen-soft); border-color: rgba(217, 119, 6, 0.35); color: var(--ink); opacity: 1;
+}
+.notif-row.is-transfer strong { color: #9a5a00; }
 
 .m-filter-bar {
   display: flex; gap: 8px; padding: 12px 14px 4px;

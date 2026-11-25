@@ -312,18 +312,16 @@
 
     s.notifications.filter((n) => isMineOrOrphan(n.waiterId) && !n.read).forEach((n) => {
       if (!knownNotifs.has(n.id)) {
+        // Solo interrumpir con sonido/toast cuando el mozo debe actuar (ej. mesa reasignada).
+        // Los pedidos recién enviados a Cocina/Barra son informativos y NO interrumpen al mozo.
         if (n.kind === 'table_transferred') {
           urgentAlert = true;
           toast(n.title, 4500);
-        } else if (n.kind === 'new_order') {
-          softAlert = true;
-          toast(n.title, 3500);
         }
       }
     });
 
     if (urgentAlert) ding(2, true);
-    else if (softAlert) ding(1, false);
 
     seedKnownSets(s);
   }
@@ -544,91 +542,126 @@
 
   function renderAlerts() {
     const readyOrders = state.orders.filter((o) => o.isOpenSession && o.status === 'listo' && isMineOrOrphan(o.waiterId));
+    const inPrepOrders = state.orders.filter(
+      (o) => o.isOpenSession && (o.status === 'nuevo' || o.status === 'cocina') && isMineOrOrphan(o.waiterId)
+    );
     const myCalls = state.calls.filter((c) => isMineOrOrphan(c.waiterId));
-    const myNotifs = state.notifications.filter((n) => isMineOrOrphan(n.waiterId) && !n.read);
+    // Excluir avisos duplicados de retiros/llamados que ya figuran como tarjeta accionable arriba
+    const passiveNotifs = state.notifications.filter(
+      (n) => isMineOrOrphan(n.waiterId) && !n.read && (n.kind === 'new_order' || n.kind === 'table_transferred')
+    );
 
     const urgentTotal = readyOrders.length + myCalls.length;
     const badge = $('#alertsBadge');
     badge.hidden = urgentTotal === 0;
     badge.textContent = urgentTotal;
+    document.querySelector('.m-top')?.classList.toggle('has-urgent', urgentTotal > 0);
 
     let html = '';
 
-    // 1. Listos para retirar en Barra / Cocina / Mostrador
-    html += `<section class="m-section">
-      <div class="m-section-head"><h2>🍽️ Listos para llevar (${readyOrders.length})</h2></div>
-      ${readyOrders.length ? readyOrders.map((o) => {
-        const stInfo = stationInfo(o.station);
-        const cardCls = o.station === 'barra' ? 'barra' : o.station === 'mostrador' ? 'mostrador-ready' : 'cocina-ready';
-        const isOrphan = !o.waiterId;
-        return `
-        <article class="alert-card ${cardCls}">
-          <div class="alert-top">
-            <strong>Mesa ${escapeHtml(o.tableCode)} · ${escapeHtml(o.blockName)}</strong>
-            <span class="chip ${stInfo.chipCls}">${stInfo.icon} Retirar en ${stInfo.short.toUpperCase()}</span>
+    // Cabecera de estado: máximo contraste si hay tareas para hacer ahora, calma total si no requiere acción
+    if (urgentTotal > 0) {
+      const taskWord = urgentTotal === 1 ? 'TAREA PARA HACER AHORA' : 'TAREAS PARA HACER AHORA';
+      html += `
+        <div class="m-urgent-banner" role="status">
+          <div>
+            <strong>⚡ ${urgentTotal} ${taskWord}</strong>
+            <small>Requiere su atención en salón</small>
           </div>
-          ${isOrphan ? '<div style="margin-bottom:6px"><span class="chip nuevo">⚠️ Mesa sin mozo asignado</span></div>' : ''}
-          <div class="alert-lines">
-            ${o.items.map((i) => `<div><b>${i.qty}×</b> ${escapeHtml(i.name)}${i.note ? `<span class="note">↳ ${escapeHtml(i.note)}</span>` : ''}</div>`).join('')}
-          </div>
-          <div class="alert-actions">
-            ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" data-claim-table="${escapeHtml(o.tableId)}">🤚 Tomar mesa</button>` : ''}
-            <button class="btn btn-ok btn-sm" type="button" data-deliver="${escapeHtml(o.id)}">✔ Entregado en mesa</button>
-          </div>
-        </article>`;
-      }).join('')
-      : '<p style="font-size:13px;color:var(--ink-3);padding:4px 0 8px">No hay pedidos esperando retiro.</p>'}
-    </section>`;
+          <span class="m-urgent-count">${urgentTotal}</span>
+        </div>`;
+    } else {
+      const prepTxt = inPrepOrders.length > 0
+        ? `<span class="m-prep-pill">⏳ ${inPrepOrders.length} ${inPrepOrders.length === 1 ? 'pedido preparándose' : 'pedidos preparándose'} en Cocina / Barra · Sin acción requerida</span>`
+        : '';
+      html += `
+        <div class="m-calm-box">
+          <span class="m-calm-ico" aria-hidden="true">✓</span>
+          <strong>Sin tareas pendientes</strong>
+          <p>Le avisaremos en cuanto salga un pedido listo o una mesa solicite atención.</p>
+          ${prepTxt}
+        </div>`;
+    }
 
-    // 2. Llamados y Cuentas
-    html += `<section class="m-section">
-      <div class="m-section-head"><h2>🙋 Llamados y Cuentas (${myCalls.length})</h2></div>
-      ${myCalls.length ? myCalls.map((c) => {
-        const isOrphan = !c.waiterId;
-        if (c.type === 'mozo') {
-          return `<article class="alert-card call-mozo">
-            <div class="alert-top"><strong>🙋 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-            <p style="font-size:14px;margin-bottom:10px">Necesita: <strong>${escapeHtml(c.reason)}</strong> ${isOrphan ? '<span class="chip nuevo">Sin mozo</span>' : ''}</p>
+    // 1. Llamados y Cuentas (máxima prioridad de atención al cliente)
+    if (myCalls.length) {
+      html += `<section class="m-section">
+        <div class="m-section-head"><h2>⚡ Llamados y cuentas (${myCalls.length})</h2></div>
+        ${myCalls.map((c) => {
+          const isOrphan = !c.waiterId;
+          if (c.type === 'mozo') {
+            return `<article class="alert-card call-mozo">
+              <span class="alert-action-tag">🙋 Atender llamado</span>
+              <div class="alert-top"><strong>Mesa ${escapeHtml(c.tableCode)}</strong><small>${timeAgo(c.createdAt)}</small></div>
+              <div class="alert-sub">${escapeHtml(c.blockName)} · Solicita: <strong>${escapeHtml(c.reason)}</strong> ${isOrphan ? '<span class="chip nuevo">Sin mozo</span>' : ''}</div>
+              <div class="alert-actions">
+                ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" style="background:#fff" data-claim-table="${escapeHtml(c.tableId)}">🤚 Tomar mesa</button>` : ''}
+                <button class="btn btn-primary" type="button" data-attend="${escapeHtml(c.id)}">✔ Llamado atendido</button>
+              </div>
+            </article>`;
+          }
+          const splitWays = Math.max(1, Number(c.splitWays) || 1);
+          const splitTxt = splitWays > 1 ? ` · ÷ ${splitWays} (${money(Math.ceil((c.total || 0) / splitWays))} c/u)` : '';
+          return `<article class="alert-card call-cuenta">
+            <span class="alert-action-tag">💳 Cobrar cuenta</span>
+            <div class="alert-top"><strong>Mesa ${escapeHtml(c.tableCode)}</strong><small>${timeAgo(c.createdAt)}</small></div>
+            <div class="alert-sub">${escapeHtml(c.blockName)} · ${escapeHtml(c.payment)} · Propina ${c.tip}%${splitTxt}${isOrphan ? ' <span class="chip nuevo">Sin mozo</span>' : ''}</div>
+            <strong class="alert-bill-total">${money(c.total)}</strong>
+            ${formatCashChangeNote(c)}
             <div class="alert-actions">
               ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" style="background:#fff" data-claim-table="${escapeHtml(c.tableId)}">🤚 Tomar mesa</button>` : ''}
-              <button class="btn btn-primary btn-sm" type="button" data-attend="${escapeHtml(c.id)}">✔ Atendido</button>
+              <button class="btn btn-primary" type="button" data-open-table="${escapeHtml(c.tableId)}">✔ Cobrar y cerrar mesa</button>
             </div>
           </article>`;
-        }
-        const splitWays = Math.max(1, Number(c.splitWays) || 1);
-        const splitTxt = splitWays > 1 ? ` · ÷ ${splitWays} (${money(Math.ceil((c.total || 0) / splitWays))} c/u)` : '';
-        return `<article class="alert-card call-cuenta">
-          <div class="alert-top"><strong>💳 Mesa ${escapeHtml(c.tableCode)} (${escapeHtml(c.blockName)})</strong><small>${timeAgo(c.createdAt)}</small></div>
-          <p style="font-size:14px;margin-bottom:8px">
-            Paga con <strong>${escapeHtml(c.payment)}</strong> · Propina ${c.tip}% -&gt; <strong>${money(c.total)}</strong>${splitTxt}
-            ${isOrphan ? ' <span class="chip nuevo">Sin mozo</span>' : ''}
-            ${formatCashChangeNote(c)}
-          </p>
-          <div class="alert-actions">
-            ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" style="background:#fff" data-claim-table="${escapeHtml(c.tableId)}">🤚 Tomar mesa</button>` : ''}
-            <button class="btn btn-primary btn-sm" type="button" data-open-table="${escapeHtml(c.tableId)}">✔ Cobrar y cerrar</button>
-          </div>
-        </article>`;
-      }).join('')
-      : '<p style="font-size:13px;color:var(--ink-3);padding:4px 0 8px">Ninguna de tus mesas tiene llamados pendientes.</p>'}
-    </section>`;
+        }).join('')}
+      </section>`;
+    }
 
-    // 3. Avisos recientes
-    html += `<section class="m-section">
-      <div class="m-section-head">
-        <h2>📬 Novedades recientes (${myNotifs.length})</h2>
-        ${myNotifs.length ? '<button class="btn btn-xs btn-ghost" type="button" id="clearNotifs">Limpiar</button>' : ''}
-      </div>
-      ${myNotifs.length ? myNotifs.slice(0, 12).map((n) => `
-        <div class="notif-row unread">
-          <div style="display:flex;justify-content:space-between;gap:8px">
-            <strong>${escapeHtml(n.title)}</strong>
-            <small>${timeAgo(n.createdAt)}</small>
-          </div>
-          ${n.body ? `<div style="color:var(--ink-2)">${escapeHtml(n.body)}</div>` : ''}
-        </div>`).join('')
-      : '<p style="font-size:13px;color:var(--ink-3)">Todo al día en tu sector.</p>'}
-    </section>`;
+    // 2. Pedidos listos para retirar en Barra / Cocina / Mostrador
+    if (readyOrders.length) {
+      html += `<section class="m-section">
+        <div class="m-section-head"><h2>🍽️ Retirar y llevar ahora (${readyOrders.length})</h2></div>
+        ${readyOrders.map((o) => {
+          const stInfo = stationInfo(o.station);
+          const cardCls = o.station === 'barra' ? 'barra' : o.station === 'mostrador' ? 'mostrador-ready' : 'cocina-ready';
+          const isOrphan = !o.waiterId;
+          return `
+          <article class="alert-card ${cardCls}">
+            <span class="alert-action-tag">${stInfo.icon} Retirar en ${stInfo.short.toUpperCase()}</span>
+            <div class="alert-top">
+              <strong>Mesa ${escapeHtml(o.tableCode)}</strong>
+              <small>${escapeHtml(o.blockName)} · ${timeAgo(o.updatedAt || o.createdAt)}</small>
+            </div>
+            ${isOrphan ? '<div style="margin-bottom:6px"><span class="chip nuevo">⚠️ Mesa sin mozo asignado</span></div>' : ''}
+            <div class="alert-lines">
+              ${o.items.map((i) => `<div><b>${i.qty}×</b> ${escapeHtml(i.name)}${i.note ? `<span class="note">↳ ${escapeHtml(i.note)}</span>` : ''}</div>`).join('')}
+            </div>
+            <div class="alert-actions">
+              ${isOrphan ? `<button class="btn btn-ghost btn-sm" type="button" data-claim-table="${escapeHtml(o.tableId)}">🤚 Tomar mesa</button>` : ''}
+              <button class="btn btn-ok" type="button" data-deliver="${escapeHtml(o.id)}">✔ Ya lo llevé a la mesa</button>
+            </div>
+          </article>`;
+        }).join('')}
+      </section>`;
+    }
+
+    // 3. Registro pasivo de baja jerarquía (solo informativo: no compite con las tareas accionables)
+    if (passiveNotifs.length) {
+      html += `<section class="m-info-section">
+        <div class="m-info-head">
+          <span>Solo informativo (${passiveNotifs.length})</span>
+          <button class="btn btn-xs btn-ghost" type="button" id="clearNotifs">Ocultar</button>
+        </div>
+        ${passiveNotifs.slice(0, 6).map((n) => `
+          <div class="notif-row ${n.kind === 'table_transferred' ? 'is-transfer' : ''}">
+            <div style="display:flex;justify-content:space-between;gap:8px">
+              <strong>${escapeHtml(n.title)}</strong>
+              <small>${timeAgo(n.createdAt)}</small>
+            </div>
+            ${n.body ? `<div>${escapeHtml(n.body)}</div>` : ''}
+          </div>`).join('')}
+      </section>`;
+    }
 
     $('#alertsContent').innerHTML = html;
   }
