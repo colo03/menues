@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>SaleListo · Pedidos en la mesa, salón en calma</title>
-  <meta name="description" content="Sistema de pedidos y solicitud de cuenta desde el código QR de cada mesa, comandas distribuidas para Cocina, Barra y Mostrador, y coordinación de mozos sin teléfonos en el salón. 0% comisión por venta.">
+  <meta name="description" content="Pedidos y solicitud de cuenta desde el código QR de cada mesa, comandas separadas para Cocina, Barra y Mostrador, y un equipo que atiende sin celulares en la mano. 0% comisión por venta. Solicitá tu cotización personalizada.">
   <meta name="theme-color" content="#FAF7F2">
   <link rel="canonical" href="https://salelisto.com/">
   <meta property="og:type" content="website">
@@ -12,14 +12,14 @@
   <meta property="og:site_name" content="SaleListo">
   <meta property="og:url" content="https://salelisto.com/">
   <meta property="og:title" content="SaleListo · Pedidos en la mesa, salón en calma">
-  <meta property="og:description" content="Carta digital por QR, comandas separadas para Cocina y Barra en tiempo real y servicio de salón sin teléfonos en mano. Abono mensual fijo con 0% comisión.">
+  <meta property="og:description" content="Carta digital por QR, comandas separadas para Cocina y Barra en tiempo real y un salón que se atiende sin celulares en la mano. 0% comisión por venta.">
   <meta property="og:image" content="https://salelisto.com/og-salelisto.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="SaleListo · Pedidos en la mesa, salón en calma">
-  <meta name="twitter:description" content="Carta digital por QR, comandas separadas para Cocina y Barra en tiempo real y servicio de salón sin teléfonos en mano. Abono mensual fijo con 0% comisión.">
+  <meta name="twitter:description" content="Carta digital por QR, comandas separadas para Cocina y Barra en tiempo real y un salón que se atiende sin celulares en la mano. 0% comisión por venta.">
   <meta name="twitter:image" content="https://salelisto.com/og-salelisto.png">
   <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
@@ -28,6 +28,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+  <link rel="preload" as="image" href="media/demo-conceptual-poster.jpg">
   <link rel="stylesheet" href="css/landing.css">
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -44,24 +45,24 @@
         <span></span><span></span><span></span>
       </button>
       <nav class="nav-links" id="nav-links" aria-label="Navegación principal">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#demo-video">Ver demo</a>
         <a href="producto.html">Producto</a>
-        <a href="planes.html">Planes y ROI</a>
-        <a href="demo.html">Demostración</a>
         <div class="nav-mobile-cta">
-          <a class="btn btn-primary" href="#piloto">Solicitar prueba</a>
+          <a class="btn btn-primary" href="#contacto">Solicitar cotización</a>
           <a class="nav-access" href="operacion.html">Acceso Local</a>
         </div>
       </nav>
       <div class="nav-actions">
         <a class="nav-access" href="operacion.html">Acceso Local</a>
-        <a class="btn btn-primary btn-sm" href="#piloto">Solicitar prueba</a>
+        <a class="btn btn-primary btn-sm" href="#contacto">Solicitar cotización</a>
       </div>
     </div>
   </header>
 
   <main id="main">
     <!-- ============================== HERO ============================== -->
-    <section class="hero" id="top" aria-labelledby="hero-title">
+    <section class="hero hero-center" id="top" aria-labelledby="hero-title">
       <div class="hero-media" aria-hidden="true">
         <video class="bg-video" autoplay muted loop playsinline preload="metadata" poster="media/hero-salon-poster.jpg">
           <source src="media/hero-salon-loop.mp4" type="video/mp4">
@@ -69,44 +70,79 @@
       </div>
       <div class="hero-veil" aria-hidden="true"></div>
 
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow eyebrow-light"><span class="dot-live"></span> Restaurantes · Bares · Cafeterías</p>
-          <h1 id="hero-title">Pedidos en la mesa.<br><span class="hl-accent">Salón en calma.</span></h1>
-          <p class="hero-lead">Sus clientes ordenan y solicitan la cuenta desde el código QR de su mesa. Cocina y Barra reciben las comandas por separado y el equipo de servicio opera sin teléfonos en mano.</p>
+      <div class="wrap hero-inner">
+        <p class="eyebrow eyebrow-light"><span class="dot-live"></span> Restaurantes · Bares · Cafeterías</p>
+        <h1 id="hero-title">Pedidos en la mesa.<br><span class="hl-accent">Salón en calma.</span></h1>
+        <p class="hero-lead">Tus clientes ordenan y piden la cuenta desde el código QR de su mesa, Cocina y Barra reciben sus comandas por separado y tu equipo atiende sin celulares en la mano.</p>
 
-          <div class="hero-ctas">
-            <a class="btn btn-primary btn-lg" href="#piloto">Solicitar prueba de 14 días <span aria-hidden="true">→</span></a>
-            <a class="btn btn-light-ghost btn-lg" href="demo.html">▶ Ver demostración en vivo</a>
-          </div>
-          <p class="hero-note">0% comisión por venta · Sin descargar aplicaciones · Implementación en 48 horas</p>
+        <div class="hero-ctas">
+          <a class="btn btn-primary btn-lg" href="#contacto">Solicitar cotización personalizada <span aria-hidden="true">→</span></a>
+          <a class="btn btn-light-ghost btn-lg" href="#demo-video" data-play-demo>▶ Ver demo en video</a>
         </div>
+        <p class="hero-note">0% comisión por venta · Sin descargar aplicaciones · Solución a medida para tu local</p>
+      </div>
+    </section>
 
-        <aside class="hero-phone" aria-label="Video de presentación de SaleListo">
-          <div class="phone" id="spot">
-            <div class="phone-notch" aria-hidden="true"></div>
-            <div class="phone-screen">
-              <video id="spot-video" muted loop playsinline preload="metadata" poster="media/spot-salelisto-poster.jpg">
-                <source src="media/spot-salelisto.mp4" type="video/mp4">
-              </video>
-              <div class="spot-fallback" aria-hidden="true">
-                <img src="mark.svg" alt="" width="64" height="64">
-                <span>Presentación SaleListo · 30 s</span>
-              </div>
-              <button class="spot-sound" id="spot-sound" type="button" aria-pressed="false">
-                <span class="spot-sound-ico" aria-hidden="true">🔊</span>
-                <span class="spot-sound-label">Activar audio</span>
-              </button>
-              <div class="spot-bar">
-                <button class="spot-play" id="spot-play" type="button" aria-label="Pausar video">
-                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/><path class="i-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
-                </button>
-                <div class="spot-progress" aria-hidden="true"><span id="spot-progress"></span></div>
-                <span class="spot-tag">30 s</span>
+    <!-- ============================== VIDEO DEMO CONCEPTUAL 16:9 ============================== -->
+    <section class="demo-video" id="demo-video" aria-labelledby="dv-title">
+      <div class="wrap">
+        <div class="dv-stage">
+          <div class="dv-player is-idle is-muted" id="dv-player">
+            <div class="dv-fallback" aria-hidden="true">
+              <img src="mark.svg" alt="" width="56" height="56">
+              <span>Video demo SaleListo</span>
+            </div>
+            <video id="demo-conceptual-video" playsinline muted preload="metadata" poster="media/demo-conceptual-poster.jpg" aria-label="Video demo conceptual de SaleListo: del pedido por QR a la cocina, la barra y el pase">
+              <source src="media/demo-conceptual-salelisto.mp4" type="video/mp4">
+            </video>
+            <div class="dv-scrim" aria-hidden="true"></div>
+
+            <button class="dv-big" id="dv-big" type="button" aria-label="Reproducir el video demo con audio desde el inicio">
+              <span class="dv-big-ico" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5.2v13.6L19 12z" fill="currentColor"/></svg>
+              </span>
+              <span class="dv-big-txt">
+                <strong>Ver demo con audio</strong>
+                <small>Recorrido completo en 35 segundos</small>
+              </span>
+            </button>
+
+            <div class="dv-end" id="dv-end" hidden>
+              <p>¿Te imaginás tu salón funcionando así?</p>
+              <div class="dv-end-actions">
+                <a class="btn btn-primary btn-lg" href="#contacto">Solicitar cotización personalizada <span aria-hidden="true">→</span></a>
+                <button class="btn btn-light-ghost btn-lg" type="button" id="dv-replay">↺ Ver de nuevo</button>
               </div>
             </div>
+
+            <div class="dv-bar" id="dv-bar">
+              <button class="dv-btn dv-play is-paused" id="dv-play" type="button" aria-label="Reproducir video">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/><path class="i-play" d="M8 5.5v13l10.5-6.5z" fill="currentColor"/></svg>
+              </button>
+              <span class="dv-time" id="dv-time" aria-hidden="true">0:00 / 0:35</span>
+              <input class="dv-seek" id="dv-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Progreso del video demo">
+              <button class="dv-btn dv-sound" id="dv-sound" type="button" aria-pressed="false" aria-label="Activar audio">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path class="i-on" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path class="i-off" d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                <span class="dv-sound-label">Activar audio</span>
+              </button>
+              <button class="dv-btn dv-fs" id="dv-fs" type="button" aria-label="Ver en pantalla completa">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path class="i-enter" d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path class="i-exit" d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+            </div>
           </div>
-        </aside>
+        </div>
+
+        <div class="dv-caption">
+          <div>
+            <p class="eyebrow">Video demo</p>
+            <h2 id="dv-title">Así se vive un servicio con SaleListo, <span class="hl-accent">de la mesa a la cocina.</span></h2>
+          </div>
+          <ul class="dv-points">
+            <li><span>01</span> El cliente pide y paga desde el QR de su mesa</li>
+            <li><span>02</span> Cocina y Barra reciben cada comanda por separado</li>
+            <li><span>03</span> El mozo entrega y cobra en un solo viaje</li>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -114,7 +150,7 @@
     <section class="section flow-compact" id="como-funciona" aria-labelledby="flow-title">
       <div class="wrap">
         <div class="section-head reveal">
-          <p class="eyebrow">Funcionamiento</p>
+          <p class="eyebrow">Cómo funciona</p>
           <h2 id="flow-title">Del código QR a la mesa, <span class="hl-accent">sin fricciones.</span></h2>
         </div>
 
@@ -155,7 +191,7 @@
 
         <div class="section-foot reveal">
           <a class="link-arrow" href="producto.html">Explorar pantallas y distribución por sectores <span aria-hidden="true">→</span></a>
-          <a class="link-arrow link-muted" href="demo.html">Abrir simulador interactivo <span aria-hidden="true">→</span></a>
+          <a class="link-arrow link-muted" href="#demo-video">▶ Ver demo en video <span aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
@@ -165,16 +201,16 @@
       <div class="wrap">
         <div class="section-head reveal">
           <p class="eyebrow eyebrow-light">Operación en salón</p>
-          <h2 id="dark-title">Servicio coordinado sin teléfonos en el salón.</h2>
-          <p class="section-lead lead-light">Dos modalidades operativas para coordinar al equipo sin utilizar dispositivos móviles frente al comensal.</p>
+          <h2 id="dark-title">Tu equipo atiende sin celulares en la mano.</h2>
+          <p class="section-lead lead-light">Una pantalla fija en el Pase y una comandera sincronizada para Cocina y Barra coordinan todo el servicio, sin dispositivos móviles frente al comensal.</p>
         </div>
 
         <div class="modes">
           <article class="mode reveal">
             <div class="mode-head">
-              <span class="pill pill-ok">Incluido en todos los planes</span>
+              <span class="pill pill-ok">Incluida en cada instalación</span>
               <h3>Estación fija en el Pase</h3>
-              <p>Una tablet o monitor en el mostrador con una columna por mozo, legible a 4 metros. Sin inversión adicional en equipamiento.</p>
+              <p>Una pantalla horizontal en el mostrador con una columna por mozo, legible a 4 metros. Cada uno ve qué retirar, qué mesa llama y qué cuenta cobrar.</p>
             </div>
             <figure class="mode-diagram" aria-label="Diagrama: pantalla del pase con una columna por mozo">
               <svg viewBox="0 0 440 230" role="img" aria-labelledby="dg1-t">
@@ -211,182 +247,126 @@
                 <text x="383" y="228" font-family="Plus Jakarta Sans, sans-serif" font-size="12" font-weight="800" fill="#FAF7F2" text-anchor="middle">legible a 4 m</text>
               </svg>
             </figure>
-            <a class="link-arrow link-light" href="pase.html">Abrir vista de Estación de Pase <span aria-hidden="true">→</span></a>
+            <a class="link-arrow link-light" href="pase.html">Ver la Estación del Pase <span aria-hidden="true">→</span></a>
           </article>
 
-          <article class="mode mode-alt reveal">
+          <article class="mode reveal">
             <div class="mode-head">
-              <span class="pill pill-accent-dark">Opcional para patios y terrazas</span>
-              <h3>Pulsera vibradora Xiaomi Band</h3>
-              <p>El teléfono permanece bloqueado en el bolsillo y cada notificación llega de forma discreta a la muñeca. Autonomía de hasta 14 días y resistencia al agua.</p>
+              <span class="pill pill-accent-dark">Cocina · Barra · Mostrador</span>
+              <h3>Comandera sincronizada de Cocina y Barra</h3>
+              <p>Cada pedido se divide solo: platos a Cocina, bebidas a Barra o Mostrador. Cuando una estación marca listo, el aviso aparece al instante en la columna del mozo en el Pase.</p>
             </div>
-            <figure class="mode-diagram" aria-label="Diagrama: pulsera con aviso T2 retirar barra">
+            <figure class="mode-diagram" aria-label="Diagrama: un pedido de mesa dividido entre Cocina y Barra que avisa al Pase">
               <svg viewBox="0 0 440 230" role="img" aria-labelledby="dg2-t">
-                <title id="dg2-t">Pulsera vibradora mostrando el aviso T2 Retirar Barra</title>
-                <g stroke="#D9412B" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.9">
-                  <path class="wave w-a" d="M118 78 C104 98 104 132 118 152"/>
-                  <path class="wave w-b" d="M98 64 C78 94 78 136 98 166"/>
-                  <path class="wave w-a" d="M262 78 C276 98 276 132 262 152"/>
-                  <path class="wave w-b" d="M282 64 C302 94 302 136 282 166"/>
-                </g>
-                <rect x="160" y="0" width="60" height="230" rx="26" fill="#38322E"/>
-                <rect x="140" y="52" width="100" height="126" rx="40" fill="#0F0D0C" stroke="#57534E" stroke-width="2"/>
-                <rect x="152" y="66" width="76" height="98" rx="30" fill="#1C1917"/>
-                <g font-family="Plus Jakarta Sans, sans-serif" text-anchor="middle">
-                  <text x="190" y="102" font-size="22">🍸</text>
-                  <text x="190" y="126" font-size="15" font-weight="800" fill="#FAF7F2">T2</text>
-                  <text x="190" y="144" font-size="10" font-weight="700" fill="#C4B5FD">Retirar Barra</text>
-                </g>
-                <g transform="translate(328 58)">
-                  <rect x="18" y="4" width="48" height="72" rx="9" fill="#0F0D0C" stroke="#57534E" stroke-width="2"/>
-                  <path d="M36 28 v-4 a6 6 0 0 1 12 0 v4" stroke="#FAF7F2" stroke-width="2" fill="none"/>
-                  <rect x="34" y="28" width="16" height="12" rx="2.5" fill="#FAF7F2"/>
-                  <path d="M8 46 H76 V82 C76 96 64 106 42 108 C20 106 8 96 8 82 Z" fill="#26221F" stroke="#38322E" stroke-width="2"/>
-                  <path d="M14 54 H70" stroke="#57534E" stroke-width="1.5" stroke-dasharray="4 3"/>
-                  <text x="42" y="124" font-family="Plus Jakarta Sans, sans-serif" font-size="9.5" font-weight="700" fill="rgba(250,247,242,0.82)" text-anchor="middle">teléfono bloqueado</text>
-                  <text x="42" y="136" font-family="Plus Jakarta Sans, sans-serif" font-size="9.5" font-weight="700" fill="rgba(250,247,242,0.68)" text-anchor="middle">en el bolsillo</text>
-                </g>
-                <g transform="translate(18 92)" font-family="Plus Jakarta Sans, sans-serif" font-weight="800">
-                  <text x="0" y="0" font-size="26" fill="#FAF7F2">14</text>
-                  <text x="0" y="18" font-size="10" fill="rgba(250,247,242,0.75)">días de</text>
-                  <text x="0" y="31" font-size="10" fill="rgba(250,247,242,0.75)">batería</text>
+                <title id="dg2-t">El pedido de la mesa T4 se divide entre Cocina y Barra y ambas avisan al Pase</title>
+                <g font-family="Plus Jakarta Sans, sans-serif" font-weight="800">
+                  <rect x="8" y="62" width="64" height="108" rx="12" fill="#0F0D0C" stroke="#57534E" stroke-width="2"/>
+                  <rect x="15" y="72" width="50" height="88" rx="6" fill="#FAF7F2"/>
+                  <text x="40" y="88" font-size="9" fill="#1C1917" text-anchor="middle">Mesa T4</text>
+                  <rect x="20" y="95" width="40" height="9" rx="3" fill="#FEF1DC"/>
+                  <rect x="20" y="108" width="40" height="9" rx="3" fill="#EFEAFE"/>
+                  <rect x="20" y="121" width="40" height="9" rx="3" fill="#FEF1DC"/>
+                  <rect x="20" y="140" width="40" height="13" rx="4" fill="#D9412B"/>
+                  <text x="40" y="149.5" font-size="7" fill="#FFFFFF" text-anchor="middle">Pedir</text>
+
+                  <path class="flow-line" d="M76 104 C104 104 104 58 132 58" stroke="#D97706" stroke-width="2.5" fill="none" stroke-dasharray="6 5"/>
+                  <path class="flow-line" d="M76 128 C104 128 104 172 132 172" stroke="#A78BFA" stroke-width="2.5" fill="none" stroke-dasharray="6 5"/>
+
+                  <rect x="134" y="14" width="168" height="90" rx="10" fill="#26221F" stroke="#38322E" stroke-width="2"/>
+                  <text x="146" y="34" font-size="10.5" fill="#FBBF24">🍳 COCINA</text>
+                  <rect x="146" y="44" width="70" height="48" rx="6" fill="#FAF7F2"/>
+                  <text x="153" y="59" font-size="9" fill="#1C1917">T4</text>
+                  <text x="153" y="72" font-size="7.5" fill="#57534E">Provoleta</text>
+                  <text x="153" y="84" font-size="7.5" fill="#57534E">Bife a punto</text>
+                  <rect x="222" y="44" width="70" height="48" rx="6" fill="#FAF7F2"/>
+                  <text x="229" y="59" font-size="9" fill="#1C1917">T7</text>
+                  <text x="229" y="72" font-size="7.5" fill="#57534E">Milanesa</text>
+                  <rect x="229" y="78" width="56" height="10" rx="3" fill="#2F8A57"/>
+                  <text x="257" y="85.5" font-size="6.5" fill="#FFFFFF" text-anchor="middle">✔ Listo</text>
+
+                  <rect x="134" y="126" width="168" height="90" rx="10" fill="#26221F" stroke="#38322E" stroke-width="2"/>
+                  <text x="146" y="146" font-size="10.5" fill="#C4B5FD">🍸 BARRA</text>
+                  <rect x="146" y="156" width="70" height="48" rx="6" fill="#FAF7F2"/>
+                  <text x="153" y="171" font-size="9" fill="#1C1917">T4</text>
+                  <text x="153" y="184" font-size="7.5" fill="#57534E">2 IPA pinta</text>
+                  <rect x="153" y="190" width="56" height="10" rx="3" fill="#2F8A57"/>
+                  <text x="181" y="197.5" font-size="6.5" fill="#FFFFFF" text-anchor="middle">✔ Listo</text>
+                  <rect x="222" y="156" width="70" height="48" rx="6" fill="#FAF7F2"/>
+                  <text x="229" y="171" font-size="9" fill="#1C1917">T2</text>
+                  <text x="229" y="184" font-size="7.5" fill="#57534E">Fernet x2</text>
+
+                  <path class="flow-line" d="M304 59 C328 59 328 104 352 104" stroke="#4ADE80" stroke-width="2.5" fill="none" stroke-dasharray="6 5"/>
+                  <path class="flow-line" d="M304 171 C328 171 328 126 352 126" stroke="#4ADE80" stroke-width="2.5" fill="none" stroke-dasharray="6 5"/>
+
+                  <rect x="352" y="88" width="80" height="54" rx="10" fill="#2F8A57"/>
+                  <text x="392" y="108" font-size="10" fill="#FFFFFF" text-anchor="middle">🛎️ PASE</text>
+                  <text x="392" y="126" font-size="9" fill="#E3F3EA" text-anchor="middle">T4 · Retirar</text>
+                  <text x="392" y="164" font-size="9.5" fill="rgba(250,247,242,0.78)" text-anchor="middle">un aviso,</text>
+                  <text x="392" y="177" font-size="9.5" fill="rgba(250,247,242,0.78)" text-anchor="middle">un solo retiro</text>
                 </g>
               </svg>
             </figure>
-            <a class="link-arrow link-light" href="mozo.html">Abrir vista de Modo Pulsera <span aria-hidden="true">→</span></a>
+            <a class="link-arrow link-light" href="cocina.html">Ver la Comandera de Cocina y Barra <span aria-hidden="true">→</span></a>
           </article>
         </div>
       </div>
     </section>
 
-    <!-- ============================== PLANES RESUMIDOS ============================== -->
-    <section class="section plans" id="planes" aria-labelledby="plans-title">
-      <div class="wrap">
-        <div class="section-head section-head-center reveal">
-          <p class="eyebrow">Planes</p>
-          <h2 id="plans-title">Abono mensual fijo. <span class="hl-accent">0% comisión.</span></h2>
-          <p class="section-lead">El 100% de lo facturado en sus mesas queda íntegramente en su establecimiento.</p>
-          <div class="currency" role="group" aria-label="Moneda de los precios">
-            <button type="button" class="cur-btn" data-cur="ars" aria-pressed="true">Pesos (ARS)</button>
-            <button type="button" class="cur-btn" data-cur="usd" aria-pressed="false">USD ref.</button>
-          </div>
-        </div>
-
-        <div class="plan-grid">
-          <article class="plan reveal">
-            <h3>Barra / Café</h3>
-            <p class="plan-for">Cafeterías y bares de menor escala</p>
-            <p class="plan-price"><span class="price" data-usd="75" data-ars="121100">ARS 121.100</span><small>/mes</small></p>
-            <p class="plan-alt" data-usd-alt="75">USD 75/mes de referencia</p>
-            <ul class="plan-list">
-              <li>Hasta <strong>12 mesas</strong> y 2 sectores</li>
-              <li><strong>Estación de Pase</strong> incluida</li>
-              <li>Distribución a Cocina, Barra y Mostrador</li>
-              <li>Actualización masiva de precios por %</li>
-            </ul>
-            <a class="btn btn-ghost btn-block plan-cta" href="#piloto" data-plan="Barra / Café">Seleccionar Barra / Café</a>
-          </article>
-
-          <article class="plan plan-star reveal">
-            <span class="plan-badge">Más elegido</span>
-            <h3>Salón / Bistró</h3>
-            <p class="plan-for">Restaurantes, pizzerías y cervecerías</p>
-            <p class="plan-price"><span class="price" data-usd="139" data-ars="224500">ARS 224.500</span><small>/mes</small></p>
-            <p class="plan-alt" data-usd-alt="139">USD 139/mes de referencia</p>
-            <ul class="plan-list">
-              <li>Hasta <strong>30 mesas</strong> y 5 sectores</li>
-              <li><strong>Mozos ilimitados</strong> y Modo Pulsera</li>
-              <li>3 estaciones y gestión de faltantes en un toque</li>
-              <li>Arqueo CSV completo y soporte prioritario</li>
-            </ul>
-            <a class="btn btn-primary btn-block plan-cta" href="#piloto" data-plan="Salón / Bistró">Seleccionar Salón / Bistró</a>
-          </article>
-
-          <article class="plan reveal">
-            <h3>Gran Salón</h3>
-            <p class="plan-for">Patios amplios, terrazas y parrillas (+30 mesas)</p>
-            <p class="plan-price"><span class="price" data-usd="239" data-ars="386000">ARS 386.000</span><small>/mes</small></p>
-            <p class="plan-alt" data-usd-alt="239">USD 239/mes de referencia, por sucursal</p>
-            <ul class="plan-list">
-              <li><strong>Mesas y sectores ilimitados</strong></li>
-              <li>Múltiples estaciones de pase por sector</li>
-              <li>Métricas de tiempos y propinas por mozo</li>
-              <li>Soporte dedicado y capacitación continua</li>
-            </ul>
-            <a class="btn btn-ghost btn-block plan-cta" href="#piloto" data-plan="Gran Salón / Multisede">Seleccionar Gran Salón</a>
-          </article>
-        </div>
-
-        <div class="sublink-bar reveal">
-          <span>¿Desea calcular el retorno mensual estimado o consultar los kits físicos y preguntas frecuentes?</span>
-          <a class="btn btn-ghost btn-sm" href="planes.html">Ver calculadora ROI, kits y consultas →</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================== PILOTO ============================== -->
-    <section class="section pilot" id="piloto" aria-labelledby="pilot-title">
-      <div class="wrap pilot-grid">
-        <div class="pilot-copy reveal">
-          <p class="eyebrow eyebrow-light">Prueba piloto de 14 días</p>
-          <h2 id="pilot-title">Evalúe el sistema en un sector de su local.</h2>
-          <p class="section-lead lead-light">Realizamos la puesta en marcha en 48 horas en su terraza, patio o salón principal para medir resultados concretos en servicio real antes de contratar.</p>
-          <div class="pilot-contact">
+    <!-- ============================== CONTACTO · COTIZACIÓN PERSONALIZADA ============================== -->
+    <section class="section contact" id="contacto" aria-labelledby="contact-title">
+      <div class="wrap contact-grid">
+        <div class="contact-copy reveal">
+          <p class="eyebrow eyebrow-light">Cotización personalizada</p>
+          <h2 id="contact-title">Contactate con nosotros</h2>
+          <p class="section-lead lead-light">Contanos brevemente sobre tu local y te preparamos una cotización personalizada.</p>
+          <ul class="contact-points">
+            <li><span aria-hidden="true">1</span><div><strong>Conocemos tu operación</strong><small>Salón, sectores, estaciones de Cocina y Barra y forma de cobro.</small></div></li>
+            <li><span aria-hidden="true">2</span><div><strong>Te enviamos una propuesta a medida</strong><small>Configurada para tu local, con 0% de comisión por venta.</small></div></li>
+            <li><span aria-hidden="true">3</span><div><strong>Te acompañamos en la puesta en marcha</strong><small>Instalación, códigos QR de mesas y capacitación del equipo.</small></div></li>
+          </ul>
+          <div class="contact-links">
             <a href="https://wa.me/541138436571" target="_blank" rel="noopener"><span aria-hidden="true">💬</span> (+54)1138436571</a>
             <a href="mailto:ventas@salelisto.com"><span aria-hidden="true">✉️</span> ventas@salelisto.com</a>
             <a href="mailto:consultas@salelisto.com"><span aria-hidden="true">✉️</span> consultas@salelisto.com</a>
           </div>
         </div>
 
-        <div class="pilot-card reveal">
+        <div class="contact-card reveal">
           <form class="lead-form" id="lead-form" novalidate>
-            <h3>Solicitar prueba piloto</h3>
-            <p class="form-sub">Nuestro equipo comercial responderá en el día.</p>
+            <h3>Solicitá tu cotización personalizada</h3>
+            <p class="form-sub">Nuestro equipo te responderá en el día.</p>
             <div class="field-row">
               <div class="field">
                 <label for="lf-name">Nombre y apellido *</label>
                 <input id="lf-name" name="name" type="text" autocomplete="name" maxlength="80" required placeholder="Ej. Martín Gómez">
               </div>
               <div class="field">
-                <label for="lf-resto">Establecimiento *</label>
+                <label for="lf-resto">Nombre del local *</label>
                 <input id="lf-resto" name="restaurantName" type="text" autocomplete="organization" maxlength="100" required placeholder="Ej. Restaurante La Esquina">
               </div>
             </div>
-            <div class="field-row">
-              <div class="field">
-                <label for="lf-contact">WhatsApp o correo electrónico *</label>
-                <input id="lf-contact" name="contact" type="text" autocomplete="tel" maxlength="120" required placeholder="Teléfono o correo de contacto">
-              </div>
-              <div class="field">
-                <label for="lf-tables">Cantidad de mesas (opcional)</label>
-                <input id="lf-tables" name="tablesCount" type="number" inputmode="numeric" min="1" max="500" placeholder="Ej. 25">
-              </div>
+            <div class="field">
+              <label for="lf-contact">WhatsApp o correo electrónico *</label>
+              <input id="lf-contact" name="contact" type="text" autocomplete="email" maxlength="120" required placeholder="Teléfono con código de área o correo">
             </div>
             <div class="field">
-              <label for="lf-plan">Plan de interés</label>
-              <select id="lf-plan" name="planInterest">
-                <option value="Todavía no sé">Requiero asesoramiento para elegir el plan</option>
-                <option value="Barra / Café">Barra / Café</option>
-                <option value="Salón / Bistró">Salón / Bistró</option>
-                <option value="Gran Salón / Multisede">Gran Salón / Multisede</option>
-              </select>
+              <label for="lf-msg">Comentario (opcional)</label>
+              <textarea id="lf-msg" name="message" rows="2" maxlength="800" placeholder="Contanos brevemente sobre tu local o consulta (opcional)"></textarea>
             </div>
-            <input type="hidden" id="lf-zone" name="zone" value="">
-            <input type="hidden" id="lf-msg" name="message" value="">
             <p class="form-error" id="lf-error" role="alert" hidden></p>
-            <button class="btn btn-primary btn-block btn-lg" type="submit" id="lf-submit">Solicitar prueba de 14 días</button>
+            <button class="btn btn-primary btn-block btn-lg" type="submit" id="lf-submit">Quiero que me contacten</button>
           </form>
 
           <div class="lead-done" id="lead-done" hidden tabindex="-1">
             <div class="done-ico" aria-hidden="true">
               <svg viewBox="0 0 64 64" width="64" height="64"><circle cx="32" cy="32" r="30" fill="#E3F3EA"/><path d="M20 33l8 8 16-17" stroke="#2F8A57" stroke-width="4.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <h3 id="done-title">Solicitud registrada.</h3>
-            <p id="done-text">Su consulta fue registrada correctamente. Si lo desea, puede iniciar contacto directo por WhatsApp.</p>
+            <h3 id="done-title">¡Gracias! Recibimos tu consulta.</h3>
+            <p id="done-text">Nuestro equipo te va a contactar en el día con tu cotización personalizada. Si preferís, escribinos ahora por WhatsApp.</p>
             <div class="done-summary" id="done-summary"></div>
-            <a class="btn btn-wa btn-block btn-lg" id="done-wa" href="https://wa.me/541138436571" target="_blank" rel="noopener">💬 Contactar por WhatsApp</a>
+            <a class="btn btn-wa btn-block btn-lg" id="done-wa" href="https://wa.me/541138436571" target="_blank" rel="noopener">💬 Escribir por WhatsApp</a>
             <a class="btn btn-ghost btn-block" id="done-mail" href="mailto:ventas@salelisto.com">✉️ Enviar a ventas@salelisto.com</a>
-            <button class="done-reset" type="button" id="done-reset">Registrar otra consulta</button>
+            <button class="done-reset" type="button" id="done-reset">Enviar otra consulta</button>
           </div>
         </div>
       </div>
@@ -399,20 +379,20 @@
       <div class="footer-top">
         <div class="footer-brand">
           <img src="logo.svg" alt="SaleListo" width="142" height="38">
-          <p>Pedidos mediante código QR, comandas distribuidas entre Cocina y Barra, y coordinación de salón sin teléfonos en mano.</p>
+          <p>Pedidos mediante código QR, comandas separadas para Cocina y Barra, y un salón que se atiende sin celulares en la mano.</p>
         </div>
         <nav class="footer-col" aria-label="Navegación">
           <h4>SaleListo</h4>
+          <a href="#como-funciona">Cómo funciona</a>
+          <a href="#demo-video">Video demo</a>
           <a href="producto.html">Producto y pantallas</a>
-          <a href="planes.html">Planes, kits y ROI</a>
-          <a href="planes.html#preguntas">Preguntas frecuentes</a>
-          <a href="demo.html">Demostración interactiva</a>
+          <a href="#contacto">Solicitar cotización</a>
         </nav>
         <nav class="footer-col" aria-label="Acceso rápido">
           <h4>Pantallas</h4>
           <a href="pase.html">Estación de Mozos</a>
           <a href="cocina.html">Cocina y Barra</a>
-          <a href="restaurante.html?demo=1">Panel Encargado</a>
+          <a href="restaurante.html?demo=1">Panel de Administración</a>
           <a href="qr.html">Códigos QR de mesas</a>
           <a class="footer-access" href="operacion.html">🔒 Acceso Local</a>
         </nav>
@@ -425,12 +405,12 @@
       </div>
       <div class="footer-bottom">
         <span>© <span id="year">2026</span> SaleListo · <a href="https://salelisto.com" style="color:inherit;text-decoration:none">salelisto.com</a></span>
-        <span>Precios netos · <span class="fx-rate-note">1 USD = ARS 1.615 (Dólar oficial venta)</span></span>
+        <span>0% comisión por venta · Solución a medida para tu local</span>
       </div>
     </div>
   </footer>
 
-  <a class="wa-float" href="https://wa.me/541138436571?text=Hola%20SaleListo%2C%20deseo%20recibir%20informaci%C3%B3n%20sobre%20la%20prueba%20piloto%20de%2014%20d%C3%ADas." target="_blank" rel="noopener" aria-label="Contactar por WhatsApp a SaleListo">
+  <a class="wa-float" href="https://wa.me/541138436571?text=Hola%20SaleListo%2C%20quiero%20solicitar%20una%20cotizaci%C3%B3n%20personalizada%20para%20mi%20local." target="_blank" rel="noopener" aria-label="Contactar por WhatsApp a SaleListo">
     <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M20.52 3.48A11.82 11.82 0 0 0 12.06 0C5.5 0 .16 5.33.16 11.9c0 2.1.55 4.14 1.6 5.95L0 24l6.33-1.66a11.86 11.86 0 0 0 5.73 1.46h.01c6.56 0 11.9-5.34 11.9-11.9 0-3.18-1.24-6.17-3.45-8.42ZM12.07 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.76.99 1-3.66-.23-.37a9.85 9.85 0 0 1-1.51-5.27c0-5.45 4.44-9.89 9.9-9.89 2.64 0 5.13 1.03 7 2.9a9.82 9.82 0 0 1 2.9 7c0 5.45-4.44 9.89-9.9 9.89Zm5.43-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.21-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35Z"/></svg>
     <span class="wa-float-label">WhatsApp</span>
   </a>

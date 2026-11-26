@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>SaleListo · Video Demo Conceptual 1920x1080</title>
+<style>
+@font-face { font-family: 'PJS'; src: url('../../video-ad/v2/assets/fonts/PJS-700.ttf'); font-weight: 700; }
+@font-face { font-family: 'PJS'; src: url('../../video-ad/v2/assets/fonts/PJS-800.ttf'); font-weight: 800; }
+:root {
+  --bg: #faf7f2; --line: #e6dfd3; --ink: #1c1917; --mute: #6b625b; --acc: #d9412b; --acc-soft: #fceae6;
+  --ok: #2f8a57; --ok-soft: #e3f3ea; --kit: #d97706; --kit-soft: #fdf0dc; --bar: #6d28d9; --bar-soft: #efe8fd;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1920px; height: 1080px; overflow: hidden; background: #1c1917; }
+body { font-family: 'PJS', sans-serif; font-weight: 700; -webkit-font-smoothing: antialiased; color: var(--ink); }
+.abs { position: absolute; }
+#vp { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; background: #1c1917; }
+.layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: hidden; }
+.layer img { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; object-fit: cover; transform-origin: 50% 50%; }
+.layer .veil { position: absolute; inset: 0; }
+.layer .warm { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, rgba(120, 60, 30, 0.10), rgba(28, 25, 23, 0.30) 85%); }
+.layer .cream { position: absolute; inset: 0; background: rgba(250, 247, 242, 0.86); }
+
+/* ---------- barra superior + stepper ---------- */
+#top { position: absolute; left: 140px; top: 40px; width: 1640px; height: 92px; border-radius: 46px; background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 2px 6px rgba(28, 25, 23, 0.10), 0 18px 44px -10px rgba(0, 0, 0, 0.35); }
+#top .logo { position: absolute; left: 34px; top: 24px; height: 44px; }
+#steps { position: absolute; right: 14px; top: 14px; height: 64px; display: flex; align-items: center; }
+.step { position: relative; display: flex; align-items: center; gap: 12px; height: 64px; padding: 0 22px 0 9px; border-radius: 32px; }
+.step .pill { position: absolute; inset: 0; border-radius: 32px; background: var(--acc-soft); border: 2px solid #f5c9bf; }
+.step .c { position: relative; width: 46px; height: 46px; border-radius: 50%; flex: none; }
+.step .c span, .step .c svg { position: absolute; left: 0; top: 0; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #fff; }
+.step .l { position: relative; font-size: 24px; font-weight: 800; white-space: nowrap; letter-spacing: -0.01em; }
+.conn { position: relative; width: 26px; height: 4px; border-radius: 2px; background: #e6dfd3; margin: 0 3px; overflow: hidden; flex: none; }
+.conn i { position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: var(--ok); }
+
+/* ---------- escenario ---------- */
+#stage { position: absolute; left: 140px; top: 156px; width: 1640px; height: 800px; border-radius: 40px; overflow: hidden;
+  background: radial-gradient(ellipse at 30% 0%, #ffffff 0%, #fbf8f3 45%, #f6f1e9 100%);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.20), 0 40px 90px -20px rgba(0, 0, 0, 0.55); }
+.scene { position: absolute; left: 0; top: 0; width: 1640px; height: 800px; }
+.eb { position: absolute; font-size: 22px; font-weight: 800; letter-spacing: 0.14em; color: var(--acc); white-space: nowrap; }
+.hl { position: absolute; font-size: 54px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.08; white-space: nowrap; color: var(--ink); }
+.card { position: absolute; background: #fff; border-radius: 32px; border: 1px solid #ece5da;
+  box-shadow: 0 1px 2px rgba(28, 25, 23, 0.04), 0 18px 44px -14px rgba(28, 25, 23, 0.18); }
+.badge { position: absolute; display: flex; align-items: center; gap: 14px; height: 72px; padding: 0 30px 0 22px; border-radius: 36px;
+  font-size: 28px; font-weight: 800; white-space: nowrap; letter-spacing: -0.01em; }
+.badge.ok { background: var(--ok); color: #fff; box-shadow: 0 14px 30px -10px rgba(47, 138, 87, 0.65); }
+.badge .ic { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.22); display: flex; align-items: center; justify-content: center; flex: none; }
+
+/* ---------- celular ---------- */
+.phone { position: absolute; width: 470px; height: 760px; border-radius: 64px; background: #1c1917; padding: 13px;
+  box-shadow: 0 2px 0 1px #3a3330 inset, 0 30px 60px -18px rgba(28, 25, 23, 0.55), 0 10px 20px rgba(28, 25, 23, 0.15); }
+.screen { position: relative; width: 444px; height: 734px; border-radius: 52px; background: #faf7f2; overflow: hidden; }
+.notch { position: absolute; left: 162px; top: 14px; width: 120px; height: 32px; border-radius: 16px; background: #1c1917; }
+.ph-head { position: absolute; left: 26px; top: 62px; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; white-space: nowrap; }
+.ph-sub { position: absolute; left: 26px; font-size: 22px; font-weight: 700; color: var(--mute); white-space: nowrap; }
+.chip { position: absolute; height: 48px; padding: 0 20px; border-radius: 24px; border: 2px solid var(--line); background: #fff; display: flex; align-items: center; gap: 8px;
+  font-size: 22px; font-weight: 800; white-space: nowrap; }
+.item { position: absolute; left: 22px; width: 400px; height: 106px; border-radius: 24px; background: #fff; border: 2px solid #ece5da; }
+.item .th { position: absolute; left: 14px; top: 20px; width: 62px; height: 62px; border-radius: 18px; }
+.item .nm { position: absolute; left: 92px; top: 18px; font-size: 26px; font-weight: 800; letter-spacing: -0.015em; white-space: nowrap; }
+.item .pr { position: absolute; left: 92px; top: 56px; font-size: 24px; font-weight: 700; color: var(--mute); white-space: nowrap; }
+.item .add { position: absolute; right: 14px; top: 27px; width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--line); background: #fff; }
+.item .add svg { position: absolute; left: -2px; top: -2px; }
+.item .ring { position: absolute; inset: -2px; border-radius: 24px; border: 4px solid var(--acc); }
+.btn { position: absolute; display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 800; white-space: nowrap; color: #fff; }
+.tap { position: absolute; width: 96px; height: 96px; border-radius: 50%; background: rgba(28, 25, 23, 0.16); border: 4px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(28, 25, 23, 0.18); }
+
+/* ---------- D2 comanderas ---------- */
+.kds { position: absolute; width: 660px; height: 360px; border-radius: 28px; background: #1c1917; padding: 12px; }
+.kds .in { position: relative; width: 636px; height: 336px; border-radius: 18px; background: #f5f1ea; overflow: hidden; }
+.kds .hd { position: absolute; left: 0; top: 0; width: 636px; height: 58px; display: flex; align-items: center; padding: 0 22px; gap: 12px; color: #fff; }
+.kds .hd b { font-size: 26px; font-weight: 800; letter-spacing: 0.08em; }
+.kds .hd em { margin-left: auto; font-style: normal; font-size: 22px; font-weight: 700; opacity: 0.85; }
+.kds .wait { position: absolute; left: 0; top: 176px; width: 636px; text-align: center; font-size: 24px; color: #a39a90; }
+.kds .tk { position: absolute; left: 20px; top: 74px; width: 596px; height: 246px; border-radius: 20px; background: #fff; border: 2px solid #ece5da; overflow: hidden; }
+.kds .tk .bar { position: absolute; left: 0; top: 0; bottom: 0; width: 10px; }
+.kds .t4 { position: absolute; left: 30px; top: 18px; height: 42px; padding: 0 14px; border-radius: 12px; background: #1c1917; color: #fff; font-size: 26px; font-weight: 800; display: flex; align-items: center; }
+.kds .sub { position: absolute; left: 112px; top: 26px; font-size: 22px; color: var(--mute); white-space: nowrap; }
+.kds .tm { position: absolute; right: 18px; top: 16px; height: 46px; padding: 0 16px 0 12px; border-radius: 23px; background: var(--ok-soft); color: var(--ok); font-size: 28px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.kds .ln { position: absolute; left: 30px; font-size: 28px; font-weight: 800; white-space: nowrap; display: flex; align-items: center; gap: 12px; letter-spacing: -0.01em; }
+.kds .ln i { font-style: normal; font-size: 22px; height: 36px; padding: 0 12px; border-radius: 18px; display: inline-flex; align-items: center; }
+.kds .mk { position: absolute; right: 18px; bottom: 16px; height: 56px; padding: 0 24px 0 16px; border-radius: 28px; font-size: 26px; font-weight: 800; display: flex; align-items: center; gap: 10px; border: 3px solid var(--ok); color: var(--ok); background: #fff; }
+
+/* ---------- D3 monitor del pase ---------- */
+.mon { position: absolute; width: 1060px; height: 540px; border-radius: 26px; background: #1c1917; padding: 16px; box-shadow: 0 30px 60px -20px rgba(28, 25, 23, 0.6); }
+.mon .in { position: relative; width: 1028px; height: 508px; border-radius: 14px; background: #161311; overflow: hidden; }
+.mon .hd { position: absolute; left: 0; top: 0; width: 1028px; height: 66px; border-bottom: 2px solid #2c2622; display: flex; align-items: center; padding: 0 24px; gap: 14px; color: #faf7f2; }
+.mon .hd b { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+.mon .hd em { margin-left: auto; font-style: normal; font-size: 26px; font-weight: 800; color: #d6cdc0; }
+.col { position: absolute; top: 82px; width: 318px; height: 410px; border-radius: 16px; background: #24201d; overflow: hidden; }
+.col .nm { position: absolute; left: 20px; top: 16px; font-size: 30px; font-weight: 800; letter-spacing: 0.06em; color: #faf7f2; }
+.col .ct { position: absolute; right: 18px; top: 18px; height: 34px; min-width: 34px; padding: 0 10px; border-radius: 17px; background: #3a332e; color: #faf7f2; font-size: 22px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+.col .ul { position: absolute; left: 20px; right: 20px; top: 64px; height: 4px; border-radius: 2px; background: #3a332e; }
+.pc { position: absolute; left: 14px; width: 290px; border-radius: 16px; }
+.pc.prep { height: 104px; background: #322b27; }
+.pc.prep b { position: absolute; left: 20px; top: 14px; font-size: 30px; font-weight: 800; color: #faf7f2; }
+.pc.prep span { position: absolute; left: 20px; top: 58px; font-size: 22px; color: #f2b25c; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
+.pc.prep span::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #f2b25c; }
+.pc.rdy { overflow: hidden; height: 200px; background: #183526; border: 3px solid #3fbf7a; }
+.pc.rdy b { position: absolute; left: 18px; top: 12px; font-size: 36px; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+.pc.rdy > span { position: absolute; left: 18px; top: 62px; font-size: 22px; color: #9fe6bd; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.pc.rdy .go { position: absolute; left: 14px; top: 116px; width: 256px; height: 64px; border-radius: 16px; background: #2f8a57; color: #fff; font-size: 26px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+/* ---------- cierre ---------- */
+#closing { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: none; }
+#closing .logo { position: absolute; left: 650px; top: 196px; width: 620px; height: 166px; }
+#cHead { position: absolute; left: 0; top: 430px; width: 1920px; text-align: center; font-size: 74px; font-weight: 800; letter-spacing: -0.035em; white-space: nowrap; color: var(--ink); }
+#cHead span { color: var(--acc); }
+#cBadge { position: absolute; left: 0; top: 566px; width: 1920px; display: flex; justify-content: center; }
+#cBadge span { display: inline-flex; align-items: center; height: 80px; padding: 0 42px; border-radius: 40px; background: var(--acc-soft); color: var(--acc); border: 2px solid #f5c9bf; font-size: 36px; font-weight: 800; letter-spacing: -0.01em; }
+#cCard { position: absolute; left: 190px; top: 714px; width: 1540px; height: 150px; background: #fff; border: 1px solid var(--line); border-radius: 36px;
+  box-shadow: 0 2px 4px rgba(28, 25, 23, 0.04), 0 24px 50px -12px rgba(28, 25, 23, 0.16); display: flex; align-items: center; justify-content: space-evenly; }
+#cCard .it { display: flex; align-items: center; gap: 18px; }
+#cCard .ic { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+#cCard .v { font-size: 38px; font-weight: 800; letter-spacing: -0.015em; white-space: nowrap; }
+#cCard .sep { width: 2px; height: 72px; background: var(--line); }
+</style>
+</head>
+<body>
+<div id="vp">
+  <div id="bg">
+    <div class="layer" id="L0"><img alt=""><div class="veil"></div><div class="warm"></div><div class="cream"></div></div>
+    <div class="layer" id="L1"><img alt=""><div class="veil"></div><div class="warm"></div><div class="cream"></div></div>
+  </div>
+  <div id="top"><img class="logo" src="../../video-ad/v2/assets/logo.svg" alt="SaleListo"><div id="steps"></div></div>
+  <div id="stage"></div>
+  <div id="closing">
+    <img class="logo" id="cLogo" src="../../video-ad/v2/assets/logo.svg" alt="SaleListo">
+    <div id="cHead">Cotización <span>personalizada</span> para tu local</div>
+    <div id="cBadge"><span>0% comisión por pedido</span></div>
+    <div id="cCard"></div>
+  </div>
+</div>
+
+<script>
+// ============================================================ helpers
+const ASSETS = '../../video-ad/v2/assets/';
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+function bezier(x1, y1, x2, y2) {
+  const bx = t => 3 * (1 - t) * (1 - t) * t * x1 + 3 * (1 - t) * t * t * x2 + t * t * t;
+  const by = t => 3 * (1 - t) * (1 - t) * t * y1 + 3 * (1 - t) * t * t * y2 + t * t * t;
+  return x => {
+    if (x <= 0) return 0; if (x >= 1) return 1;
+    let lo = 0, hi = 1, t = x;
+    for (let i = 0; i < 40; i++) { t = (lo + hi) / 2; if (bx(t) < x) lo = t; else hi = t; }
+    return clamp(by(t));
+  };
+}
+const ease = bezier(0.22, 1, 0.36, 1);          // curva maestra unica
+const inout = x => { x = clamp(x); return x * x * (3 - 2 * x); };
+const A = (t, t0, d = 0.5) => ease(clamp((t - t0) / d));
+const lin = (t, a, b) => clamp((t - a) / (b - a));
+const $ = id => document.getElementById(id);
+const hex = h => [1, 3, 5].map(i => parseInt(h.substr(i, 2), 16));
+const mix = (a, b, p) => { const x = hex(a), y = hex(b); return `rgb(${x.map((v, i) => Math.round(v + (y[i] - v) * clamp(p))).join(',')})`; };
+function op(e, o) { o = clamp(o); e.style.opacity = o.toFixed(4); e.style.visibility = o <= 0.002 ? 'hidden' : 'visible'; }
+function set(e, o, x = 0, y = 0, s = 1) { op(e, o); e.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${s.toFixed(4)})`; }
+const fmtARS = v => '$' + Math.round(v).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+const INK = '#1c1917', ACC = '#d9412b', OK = '#2f8a57', KIT = '#d97706', BAR = '#6d28d9', LINE = '#e6dfd3';
+// pulso de presion (1 -> 0.95 -> 1)
+const press = (t, t0) => 1 - 0.05 * Math.sin(Math.PI * clamp((t - t0 + 0.04) / 0.26));
+// anillo que se expande
+function ring(e, t, t0, dur = 0.75, grow = 0.12) { const u = (t - t0) / dur; if (u < 0 || u > 1) { op(e, 0); return; } set(e, 0.85 * (1 - u), 0, 0, 1 + grow * ease(u)); }
+// toque de dedo: lista de [t0, x, y]
+function tapFx(e, t, evs) {
+  for (const [t0, x, y] of evs) {
+    const u = (t - t0 + 0.08) / 0.62;
+    if (u >= 0 && u <= 1) {
+      const o = u < 0.15 ? u / 0.15 : 1 - (u - 0.15) / 0.85;
+      e.style.left = (x - 48) + 'px'; e.style.top = (y - 48) + 'px';
+      set(e, o, 0, 0, 0.55 + 0.75 * ease(u)); return;
+    }
+  }
+  op(e, 0);
+}
+// iconos
+const CK = (s, c = '#fff', w = 3) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="${c}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const PLUS = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 48 48"><path d="M24 15v18M15 24h18" stroke="${c}" stroke-width="3.5" stroke-linecap="round"/></svg>`;
+const CLOCK = c => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>`;
+const PERSON = c => `<svg width="34" height="34" viewBox="0 0 24 24" fill="${c}"><circle cx="12" cy="8" r="4.2"/><path d="M4 20.5c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>`;
+const CARD = c => `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9.5h19" /></svg>`;
+const CASH = c => `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.4" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.8"/></svg>`;
+const LEAF = c => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C5 10 10 5 20 4c0 9-5 15-13 15"/><path d="M5 19l7-7"/></svg>`;
+const WHEAT = c => `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></svg>`;
+const THUMB = {
+  bife: `<svg width="62" height="62" viewBox="0 0 62 62"><rect width="62" height="62" rx="18" fill="#f8e3d6"/><path d="M13 31c0-10 9-17 20-17 9 0 16 6 16 13 0 5-3 8-3 13 0 6-5 10-13 10-12 0-20-8-20-19z" fill="#a8482a"/><path d="M21 30c2-5 7-8 12-8" stroke="#f3d2bd" stroke-width="3" fill="none" stroke-linecap="round"/><circle cx="38" cy="37" r="4.5" fill="#f3d2bd"/></svg>`,
+  provo: `<svg width="62" height="62" viewBox="0 0 62 62"><rect width="62" height="62" rx="18" fill="#fdf0d2"/><circle cx="31" cy="32" r="19" fill="#f2b84a"/><circle cx="31" cy="32" r="19" fill="none" stroke="#c9801c" stroke-width="3"/><circle cx="25" cy="28" r="3.2" fill="#d99630"/><circle cx="36" cy="36" r="2.6" fill="#d99630"/><path d="M38 16c3 4 1 6 4 9" stroke="#2f8a57" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+  ipa: `<svg width="62" height="62" viewBox="0 0 62 62"><rect width="62" height="62" rx="18" fill="#fde9cc"/><path d="M20 19h22l-3 29a3 3 0 0 1-3 3H26a3 3 0 0 1-3-3z" fill="#f0a234"/><path d="M18 19c0-5 5-7 9-4 2-3 8-3 10 0 4-2 8 1 7 4z" fill="#fff" stroke="#e2d4bf" stroke-width="1.5"/><path d="M26 25l1 18" stroke="#fbd28b" stroke-width="3" stroke-linecap="round"/></svg>`,
+};
+function fakeQR(n = 25, px = 300, seed0 = 7) {
+  let seed = seed0; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const m = px / n; let s = '';
+  const finder = (x, y) => { s += `<rect x="${x * m}" y="${y * m}" width="${7 * m}" height="${7 * m}" rx="${m * 1.6}" fill="${INK}"/><rect x="${(x + 1) * m}" y="${(y + 1) * m}" width="${5 * m}" height="${5 * m}" rx="${m}" fill="#ffffff"/><rect x="${(x + 2) * m}" y="${(y + 2) * m}" width="${3 * m}" height="${3 * m}" rx="${m * 0.7}" fill="${INK}"/>`; };
+  for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) {
+    const inF = (x < 8 && y < 8) || (x > n - 9 && y < 8) || (x < 8 && y > n - 9);
+    const inC = x >= 9 && x <= 15 && y >= 9 && y <= 15;
+    if (!inF && !inC && rnd() < 0.5) s += `<rect x="${(x * m + 0.8).toFixed(2)}" y="${(y * m + 0.8).toFixed(2)}" width="${(m - 1.6).toFixed(2)}" height="${(m - 1.6).toFixed(2)}" rx="2.4" fill="${INK}"/>`;
+  }
+  finder(0, 0); finder(n - 7, 0); finder(0, n - 7);
+  return s;
+}
+// trazo que se dibuja
+function drawable(p) { const L = p.getTotalLength(); p.style.strokeDasharray = `${L} ${L}`; return pr => { p.style.strokeDashoffset = (L * (1 - clamp(pr))).toFixed(2); op(p, pr > 0.001 ? 1 : 0); }; }
+function dotOn(path, dot, u, o) { const L = path.getTotalLength(), q = path.getPointAtLength(L * clamp(u)); dot.setAttribute('cx', q.x.toFixed(2)); dot.setAttribute('cy', q.y.toFixed(2)); op(dot, o); }
+
+// ============================================================ marcado de escenas
+const PHONE_HEAD = `<div class="notch"></div>
+  <div class="ph-head">La Esquina <span style="color:${ACC}">· Mesa T4</span></div>`;
+
+function buildD1() {
+  const items = [['bife', 'Bife de chorizo', '$16.500'], ['provo', 'Provoleta', '$8.900'], ['ipa', '2× IPA tirada', '$7.200']];
+  return `
+  <div class="eb" style="left:96px;top:66px">PASO 01 · MESA QR</div>
+  <div class="hl" style="left:96px;top:100px">El cliente pide desde su mesa</div>
+  <div class="card" id="d1Card" style="left:96px;top:214px;width:540px;height:520px">
+    <div class="abs" style="left:34px;top:30px;display:flex;align-items:center;gap:14px;white-space:nowrap">
+      <span style="height:46px;padding:0 16px;border-radius:14px;background:${INK};color:#fff;font-size:28px;font-weight:800;display:flex;align-items:center">Mesa T4</span>
+      <span style="font-size:28px;font-weight:800;color:var(--mute)">· Terraza</span>
+    </div>
+    <div class="abs" style="left:120px;top:112px;width:300px;height:300px">
+      <svg width="300" height="300" viewBox="0 0 300 300">${fakeQR()}</svg>
+      <div class="abs" style="left:108px;top:108px;width:84px;height:84px;border-radius:20px;background:#fff;display:flex;align-items:center;justify-content:center"><img src="${ASSETS}mark.svg" style="width:66px;height:66px" alt=""></div>
+      <div class="abs" id="d1Beam" style="left:-26px;top:0;width:352px;height:70px;background:linear-gradient(180deg, rgba(217,65,43,0) 0%, rgba(217,65,43,0.20) 80%, rgba(217,65,43,0.0) 100%)">
+        <div class="abs" style="left:0;right:0;bottom:12px;height:5px;border-radius:3px;background:${ACC};box-shadow:0 0 18px 4px rgba(217,65,43,0.55)"></div></div>
+      <svg id="d1Brk" class="abs" style="left:-24px;top:-24px;overflow:visible" width="348" height="348" viewBox="0 0 348 348" fill="none" stroke-width="7" stroke-linecap="round">
+        <path d="M4 52V20Q4 4 20 4H52M296 4H328Q344 4 344 20V52M344 296V328Q344 344 328 344H296M52 344H20Q4 344 4 328V296"/></svg>
+    </div>
+    <div class="abs" id="d1Hint" style="left:0;top:446px;width:540px;text-align:center;font-size:24px;color:var(--mute)">Escaneá con la cámara del celular</div>
+    <div class="abs" id="d1Ok" style="left:0;top:446px;width:540px;display:flex;justify-content:center;align-items:center;gap:8px;font-size:24px;font-weight:800;color:${OK}">${CK(28, OK, 3.2)} Carta abierta al instante</div>
+  </div>
+  <div class="badge ok" id="d1Apps" style="left:216px;top:712px">${'<span class="ic">' + CK(28) + '</span>'}Sin bajar apps</div>
+  <svg class="abs" style="left:0;top:0;overflow:visible" width="1640" height="800">
+    <path id="d1Trk" d="M650 474 C 780 474, 900 400, 1036 400" fill="none" stroke="#e6dfd3" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16"/>
+    <path id="d1Arr" d="M650 474 C 780 474, 900 400, 1036 400" fill="none" stroke="${ACC}" stroke-width="6" stroke-linecap="round"/>
+    <path id="d1Head" d="M1020 386 L1040 400 L1020 414" fill="none" stroke="${ACC}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle id="d1Dot" r="11" fill="${ACC}" stroke="#fff" stroke-width="4"/>
+  </svg>
+  <div class="phone" id="d1Phone" style="left:1062px;top:20px"><div class="screen">
+    ${PHONE_HEAD}
+    <div class="ph-sub" style="top:102px">Carta digital · Pedí desde tu mesa</div>
+    <div class="chip" style="left:22px;top:146px">${WHEAT(ACC)}Sin TACC</div>
+    <div class="chip" style="left:196px;top:146px">${LEAF(OK)}Veggie</div>
+    <div class="ph-sub" style="top:214px;color:${INK};font-weight:800">Destacados</div>
+    ${items.map((it, k) => `<div class="item" id="d1It${k}" style="top:${252 + 118 * k}px">
+      <div class="th">${THUMB[it[0]]}</div><div class="nm">${it[1]}</div><div class="pr">${it[2]}</div>
+      <div class="add" id="d1Add${k}">${PLUS(48, INK)}</div><div class="add" id="d1Chk${k}" style="background:${OK};border-color:${OK}"><span class="abs" style="left:8px;top:8px">${CK(28)}</span></div>
+      <div class="ring" id="d1Ring${k}"></div></div>`).join('')}
+    <div class="btn" id="d1Send" style="left:22px;top:626px;width:400px;height:80px;border-radius:26px;background:${ACC};font-size:30px;box-shadow:0 14px 28px -10px rgba(217,65,43,0.7)">
+      <span id="d1SendT">Enviar pedido</span>
+      <span id="d1Cnt" style="width:40px;height:40px;border-radius:50%;background:#fff;color:${ACC};font-size:22px;display:flex;align-items:center;justify-content:center">3</span></div>
+    <div class="btn" id="d1Sent" style="left:22px;top:626px;width:400px;height:80px;border-radius:26px;background:${OK};font-size:30px">${CK(32)}Pedido enviado</div>
+    <div class="abs" id="d1Rip" style="left:0;top:0;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.45)"></div>
+    <div class="tap" id="d1Tap"></div>
+  </div></div>`;
+}
+
+function kds(id, label, color, soft, lines, timer) {
+  return `<div class="kds" id="${id}">
+    <div class="in">
+      <div class="hd" id="${id}Hd"><span style="width:14px;height:14px;border-radius:50%;background:#fff"></span><b>${label}</b><em>Comandera</em></div>
+      <div class="wait" id="${id}Wait">Esperando pedidos</div>
+      <div class="tk" id="${id}Tk"><div class="bar" style="background:${color}"></div>
+        <div class="t4">T4</div><div class="sub">Mesa T4 · Terraza</div>
+        <div class="tm">${CLOCK(OK)}<span id="${id}Tm">${timer}</span></div>
+        ${lines.map((l, k) => `<div class="ln" style="top:${80 + 46 * k}px">${l[0]}${l[1] ? `<i style="background:${soft};color:${color}">${l[1]}</i>` : ''}</div>`).join('')}
+        <div class="mk" id="${id}Mk">${CK(28, OK, 3.4)}Marcar listo</div>
+      </div>
+    </div></div>`;
+}
+function buildD2() {
+  const L = [['1× Bife de chorizo', 'k'], ['1× Provoleta', 'k'], ['2× IPA tirada', 'b'], ['1× Limonada', 'b']];
+  return `
+  <div class="eb" style="left:96px;top:66px">PASO 02 · RUTEO AUTOMÁTICO</div>
+  <div class="hl" style="left:96px;top:100px">Cocina y barra, al instante</div>
+  <div class="card" id="d2Tk" style="left:96px;top:226px;width:460px;height:400px">
+    <div class="abs" style="left:32px;top:28px;display:flex;align-items:center;gap:12px;white-space:nowrap">
+      <span style="height:44px;padding:0 14px;border-radius:12px;background:${INK};color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center">Mesa T4</span>
+      <span style="font-size:24px;font-weight:800;color:var(--mute)">Pedido nuevo</span></div>
+    <div class="abs" style="left:32px;right:32px;top:96px;height:2px;background:#efe9df"></div>
+    ${L.map((l, k) => `<div class="abs" style="left:32px;top:${118 + 66 * k}px;width:396px;height:50px;display:flex;align-items:center;font-size:28px;font-weight:800;white-space:nowrap;letter-spacing:-0.01em">
+      <span style="width:12px;height:12px;border-radius:50%;margin-right:14px;background:${l[1] === 'k' ? KIT : BAR}"></span>${l[0]}
+      <span id="d2Tag${k}" style="margin-left:auto;height:38px;padding:0 14px;border-radius:19px;font-size:22px;display:flex;align-items:center;background:${l[1] === 'k' ? 'var(--kit-soft)' : 'var(--bar-soft)'};color:${l[1] === 'k' ? KIT : BAR}">${l[1] === 'k' ? 'Cocina' : 'Barra'}</span></div>`).join('')}
+  </div>
+  <svg class="abs" style="left:0;top:0;overflow:visible" width="1640" height="800">
+    <defs><filter id="glow" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="5"/></filter></defs>
+    <path d="M560 384 C 730 384, 720 212, 896 212" fill="none" stroke="#ece5da" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16"/>
+    <path d="M560 468 C 730 468, 720 588, 896 588" fill="none" stroke="#ece5da" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 16"/>
+    <path id="d2CkG" d="M560 384 C 730 384, 720 212, 896 212" fill="none" stroke="${KIT}" stroke-width="14" stroke-linecap="round" opacity="0.35" filter="url(#glow)"/>
+    <path id="d2Ck" d="M560 384 C 730 384, 720 212, 896 212" fill="none" stroke="${KIT}" stroke-width="7" stroke-linecap="round"/>
+    <path id="d2CbG" d="M560 468 C 730 468, 720 588, 896 588" fill="none" stroke="${BAR}" stroke-width="14" stroke-linecap="round" opacity="0.35" filter="url(#glow)"/>
+    <path id="d2Cb" d="M560 468 C 730 468, 720 588, 896 588" fill="none" stroke="${BAR}" stroke-width="7" stroke-linecap="round"/>
+    <circle id="d2Dk" r="12" fill="${KIT}" stroke="#fff" stroke-width="4"/>
+    <circle id="d2Db" r="12" fill="${BAR}" stroke="#fff" stroke-width="4"/>
+  </svg>
+  <div class="abs" style="left:900px;top:32px">${kds('d2K', 'COCINA', KIT, 'var(--kit-soft)', [['1× Provoleta', ''], ['1× Bife de chorizo', 'a punto']], '02:15')}</div>
+  <div class="abs" style="left:900px;top:408px">${kds('d2B', 'BARRA', BAR, 'var(--bar-soft)', [['2× IPA tirada', ''], ['1× Limonada', '']], '01:10')}</div>
+  <div class="badge ok" id="d2Ok" style="left:96px;top:676px"><span class="ic">${CK(28)}</span>Ruteo automático · Sin errores ni demoras</div>`;
+}
+
+function buildD3() {
+  const prep = (m, y, id = '') => `<div class="pc prep" ${id ? `id="${id}"` : ''} style="top:${y}px"><b>${m}</b><span>En preparación</span></div>`;
+  const col = (k, name, inner, cnt) => `<div class="col" id="d3Col${k}" style="left:${20 + k * 335}px"><div class="nm" id="d3Nm${k}">${name}</div><div class="ct" id="d3Ct${k}">${cnt}</div><div class="ul" id="d3Ul${k}"></div>${inner}</div>`;
+  return `
+  <div class="eb" style="left:96px;top:58px">PASO 03 · ESTACIÓN DEL PASE</div>
+  <div class="hl" style="left:96px;top:92px">Ordenado por mozo, en el pase</div>
+  <div class="abs" id="d3Mon" style="left:96px;top:196px;width:1060px;height:590px">
+    <div class="abs" style="left:470px;top:536px;width:120px;height:34px;background:linear-gradient(#2a2420,#1c1917)"></div>
+    <div class="abs" style="left:370px;top:566px;width:320px;height:14px;border-radius:7px;background:#1c1917"></div>
+    <div class="mon"><div class="in">
+      <div class="hd"><img src="${ASSETS}mark.svg" style="width:38px;height:38px" alt=""><b>Estación del pase</b><span style="font-size:22px;color:#a39a90">· Salón y terraza</span><em>21:48</em></div>
+      ${col(0, 'LUCÍA', prep('Mesa T2', 84) + prep('Mesa T8', 202), '2')}
+      ${col(1, 'MARTÍN', `<div class="pc rdy" id="d3T4" style="top:84px"><b>Mesa T4</b><span>${CK(24, '#9fe6bd', 3.2)}Cocina y Barra listos</span>
+          <div class="go" id="d3Go">${CK(28)}<span>Entregado</span></div><div class="abs" id="d3Rip" style="left:0;top:0;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.35)"></div></div>
+          <div class="abs" id="d3Glow" style="left:14px;top:84px;width:290px;height:200px;border-radius:16px;box-shadow:0 0 0 4px #3fbf7a, 0 0 46px 10px rgba(63,191,122,0.55)"></div>
+          ${prep('Mesa T6', 84, 'd3T6')}`, '1')}
+      ${col(2, 'SOFÍA', prep('Mesa T9', 84) + prep('Mesa T3', 202), '2')}
+      <div class="tap" id="d3Tap"></div>
+    </div></div>
+  </div>
+  <div class="card" id="d3Val" style="left:1202px;top:236px;width:344px;height:400px">
+    <div class="abs" style="left:112px;top:40px;width:120px;height:120px;border-radius:50%;background:var(--acc-soft);display:flex;align-items:center;justify-content:center">
+      <svg width="70" height="70" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="14" y="5" width="20" height="38" rx="5" stroke="${INK}" stroke-width="3.5"/><path d="M21 37h6" stroke="${INK}" stroke-width="3.5"/>
+        <path id="d3Slash" d="M7 7L41 41" stroke="${ACC}" stroke-width="5"/></svg></div>
+    <div class="abs" style="left:0;top:186px;width:344px;text-align:center;font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">Sin celulares<br>en la mano</div>
+    <div class="abs" style="left:40px;right:40px;top:290px;height:2px;background:#efe9df"></div>
+    <div class="abs" style="left:0;top:316px;width:344px;display:flex;justify-content:center;align-items:center;gap:10px;font-size:24px;font-weight:800;color:${OK};white-space:nowrap">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${OK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2.5"/><path d="M12 16.5V20M8 20h8"/></svg>
+      Pantalla fija en el pase</div>
+  </div>`;
+}
+
+function buildD4() {
+  const rows = [['1× Bife de chorizo', '$16.500'], ['1× Provoleta', '$8.900'], ['2× IPA tirada', '$7.200'], ['1× Limonada', '$1.600']];
+  return `
+  <div class="eb" style="left:650px;top:66px">PASO 04 · CUENTA EN 1 VIAJE</div>
+  <div class="hl" style="left:650px;top:100px">La cuenta, en un solo viaje</div>
+  <div class="phone" id="d4Phone" style="left:110px;top:20px"><div class="screen">
+    ${PHONE_HEAD}
+    <div id="d4A" class="abs" style="left:0;top:0;width:444px;height:734px">
+      <div class="ph-sub" style="top:102px">Tu pedido</div>
+      ${rows.map((r, k) => `<div class="abs" style="left:26px;top:${150 + 60 * k}px;width:392px;height:48px;display:flex;align-items:center;font-size:24px;font-weight:800;white-space:nowrap">${r[0]}<span style="margin-left:auto;color:var(--mute)">${r[1]}</span></div>`).join('')}
+      <div class="abs" style="left:26px;right:26px;top:400px;height:2px;background:#e9e2d7"></div>
+      <div class="abs" style="left:26px;top:420px;width:392px;display:flex;align-items:center;font-size:28px;font-weight:800">Subtotal<span style="margin-left:auto">$34.200</span></div>
+      <div class="abs" style="left:26px;top:492px;height:48px;padding:0 18px 0 12px;border-radius:24px;background:var(--ok-soft);color:${OK};display:flex;align-items:center;gap:8px;font-size:22px;font-weight:800;white-space:nowrap">${CK(26, OK, 3.2)}Todo servido en la mesa</div>
+      <div class="btn" id="d4Ask" style="left:22px;top:626px;width:400px;height:80px;border-radius:26px;background:${ACC};font-size:30px;box-shadow:0 14px 28px -10px rgba(217,65,43,0.7)">Pedir cuenta</div>
+    </div>
+    <div id="d4B" class="abs" style="left:0;top:0;width:444px;height:734px">
+      <div class="ph-sub" style="top:102px;color:${INK};font-weight:800">¿Cómo querés pagar?</div>
+      <div class="abs" id="d4Card" style="left:22px;top:148px;width:194px;height:100px;border-radius:22px;background:#fff;border:3px solid ${LINE};display:flex;flex-direction:column;justify-content:center;padding-left:18px;gap:6px">
+        ${CARD(INK)}<span style="font-size:26px;font-weight:800">Tarjeta</span><span id="d4CardOk" class="abs" style="right:12px;top:12px;width:34px;height:34px;border-radius:50%;background:${ACC};display:flex;align-items:center;justify-content:center">${CK(22)}</span></div>
+      <div class="abs" style="left:228px;top:148px;width:194px;height:100px;border-radius:22px;background:#fff;border:3px solid ${LINE};display:flex;flex-direction:column;justify-content:center;padding-left:18px;gap:6px">
+        ${CASH(INK)}<span style="font-size:26px;font-weight:800">Efectivo</span></div>
+      <div class="ph-sub" style="top:272px">Propina</div>
+      <div class="chip" style="left:22px;top:310px;height:56px;width:164px;justify-content:center">Sin propina</div>
+      <div class="chip" id="d4P10" style="left:196px;top:310px;height:56px;width:110px;justify-content:center">+10%</div>
+      <div class="chip" style="left:316px;top:310px;height:56px;width:106px;justify-content:center">+15%</div>
+      <div class="abs" style="left:22px;top:390px;width:400px;height:76px;border-radius:22px;background:#fff;border:2px solid #ece5da">
+        <span class="abs" style="left:20px;top:20px;font-size:24px;font-weight:800">Dividir cuenta</span>
+        <span class="abs" style="right:20px;top:20px;width:64px;height:36px;border-radius:18px;background:#e2dbd0"><span class="abs" style="left:4px;top:4px;width:28px;height:28px;border-radius:50%;background:#fff"></span></span></div>
+      <div class="abs" style="left:26px;top:494px;width:392px;height:80px;display:flex;align-items:center">
+        <span style="font-size:24px;font-weight:800;color:var(--mute)">Total</span>
+        <span id="d4Tot" style="margin-left:auto;font-size:48px;font-weight:800;letter-spacing:-0.02em">$34.200</span></div>
+      <div class="btn" id="d4Snd" style="left:22px;top:626px;width:400px;height:80px;border-radius:26px;background:${ACC};font-size:30px;box-shadow:0 14px 28px -10px rgba(217,65,43,0.7)">Enviar al mozo</div>
+      <div class="btn" id="d4Sent" style="left:22px;top:626px;width:400px;height:80px;border-radius:26px;background:${OK};font-size:30px">${CK(32)}Mozo avisado</div>
+    </div>
+    <div class="tap" id="d4Tap"></div>
+  </div></div>
+  <svg class="abs" style="left:0;top:0;overflow:visible" width="1640" height="800">
+    <path d="M604 470 H 930" fill="none" stroke="#e6dfd3" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 18"/>
+    <path id="d4Arr" d="M604 470 H 924" fill="none" stroke="${OK}" stroke-width="10" stroke-linecap="round"/>
+    <path id="d4Head" d="M906 448 L932 470 L906 492" fill="none" stroke="${OK}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <div class="abs" id="d4Lbl" style="left:640px;top:396px;width:260px;display:flex;justify-content:center"><span style="height:46px;padding:0 18px;border-radius:23px;background:var(--ok-soft);color:${OK};font-size:22px;font-weight:800;display:flex;align-items:center;white-space:nowrap">Monto exacto</span></div>
+  <div class="card" id="d4Disp" style="left:956px;top:236px;width:600px;height:470px">
+    <div class="abs" style="left:32px;top:32px;width:68px;height:68px;border-radius:50%;background:${OK};display:flex;align-items:center;justify-content:center">${PERSON('#fff')}</div>
+    <div class="abs" style="left:118px;top:30px;font-size:32px;font-weight:800;letter-spacing:-0.02em">Martín</div>
+    <div class="abs" style="left:118px;top:72px;font-size:22px;color:var(--mute)">Mozo · Terraza</div>
+    <div class="abs" style="right:32px;top:42px;height:48px;padding:0 18px;border-radius:14px;background:${INK};color:#fff;font-size:26px;font-weight:800;display:flex;align-items:center">Mesa T4</div>
+    <div class="abs" style="left:32px;right:32px;top:128px;height:2px;background:#efe9df"></div>
+    <div class="abs" id="d4W0" style="left:0;top:150px;width:600px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+      <span style="width:84px;height:84px;border-radius:50%;background:#f3eee6;display:flex;align-items:center;justify-content:center"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#a39a90" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></span>
+      <span style="font-size:28px;font-weight:800;color:#a39a90">Mesa T4 en servicio</span></div>
+    <div class="abs" id="d4W1" style="left:0;top:150px;width:600px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px">
+      <span id="d4Bell" style="width:84px;height:84px;border-radius:50%;background:var(--acc-soft);display:flex;align-items:center;justify-content:center"><svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="${ACC}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5h4"/></svg></span>
+      <span style="font-size:32px;font-weight:800;color:${ACC}">Mesa T4 pidió la cuenta</span>
+      <span style="font-size:24px;color:var(--mute)">Eligiendo cómo pagar</span></div>
+    <div class="abs" id="d4Body" style="left:0;top:0;width:600px;height:470px">
+    <div class="abs" style="left:32px;top:150px;font-size:22px;font-weight:800;letter-spacing:0.12em;color:var(--mute)">COBRAR EN LA MESA</div>
+    <div class="abs" style="left:30px;top:178px;font-size:86px;font-weight:800;letter-spacing:-0.04em;line-height:1">$37.620</div>
+    <div class="abs" style="left:32px;top:290px;display:flex;gap:12px">
+      <span style="height:48px;padding:0 18px 0 14px;border-radius:24px;background:#f3eee6;display:flex;align-items:center;gap:10px;font-size:22px;font-weight:800">${CARD(INK)}Tarjeta</span>
+      <span style="height:48px;padding:0 18px;border-radius:24px;background:#f3eee6;display:flex;align-items:center;font-size:22px;font-weight:800">Propina 10% incluida</span></div>
+    </div>
+    <div class="abs" id="d4Stamp" style="left:32px;top:370px;width:536px;height:70px;border-radius:20px;background:${OK};color:#fff;display:flex;align-items:center;justify-content:center;gap:12px;font-size:28px;font-weight:800;white-space:nowrap;box-shadow:0 16px 30px -10px rgba(47,138,87,0.7)">${CK(32, '#fff', 3.4)}Cobro resuelto en 1 solo viaje</div>
+  </div>`;
+}
+
+// ============================================================ motor
+let TL = null, FC = {}, M = {}, SC = {};
+const R = {};
+const IN_D = 0.48, OUT_D = 0.30;
+const STEPS = ['Mesa QR', 'Cocina y Barra', 'Estación del Pase', 'Cuenta en 1 viaje'];
+function sceneVis(s, t, opts = {}) {
+  const pin = opts.noIn ? 1 : A(t, s.start + 0.02, IN_D);
+  const pout = opts.noOut ? 0 : A(t, s.end - OUT_D - 0.02, OUT_D);
+  const o = (t < s.end - 0.02 || opts.noOut) ? pin * (1 - pout) : 0;
+  return { o: t < s.start && !opts.noIn ? 0 : o, dy: (1 - pin) * 16 - pout * 12 };
+}
+function build() {
+  $('steps').innerHTML = STEPS.map((l, k) => `${k ? `<div class="conn"><i id="cn${k}"></i></div>` : ''}<div class="step"><div class="pill" id="sp${k}"></div>
+    <div class="c" id="sc${k}"><span id="sn${k}">0${k + 1}</span>${CK(46, '#fff', 2.6).replace('<svg', `<svg id="sk${k}"`)}</div><div class="l" id="sl${k}">${l}</div></div>`).join('');
+  $('stage').innerHTML = `<div class="scene" id="sD1">${buildD1()}</div><div class="scene" id="sD2">${buildD2()}</div><div class="scene" id="sD3">${buildD3()}</div><div class="scene" id="sD4">${buildD4()}</div>`;
+  $('cCard').innerHTML = `
+    <div class="it"><div class="ic" style="background:#fceae6"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="${ACC}" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg></div><div class="v">salelisto.com</div></div>
+    <div class="sep"></div>
+    <div class="it"><div class="ic" style="background:#e3f3ea"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="${OK}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.4 18.5z"/></svg></div><div class="v">(+54)1138436571</div></div>
+    <div class="sep"></div>
+    <div class="it"><div class="ic" style="background:#fceae6"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="${ACC}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></div><div class="v">ventas@salelisto.com</div></div>`;
+  R.L = [$('L0'), $('L1')].map(l => ({ el: l, img: l.querySelector('img'), veil: l.querySelector('.veil'), warm: l.querySelector('.warm'), cream: l.querySelector('.cream') }));
+  R.d1Arr = drawable($('d1Arr')); R.d2Ck = drawable($('d2Ck')); R.d2CkG = drawable($('d2CkG')); R.d2Cb = drawable($('d2Cb')); R.d2CbG = drawable($('d2CbG')); R.d4Arr = drawable($('d4Arr'));
+  R.d3Slash = drawable($('d3Slash'));
+}
+
+// ------------------------------------------------------------ animacion por escena
+function renderD1(t) {
+  const pb = A(t, M.escanea - 0.1, 0.45);
+  const brk = $('d1Brk');
+  brk.setAttribute('stroke', mix('#d6cdc0', ACC, pb));
+  brk.style.transform = `scale(${(1 + 0.05 * (1 - pb) * (pb > 0 ? 1 : 0)).toFixed(4)})`; brk.style.transformOrigin = '174px 174px';
+  // haz de escaneo (2 pasadas)
+  const ub = lin(t, M.qr1 - 0.30, M.qr1 + 0.90);
+  const y = ub < 0.5 ? -40 + 300 * inout(ub * 2) : 260 - 300 * inout((ub - 0.5) * 2);
+  set($('d1Beam'), ub > 0 && ub < 1 ? Math.min(1, Math.sin(Math.PI * ub) * 2.2) : 0, 0, y);
+  const scanned = A(t, M.qr1 + 0.55, 0.4);
+  set($('d1Hint'), 1 - scanned, 0, -8 * scanned); set($('d1Ok'), scanned, 0, 8 * (1 - scanned));
+  const g = clamp(A(t, M.qr1 - 0.1, 0.35) - A(t, M.qr1 + 1.3, 0.8));
+  $('d1Card').style.boxShadow = `0 0 0 ${(4 * g).toFixed(2)}px rgba(217,65,43,${(0.9 * g).toFixed(3)}), 0 18px 44px -14px rgba(28,25,23,0.18), 0 0 60px ${(10 * g).toFixed(1)}px rgba(217,65,43,${(0.18 * g).toFixed(3)})`;
+  // flecha mesa -> carta
+  const pa = A(t, M.qr1 + 0.35, 0.85);
+  R.d1Arr(pa); op($('d1Head'), A(t, M.qr1 + 0.95, 0.25));
+  const loop = t > M.qr1 + 1.2 ? ((t - M.qr1 - 1.2) / 1.6) % 1 : -1;
+  if (loop >= 0) dotOn($('d1Arr'), $('d1Dot'), ease(loop), Math.sin(Math.PI * loop)); else dotOn($('d1Arr'), $('d1Dot'), pa, pa > 0 && pa < 1 ? 1 : 0);
+  const pg = clamp(A(t, M.qr1 + 0.95, 0.3) - A(t, M.qr1 + 1.7, 0.7));
+  $('d1Phone').style.boxShadow = `0 2px 0 1px #3a3330 inset, 0 30px 60px -18px rgba(28,25,23,0.55), 0 0 0 ${(6 * pg).toFixed(2)}px rgba(217,65,43,${(0.55 * pg).toFixed(3)})`;
+  // seleccion de items
+  const sel = [M.pide1, M.carta, M.carta + 0.62];
+  let n = 0;
+  sel.forEach((ts, k) => {
+    const p = A(t, ts + 0.05, 0.35); if (t >= ts) n++;
+    const it = $('d1It' + k);
+    it.style.borderColor = mix('#ece5da', ACC, p); it.style.background = mix('#ffffff', '#fff6f3', p);
+    it.style.transform = `scale(${press(t, ts).toFixed(4)})`;
+    set($('d1Add' + k), 1 - p); set($('d1Chk' + k), p, 0, 0, 0.6 + 0.4 * p);
+    ring($('d1Ring' + k), t, ts + 0.05, 0.7, 0.08);
+  });
+  const cnt = $('d1Cnt'); cnt.textContent = String(Math.max(1, n)); set(cnt, A(t, M.pide1 + 0.05, 0.3), 0, 0, 0.6 + 0.4 * A(t, M.pide1 + 0.05, 0.3));
+  const tSend = M.apps + 0.38;
+  const sent = A(t, tSend + 0.28, 0.35);
+  set($('d1Send'), 1, 0, 0, press(t, tSend)); set($('d1Sent'), sent, 0, 0, press(t, tSend));
+  const ur = lin(t, tSend, tSend + 0.55);
+  set($('d1Rip'), ur > 0 && ur < 1 ? 0.9 * (1 - ur) : 0, 222 - 100, 666 - 100, 0.2 + 3.2 * ease(ur));
+  tapFx($('d1Tap'), t, [[sel[0], 384, 252 + 53], [sel[1], 384, 370 + 53], [sel[2], 384, 488 + 53], [tSend, 260, 666]]);
+  const pApps = A(t, M.apps, 0.45);
+  set($('d1Apps'), pApps, 0, 18 * (1 - pApps), 0.9 + 0.1 * pApps);
+}
+
+function renderD2(t) {
+  const pi = clamp(A(t, M.instante, 0.3) - A(t, M.instante + 0.6, 0.6));
+  $('d2Tk').style.boxShadow = `0 0 0 ${(4 * pi).toFixed(2)}px rgba(217,65,43,${(0.8 * pi).toFixed(3)}), 0 18px 44px -14px rgba(28,25,23,0.18)`;
+  [M.platos, M.platos + 0.15, M.bebidas, M.bebidas + 0.15].forEach((ts, k) => { const p = A(t, ts, 0.4); set($('d2Tag' + k), p, 12 * (1 - p)); });
+  const ck = A(t, M.platos + 0.05, 0.85), cb = A(t, M.bebidas + 0.05, 0.55);
+  R.d2Ck(ck); R.d2CkG(ck); R.d2Cb(cb); R.d2CbG(cb);
+  const lk = t > M.cocina ? ((t - M.cocina) / 1.5) % 1 : -1, lb = t > M.barra ? ((t - M.barra) / 1.5) % 1 : -1;
+  if (lk >= 0) dotOn($('d2Ck'), $('d2Dk'), ease(lk), Math.sin(Math.PI * lk)); else dotOn($('d2Ck'), $('d2Dk'), ck, ck > 0 && ck < 1 ? 1 : 0);
+  if (lb >= 0) dotOn($('d2Cb'), $('d2Db'), ease(lb), Math.sin(Math.PI * lb)); else dotOn($('d2Cb'), $('d2Db'), cb, cb > 0 && cb < 1 ? 1 : 0);
+  [['d2K', M.cocina, KIT, 135, M.cocina + 2.75], ['d2B', M.barra, BAR, 70, M.barra + 1.85]].forEach(([id, ton, col, t0s, tmk]) => {
+    const on = A(t, ton - 0.05, 0.4);
+    $(id + 'Hd').style.background = mix('#57534e', col, on);
+    const box = $(id);
+    box.style.boxShadow = `0 0 0 ${(5 * on).toFixed(2)}px ${col}55, 0 24px 60px -16px ${col}${Math.round(on * 140).toString(16).padStart(2, '0')}, 0 20px 40px -18px rgba(28,25,23,0.5)`;
+    set($(id + 'Wait'), 1 - on);
+    const tk = A(t, ton + 0.05, 0.5); set($(id + 'Tk'), tk, 0, -26 * (1 - tk));
+    $(id + 'Tm').textContent = mmss(t0s + Math.max(0, Math.floor(t - ton)));
+    const mk = A(t, tmk, 0.35), mkEl = $(id + 'Mk');
+    mkEl.style.background = mix('#ffffff', OK, mk); mkEl.style.color = mix(OK, '#ffffff', mk);
+    mkEl.querySelector('path').setAttribute('stroke', mix(OK, '#ffffff', mk));
+    mkEl.style.boxShadow = `0 0 ${(30 * mk).toFixed(1)}px ${(4 * mk).toFixed(1)}px rgba(47,138,87,${(0.45 * mk).toFixed(3)})`;
+    mkEl.style.transform = `scale(${(1 + 0.06 * Math.sin(Math.PI * clamp((t - tmk) / 0.4))).toFixed(4)})`;
+  });
+  const pe = A(t, M.errores, 0.45); set($('d2Ok'), pe, 0, 18 * (1 - pe), 0.9 + 0.1 * pe);
+}
+
+function renderD3(t) {
+  // monitor centrado y luego se corre a la izquierda para la tarjeta de valor
+  const mv = A(t, M.celulares - 0.45, 0.7);
+  $('d3Mon').style.transform = `translateX(${(194 * (1 - mv)).toFixed(2)}px)`;
+  const pv = A(t, M.celulares, 0.5); set($('d3Val'), pv, 40 * (1 - pv), 0);
+  R.d3Slash(A(t, M.celulares + 0.3, 0.45));
+  // caida de la tarjeta T4 en la columna de Martin
+  const pd = A(t, M.sale - 0.05, 0.6);
+  set($('d3T4'), pd, 0, -70 * (1 - pd));
+  $('d3T6').style.transform = `translateY(${(214 * A(t, M.sale - 0.15, 0.5)).toFixed(2)}px)`;
+  $('d3Ct1').textContent = t >= M.sale ? '2' : '1';
+  const glow = clamp(A(t, M.sale + 0.1, 0.4) * (0.55 + 0.45 * Math.max(0, Math.sin(Math.PI * lin(t, M.mozo1, M.mozo1 + 0.9))))) * (1 - A(t, M.pase + 0.15, 0.4));
+  op($('d3Glow'), glow);
+  const hm = A(t, M.mozo1 - 0.05, 0.4);
+  $('d3Ul1').style.background = mix('#3a332e', '#3fbf7a', hm); $('d3Nm1').style.color = mix('#faf7f2', '#7fe0a8', hm);
+  $('d3Col1').style.background = mix('#24201d', '#1d2a22', hm);
+  // toque unico en Entregado
+  const tp = M.pase;
+  const done = A(t, tp + 0.2, 0.4);
+  $('d3Go').style.transform = `scale(${press(t, tp).toFixed(4)})`;
+  $('d3Go').style.background = mix('#2f8a57', '#e3f3ea', done); $('d3Go').style.color = mix('#ffffff', '#2f8a57', done);
+  $('d3Go').querySelector('path').setAttribute('stroke', mix('#ffffff', '#2f8a57', done));
+  $('d3T4').style.borderColor = mix('#3fbf7a', '#2c5a40', done);
+  const ur = lin(t, tp, tp + 0.5);
+  set($('d3Rip'), ur > 0 && ur < 1 ? 0.9 * (1 - ur) : 0, 142 - 60, 148 - 60, 0.3 + 3 * ease(ur));
+  tapFx($('d3Tap'), t, [[tp, 335 + 20 + 14 + 150, 82 + 84 + 148]]);
+}
+
+function renderD4(t) {
+  const sw = A(t, M.qr2 - 0.05, 0.5);
+  set($('d4A'), 1 - sw, -40 * sw); set($('d4B'), sw, 40 * (1 - sw));
+  $('d4Ask').style.transform = `scale(${press(t, M.cuenta).toFixed(4)})`;
+  const pc = A(t, M.pagar + 0.05, 0.35);
+  const card = $('d4Card'); card.style.borderColor = mix(LINE, ACC, pc); card.style.background = mix('#ffffff', '#fff3f0', pc);
+  card.style.transform = `scale(${press(t, M.pagar).toFixed(4)})`; set($('d4CardOk'), pc, 0, 0, 0.6 + 0.4 * pc);
+  const tP = M.pagar + 0.8, pp = A(t, tP + 0.05, 0.35);
+  const p10 = $('d4P10'); p10.style.borderColor = mix(LINE, ACC, pp); p10.style.background = mix('#ffffff', ACC, pp); p10.style.color = mix(INK, '#ffffff', pp);
+  p10.style.transform = `scale(${press(t, tP).toFixed(4)})`;
+  $('d4Tot').textContent = fmtARS(34200 + 3420 * inout(lin(t, tP + 0.05, tP + 0.65)));
+  const tG = M.pagar + 1.65;
+  const sent = A(t, tG + 0.25, 0.35);
+  set($('d4Snd'), 1, 0, 0, press(t, tG)); set($('d4Sent'), sent, 0, 0, press(t, tG));
+  tapFx($('d4Tap'), t, [[M.cuenta, 222, 666], [M.pagar, 119, 198], [tP, 251, 338], [tG, 222, 666]]);
+  const pa = A(t, tG + 0.2, 0.75);
+  R.d4Arr(pa); op($('d4Head'), A(t, tG + 0.7, 0.25));
+  const pl = A(t, tG + 0.55, 0.4); set($('d4Lbl'), pl, 0, 10 * (1 - pl));
+  const pdsp = A(t, SC.D4.start + 0.35, 0.6); set($('d4Disp'), pdsp, 36 * (1 - pdsp), 0);
+  const w0 = A(t, M.cuenta + 0.1, 0.25), w1 = A(t, M.cuenta + 0.35, 0.4), bd = A(t, tG + 0.55, 0.45);
+  set($('d4W0'), 1 - w0, 0, -12 * w0); set($('d4W1'), w1 * (1 - bd), 0, 12 * (1 - w1) - 12 * bd); set($('d4Body'), bd, 0, 14 * (1 - bd));
+  const rb = lin(t, M.cuenta + 0.3, M.cuenta + 1.3);
+  $('d4Bell').style.transform = `rotate(${(14 * Math.sin(rb * Math.PI * 6) * (1 - rb) * (rb > 0 && rb < 1 ? 1 : 0)).toFixed(2)}deg)`;
+  const gl = clamp(A(t, M.viaje - 0.05, 0.3) - A(t, M.viaje + 0.5, 0.5));
+  $('d4Disp').style.boxShadow = `0 0 0 ${(5 * gl).toFixed(2)}px rgba(47,138,87,${(0.6 * gl).toFixed(3)}), 0 18px 44px -14px rgba(28,25,23,0.18)`;
+  const ps = A(t, M.viaje - 0.05, 0.4); set($('d4Stamp'), ps, 0, 0, 1.18 - 0.18 * ps);
+}
+
+function renderSteps(t) {
+  const st = [SC.D1.start, SC.D2.start, SC.D3.start, SC.D4.start, SC.END.start];
+  for (let k = 0; k < 4; k++) {
+    const act = k === 0 ? 1 : A(t, st[k] - 0.15, 0.45);
+    const done = A(t, st[k + 1] - 0.15, 0.45);
+    $('sc' + k).style.background = done > 0 ? mix(ACC, OK, done) : mix('#ece6dc', ACC, act);
+    $('sn' + k).style.color = mix('#8a8178', '#ffffff', act);
+    op($('sn' + k), 1 - done); op($('sk' + k), done);
+    $('sl' + k).style.color = done > 0 ? mix(INK, OK, done) : mix('#9a9188', INK, act);
+    op($('sp' + k), act * (1 - done));
+    if (k) $('cn' + k).style.width = (100 * act) + '%';
+  }
+}
+
+const pending = [];
+function setImg(img, src) {
+  if (img.dataset.src !== src) { img.dataset.src = src; img.src = src; }
+  pending.push(img.decode().catch(() => {}));
+}
+function paintLayer(L, k, t) {
+  const s = TL.scenes[k];
+  const n = FC[s.id] || 1;
+  const i = Math.max(1, Math.min(n, Math.floor((t - s.start + TL.pre) * TL.srcFps) + 1));
+  setImg(L.img, `${TL.frameBase}/${s.id}/f_${String(i).padStart(4, '0')}.jpg`);
+  const nx = TL.scenes[k + 1];
+  const a = s.start - (k > 0 ? s.xfade / 2 : 0), b = s.end + (nx ? nx.xfade / 2 : 0);
+  const q = lin(t, a, b);
+  const closing = !!s.closing;
+  L.img.style.transform = `scale(${((closing ? 1.08 : 1.0) * (1 + 0.03 * q)).toFixed(5)})`;
+  L.img.style.filter = closing ? 'blur(14px)' : 'none';
+  L.veil.style.display = closing ? 'none' : 'block';
+  L.warm.style.display = closing ? 'none' : 'block';
+  L.veil.style.background = `rgba(28, 25, 23, ${s.veil || 0.5})`;
+  L.cream.style.display = closing ? 'block' : 'none';
+}
+
+window.renderFrame = async function (f) {
+  pending.length = 0;
+  const t = f / TL.fps;
+  const sc = TL.scenes;
+  let i = 0; for (let k = 0; k < sc.length; k++) if (t >= sc[k].start) i = k;
+  let tr = null;
+  for (let k = 1; k < sc.length; k++) {
+    const a = sc[k].start - sc[k].xfade / 2, b = sc[k].start + sc[k].xfade / 2;
+    if (t >= a && t < b) tr = { from: k - 1, to: k, p: (t - a) / (b - a) };
+  }
+  if (tr) {
+    paintLayer(R.L[0], tr.from, t); paintLayer(R.L[1], tr.to, t);
+    R.L[0].el.style.opacity = 1; R.L[1].el.style.opacity = tr.p.toFixed(4); R.L[1].el.style.display = 'block';
+  } else {
+    paintLayer(R.L[0], i, t); R.L[0].el.style.opacity = 1; R.L[1].el.style.display = 'none';
+  }
+  // barra + escenario: visibles desde el cuadro 0, salen hacia el cierre
+  const END = SC.END, e6 = END.start;
+  const cfade = lin(t, e6 - END.xfade / 2, e6 + END.xfade / 2 - 0.1), cout = A(t, e6 - END.xfade / 2, 0.6);
+  set($('stage'), 1 - cfade, 0, -cout * 14, 1 - 0.015 * cout);
+  set($('top'), 1 - cfade, 0, -cout * 10);
+  const diag = sc.filter(s => !s.closing);
+  diag.forEach((s, k) => {
+    const v = sceneVis(s, t, { noIn: k === 0, noOut: k === diag.length - 1 });
+    set($('s' + s.id), v.o, 0, v.dy);
+  });
+  renderSteps(t);
+  if (t < SC.D2.start + 0.1) renderD1(t);
+  if (t > SC.D2.start - 0.1 && t < SC.D3.start + 0.1) renderD2(t);
+  if (t > SC.D3.start - 0.1 && t < SC.D4.start + 0.1) renderD3(t);
+  if (t > SC.D4.start - 0.1) renderD4(t);
+  // cierre
+  $('closing').style.display = t >= e6 - 0.3 ? 'block' : 'none';
+  const pl = A(t, M.logo, 0.6), ph = A(t, M.cta - 0.15, 0.6), pb = A(t, M.personalizada, 0.55), pc = A(t, M.personalizada + 0.5, 0.6);
+  set($('cLogo'), pl, 0, 16 * (1 - pl), 0.96 + 0.04 * pl); set($('cHead'), ph, 0, 16 * (1 - ph));
+  set($('cBadge'), pb, 0, 16 * (1 - pb)); set($('cCard'), pc, 0, 16 * (1 - pc));
+  await Promise.all(pending);
+  return true;
+};
+window.init = async function (tl, fc) {
+  TL = tl; FC = fc; M = tl.marks;
+  tl.scenes.forEach(s => { SC[s.id] = s; });
+  build();
+  await document.fonts.ready;
+  await Promise.all([700, 800].map(w => document.fonts.load(`${w} 40px PJS`)));
+  await Promise.all([...document.querySelectorAll('img')].filter(i => i.src).map(i => i.decode().catch(() => {})));
+  await new Promise(r => setTimeout(r, 300));
+  return true;
+};
+</script>
+</body>
+</html>

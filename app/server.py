@@ -89,6 +89,8 @@ PORT = _parse_initial_port(sys.argv)
 
 SAFE_HOST_RE = re.compile(r'^[A-Za-z0-9.\[\]:-]{1,253}$')
 SHORT_QR_PATH_RE = re.compile(r'^/q/([A-Za-z0-9_-]{1,64})/?$')
+# Página pública de planes retirada: GET/HEAD responden 301 hacia el formulario de cotización
+LEGACY_PLANES_PATHS = frozenset({'/planes', '/planes/', '/planes.html'})
 GZIP_MIN_BYTES = 512
 SSE_KEEPALIVE_S = 15
 
@@ -944,6 +946,13 @@ class Handler(SimpleHTTPRequestHandler):
         if not head_only and payload:
             self.wfile.write(payload)
 
+    def _redirect_legacy_planes(self) -> None:
+        self.send_response(301)
+        self.send_header('Location', '/#contacto')
+        self.send_header('Cache-Control', 'public, max-age=86400')
+        self.send_header('Content-Length', '0')
+        self.end_headers()
+
     def _serve_short_qr(self, head_only: bool = False) -> None:
         target = (PUBLIC / 'cliente.html').resolve()
         if not target.is_file():
@@ -961,7 +970,7 @@ class Handler(SimpleHTTPRequestHandler):
         except (OSError, ValueError):
             return False
         if pub_root not in target.parents or not target.is_file():
-            # Rutas limpias sin .html: /demo -> demo.html, /producto -> producto.html, /planes -> planes.html
+            # Rutas limpias sin .html: /demo -> demo.html, /producto -> producto.html (/planes redirige a /#contacto)
             if raw_rel.endswith('/'):
                 slug = raw_rel.rstrip('/')
                 if slug and '/' not in slug and '.' not in slug:
@@ -1107,6 +1116,8 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/q/'):
             self.send_error(404, 'Código QR inválido')
             return
+        if path in LEGACY_PLANES_PATHS:
+            return self._redirect_legacy_planes()
         if self._try_serve_static_compressed(path, head_only=True):
             return
         return super().do_HEAD()
@@ -1269,6 +1280,10 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/q/'):
             self.send_error(404, 'Código QR inválido')
             return
+
+        # La página pública de planes fue retirada: redirección permanente al formulario de cotización
+        if path in LEGACY_PLANES_PATHS:
+            return self._redirect_legacy_planes()
 
         if path == '/api/health':
             with subs_lock:

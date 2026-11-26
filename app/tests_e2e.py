@@ -791,8 +791,6 @@ def run_suite() -> None:
             '/demo',
             '/producto.html',
             '/producto',
-            '/planes.html',
-            '/planes',
             '/operacion.html',
             '/operacion',
             '/api/qrs',
@@ -841,6 +839,19 @@ def run_suite() -> None:
         finally:
             conn_r.close()
 
+        # La página pública de planes fue retirada: GET/HEAD /planes y /planes.html -> 301 /#contacto
+        for legacy_method, legacy_route in (('GET', '/planes'), ('GET', '/planes.html'), ('HEAD', '/planes'), ('HEAD', '/planes.html')):
+            conn_p = http.client.HTTPConnection('127.0.0.1', int(api.base_url.rsplit(':', 1)[-1]), timeout=5)
+            try:
+                conn_p.request(legacy_method, legacy_route)
+                resp_p = conn_p.getresponse()
+                resp_p.read()
+                assert resp_p.status == 301 and resp_p.getheader('Location') == '/#contacto', (
+                    f'{legacy_method} {legacy_route} debio redirigir 301 a /#contacto ({resp_p.status}, {resp_p.getheader("Location")})'
+                )
+            finally:
+                conn_p.close()
+
         # SEO, Open Graph PNG 1200x630 y canales oficiales en index.html / robots.txt / sitemap.xml
         idx_code, idx_hdrs, idx_raw = api.request('GET', '/')
         assert idx_code == 200 and 'text/html' in idx_hdrs.get('content-type', '')
@@ -867,8 +878,8 @@ def run_suite() -> None:
         assert (
             '<loc>https://salelisto.com/</loc>' in sm_txt
             and '<loc>https://salelisto.com/producto.html</loc>' in sm_txt
-            and '<loc>https://salelisto.com/planes.html</loc>' in sm_txt
-            and '<loc>https://salelisto.com/demo.html</loc>' in sm_txt
+            and 'planes.html' not in sm_txt
+            and 'demo.html' not in sm_txt
         )
         print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4, Open Graph PNG, SEO y vistas clave verificados.')
 
