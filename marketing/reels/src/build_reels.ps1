@@ -4,7 +4,7 @@
 #   powershell -ExecutionPolicy Bypass -File marketing\reels\src\build_reels.ps1 [-Reels r01,r02,r03,r04,r05] [-Clean]
 #   -Clean: borra la carpeta de trabajo temporal al terminar.
 # La locucion ya generada vive en src\vo\ (rNN.mp3 + rNN_words.json); para regenerarla: python gen_vo_reels.py rNN
-param([string[]]$Reels = @("r01", "r02", "r03", "r04", "r05"), [switch]$Clean)
+param([string[]]$Reels = @("r01", "r02", "r03", "r04", "r05", "r06", "r07", "r08"), [switch]$Clean)
 $Reels = @($Reels | ForEach-Object { $_ -split ',' } | Where-Object { $_ })
 $ErrorActionPreference = "Stop"
 $SRC = $PSScriptRoot
@@ -18,6 +18,9 @@ $NAMES = @{
   r03 = "Reel_03_Cero_Comision_Precios_Al_Dia"
   r04 = "Reel_04_Cobrar_En_Un_Viaje"
   r05 = "Reel_05_Piloto_14_Dias_Un_Sector"
+  r06 = "Reel_06_Mozos_Que_Rinden_Mas"
+  r07 = "Reel_07_Resenas_Cinco_Estrellas"
+  r08 = "Reel_08_Mesas_Grandes_Sin_Caos"
 }
 $TITLES = @{
   r01 = "SaleListo Reel 01: Sin celulares en el salon"
@@ -25,6 +28,9 @@ $TITLES = @{
   r03 = "SaleListo Reel 03: Cero comision y precios al dia"
   r04 = "SaleListo Reel 04: Cobrar en un solo viaje"
   r05 = "SaleListo Reel 05: Piloto de 14 dias en un sector"
+  r06 = "SaleListo Reel 06: Mozos que rinden mas que los convencionales"
+  r07 = "SaleListo Reel 07: Cuida tus resenas de 5 estrellas en Google"
+  r08 = "SaleListo Reel 08: Mesas grandes sin caos"
 }
 
 New-Item -ItemType Directory -Force $WORK | Out-Null

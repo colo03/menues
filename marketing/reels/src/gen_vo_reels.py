@@ -31,6 +31,19 @@ TEXTS = {
             "Probá SaleListo catorce días solo en tu vereda, patio o terraza. "
             "En cuarenta y ocho horas cargamos tu carta, activamos los QR fijos, "
             "y medís cuántas rondas más vendés. Cero comisión. Pedí tu piloto por WhatsApp."),
+    "r06": ("Un mozo convencional pasa más de la mitad del turno anotando pedidos y cobrando. "
+            "Con SaleListo, tus clientes piden directo del QR y tus mozos solo llevan platos y atienden. "
+            "Así cada mozo rinde por dos, atendiendo más mesas en hora pico. "
+            "Cero comisión. Escribinos."),
+    "r07": ("Invertís fortunas en cocina y local, y una reseña de una estrella en Google te espanta mesas por esperar veinte minutos. "
+            "Con SaleListo, cada mesa pide y cierra por QR al segundo. "
+            "Tu cocina brilla, tu puntaje sube y la caja factura más. "
+            "Cero comisión. Escribinos."),
+    "r08": ("Una mesa de ocho amigos suele frenar todo tu salón entre pedidos y cuentas separadas. "
+            "Con SaleListo, cada persona escanea el QR sin bajar apps, "
+            "filtra sus platos y suma al mismo pedido. "
+            "Al cerrar, dividen la cuenta en segundos. "
+            "Más ticket, cero comisión. Escribinos."),
 }
 
 

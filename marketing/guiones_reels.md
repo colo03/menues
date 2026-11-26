@@ -1,6 +1,6 @@
 # SaleListo · Guiones de Reels
 
-Documento maestro de los **5 Reels verticales renderizados** (Instagram Reels, TikTok, YouTube Shorts y estados de WhatsApp B2B) y de **5 guiones listos para grabar con cámara en mano** en restaurantes reales.
+Documento maestro de los **8 Reels verticales renderizados** (Instagram Reels, TikTok, YouTube Shorts y estados de WhatsApp B2B) y de **5 guiones listos para grabar con cámara en mano** en restaurantes reales.
 
 - Archivos finales: [`reels/`](reels/) · código reproducible en [`reels/src/`](reels/src/) (ver [`reels/src/README.md`](reels/src/README.md)).
 - Línea gráfica: Propuesta 01 `Pase Limpio`, `Plus Jakarta Sans`, lienzo blanco redondeado de 720x720 sobre B-roll cálido con deriva lineal del 3 %, curva única `cubic-bezier(0.22, 1, 0.36, 1)` sin rebote, crossfades de 0.48 s y **máximo 5 palabras en pantalla por escena**.
@@ -25,6 +25,9 @@ Documento maestro de los **5 Reels verticales renderizados** (Instagram Reels, T
 | Reel 03 · Cero comisión y precios al día | 18.40 s | 6.96 MB | -14.0 LUFS · -1.5 dBTP |
 | Reel 04 · Cobrar en un solo viaje | 20.01 s | 7.51 MB | -14.0 LUFS · -1.5 dBTP |
 | Reel 05 · Piloto 14 días en un sector | 19.47 s | 6.23 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 06 · Mozos que rinden por dos | 20.54 s | 9.43 MB | -14.0 LUFS · -1.5 dBTP |
+| Reel 07 · Reseñas 5 estrellas y más caja | 20.54 s | 6.40 MB | -14.0 LUFS · -1.6 dBTP |
+| Reel 08 · Mesas grandes sin caos | 20.54 s | 6.91 MB | -14.0 LUFS · -1.5 dBTP |
 
 Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movflags +faststart`.
 
@@ -156,6 +159,75 @@ Todos: `1080x1920`, `60 fps`, H.264 High `CRF 20`, AAC 48 kHz estéreo, `-movfla
 > #duenosgastronomicos #restaurantes #terraza #vereda #pilotogastronomico #SaleListo
 
 **Estado de WhatsApp B2B:** "Probá SaleListo 14 días solo en tu vereda o terraza, listo en 48 h y 0% comisión: salelisto.com · (+54)1138436571"
+
+---
+
+## Reel 06 · Mozos que rinden por dos
+
+**Archivo:** [`Reel_06_Mozos_Que_Rinden_Mas.mp4`](reels/Reel_06_Mozos_Que_Rinden_Mas.mp4) · **Ángulo:** productividad del equipo en hora pico (1 mozo con SaleListo rinde por 2 convencionales).
+
+**Locución (45 palabras):**
+> Un mozo convencional pasa más de la mitad del turno anotando pedidos y cobrando. Con SaleListo, tus clientes piden directo del QR y tus mozos solo llevan platos y atienden. Así cada mozo rinde por dos, atendiendo más mesas en hora pico. Cero comisión. Escribinos.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 5.05 s | **Mozo `convencional`** | Radiografía del turno de 1 mozo: barra coral al 70% (`Más de la mitad`) en `Anotar pedidos` e `Ir a cobrar` frente a solo 30% en `Atender mesas` | Barra y salón en hora pico |
+| 5.05 a 11.11 s | **QR toma `el pedido`** | Arriba `QR en mesa` absorbiendo `Carta`, `Pedido` y `Cuenta` con tilde verde; abajo `Tu mozo · Sin mandados` enfocado al 100% en `Llevar platos` y `Atender mesas` | Pizza saliendo al salón |
+| 11.11 a 15.91 s | **1 mozo rinde `por 2`** | Comparativa directa: `2 mozos · 6 mesas` en gris vs `1 mozo SaleListo (2x) · 8 mesas` en verde + píldora `Más mesas en hora pico` | Salón lleno con clientes |
+| 15.91 a 20.54 s | **Mismo equipo, `más mesas`** + logo, `0% comisión`, contacto | Cierre crema: logo, bajada, insignia `0% comisión`, `(+54)1138436571` y `ventas@salelisto.com` | Servicio en salón desenfocado |
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> Un mozo convencional pierde más de la mitad del turno haciendo mandados mecánicos: llevar cartas, anotar pedidos e ir y volver para cobrar. Con SaleListo el cliente pide y cierra desde el QR, y tu equipo solo lleva platos y atiende mesas. Así 1 mozo rinde por 2 y atendés más mesas en hora pico con el mismo equipo. 0% comisión por pedido.
+> Probá la demo en vivo en salelisto.com/demo o escribinos al (+54)1138436571 / ventas@salelisto.com.
+> #duenosgastronomicos #restaurantes #mozos #rentabilidad #horapico #SaleListo
+
+**Estado de WhatsApp B2B:** "Con SaleListo cada mozo rinde por 2 convencionales: más mesas atendidas en hora pico con el mismo equipo. Demo en salelisto.com/demo · (+54)1138436571"
+
+---
+
+## Reel 07 · Reseñas 5 estrellas y más caja
+
+**Archivo:** [`Reel_07_Resenas_Cinco_Estrellas.mp4`](reels/Reel_07_Resenas_Cinco_Estrellas.mp4) · **Ángulo:** reputación en Google Maps y protección de facturación del empresario gastronómico.
+
+**Locución (46 palabras):**
+> Invertís fortunas en cocina y local, y una reseña de una estrella en Google te espanta mesas por esperar veinte minutos. Con SaleListo, cada mesa pide y cierra por QR al segundo. Tu cocina brilla, tu puntaje sube y la caja factura más. Cero comisión. Escribinos.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 7.49 s | **¿1 estrella te `espanta mesas?`** | Badges `Cocina top` y `Local impecable` se apagan al caer una reseña `1.0` (`"Comida excelente..."` vs `"...20 min esperando"`), mesas vaciándose y alerta `Mesas que no vuelven` | Salón en servicio |
+| 7.49 a 11.68 s | **Piden y cierran `al segundo`** | QR con escaneo coral activando `Pide desde la mesa ✓` y `Cierra la cuenta ✓` mientras el contador cae a `0 min de espera` en verde | Manos con celular |
+| 11.68 a 15.72 s | **Puntaje arriba, `más caja`** | Cinco estrellas doradas en cascada (`4.1 → 4.9 ★`), barras verdes con curva ascendente y píldora `+ Mesas · + Facturación` | Salón lleno |
+| 15.72 a 20.54 s | **Más puntaje, `más caja`** + logo, `0% comisión`, contacto | Cierre crema: logo, bajada, insignia `0% comisión`, `(+54)1138436571` y `ventas@salelisto.com` | Amigos en mesa desenfocados |
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> Invertís fortunas en cocina, insumos y ambientación, pero una sola reseña de 1 estrella en Google por esperar 20 minutos te espanta mesas nuevas todos los días. Con SaleListo cada mesa pide y cierra por QR al segundo: tu cocina brilla, tu puntaje sube y la caja factura más. 0% comisión por pedido.
+> Probalo en salelisto.com/demo o escribinos al (+54)1138436571 / ventas@salelisto.com.
+> #duenosgastronomicos #restaurantes #googlemaps #reputacion #gastronomia #SaleListo
+
+**Estado de WhatsApp B2B:** "Que una espera de 20 minutos no arruine tu puntaje en Google ni te espante mesas. Probalo en salelisto.com/demo · (+54)1138436571"
+
+---
+
+## Reel 08 · Mesas grandes sin caos
+
+**Archivo:** [`Reel_08_Mesas_Grandes_Sin_Caos.mp4`](reels/Reel_08_Mesas_Grandes_Sin_Caos.mp4) · **Ángulo:** mesas de 8 amigos pidiendo desde el mismo QR con filtros dietarios y división de cuenta en segundos.
+
+**Locución (45 palabras):**
+> Una mesa de ocho amigos suele frenar todo tu salón entre pedidos y cuentas separadas. Con SaleListo, cada persona escanea el QR sin bajar apps, filtra sus platos y suma al mismo pedido. Al cerrar, dividen la cuenta en segundos. Más ticket, cero comisión. Escribinos.
+
+| Tiempo | Texto en pantalla | Diagrama (se entiende sin sonido) | B-roll |
+|---|---|---|---|
+| 0.00 a 5.51 s | **¿Mesa de 8, `salón trabado?`** | Mesa cenital de 8 personas con burbujas de pedidos y cuentas mezcladas + alerta `8 pedidos · 8 cuentas` con reloj de espera | Amigos en café/salón |
+| 5.51 a 11.99 s | **Todos piden `al mismo QR`** | QR con escaneo y etiqueta `Sin apps`, filtros `Sin TACC` y `Vegano` activos en verde, carrito compartido `Mesa 8 · 8 ítems` | Manos usando celular |
+| 11.99 a 14.80 s | **Cuenta dividida `en segundos`** | `Total Mesa 8` (`$96.000`) dividido `÷ 8 personas` = `$12.000 c/u` en verde, chips `Tarjeta`, `QR`, `Efectivo` y sello verde de confirmación | Clienta con celular |
+| 14.80 a 20.54 s | **Más ticket, `menos espera`** + logo, `0% comisión`, contacto | Cierre crema: logo, bajada, insignia `0% comisión`, `(+54)1138436571` y `ventas@salelisto.com` | Canilla desenfocada |
+
+**Copy sugerido (Instagram / TikTok / LinkedIn):**
+> Una mesa de 8 personas no tiene por qué frenar todo tu salón. Con SaleListo, cada comensal escanea el mismo QR sin bajar apps, aplica filtros (`Sin TACC`, `Vegano`), suma al carrito de la mesa y al cerrar dividen la cuenta en segundos eligiendo cómo pagar. 0% comisión por pedido.
+> Probalo gratis en salelisto.com/demo o escribinos al (+54)1138436571 / ventas@salelisto.com.
+> #restaurantes #bares #mesasgrandes #cartadigital #gastronomia #SaleListo
+
+**Estado de WhatsApp B2B:** "Mesas de 8 amigos pidiendo al mismo QR sin bajar apps y dividiendo la cuenta en segundos. Demo en salelisto.com/demo · (+54)1138436571"
 
 ---
 
