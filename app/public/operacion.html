@@ -3,277 +3,700 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SaleListo · Acceso del Local</title>
-  <meta name="robots" content="noindex">
+  <title>SaleListo · Portal del Local</title>
+  <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/svg+xml" href="mark.svg">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
   <link rel="stylesheet" href="css/base.css">
   <style>
-    body {
-      min-height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
+    body { min-height: 100dvh; background: var(--bg); }
+    .boot {
+      position: fixed; inset: 0; display: grid; place-items: center;
+      background: var(--bg); z-index: 50; font-weight: 700; color: var(--ink-3);
     }
-    .wrap {
-      width: 100%;
-      max-width: 880px;
-      margin: 0 auto;
-      padding: 28px 18px 48px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+    .wrap { width: 100%; max-width: 1080px; margin: 0 auto; padding: 22px 20px 56px; }
+
+    /* Topbar */
     .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 32px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      flex-wrap: wrap; margin-bottom: 26px;
     }
-    .brand-link {
-      display: inline-flex;
-      align-items: center;
-      text-decoration: none;
+    .brand-link img { height: 34px; display: block; }
+    .acc-box { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .acc-pill {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 7px 14px 7px 10px; border-radius: var(--radius-pill);
+      background: var(--ok-soft); border: 1px solid rgba(47, 138, 87, 0.28); min-width: 0;
     }
-    .brand-link img {
-      height: 38px;
-      display: block;
+    .acc-pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--ok); flex: none; box-shadow: 0 0 0 3px rgba(47, 138, 87, 0.18); }
+    .acc-pill .txt { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+    .acc-pill strong { font-size: 13.5px; color: #1d5c39; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+    .acc-pill small { font-size: 12px; color: #3f7a57; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
+    .mode-badge {
+      font-size: 12px; font-weight: 700; padding: 6px 11px; border-radius: var(--radius-pill);
+      background: var(--surface); border: 1px solid var(--line); color: var(--ink-2); white-space: nowrap;
     }
-    .back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13.5px;
-      font-weight: 700;
-      color: var(--ink-2);
-      text-decoration: none;
-      padding: 8px 14px;
-      border-radius: var(--radius-pill);
-      border: 1px solid var(--line);
-      background: var(--surface);
-      transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
-    }
-    .back:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-logout { font-size: 13px; padding: 8px 14px; border-radius: var(--radius-pill); }
 
-    .head {
-      margin-bottom: 24px;
+    /* Puesto fijado */
+    .pin-banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      padding: 13px 16px; margin-bottom: 20px; border-radius: var(--radius-card);
+      background: #fff7e6; border: 1px solid rgba(217, 119, 6, 0.35); color: #7c4400; font-size: 14px;
     }
-    .rest-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 12.5px;
-      font-weight: 700;
-      padding: 5px 12px;
-      border-radius: var(--radius-pill);
-      background: var(--surface-2);
-      color: var(--ink-2);
-      margin-bottom: 12px;
-    }
-    .rest-pill .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--ok);
-    }
-    h1 {
-      font-size: clamp(26px, 4vw, 36px);
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      line-height: 1.15;
-      color: var(--ink);
-    }
-    .lead {
-      font-size: 16px;
-      color: var(--ink-2);
-      margin-top: 8px;
-      line-height: 1.45;
-    }
+    .pin-banner strong { color: #5c3200; }
+    .pin-banner .acts { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    .roles {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
+    .head { margin-bottom: 20px; }
+    .head h1 { font-size: clamp(24px, 3.4vw, 32px); font-weight: 800; letter-spacing: -0.025em; }
+    .head p { margin-top: 6px; font-size: 15px; color: var(--ink-2); }
+
+    /* Tarjetas de módulos */
+    .roles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .role-card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-card);
-      padding: 22px;
-      box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      color: inherit;
-      text-decoration: none;
-      transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+      background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-card);
+      padding: 20px; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 10px;
+      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
     }
-    a.role-card:hover {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-float);
-    }
-    .role-card.primary {
-      border-color: rgba(217, 65, 43, 0.35);
-      background: linear-gradient(180deg, #ffffff 0%, #fffaf8 100%);
-    }
-    .role-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
+    .role-card:hover { border-color: var(--line-strong); box-shadow: var(--shadow-float); }
+    .role-card.primary { border-color: rgba(217, 65, 43, 0.32); background: linear-gradient(180deg, #ffffff 0%, #fffaf8 100%); }
+    .role-card.is-pinned { border-color: rgba(217, 119, 6, 0.55); box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12); }
+    .role-card.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; flex-wrap: wrap; }
+    .role-card.wide .role-body { flex: 1; min-width: 220px; }
+    .role-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .role-ico {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: var(--surface-2);
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      flex: none;
+      width: 44px; height: 44px; border-radius: 12px; background: var(--surface-2);
+      display: grid; place-items: center; font-size: 22px; flex: none;
     }
-    .role-card.primary .role-ico {
-      background: var(--accent-soft);
+    .role-card.primary .role-ico { background: var(--accent-soft); }
+    .acc-badge {
+      font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: var(--radius-pill);
+      white-space: nowrap; letter-spacing: 0.01em;
     }
-    .role-badge {
-      font-size: 11.5px;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: var(--radius-pill);
-      background: var(--surface-2);
-      color: var(--ink-2);
+    .acc-badge.direct { background: var(--ok-soft); color: var(--ok); }
+    .acc-badge.pin { background: var(--warn-soft); color: #9a5500; }
+    .acc-badge.neutral { background: var(--surface-2); color: var(--ink-2); }
+    .role-card h2 { font-size: 18.5px; font-weight: 800; letter-spacing: -0.015em; }
+    .role-card p { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+    .role-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; align-items: center; }
+    .seg { display: inline-flex; gap: 3px; background: var(--surface-2); padding: 3px; border-radius: var(--radius-pill); flex-wrap: wrap; }
+    .seg button {
+      font-size: 12.5px; font-weight: 700; padding: 6px 11px; border-radius: var(--radius-pill); color: var(--ink-2);
     }
-    .role-card h2 {
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: -0.015em;
-    }
-    .role-card p {
-      font-size: 14px;
-      color: var(--ink-2);
-      line-height: 1.45;
-    }
-    .role-go {
-      margin-top: auto;
-      padding-top: 6px;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    .station-btns {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: auto;
-      padding-top: 6px;
-    }
+    .seg button.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-xs); }
+    .btn-pin.is-on { background: var(--warn-soft); color: #9a5500; border-color: rgba(217, 119, 6, 0.35); }
 
-    .extra-bar {
-      margin-top: 18px;
-      padding: 14px 18px;
-      border-radius: var(--radius-card);
-      background: var(--surface-2);
-      border: 1px solid var(--line);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      font-size: 13.5px;
-      color: var(--ink-2);
+    /* Superadmin */
+    .sa {
+      margin-top: 34px; padding: 24px; border-radius: 20px; background: var(--surface);
+      border: 1px solid var(--line); box-shadow: var(--shadow-card);
     }
-    .extra-links {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .sa-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .sa-kicker {
+      display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;
+      color: var(--ink); background: var(--surface-2); padding: 4px 10px; border-radius: var(--radius-pill); margin-bottom: 8px;
     }
+    .sa h2 { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; }
+    .sa-head p { margin-top: 5px; font-size: 14px; color: var(--ink-2); max-width: 560px; }
+    .demo-link {
+      font-size: 13px; font-weight: 700; color: var(--ink-2); text-decoration: none; padding: 8px 13px;
+      border-radius: var(--radius-pill); border: 1px dashed var(--line-strong); white-space: nowrap;
+    }
+    .demo-link:hover { color: var(--accent); border-color: var(--accent); }
 
+    .sa-form {
+      margin-top: 18px; display: grid; grid-template-columns: 1.25fr 1.1fr 1.15fr auto; gap: 12px; align-items: end;
+      padding: 16px; border-radius: var(--radius-card); background: var(--bg); border: 1px solid var(--line);
+    }
+    .f-label { display: block; font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; }
+    .combo {
+      display: flex; align-items: stretch; border: 1px solid var(--line-strong); border-radius: var(--radius-control);
+      background: var(--surface); overflow: hidden;
+    }
+    .combo:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.14); }
+    .combo input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; padding: 10px 11px; font-weight: 600; }
+    .combo .sfx {
+      display: flex; align-items: center; padding: 0 10px; font-size: 13px; font-weight: 700; color: var(--ink-3);
+      background: var(--surface-2); border-left: 1px solid var(--line); white-space: nowrap;
+    }
+    .combo .mini {
+      display: flex; align-items: center; padding: 0 11px; font-size: 12.5px; font-weight: 700; color: var(--accent);
+      border-left: 1px solid var(--line); white-space: nowrap;
+    }
+    .sa-form .input { border-color: var(--line-strong); }
+    .sa-form .btn { height: 42px; white-space: nowrap; }
+    .sa-msg { grid-column: 1 / -1; font-size: 13px; font-weight: 700; }
+    .sa-msg.err { color: #a12a18; }
+
+    .acc-list { margin-top: 18px; border: 1px solid var(--line); border-radius: var(--radius-card); overflow: hidden; }
+    .acc-row {
+      display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(200px, 1fr) minmax(0, 1fr) auto; gap: 12px;
+      align-items: center; padding: 13px 16px; border-top: 1px solid var(--line); background: var(--surface);
+    }
+    .acc-row:first-child { border-top: 0; }
+    .acc-row.hdr {
+      background: var(--surface-2); font-size: 11.5px; font-weight: 800; letter-spacing: 0.04em;
+      text-transform: uppercase; color: var(--ink-3); padding-top: 9px; padding-bottom: 9px;
+    }
+    .acc-row.off { background: #fbf9f6; }
+    .acc-row.off .a-main strong { color: var(--ink-3); text-decoration: line-through; }
+    .a-main { min-width: 0; }
+    .a-main strong { display: block; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .a-main small { display: block; font-size: 12.5px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .a-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: 11.5px; font-weight: 800; padding: 3px 9px; border-radius: var(--radius-pill); white-space: nowrap; }
+    .tag.sa-role { background: var(--ink); color: #fff; }
+    .tag.owner { background: var(--surface-2); color: var(--ink-2); }
+    .tag.on { background: var(--ok-soft); color: var(--ok); }
+    .tag.offt { background: var(--accent-soft); color: var(--accent); }
+    .a-meta { font-size: 12.5px; color: var(--ink-2); line-height: 1.35; }
+    .a-acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+    .acc-empty { padding: 22px; text-align: center; color: var(--ink-3); font-weight: 600; }
+
+    /* Diálogo de credenciales */
+    dialog.cred {
+      border: 0; padding: 0; border-radius: 18px; width: min(440px, calc(100vw - 32px));
+      box-shadow: var(--shadow-float); color: var(--ink);
+    }
+    dialog.cred::backdrop { background: rgba(28, 25, 23, 0.45); }
+    .cred-in { padding: 24px; }
+    .cred-in h3 { font-size: 19px; font-weight: 800; }
+    .cred-in p { margin-top: 6px; font-size: 14px; color: var(--ink-2); }
+    .cred-box {
+      margin-top: 14px; padding: 14px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line);
+      font-size: 14px; line-height: 1.7; word-break: break-all;
+    }
+    .cred-box code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 700; font-size: 14px; }
+    .cred-field { margin-top: 14px; }
+    .cred-acts { margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+
+    @media (max-width: 860px) {
+      .sa-form { grid-template-columns: 1fr 1fr; }
+      .sa-form .btn-create { grid-column: 1 / -1; }
+    }
     @media (max-width: 680px) {
+      .wrap { padding: 16px 14px 44px; }
+      .topbar { margin-bottom: 20px; }
+      .acc-box { width: 100%; justify-content: space-between; }
+      .acc-pill { flex: 1 1 100%; }
+      .acc-pill strong, .acc-pill small { max-width: none; }
       .roles { grid-template-columns: 1fr; }
+      .role-card.wide { flex-direction: column; align-items: stretch; }
+      .role-card.wide .acc-badge { align-self: flex-start; }
+      .sa { padding: 18px 14px; border-radius: 16px; }
+      .sa-form { grid-template-columns: 1fr; padding: 14px; }
+      .acc-row { grid-template-columns: 1fr; gap: 8px; }
+      .acc-row.hdr { display: none; }
+      .a-acts { justify-content: flex-start; }
     }
   </style>
 </head>
 <body>
-  <main class="wrap">
+  <div class="boot" id="boot">Verificando el acceso del local…</div>
+
+  <main class="wrap" id="app" hidden>
     <nav class="topbar">
-      <a class="brand-link" href="/"><img src="logo.svg" alt="SaleListo"></a>
-      <a class="back" href="/">← Volver al inicio</a>
+      <a class="brand-link" href="/operacion?elegir=1" aria-label="SaleListo, portal del local"><img src="logo.svg" alt="SaleListo"></a>
+      <div class="acc-box">
+        <div class="acc-pill" title="Cuenta del local vinculada a este dispositivo">
+          <span class="dot" aria-hidden="true"></span>
+          <span class="txt"><strong id="accName">Tu local</strong><small id="accEmail">cuenta@salelisto.com</small></span>
+        </div>
+        <span class="mode-badge" id="modeBadge">🛎️ Estación compartida</span>
+        <button class="btn btn-ghost btn-logout" id="logoutBtn" type="button">Cerrar sesión</button>
+      </div>
     </nav>
 
+    <div class="pin-banner" id="pinBanner" hidden>
+      <span>📌 Este equipo está fijado en <strong id="pinLabel">Cocina</strong>. Al abrir el portal entra directo a esa pantalla.</span>
+      <span class="acts">
+        <a class="btn btn-sm btn-ghost" id="pinOpen" href="#">Abrir ahora</a>
+        <button class="btn btn-sm btn-danger" id="pinClear" type="button">Desfijar</button>
+      </span>
+    </div>
+
     <header class="head">
-      <div class="rest-pill"><span class="dot"></span><span id="restLabel">Acceso para el personal del establecimiento</span></div>
-      <h1>Seleccione la vista correspondiente</h1>
-      <p class="lead">Elija el módulo operativo según el puesto de trabajo de este dispositivo.</p>
+      <h1>¿Qué puesto es este dispositivo?</h1>
+      <p>Elegí el módulo de tu restaurante. Las estaciones fijas abren directo, sin claves.</p>
     </header>
 
-    <section class="roles">
-      <a class="role-card primary" href="restaurante.html">
+    <section class="roles" aria-label="Módulos del software">
+      <article class="role-card primary">
         <div class="role-top">
-          <span class="role-ico">🖥️</span>
-          <span class="role-badge">Caja / Administración</span>
+          <span class="role-ico" aria-hidden="true">🖥️</span>
+          <span class="acc-badge pin" data-admin-badge>PIN 4 dígitos</span>
         </div>
         <h2>Panel del Encargado</h2>
-        <p>Configure sectores y mesas, administre la carta y los precios, gestione turnos del personal y consulte el arqueo diario.</p>
-        <span class="role-go">Ingresar al Panel →</span>
-      </a>
-
-      <a class="role-card" href="pase.html">
-        <div class="role-top">
-          <span class="role-ico">🛎️</span>
-          <span class="role-badge">Mostrador / Pase</span>
+        <p>Salón y mesas, carta y precios, turnos del personal y arqueo diario de caja.</p>
+        <div class="role-actions">
+          <a class="btn btn-sm btn-primary" href="restaurante.html">Ingresar al Panel →</a>
         </div>
-        <h2>Estación de Mozos</h2>
-        <p>Diseñada para un monitor o tablet fija en el mostrador: centraliza pedidos listos, llamados y solicitudes de cuenta.</p>
-        <span class="role-go">Abrir Estación de Mozos →</span>
-      </a>
+      </article>
 
-      <div class="role-card">
+      <article class="role-card" data-pin-card="pase">
         <div class="role-top">
-          <span class="role-ico">🍳</span>
-          <span class="role-badge">Elaboración</span>
+          <span class="role-ico" aria-hidden="true">🛎️</span>
+          <span class="acc-badge direct">Directo · sin clave</span>
+        </div>
+        <h2>Estación de Mozos (Pase)</h2>
+        <p>Monitor o tablet fija en el mostrador: pedidos listos, llamados de mesa y pedidos de cuenta.</p>
+        <div class="role-actions">
+          <a class="btn btn-sm btn-primary" href="pase.html">Abrir Estación</a>
+          <button class="btn btn-sm btn-ghost btn-pin" type="button" data-pin="pase">📌 Fijar aquí</button>
+        </div>
+      </article>
+
+      <article class="role-card" data-pin-card="cocina">
+        <div class="role-top">
+          <span class="role-ico" aria-hidden="true">🍳</span>
+          <span class="acc-badge direct">Directo · sin clave</span>
         </div>
         <h2>Cocina y Barra</h2>
-        <p>Recibe las comandas con alerta sonora y notifica al mozo en una sola acción cuando el pedido está listo para despacho.</p>
-        <div class="station-btns">
-          <a class="btn btn-sm btn-primary" href="cocina.html?estacion=todas">Ver todas</a>
-          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=cocina">Solo Cocina</a>
-          <a class="btn btn-sm btn-ghost" href="cocina.html?estacion=barra">Solo Barra</a>
+        <p>Comandas con alerta sonora y aviso al mozo en un toque cuando el pedido está listo.</p>
+        <div class="seg" role="group" aria-label="Estación de elaboración" id="kdsSeg">
+          <button type="button" class="active" data-kds="todas">Todas</button>
+          <button type="button" data-kds="cocina">Cocina</button>
+          <button type="button" data-kds="barra">Barra</button>
+          <button type="button" data-kds="mostrador">Mostrador</button>
         </div>
-      </div>
+        <div class="role-actions">
+          <a class="btn btn-sm btn-primary" id="kdsOpen" href="cocina.html?estacion=todas">Abrir Todas</a>
+          <button class="btn btn-sm btn-ghost btn-pin" type="button" id="kdsPin" data-pin="cocina-todas">📌 Fijar aquí</button>
+        </div>
+      </article>
 
-      <a class="role-card" href="qr.html">
+      <article class="role-card">
         <div class="role-top">
-          <span class="role-ico">🖨️</span>
-          <span class="role-badge">Mesas</span>
+          <span class="role-ico" aria-hidden="true">🖨️</span>
+          <span class="acc-badge pin" data-admin-badge>PIN 4 dígitos</span>
         </div>
         <h2>Códigos QR de mesas</h2>
-        <p>Consulte, verifique o descargue las tarjetas imprimibles correspondientes a cada mesa y sector del establecimiento.</p>
-        <span class="role-go">Ver códigos QR →</span>
-      </a>
+        <p>Verificá, imprimí o descargá las tarjetas QR fijas de cada mesa y sector.</p>
+        <div class="role-actions">
+          <a class="btn btn-sm btn-primary" href="qr.html">Ver códigos QR</a>
+        </div>
+      </article>
+
+      <article class="role-card wide">
+        <span class="role-ico" aria-hidden="true">📱</span>
+        <div class="role-body">
+          <h2>Vista móvil de Mozo</h2>
+          <p>El celular ya queda vinculado al local: cada mozo toca su nombre y su PIN.</p>
+        </div>
+        <span class="acc-badge neutral">Nombre + PIN 4 dígitos</span>
+        <a class="btn btn-sm btn-ghost" href="mozo.html">Abrir vista de Mozo</a>
+      </article>
     </section>
 
-    <div class="extra-bar">
-      <span>Accesos complementarios:</span>
-      <div class="extra-links">
-        <a class="btn btn-xs btn-ghost" href="mozo.html">📱 Vista móvil de Mozo</a>
-        <a class="btn btn-xs btn-ghost" href="demo.html">▶ Abrir simulador interactivo</a>
+    <section class="sa" id="saPanel" hidden aria-labelledby="saTitle">
+      <div class="sa-head">
+        <div>
+          <span class="sa-kicker">Solo administradores SaleListo</span>
+          <h2 id="saTitle">Cuentas de restaurantes (@salelisto.com)</h2>
+          <p>Creá la cuenta de cada cliente nuevo, compartí sus credenciales y resetealas o desactivalas al instante.</p>
+        </div>
+        <a class="demo-link" href="demo.html">▶ Simulador interno para reuniones</a>
       </div>
-    </div>
+
+      <form class="sa-form" id="accForm" novalidate>
+        <div>
+          <label class="f-label" for="nUser">Usuario</label>
+          <div class="combo">
+            <input id="nUser" type="text" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="laesquina" required>
+            <span class="sfx">@salelisto.com</span>
+          </div>
+        </div>
+        <div>
+          <label class="f-label" for="nName">Nombre del local</label>
+          <input class="input" id="nName" type="text" maxlength="80" placeholder="La Esquina Bodegón" required>
+        </div>
+        <div>
+          <label class="f-label" for="nPass">Contraseña inicial</label>
+          <div class="combo">
+            <input id="nPass" type="text" autocomplete="off" spellcheck="false" placeholder="Mínimo 8 caracteres" required>
+            <button class="mini" type="button" id="nGen">Generar</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-create" type="submit" id="nSubmit">Crear cuenta</button>
+        <div class="sa-msg" id="accMsg" hidden></div>
+      </form>
+
+      <div class="acc-list" id="accList" aria-live="polite">
+        <div class="acc-empty">Cargando cuentas…</div>
+      </div>
+    </section>
   </main>
 
+  <dialog class="cred" id="credDlg">
+    <form method="dialog" class="cred-in" id="credForm">
+      <h3 id="credTitle">Cuenta creada</h3>
+      <p id="credSub">Compartí estas credenciales con el encargado del local.</p>
+      <div class="cred-field" id="credPassField" hidden>
+        <label class="f-label" for="credPassInput">Nueva contraseña</label>
+        <div class="combo">
+          <input id="credPassInput" type="text" autocomplete="off" spellcheck="false">
+          <button class="mini" type="button" id="credGen">Generar</button>
+        </div>
+      </div>
+      <div class="cred-box" id="credBox"></div>
+      <div class="cred-acts">
+        <button class="btn btn-ghost" value="cancel" id="credCancel">Cerrar</button>
+        <button class="btn btn-ghost" type="button" id="credCopy">Copiar credenciales</button>
+        <button class="btn btn-primary" type="button" id="credSave" hidden>Guardar nueva clave</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast-wrap" id="toasts"></div>
+
   <script>
-    fetch('/api/waiters-public', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        if (d && d.restaurant) {
-          document.getElementById('restLabel').textContent = `${d.restaurant} · Acceso del local`;
+    (() => {
+      const $ = (s) => document.querySelector(s);
+      const PIN_KEY = 'salelisto_pinned_view';
+      const PIN_VIEWS = {
+        pase: { label: 'Estación de Mozos (Pase)', url: 'pase.html' },
+        'cocina-todas': { label: 'Cocina y Barra · Todas', url: 'cocina.html?estacion=todas' },
+        'cocina-cocina': { label: 'Cocina', url: 'cocina.html?estacion=cocina' },
+        'cocina-barra': { label: 'Barra', url: 'cocina.html?estacion=barra' },
+        'cocina-mostrador': { label: 'Mostrador', url: 'cocina.html?estacion=mostrador' },
+      };
+      const KDS_LABEL = { todas: 'Todas', cocina: 'Cocina', barra: 'Barra', mostrador: 'Mostrador' };
+      const params = new URLSearchParams(location.search);
+      const choosing = params.get('elegir') === '1';
+      let me = null;
+      let kdsSel = 'todas';
+
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      function toast(msg) {
+        const wrap = $('#toasts');
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.textContent = msg;
+        wrap.appendChild(el);
+        setTimeout(() => el.remove(), 2800);
+      }
+
+      function getPinned() {
+        try {
+          const v = localStorage.getItem(PIN_KEY) || '';
+          return PIN_VIEWS[v] ? v : '';
+        } catch (_) {
+          return '';
         }
-      })
-      .catch(() => {});
+      }
+      function setPinned(v) {
+        try {
+          if (v) localStorage.setItem(PIN_KEY, v);
+          else localStorage.removeItem(PIN_KEY);
+        } catch (_) {}
+      }
+
+      function genPassword(len = 12) {
+        const abc = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        const arr = new Uint32Array(len);
+        crypto.getRandomValues(arr);
+        return Array.from(arr, (n) => abc[n % abc.length]).join('');
+      }
+
+      async function copyText(txt) {
+        try {
+          await navigator.clipboard.writeText(txt);
+          toast('Copiado al portapapeles');
+        } catch (_) {
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand('copy'); toast('Copiado al portapapeles'); } catch (__) { toast('No se pudo copiar'); }
+          ta.remove();
+        }
+      }
+
+      async function api(method, url, body) {
+        const res = await fetch(url, {
+          method,
+          credentials: 'same-origin',
+          cache: 'no-store',
+          headers: body ? { 'Content-Type': 'application/json' } : {},
+          body: body ? JSON.stringify(body) : undefined,
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.status === 401 && url.startsWith('/api/accounts')) {
+          location.replace('/login?next=%2Foperacion');
+          throw new Error('Sesión vencida');
+        }
+        if (!res.ok || data.ok === false) {
+          const err = new Error(data.error || 'Ocurrió un error');
+          err.status = res.status;
+          throw err;
+        }
+        return data;
+      }
+
+      // ---------- Puesto fijado ----------
+      function renderPinned() {
+        const pinned = getPinned();
+        $('#pinBanner').hidden = !pinned;
+        if (pinned) {
+          $('#pinLabel').textContent = PIN_VIEWS[pinned].label;
+          $('#pinOpen').href = PIN_VIEWS[pinned].url;
+        }
+        document.querySelectorAll('.btn-pin').forEach((b) => {
+          const on = b.dataset.pin === pinned;
+          b.classList.toggle('is-on', on);
+          b.textContent = on ? '📌 Fijado aquí' : '📌 Fijar aquí';
+          b.setAttribute('aria-pressed', String(on));
+        });
+        document.querySelectorAll('[data-pin-card]').forEach((c) => {
+          c.classList.toggle('is-pinned', Boolean(pinned) && pinned.startsWith(c.dataset.pinCard));
+        });
+      }
+
+      document.querySelectorAll('.btn-pin').forEach((b) => b.addEventListener('click', () => {
+        const key = b.dataset.pin;
+        if (getPinned() === key) {
+          setPinned('');
+          renderPinned();
+          toast('Puesto desfijado');
+          return;
+        }
+        setPinned(key);
+        renderPinned();
+        location.href = PIN_VIEWS[key].url;
+      }));
+      $('#pinClear').addEventListener('click', () => {
+        setPinned('');
+        renderPinned();
+        toast('Puesto desfijado: el portal vuelve a mostrar todos los módulos');
+      });
+
+      $('#kdsSeg').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-kds]');
+        if (!btn) return;
+        kdsSel = btn.dataset.kds;
+        $('#kdsSeg').querySelectorAll('[data-kds]').forEach((x) => x.classList.toggle('active', x === btn));
+        $('#kdsOpen').href = `cocina.html?estacion=${kdsSel}`;
+        $('#kdsOpen').textContent = `Abrir ${KDS_LABEL[kdsSel]}`;
+        $('#kdsPin').dataset.pin = `cocina-${kdsSel}`;
+        renderPinned();
+      });
+
+      // ---------- Cierre de sesión ----------
+      $('#logoutBtn').addEventListener('click', async () => {
+        try {
+          await fetch('/api/auth/account/logout', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        } catch (_) {}
+        try {
+          ['salelisto:adminToken', 'salelisto:adminRole', 'salelisto:kdsToken', 'salelisto:waiterToken', 'salelisto:waiterId']
+            .forEach((k) => sessionStorage.removeItem(k));
+        } catch (_) {}
+        location.replace('/login');
+      });
+
+      // ---------- Superadmin: cuentas de restaurantes ----------
+      function fmtDate(ts) {
+        if (!ts) return 'Nunca';
+        const d = new Date(ts);
+        return d.toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+          + ' ' + d.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+      }
+
+      function credText(email, password) {
+        const lines = [`Usuario: ${email}`];
+        if (password) lines.push(`Contraseña: ${password}`);
+        lines.push(`Ingreso: ${location.origin}/login`);
+        return lines.join('\n');
+      }
+
+      let dlgState = null;
+      function openCredDialog(opts) {
+        dlgState = opts;
+        $('#credTitle').textContent = opts.title;
+        $('#credSub').textContent = opts.sub;
+        $('#credPassField').hidden = !opts.editPassword;
+        $('#credSave').hidden = !opts.editPassword;
+        if (opts.editPassword) $('#credPassInput').value = opts.password || genPassword();
+        renderCredBox();
+        $('#credDlg').showModal();
+      }
+      function renderCredBox() {
+        if (!dlgState) return;
+        const pw = dlgState.editPassword ? $('#credPassInput').value : dlgState.password;
+        $('#credBox').innerHTML = `Usuario: <code>${esc(dlgState.email)}</code>`
+          + (pw ? `<br>Contraseña: <code>${esc(pw)}</code>` : '')
+          + `<br>Ingreso: <code>${esc(location.origin)}/login</code>`;
+      }
+      $('#credPassInput').addEventListener('input', renderCredBox);
+      $('#credGen').addEventListener('click', () => { $('#credPassInput').value = genPassword(); renderCredBox(); });
+      $('#credCopy').addEventListener('click', () => {
+        if (!dlgState) return;
+        const pw = dlgState.editPassword ? $('#credPassInput').value : dlgState.password;
+        copyText(credText(dlgState.email, pw));
+      });
+      $('#credSave').addEventListener('click', async () => {
+        if (!dlgState) return;
+        const pw = $('#credPassInput').value.trim();
+        if (pw.length < 8) { toast('La contraseña debe tener al menos 8 caracteres'); return; }
+        try {
+          await api('PATCH', `/api/accounts/${encodeURIComponent(dlgState.id)}`, { password: pw });
+          const email = dlgState.email;
+          dlgState = { ...dlgState, editPassword: false, password: pw };
+          $('#credPassField').hidden = true;
+          $('#credSave').hidden = true;
+          $('#credTitle').textContent = 'Clave actualizada';
+          $('#credSub').textContent = 'Se cerraron las sesiones anteriores de esta cuenta. Compartí la nueva clave.';
+          renderCredBox();
+          toast(`Nueva clave guardada para ${email}`);
+          loadAccounts();
+        } catch (err) {
+          toast(err.message);
+        }
+      });
+
+      function renderAccounts(list) {
+        const box = $('#accList');
+        if (!list.length) {
+          box.innerHTML = '<div class="acc-empty">Todavía no hay cuentas creadas.</div>';
+          return;
+        }
+        const selfId = me?.account?.id;
+        box.innerHTML = `<div class="acc-row hdr"><span>Cuenta</span><span>Estado</span><span>Último ingreso</span><span style="text-align:right">Acciones</span></div>`
+          + list.map((a) => {
+            const isSelf = a.id === selfId;
+            return `
+            <div class="acc-row ${a.active ? '' : 'off'}" data-id="${esc(a.id)}">
+              <div class="a-main">
+                <strong>${esc(a.email)}</strong>
+                <small>${esc(a.restaurantName)}${isSelf ? ' · vos' : ''}</small>
+              </div>
+              <div class="a-tags">
+                <span class="tag ${a.role === 'superadmin' ? 'sa-role' : 'owner'}">${a.role === 'superadmin' ? 'Admin SaleListo' : 'Restaurante'}</span>
+                <span class="tag ${a.active ? 'on' : 'offt'}">${a.active ? 'Activa' : 'Desactivada'}</span>
+              </div>
+              <div class="a-meta">${esc(fmtDate(a.lastLoginAt))}<br>${Number(a.activeSessions || 0)} dispositivo(s) vinculado(s)</div>
+              <div class="a-acts">
+                <button class="btn btn-xs btn-ghost" type="button" data-act="copy">Copiar acceso</button>
+                <button class="btn btn-xs btn-ghost" type="button" data-act="reset">Nueva clave</button>
+                ${isSelf ? '' : `<button class="btn btn-xs ${a.active ? 'btn-danger' : 'btn-ok'}" type="button" data-act="toggle">${a.active ? 'Desactivar' : 'Activar'}</button>`}
+              </div>
+            </div>`;
+          }).join('');
+        box.querySelectorAll('.acc-row[data-id]').forEach((row) => {
+          const acc = list.find((x) => x.id === row.dataset.id);
+          row.querySelector('[data-act="copy"]').addEventListener('click', () => copyText(credText(acc.email, '')));
+          row.querySelector('[data-act="reset"]').addEventListener('click', () => openCredDialog({
+            id: acc.id,
+            email: acc.email,
+            title: 'Resetear contraseña',
+            sub: `Generá una clave nueva para ${acc.restaurantName}. Se cierran sus sesiones anteriores.`,
+            editPassword: true,
+          }));
+          row.querySelector('[data-act="toggle"]')?.addEventListener('click', async () => {
+            const next = !acc.active;
+            if (!next && !confirm(`¿Desactivar ${acc.email}? Se cierran todas sus sesiones al instante.`)) return;
+            try {
+              await api('PATCH', `/api/accounts/${encodeURIComponent(acc.id)}`, { active: next });
+              toast(next ? `${acc.email} reactivada` : `${acc.email} desactivada`);
+              loadAccounts();
+            } catch (err) {
+              toast(err.message);
+            }
+          });
+        });
+      }
+
+      async function loadAccounts() {
+        try {
+          const d = await api('GET', '/api/accounts');
+          renderAccounts(d.accounts || []);
+        } catch (err) {
+          $('#accList').innerHTML = `<div class="acc-empty">${esc(err.message)}</div>`;
+        }
+      }
+
+      function showFormMsg(msg, isErr) {
+        const el = $('#accMsg');
+        el.textContent = msg;
+        el.className = `sa-msg${isErr ? ' err' : ''}`;
+        el.hidden = !msg;
+      }
+
+      $('#nGen').addEventListener('click', () => { $('#nPass').value = genPassword(); });
+      $('#nUser').addEventListener('input', () => {
+        const v = $('#nUser').value;
+        if (/@salelisto\.com$/i.test(v.trim())) $('#nUser').value = v.slice(0, v.indexOf('@'));
+      });
+      $('#accForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showFormMsg('', false);
+        const user = $('#nUser').value.trim().toLowerCase();
+        const name = $('#nName').value.trim();
+        const pw = $('#nPass').value.trim();
+        if (!/^[a-z0-9._-]{2,48}$/.test(user)) { showFormMsg('Usuario inválido: usá letras, números, punto o guion (mínimo 2).', true); return; }
+        if (name.length < 2) { showFormMsg('Ingresá el nombre del local.', true); return; }
+        if (pw.length < 8) { showFormMsg('La contraseña inicial debe tener al menos 8 caracteres.', true); return; }
+        $('#nSubmit').disabled = true;
+        try {
+          const d = await api('POST', '/api/accounts', { email: `${user}@salelisto.com`, restaurantName: name, password: pw });
+          $('#accForm').reset();
+          openCredDialog({
+            id: d.account.id,
+            email: d.account.email,
+            password: pw,
+            title: 'Cuenta creada',
+            sub: `Compartí estas credenciales con ${d.account.restaurantName}.`,
+            editPassword: false,
+          });
+          loadAccounts();
+        } catch (err) {
+          showFormMsg(err.message, true);
+        } finally {
+          $('#nSubmit').disabled = false;
+        }
+      });
+
+      // ---------- Arranque ----------
+      function renderAccount() {
+        const acc = me.account;
+        const owner = acc.deviceMode === 'owner_device';
+        $('#accName').textContent = acc.restaurantName;
+        $('#accEmail').textContent = acc.email;
+        $('#modeBadge').textContent = owner ? '💼 Equipo del Encargado' : '🛎️ Estación compartida';
+        document.querySelectorAll('[data-admin-badge]').forEach((b) => {
+          b.textContent = owner ? 'Acceso directo' : 'PIN 4 dígitos';
+          b.className = `acc-badge ${owner ? 'direct' : 'pin'}`;
+        });
+        if (acc.role === 'superadmin') {
+          $('#saPanel').hidden = false;
+          loadAccounts();
+        }
+      }
+
+      fetch('/api/auth/account/me?lite=1', { cache: 'no-store', credentials: 'same-origin' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (!d || !d.authenticated) {
+            location.replace('/login?next=%2Foperacion');
+            return;
+          }
+          me = d;
+          const pinned = getPinned();
+          if (pinned && !choosing) {
+            location.replace(PIN_VIEWS[pinned].url);
+            return;
+          }
+          renderAccount();
+          renderPinned();
+          $('#boot').hidden = true;
+          $('#app').hidden = false;
+        })
+        .catch(() => {
+          $('#boot').textContent = 'Sin conexión con el servidor. Reintentando…';
+          setTimeout(() => location.reload(), 3000);
+        });
+    })();
   </script>
 </body>
 </html>

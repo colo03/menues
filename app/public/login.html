@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iniciar sesión · SaleListo</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Acceso privado para restaurantes con cuenta @salelisto.com.">
+  <link rel="icon" type="image/svg+xml" href="mark.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+  <link rel="stylesheet" href="css/base.css">
+  <style>
+    body {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background:
+        radial-gradient(1200px 520px at 50% -180px, rgba(217, 65, 43, 0.07), transparent 70%),
+        #FAF7F2;
+    }
+    .l-top {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 22px 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .l-brand img { height: 34px; display: block; }
+    .l-back {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--ink-2);
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+    }
+    .l-back:hover { border-color: var(--accent); color: var(--accent); }
+
+    .l-main {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 28px 18px 40px;
+    }
+    .l-card {
+      width: min(460px, 100%);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow-float);
+      padding: 34px 32px 28px;
+    }
+    .l-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 5px 11px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 14px;
+    }
+    .l-card h1 {
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+    }
+    .l-sub {
+      margin-top: 8px;
+      font-size: 14.5px;
+      color: var(--ink-2);
+      line-height: 1.5;
+    }
+    form { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
+    .f-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-2);
+      margin-bottom: 7px;
+    }
+    .f-combo {
+      display: flex;
+      align-items: stretch;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
+      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+    }
+    .f-combo:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.14);
+    }
+    .f-combo input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      padding: 13px 14px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .f-suffix {
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--ink-3);
+      background: var(--surface-2);
+      border-left: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    .f-eye {
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-2);
+      border-left: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .f-eye:hover { color: var(--accent); }
+
+    .mode-title { font-size: 13px; font-weight: 700; color: var(--ink-2); margin: 2px 0 8px; }
+    .modes { display: grid; gap: 10px; border: 0; padding: 0; margin: 0; }
+    .mode {
+      position: relative;
+      display: grid;
+      grid-template-columns: 40px 1fr 20px;
+      gap: 12px;
+      align-items: start;
+      padding: 13px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      cursor: pointer;
+      transition: border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+    }
+    .mode:hover { border-color: var(--line-strong); }
+    .mode input { position: absolute; opacity: 0; pointer-events: none; }
+    .mode-ico {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: var(--surface-2);
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+    }
+    .mode strong { display: block; font-size: 14.5px; font-weight: 800; letter-spacing: -0.01em; }
+    .mode small { display: block; margin-top: 3px; font-size: 13px; color: var(--ink-2); line-height: 1.42; }
+    .mode-radio {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--line-strong);
+      margin-top: 2px;
+      transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+    }
+    .mode:has(input:checked) { border-color: var(--accent); background: #fffaf8; }
+    .mode:has(input:checked) .mode-ico { background: var(--accent-soft); }
+    .mode:has(input:checked) .mode-radio { border-color: var(--accent); box-shadow: inset 0 0 0 4px #fff, inset 0 0 0 10px var(--accent); }
+    .mode:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(217, 65, 43, 0.18); }
+
+    .l-error {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #a12a18;
+      background: var(--accent-soft);
+      border: 1px solid rgba(217, 65, 43, 0.25);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .l-submit {
+      width: 100%;
+      padding: 14px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 12px;
+      margin-top: 4px;
+    }
+    .l-submit[aria-busy="true"] { opacity: 0.7; pointer-events: none; }
+    .l-foot {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      font-size: 13.5px;
+      color: var(--ink-2);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .l-foot a { color: var(--accent); font-weight: 800; text-decoration: none; }
+    .l-foot a:hover { text-decoration: underline; }
+    .l-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--ink-3);
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .l-card { padding: 26px 20px 22px; border-radius: 18px; }
+      .l-card h1 { font-size: 24px; }
+      .f-suffix { padding: 0 10px; font-size: 13.5px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="l-top">
+    <a class="l-brand" href="/" aria-label="SaleListo, inicio"><img src="logo.svg" alt="SaleListo"></a>
+    <a class="l-back" href="/">← Volver al inicio</a>
+  </header>
+
+  <main class="l-main">
+    <section class="l-card" aria-labelledby="l-title">
+      <span class="l-eyebrow">🔒 Acceso privado del local</span>
+      <h1 id="l-title">Iniciar sesión</h1>
+      <p class="l-sub">Ingresá con la cuenta <strong>@salelisto.com</strong> de tu restaurante para abrir el software de tu salón.</p>
+
+      <form id="loginForm" novalidate>
+        <div>
+          <label class="f-label" for="lUser">Usuario</label>
+          <div class="f-combo">
+            <input id="lUser" name="username" type="text" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="tulocal" required>
+            <span class="f-suffix" aria-hidden="true">@salelisto.com</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="f-label" for="lPass">Contraseña</label>
+          <div class="f-combo">
+            <input id="lPass" name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
+            <button class="f-eye" id="lEye" type="button" aria-controls="lPass" aria-pressed="false">Mostrar</button>
+          </div>
+        </div>
+
+        <div>
+          <p class="mode-title" id="modeTitle">¿Cómo se va a usar este dispositivo?</p>
+          <fieldset class="modes" aria-labelledby="modeTitle">
+            <label class="mode">
+              <input type="radio" name="deviceMode" value="station" checked>
+              <span class="mode-ico" aria-hidden="true">🛎️</span>
+              <span>
+                <strong>Estación del local / Equipo compartido</strong>
+                <small>Pase, Cocina, Barra o mozos. Las estaciones abren directo; el Panel de Encargado pide PIN.</small>
+              </span>
+              <span class="mode-radio" aria-hidden="true"></span>
+            </label>
+            <label class="mode">
+              <input type="radio" name="deviceMode" value="owner_device">
+              <span class="mode-ico" aria-hidden="true">💼</span>
+              <span>
+                <strong>Equipo personal del Encargado</strong>
+                <small>Abre Panel de Administración y QRs directamente sin pedir PIN.</small>
+              </span>
+              <span class="mode-radio" aria-hidden="true"></span>
+            </label>
+          </fieldset>
+        </div>
+
+        <div class="l-error" id="lError" role="alert" hidden></div>
+
+        <button class="btn btn-primary l-submit" id="lSubmit" type="submit">Ingresar al local</button>
+      </form>
+
+      <p class="l-note">Este dispositivo queda vinculado a tu local por 30 días.</p>
+
+      <p class="l-foot">
+        ¿Todavía no tenés tu cuenta <strong>@salelisto.com</strong>?<br>
+        <a href="/#contacto">Solicitar cotización personalizada</a>
+      </p>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const ALLOWED_NEXT = new Set([
+        '/operacion', '/operacion.html', '/pase', '/pase.html', '/cocina', '/cocina.html',
+        '/qr', '/qr.html', '/mozo', '/mozo.html', '/restaurante', '/restaurante.html',
+        '/demo', '/demo.html',
+      ]);
+
+      function safeNext() {
+        try {
+          const raw = new URLSearchParams(location.search).get('next') || '';
+          if (!raw || !raw.startsWith('/') || raw.startsWith('//') || raw.includes('\\')) return '/operacion';
+          const url = new URL(raw, location.origin);
+          if (url.origin !== location.origin || !ALLOWED_NEXT.has(url.pathname)) return '/operacion';
+          return url.pathname + url.search;
+        } catch (_) {
+          return '/operacion';
+        }
+      }
+
+      const form = document.getElementById('loginForm');
+      const user = document.getElementById('lUser');
+      const pass = document.getElementById('lPass');
+      const eye = document.getElementById('lEye');
+      const errBox = document.getElementById('lError');
+      const submit = document.getElementById('lSubmit');
+
+      function showError(msg) {
+        errBox.textContent = msg;
+        errBox.hidden = !msg;
+      }
+
+      // Si el dispositivo ya está vinculado, entrar directo
+      fetch('/api/auth/account/me?lite=1', { cache: 'no-store', credentials: 'same-origin' })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d) => {
+          if (d && d.authenticated) location.replace(safeNext());
+        })
+        .catch(() => {});
+
+      // Si pegan el mail completo, dejar solo el usuario (el sufijo es fijo)
+      user.addEventListener('input', () => {
+        const v = user.value;
+        const at = v.indexOf('@');
+        if (at >= 0 && /@salelisto\.com$/i.test(v.trim())) user.value = v.slice(0, at);
+        if (!errBox.hidden) showError('');
+      });
+      pass.addEventListener('input', () => { if (!errBox.hidden) showError(''); });
+
+      eye.addEventListener('click', () => {
+        const show = pass.type === 'password';
+        pass.type = show ? 'text' : 'password';
+        eye.textContent = show ? 'Ocultar' : 'Mostrar';
+        eye.setAttribute('aria-pressed', String(show));
+        pass.focus();
+      });
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        showError('');
+        let username = user.value.trim().toLowerCase();
+        if (username.endsWith('@salelisto.com')) username = username.slice(0, -'@salelisto.com'.length);
+        if (!username) { showError('Ingresá tu usuario @salelisto.com.'); user.focus(); return; }
+        if (username.includes('@')) { showError('Usá tu usuario @salelisto.com (por ejemplo: laesquina).'); user.focus(); return; }
+        if (!pass.value) { showError('Ingresá tu contraseña.'); pass.focus(); return; }
+        const deviceMode = (form.querySelector('input[name="deviceMode"]:checked') || {}).value || 'station';
+
+        submit.setAttribute('aria-busy', 'true');
+        submit.textContent = 'Ingresando…';
+        try {
+          const res = await fetch('/api/auth/account/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ email: `${username}@salelisto.com`, password: pass.value, deviceMode }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            if (res.status === 429) {
+              showError('Demasiados intentos fallidos. Esperá 5 minutos y volvé a probar.');
+            } else if (res.status === 401) {
+              showError('Usuario o contraseña incorrectos.');
+            } else {
+              showError(data.error || 'No pudimos iniciar sesión. Probá de nuevo.');
+            }
+            pass.select();
+            return;
+          }
+          try {
+            // Tokens de staff anteriores pertenecían a otra sesión del dispositivo
+            ['salelisto:adminToken', 'salelisto:adminRole', 'salelisto:kdsToken'].forEach((k) => sessionStorage.removeItem(k));
+          } catch (_) {}
+          location.replace(safeNext());
+        } catch (_) {
+          showError('Sin conexión con el servidor. Revisá internet y probá de nuevo.');
+        } finally {
+          submit.removeAttribute('aria-busy');
+          submit.textContent = 'Ingresar al local';
+        }
+      });
+
+      setTimeout(() => user.focus(), 60);
+    })();
+  </script>
+</body>
+</html>

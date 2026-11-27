@@ -17,6 +17,8 @@ directorio temporal aislado (nunca lee ni modifica app/data/) y verifica:
   8. Arquitectura 4G/5G sin Wi-Fi: rutas cortas /q/<qr_token>, compresion Gzip (sin tocar SSE ni 206),
      _client_ip() detras de CF-Connecting-IP/X-Forwarded-For vs LAN directa, idempotencia clientRequestId
      en POST /api/orders, precedencia PUBLIC_URL/tunel y endpoints /api/tunnel/*.
+  9. Cuentas @salelisto.com (PBKDF2, fundadoras por env), cookie HttpOnly sl_account, gate 302 /login
+     de pantallas internas, stationToken/autoAdminToken por puesto, /api/accounts y revocacion de sesiones.
 """
 from __future__ import annotations
 
@@ -199,6 +201,332 @@ class _FakeCloudflaredProc:
         return self.returncode
 
 
+def _raw_http(
+    port: int,
+    method: str,
+    path: str,
+    body: dict | None = None,
+    cookie: str = '',
+    headers: dict[str, str] | None = None,
+) -> tuple[int, dict[str, str], bytes, list[str]]:
+    """Request sin seguir redirecciones; devuelve (status, headers, body, set_cookies)."""
+    conn = http.client.HTTPConnection('127.0.0.1', port, timeout=15)
+    try:
+        hdrs = dict(headers or {})
+        data = None
+        if body is not None:
+            data = json.dumps(body, ensure_ascii=False).encode('utf-8')
+            hdrs['Content-Type'] = 'application/json; charset=utf-8'
+        if cookie:
+            hdrs['Cookie'] = f'theme=dark; sl_account={cookie}; _ga=GA1.2.3'
+        conn.request(method, path, body=data, headers=hdrs)
+        resp = conn.getresponse()
+        raw = resp.read()
+        pairs = resp.getheaders()
+        return (
+            int(resp.status),
+            {k.lower(): v for k, v in pairs},
+            raw,
+            [v for k, v in pairs if k.lower() == 'set-cookie'],
+        )
+    finally:
+        conn.close()
+
+
+def _cookie_token(set_cookies: list[str]) -> str:
+    for sc in set_cookies:
+        first = sc.split(';', 1)[0].strip()
+        if first.startswith('sl_account='):
+            return first[len('sl_account='):]
+    return ''
+
+
+def test_9_restaurant_accounts_and_gate(port: int) -> None:
+    """Cuentas @salelisto.com, cookie HttpOnly sl_account, logueo por puesto y gate de pantallas internas."""
+    founders_pw = 'Fundadores-Prueba-2026'
+    env_keys = (
+        'SALELISTO_REQUIRE_ACCOUNT_LOGIN', 'SALELISTO_FOUNDERS_PASSWORD', 'SALELISTO_DEV_PASSWORD',
+        'RENDER', 'FLY_APP_NAME', 'RAILWAY_ENVIRONMENT',
+    )
+    saved_env = {k: os.environ.pop(k, None) for k in env_keys}
+    server.auth_failures.clear()
+    sdb = server.db
+    try:
+        # 9a. Hashing PBKDF2, normalizacion @salelisto.com y bootstrap de cuentas fundadoras
+        h = db_mod.hash_password('clave-segura-1')
+        assert h.startswith('pbkdf2_sha256$200000$') and len(h.split('$')) == 4
+        assert db_mod.verify_password('clave-segura-1', h) and not db_mod.verify_password('clave-segura-2', h)
+        assert not db_mod.verify_password('x', 'texto-plano') and not db_mod.verify_password('x', '')
+        assert sdb.normalize_salelisto_email('  LaEsquina ') == 'laesquina@salelisto.com'
+        assert sdb.normalize_salelisto_email('Bar.Norte@SaleListo.com') == 'bar.norte@salelisto.com'
+        for bad_email in ('simon@gmail.com', 'a@salelisto.com', 'x@salelisto.com.ar', 'mal usuario', '', 'a@b@salelisto.com'):
+            try:
+                sdb.normalize_salelisto_email(bad_email)
+                raise AssertionError(f'normalize_salelisto_email debio rechazar {bad_email!r}')
+            except db_mod.ActionError:
+                pass
+
+        # Al importar server.py (local, sin env) se crearon las fundadoras con la clave de desarrollo
+        initial = {a['email']: a for a in sdb.list_restaurant_accounts()}
+        for founder in ('simon@salelisto.com', 'valentin@salelisto.com'):
+            assert founder in initial and initial[founder]['role'] == 'superadmin' and initial[founder]['active'] is True
+        assert all('password_hash' not in a and 'passwordHash' not in a for a in initial.values())
+        sdb.verify_account_login('simon', 'salelisto2026')
+
+        # Con SALELISTO_FOUNDERS_PASSWORD se sincroniza esa clave (rotacion explicita) y la de desarrollo deja de servir
+        os.environ['SALELISTO_FOUNDERS_PASSWORD'] = founders_pw
+        sdb._ensure_founder_accounts()
+        try:
+            sdb.verify_account_login('simon@salelisto.com', 'salelisto2026')
+            raise AssertionError('La clave de desarrollo debio invalidarse al setear SALELISTO_FOUNDERS_PASSWORD')
+        except db_mod.AuthError as e:
+            assert e.status == 401
+        sdb.verify_account_login('valentin@salelisto.com', founders_pw)
+
+        # Un cambio manual desde el portal se respeta mientras la variable de entorno no cambie
+        simon_id = initial['simon@salelisto.com']['id']
+        sdb.update_restaurant_account(simon_id, password='CambioManual-2026')
+        sdb._ensure_founder_accounts()
+        sdb.verify_account_login('simon@salelisto.com', 'CambioManual-2026')
+        sdb.update_restaurant_account(simon_id, password=founders_pw)
+
+        # Los sandboxes en memoria de /demo nunca crean cuentas
+        mem_db = db_mod.Database(None, server.UPLOADS_DIR, memory_name='t9_accounts')
+        try:
+            assert mem_db.list_restaurant_accounts() == []
+        finally:
+            mem_db.close()
+
+        # En cloud sin SALELISTO_FOUNDERS_PASSWORD no se inventan claves debiles
+        with tempfile.TemporaryDirectory(prefix='salelisto_cloud_') as cdir:
+            os.environ.pop('SALELISTO_FOUNDERS_PASSWORD', None)
+            os.environ['RENDER'] = 'true'
+            try:
+                cloud_db = db_mod.Database(Path(cdir) / 'salelisto.db', Path(cdir) / 'uploads')
+                assert cloud_db.list_restaurant_accounts() == [], 'En cloud sin env var no deben crearse cuentas'
+            finally:
+                os.environ.pop('RENDER', None)
+                os.environ['SALELISTO_FOUNDERS_PASSWORD'] = founders_pw
+
+        # 9b. Gate activo: pantallas internas sin sesion -> 302 /login?next=...
+        os.environ['SALELISTO_REQUIRE_ACCOUNT_LOGIN'] = '1'
+        assert server.require_account_gate() is True
+        for route in ('/operacion', '/operacion.html', '/demo', '/demo.html', '/pase', '/pase.html', '/cocina',
+                      '/cocina.html', '/qr', '/qr.html', '/mozo', '/mozo.html', '/restaurante', '/restaurante.html'):
+            c, hd, _, _ = _raw_http(port, 'GET', route)
+            assert c == 302, f'{route} sin sesion debio dar 302, dio {c}'
+            assert hd.get('location') == f'/login?next={route}', f'{route}: Location inesperado {hd.get("location")}'
+            assert 'no-store' in hd.get('cache-control', '')
+        c, hd, _, _ = _raw_http(port, 'GET', '/cocina?estacion=barra')
+        assert c == 302 and hd.get('location') == '/login?next=/cocina%3Festacion%3Dbarra', hd.get('location')
+        c, hd, body_h, _ = _raw_http(port, 'HEAD', '/operacion')
+        assert c == 302 and hd.get('location') == '/login?next=/operacion' and body_h == b''
+
+        # Rutas publicas siempre abiertas
+        qr_tok = sdb.get_staff_state(role='staff')['tables'][0]['qrToken']
+        for route in ('/', '/producto', '/producto.html', '/login', '/login.html', '/cliente.html', f'/q/{qr_tok}',
+                      '/api/health', '/css/base.css', '/js/store.js', '/media/hero-salon-loop.mp4'):
+            c, _, raw_pub, _ = _raw_http(port, 'GET', route, headers={'Range': 'bytes=0-15'} if route.startswith('/media/') else None)
+            assert c in (200, 206), f'Ruta publica {route} devolvio {c}'
+            if route in ('/login', '/login.html'):
+                html = raw_pub.decode('utf-8')
+                assert '@salelisto.com' in html and 'Ingresar al local' in html and 'noindex' in html
+                assert 'owner_device' in html and 'station' in html and '\u2014' not in html
+        for page in ('/', '/producto'):
+            _, _, raw_page, _ = _raw_http(port, 'GET', page)
+            html = raw_page.decode('utf-8')
+            assert 'href="login.html">Iniciar sesión</a>' in html, f'{page} sin link Iniciar sesión'
+            for internal in ('operacion.html', 'pase.html', 'cocina.html', 'restaurante.html', 'qr.html', 'demo.html'):
+                assert f'href="{internal}' not in html and f'href="/{internal}' not in html, f'{page} enlaza {internal}'
+
+        c, _, raw_me, _ = _raw_http(port, 'GET', '/api/auth/account/me')
+        me0 = json.loads(raw_me)
+        assert c == 200 and me0['authenticated'] is False and me0['requireLogin'] is True
+
+        # 9c. Login invalido
+        c, _, raw_bad, sc_bad = _raw_http(port, 'POST', '/api/auth/account/login',
+                                          {'email': 'simon@gmail.com', 'password': founders_pw})
+        assert c == 400 and not sc_bad and json.loads(raw_bad)['ok'] is False
+        c, _, _, sc_bad = _raw_http(port, 'POST', '/api/auth/account/login',
+                                    {'email': 'simon@salelisto.com', 'password': 'incorrecta-123'})
+        assert c == 401 and not sc_bad
+        c, _, _, _ = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'noexiste', 'password': 'incorrecta-123'})
+        assert c == 401
+
+        # 9d. Login superadmin en Equipo del Encargado: cookie HttpOnly + stationToken + autoAdminToken
+        c, _, raw_s, sc_s = _raw_http(port, 'POST', '/api/auth/account/login',
+                                      {'email': 'simon', 'password': founders_pw, 'deviceMode': 'owner_device'})
+        res_s = json.loads(raw_s)
+        assert c == 200 and res_s['ok'] is True, res_s
+        assert len(sc_s) == 1
+        for attr in ('HttpOnly', 'SameSite=Lax', 'Path=/', 'Max-Age=2592000'):
+            assert attr in sc_s[0], f'Cookie sl_account sin {attr}: {sc_s[0]}'
+        assert 'Secure' not in sc_s[0], 'En HTTP local sin proxy HTTPS la cookie no debe ser Secure'
+        simon_cookie = _cookie_token(sc_s)
+        assert simon_cookie.startswith('acs_') and len(simon_cookie) > 30
+        assert res_s['account']['email'] == 'simon@salelisto.com' and res_s['account']['role'] == 'superadmin'
+        assert res_s['account']['deviceMode'] == 'owner_device'
+        assert server.resolve_role(res_s['stationToken']) == 'kitchen'
+        assert server.resolve_role(res_s['autoAdminToken']) == 'admin'
+        c_tun, _ = ApiClient(f'http://127.0.0.1:{port}').get_json('/api/tunnel/status', token=res_s['autoAdminToken'])
+        assert c_tun == 200, 'autoAdminToken debe tener permisos reales de encargado'
+
+        for route in ('/operacion', '/pase', '/cocina', '/restaurante', '/demo', '/qr', '/mozo', '/cocina?estacion=barra'):
+            c, _, _, _ = _raw_http(port, 'GET', route, cookie=simon_cookie)
+            assert c == 200, f'{route} con sesion superadmin devolvio {c}'
+        c, _, raw_me, _ = _raw_http(port, 'GET', '/api/auth/account/me', cookie=simon_cookie)
+        me_s = json.loads(raw_me)
+        assert me_s['authenticated'] is True and me_s['account']['role'] == 'superadmin'
+        assert server.resolve_role(me_s['stationToken']) == 'kitchen' and server.resolve_role(me_s['autoAdminToken']) == 'admin'
+        _, _, raw_lite, _ = _raw_http(port, 'GET', '/api/auth/account/me?lite=1', cookie=simon_cookie)
+        me_lite = json.loads(raw_lite)
+        assert me_lite['authenticated'] is True and 'stationToken' not in me_lite and 'autoAdminToken' not in me_lite
+
+        # Detras de proxy HTTPS la cookie lleva Secure
+        c, _, _, sc_v = _raw_http(port, 'POST', '/api/auth/account/login',
+                                  {'email': 'valentin@salelisto.com', 'password': founders_pw},
+                                  headers={'X-Forwarded-Proto': 'https'})
+        assert c == 200 and 'Secure' in sc_v[0]
+        valentin_cookie = _cookie_token(sc_v)
+
+        # 9e. Gestion de cuentas (solo superadmin)
+        c, _, raw_list, _ = _raw_http(port, 'GET', '/api/accounts', cookie=simon_cookie)
+        accs = json.loads(raw_list)['accounts']
+        assert c == 200 and {'simon@salelisto.com', 'valentin@salelisto.com'} <= {a['email'] for a in accs}
+        assert all('password_hash' not in a and 'passwordHash' not in a for a in accs)
+        c, _, _, _ = _raw_http(port, 'GET', '/api/accounts')
+        assert c == 401
+
+        c, _, raw_new, _ = _raw_http(port, 'POST', '/api/accounts',
+                                     {'email': 'laesquina@salelisto.com', 'restaurantName': 'La Esquina Bodegón', 'password': 'Esquina-2026'},
+                                     cookie=simon_cookie)
+        new_acc = json.loads(raw_new)
+        assert c == 201 and new_acc['ok'] is True, new_acc
+        esq = new_acc['account']
+        assert esq['email'] == 'laesquina@salelisto.com' and esq['role'] == 'owner' and esq['active'] is True
+        assert 'password_hash' not in esq
+        for bad_body, why in (
+            ({'email': 'laesquina', 'restaurantName': 'Duplicada', 'password': 'Esquina-2026'}, 'duplicado'),
+            ({'email': 'otro@gmail.com', 'restaurantName': 'Otro', 'password': 'Esquina-2026'}, 'dominio'),
+            ({'email': 'cortita', 'restaurantName': 'Corta', 'password': '1234'}, 'clave corta'),
+        ):
+            c, _, _, _ = _raw_http(port, 'POST', '/api/accounts', bad_body, cookie=simon_cookie)
+            assert c == 400, f'POST /api/accounts ({why}) debio dar 400, dio {c}'
+
+        # 9f. Cliente en estacion compartida: stationToken sin autoAdminToken, sin demo ni gestion de cuentas
+        c, _, raw_e, sc_e = _raw_http(port, 'POST', '/api/auth/account/login',
+                                      {'email': 'LaEsquina', 'password': 'Esquina-2026', 'deviceMode': 'station'})
+        res_e = json.loads(raw_e)
+        assert c == 200 and res_e['account']['role'] == 'owner' and res_e['account']['deviceMode'] == 'station'
+        assert server.resolve_role(res_e['stationToken']) == 'kitchen' and 'autoAdminToken' not in res_e
+        esq_cookie = _cookie_token(sc_e)
+        for route in ('/operacion', '/cocina', '/pase', '/restaurante', '/qr', '/mozo'):
+            c, _, _, _ = _raw_http(port, 'GET', route, cookie=esq_cookie)
+            assert c == 200, f'{route} con cuenta owner devolvio {c}'
+        for demo_route in ('/demo', '/demo.html'):
+            c, hd, _, _ = _raw_http(port, 'GET', demo_route, cookie=esq_cookie)
+            assert c == 302 and hd.get('location') == '/operacion', f'{demo_route} owner: {c} {hd.get("location")}'
+        _, _, raw_me_e, _ = _raw_http(port, 'GET', '/api/auth/account/me', cookie=esq_cookie)
+        me_e = json.loads(raw_me_e)
+        assert me_e['authenticated'] is True and me_e['stationToken'] and 'autoAdminToken' not in me_e
+        c, _, _, _ = _raw_http(port, 'POST', '/api/accounts',
+                               {'email': 'hack', 'restaurantName': 'Hack', 'password': 'Hackeo-2026'}, cookie=esq_cookie)
+        assert c == 403
+        c, _, _, _ = _raw_http(port, 'GET', '/api/accounts', cookie=esq_cookie)
+        assert c == 403
+        c, _, _, _ = _raw_http(port, 'PATCH', f"/api/accounts/{esq['id']}", {'active': False}, cookie=esq_cookie)
+        assert c == 403
+        c, _, _, _ = _raw_http(port, 'PATCH', f"/api/accounts/{esq['id']}", {'active': False})
+        assert c == 401
+
+        # Sandboxes del simulador (X-Demo-Session) solo para superadmin cuando el gate esta activo
+        sb_hdr = {'X-Demo-Session': 'sb_gate_t9_0001'}
+        c, _, _, _ = _raw_http(port, 'GET', '/api/staff-state', headers=sb_hdr)
+        assert c == 401
+        c, _, _, _ = _raw_http(port, 'GET', '/api/staff-state', headers=sb_hdr, cookie=esq_cookie)
+        assert c == 401
+        c, _, _, _ = _raw_http(port, 'GET', '/api/staff-state', headers=sb_hdr, cookie=simon_cookie)
+        assert c == 200
+        c, _, _, _ = _raw_http(port, 'POST', '/api/demo/discard', {'demoSid': 'sb_gate_t9_0001'})
+        assert c == 401
+        c, _, raw_disc, _ = _raw_http(port, 'POST', '/api/demo/discard', {'demoSid': 'sb_gate_t9_0001'}, cookie=simon_cookie)
+        assert c == 200 and json.loads(raw_disc)['discarded'] is True
+
+        # 9g. Desactivar la cuenta revoca al instante sus sesiones
+        c, _, raw_off, _ = _raw_http(port, 'PATCH', f"/api/accounts/{esq['id']}", {'active': False}, cookie=simon_cookie)
+        assert c == 200 and json.loads(raw_off)['account']['active'] is False
+        c, hd, _, _ = _raw_http(port, 'GET', '/operacion', cookie=esq_cookie)
+        assert c == 302 and hd.get('location') == '/login?next=/operacion'
+        _, _, raw_me_off, _ = _raw_http(port, 'GET', '/api/auth/account/me', cookie=esq_cookie)
+        assert json.loads(raw_me_off)['authenticated'] is False
+        c, _, _, _ = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'laesquina', 'password': 'Esquina-2026'})
+        assert c == 403, 'Una cuenta desactivada no debe poder iniciar sesion'
+        c, _, _, _ = _raw_http(port, 'PATCH', f'/api/accounts/{simon_id}', {'active': False}, cookie=simon_cookie)
+        assert c == 400, 'Un superadmin no debe poder desactivarse a si mismo'
+        c, _, _, _ = _raw_http(port, 'PATCH', '/api/accounts/acc_noexiste00', {'active': True}, cookie=simon_cookie)
+        assert c == 404
+
+        # Reactivar (alias POST /api/accounts/update) y resetear clave: revoca sesiones previas
+        c, _, _, _ = _raw_http(port, 'POST', '/api/accounts/update', {'id': esq['id'], 'active': True}, cookie=simon_cookie)
+        assert c == 200
+        c, _, _, sc_e2 = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'laesquina', 'password': 'Esquina-2026'})
+        assert c == 200
+        esq_cookie2 = _cookie_token(sc_e2)
+        c, _, raw_rn, _ = _raw_http(port, 'PATCH', f"/api/accounts/{esq['id']}",
+                                    {'password': 'NuevaClave-2026', 'restaurantName': 'La Esquina de Palermo'}, cookie=simon_cookie)
+        assert c == 200 and json.loads(raw_rn)['account']['restaurantName'] == 'La Esquina de Palermo'
+        c, _, _, _ = _raw_http(port, 'GET', '/cocina', cookie=esq_cookie2)
+        assert c == 302, 'Cambiar la clave debe cerrar las sesiones anteriores de la cuenta'
+        c, _, _, _ = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'laesquina', 'password': 'Esquina-2026'})
+        assert c == 401
+        c, _, _, _ = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'laesquina', 'password': 'NuevaClave-2026'})
+        assert c == 200
+
+        # Un superadmin que cambia su propia clave conserva la sesion actual
+        c, _, _, _ = _raw_http(port, 'PATCH', f'/api/accounts/{simon_id}', {'password': founders_pw}, cookie=simon_cookie)
+        assert c == 200
+        c, _, _, _ = _raw_http(port, 'GET', '/operacion', cookie=simon_cookie)
+        assert c == 200
+
+        # 9h. Logout revoca la cookie en servidor y la borra en el navegador
+        c, _, raw_out, sc_out = _raw_http(port, 'POST', '/api/auth/account/logout', {}, cookie=simon_cookie)
+        assert c == 200 and json.loads(raw_out)['ok'] is True
+        assert sc_out and sc_out[0].startswith('sl_account=;') and 'Max-Age=0' in sc_out[0] and 'HttpOnly' in sc_out[0]
+        c, hd, _, _ = _raw_http(port, 'GET', '/operacion', cookie=simon_cookie)
+        assert c == 302 and hd.get('location', '').startswith('/login?next=')
+        _, _, raw_me_out, _ = _raw_http(port, 'GET', '/api/auth/account/me', cookie=simon_cookie)
+        assert json.loads(raw_me_out)['authenticated'] is False
+        c, _, _, _ = _raw_http(port, 'GET', '/operacion', cookie=valentin_cookie)
+        assert c == 200, 'El logout de un dispositivo no debe cerrar los demas'
+        c, _, _, _ = _raw_http(port, 'GET', '/operacion', cookie='acs_inventada_' + 'x' * 30)
+        assert c == 302
+
+        # 9i. Anti fuerza bruta en /api/auth/account/login
+        server.auth_failures.clear()
+        for _ in range(server.AUTH_MAX_FAILURES):
+            _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'valentin', 'password': 'mal-mal-mal'})
+        c, _, _, _ = _raw_http(port, 'POST', '/api/auth/account/login', {'email': 'valentin', 'password': founders_pw})
+        assert c == 429, f'Tras {server.AUTH_MAX_FAILURES} fallos debio bloquear con 429, dio {c}'
+        server.auth_failures.clear()
+
+        # 9j. Sin gate (local por defecto) las pantallas siguen abiertas como antes
+        os.environ.pop('SALELISTO_REQUIRE_ACCOUNT_LOGIN', None)
+        assert server.require_account_gate() is False
+        c, _, _, _ = _raw_http(port, 'GET', '/operacion')
+        assert c == 200
+        os.environ['FLY_APP_NAME'] = 'salelisto-prod'
+        try:
+            assert server.require_account_gate() is True, 'En cloud el gate debe estar siempre activo'
+        finally:
+            os.environ.pop('FLY_APP_NAME', None)
+    finally:
+        server.auth_failures.clear()
+        for k, v in saved_env.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
+
+
 def run_suite() -> None:
     print('=== SaleListo · Suite E2E Permanente ===\n')
 
@@ -268,7 +596,7 @@ def run_suite() -> None:
             },
         )
         assert code_ssrf == 400, 'Suscripcion Push con endpoint local HTTP debio rechazarse con 400'
-        print('OK [1/8] Web Push RFC 8291/8292, VAPID env, Anti-SSRF y /api/health verificados.')
+        print('OK [1/9] Web Push RFC 8291/8292, VAPID env, Anti-SSRF y /api/health verificados.')
 
         # Autenticar sesion de encargado real (PIN inicial 1234)
         code, auth_res = api.post_json('/api/auth/admin', {'pin': '1234'})
@@ -351,7 +679,7 @@ def run_suite() -> None:
 
         api.action('restaurant.save', {'demoMode': True}, token=admin_token)
         api.action('data.clear_orders', {}, token=admin_token)
-        print('OK [2/8] Seguridad /api/qrs en produccion, QR V10 (271 B) y anti-spoofing verificados.')
+        print('OK [2/9] Seguridad /api/qrs en produccion, QR V10 (271 B) y anti-spoofing verificados.')
 
         # 3. Ruteo simultaneo a 3 estaciones (Cocina + Barra + Mostrador), 86 por kitchen y price.undo
         mesa_t1 = tables_by_code['T1']
@@ -426,7 +754,7 @@ def run_suite() -> None:
         assert code_undo == 200 and r_undo['state']['restaurant']['canUndoPrices'] is False
         restored_ramen = next(i for i in r_undo['state']['items'] if i['id'] == ramen['id'])
         assert restored_ramen['price'] == orig_ramen_price, 'price.undo no restauro el precio exacto original'
-        print('OK [3/8] 3 Estaciones (Cocina + Barra + Mostrador), 86 en Cocina y price.undo verificados.')
+        print('OK [3/9] 3 Estaciones (Cocina + Barra + Mostrador), 86 en Cocina y price.undo verificados.')
 
         # 4. Balanceo, desasignacion limpia, preservacion de PIN de mozo, login en prod y anti fuerza bruta
         mesa_2 = tables_by_code['2']
@@ -519,7 +847,7 @@ def run_suite() -> None:
         c_locked, _ = api.post_json('/api/auth/admin', {'pin': '1234'})
         assert c_locked == 429, f'Tras {server.AUTH_MAX_FAILURES} fallos /api/auth/admin debio responder 429, dio {c_locked}'
         server.auth_failures.clear()
-        print('OK [4/8] Preservacion de PIN, login seguro en produccion, revocacion y rate-limit verificados.')
+        print('OK [4/9] Preservacion de PIN, login seguro en produccion, revocacion y rate-limit verificados.')
 
         # 5. Cuenta con vuelto y division (cashAmount/splitWays), cierre, integridad al borrar mesa/bloque (B5) y ART 06:00 (B7)
         expected_sub = expected_kitchen + expected_bar + expected_counter  # 35.500 + 13.600 + 10.500 = 59.600
@@ -622,7 +950,7 @@ def run_suite() -> None:
         evening_utc_next_day = datetime(2026, 11, 21, 1, 30, 0, tzinfo=timezone.utc)  # 22:30 ART del 20/11 -> turno del 20/11 06:00 ART
         expected_shift_20 = int(datetime(2026, 11, 20, 6, 0, 0, tzinfo=db_mod.AR_TZ).timestamp() * 1000)
         assert db_mod.start_of_today_ms(evening_utc_next_day) == expected_shift_20, 'Fallo corte ART a las 22:30 ART (01:30 UTC)'
-        print('OK [5/8] Efectivo/vuelto/vaquita, archivo contable sin perdida (B5) y corte 06:00 ART (B7) verificados.')
+        print('OK [5/9] Efectivo/vuelto/vaquita, archivo contable sin perdida (B5) y corte 06:00 ART (B7) verificados.')
 
         # 6. Aislamiento total de Leads PII ante demo_admin (B2), HTTP 401 en /api/action y persistencia tras reinicio (B6)
         server.leads_rate.clear()
@@ -742,7 +1070,7 @@ def run_suite() -> None:
         assert persisted_w2 is not None and persisted_w2['role'] == 'waiter', 'staff_sessions no persistio en SQLite'
         restarted_db.execute('notifications.read', {}, role='admin')
         assert restarted_db.version == ver_before_restart + 1, 'La version no crecio monotonicamente tras reinicio'
-        print('OK [6/8] Aislamiento PII demo_admin, HTTP 401 y persistencia tras reinicio (B6) verificados.')
+        print('OK [6/9] Aislamiento PII demo_admin, HTTP 401 y persistencia tras reinicio (B6) verificados.')
 
         # 7. Entrega multimedia HTTP 206 Partial Content (/media/hero-salon-loop.mp4) y vistas clave
         hero_file = APP_DIR / 'public' / 'media' / 'hero-salon-loop.mp4'
@@ -881,7 +1209,7 @@ def run_suite() -> None:
             and 'planes.html' not in sm_txt
             and 'demo.html' not in sm_txt
         )
-        print('OK [7/8] Streaming HTTP 206 de /media/hero-salon-loop.mp4, Open Graph PNG, SEO y vistas clave verificados.')
+        print('OK [7/9] Streaming HTTP 206 de /media/hero-salon-loop.mp4, Open Graph PNG, SEO y vistas clave verificados.')
 
         # 8. Arquitectura 4G/5G sin Wi-Fi: /q/<token>, Gzip, _client_ip(), idempotencia POST /api/orders y /api/tunnel/*
         api.action('data.clear_orders', {}, token=admin_token)
@@ -1398,7 +1726,11 @@ def run_suite() -> None:
             if old_pub_env is not None:
                 os.environ['PUBLIC_URL'] = old_pub_env
 
-        print('OK [8/8] 4G/5G: /q/<token>, Gzip, _client_ip(), idempotencia /api/orders, precedencia y /api/tunnel/* verificados.')
+        print('OK [8/9] 4G/5G: /q/<token>, Gzip, _client_ip(), idempotencia /api/orders, precedencia y /api/tunnel/* verificados.')
+
+        # 9. Cuentas @salelisto.com, cookie sl_account, logueo optimizado por puesto y gate de pantallas internas
+        test_9_restaurant_accounts_and_gate(port)
+        print('OK [9/9] Cuentas @salelisto.com, cookie HttpOnly sl_account, gate 302 /login, stationToken/autoAdminToken y revocacion verificados.')
 
     finally:
         httpd.shutdown()

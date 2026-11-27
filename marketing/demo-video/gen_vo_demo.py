@@ -13,7 +13,7 @@ TEXT = (
     "Así funciona SaleListo en tu restaurante. "
     "El cliente escanea el QR de su mesa y pide desde la carta digital, sin bajar aplicaciones. "
     "Al instante, los platos entran a cocina y las bebidas a barra, sin errores ni demoras. "
-    "Cuando el pedido sale, aparece ordenado por mozo en la estación fija del pase, sin celulares en la mano. "
+    "Cuando el pedido sale, aparece ordenado por mozo en la estación fija del pase, listo para retirar sin demoras. "
     "Y al terminar, el cliente pide la cuenta en el QR eligiendo cómo pagar, y tu mozo resuelve todo en un solo viaje. "
     "SaleListo. Solicitá tu cotización personalizada."
 )

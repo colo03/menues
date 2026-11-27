@@ -10,8 +10,10 @@ Gestiona:
 from __future__ import annotations
 
 import base64
+import hashlib
 import hmac
 import json
+import os
 import re
 import secrets
 import sqlite3
@@ -77,6 +79,55 @@ DEFAULT_ITEM_TAGS: dict[str, str] = {
 }
 
 LEAD_STATUSES = ('nuevo', 'contactado', 'piloto', 'descartado')
+
+# ---------- Cuentas de restaurante @salelisto.com ----------
+SALELISTO_DOMAIN = 'salelisto.com'
+SALELISTO_EMAIL_RE = re.compile(r'^[a-z0-9._-]{2,48}@salelisto\.com$')
+ACCOUNT_ROLES = ('superadmin', 'owner')
+ACCOUNT_DEVICE_MODES = ('station', 'owner_device')
+ACCOUNT_SESSION_TTL_DAYS = 30
+ACCOUNT_PASSWORD_MIN = 8
+ACCOUNT_PASSWORD_MAX = 128
+PBKDF2_ITERATIONS = 200_000
+FOUNDER_ACCOUNTS: tuple[tuple[str, str], ...] = (
+    ('simon@salelisto.com', 'SaleListo · Admin Simón'),
+    ('valentin@salelisto.com', 'SaleListo · Admin Valentín'),
+)
+FOUNDERS_META_KEY = 'founders_env_password'
+
+
+def hash_password(password: str, iterations: int = PBKDF2_ITERATIONS) -> str:
+    """Hash PBKDF2-HMAC-SHA256 con sal aleatoria: pbkdf2_sha256$<iter>$<salt_hex>$<hash_hex>."""
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac('sha256', str(password).encode('utf-8'), salt, iterations)
+    return f'pbkdf2_sha256${iterations}${salt.hex()}${digest.hex()}'
+
+
+def verify_password(password: str, stored: str) -> bool:
+    try:
+        algo, iter_txt, salt_hex, hash_hex = str(stored or '').split('$')
+        if algo != 'pbkdf2_sha256':
+            return False
+        iterations = int(iter_txt)
+        if not (1_000 <= iterations <= 5_000_000):
+            return False
+        salt = bytes.fromhex(salt_hex)
+        expected = bytes.fromhex(hash_hex)
+    except (ValueError, TypeError):
+        return False
+    digest = hashlib.pbkdf2_hmac('sha256', str(password).encode('utf-8'), salt, iterations)
+    return hmac.compare_digest(digest, expected)
+
+
+# Hash de referencia para igualar tiempos cuando el usuario no existe (evita enumerar cuentas)
+_DUMMY_PASSWORD_HASH = hash_password(secrets.token_hex(8))
+
+
+def _cloud_env_active() -> bool:
+    return any(
+        bool((os.environ.get(var) or '').strip())
+        for var in ('RENDER', 'FLY_APP_NAME', 'RAILWAY_ENVIRONMENT')
+    )
 
 
 def normalize_tags(raw: Any) -> str:
@@ -168,6 +219,7 @@ class Database:
         self._pending_push_notifications: list[dict[str, Any]] = []
         self._demo_leads: list[dict[str, Any]] = self._default_demo_leads()
         self._init_schema()
+        self._ensure_founder_accounts()
 
     def close(self) -> None:
         with self.lock:
@@ -436,6 +488,33 @@ class Database:
                     );
                     CREATE INDEX IF NOT EXISTS idx_leads_created ON leads(created_at DESC);
                     CREATE INDEX IF NOT EXISTS idx_sessions_status_closed ON table_sessions(status, closed_at);
+
+                    CREATE TABLE IF NOT EXISTS restaurant_accounts (
+                        id TEXT PRIMARY KEY,
+                        email TEXT NOT NULL UNIQUE,
+                        restaurant_name TEXT NOT NULL,
+                        role TEXT NOT NULL DEFAULT 'owner',
+                        password_hash TEXT NOT NULL,
+                        active INTEGER NOT NULL DEFAULT 1,
+                        created_at INTEGER NOT NULL,
+                        last_login_at INTEGER NOT NULL DEFAULT 0
+                    );
+
+                    CREATE TABLE IF NOT EXISTS account_sessions (
+                        token TEXT PRIMARY KEY,
+                        account_id TEXT NOT NULL,
+                        device_mode TEXT NOT NULL DEFAULT 'station',
+                        created_at INTEGER NOT NULL,
+                        expires_at INTEGER NOT NULL,
+                        FOREIGN KEY(account_id) REFERENCES restaurant_accounts(id) ON DELETE CASCADE
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_account_sessions_account ON account_sessions(account_id);
+                    CREATE INDEX IF NOT EXISTS idx_account_sessions_expires ON account_sessions(expires_at);
+
+                    CREATE TABLE IF NOT EXISTS app_meta (
+                        key TEXT PRIMARY KEY,
+                        value TEXT NOT NULL
+                    );
                     """
                 )
                 item_cols = {r['name'] for r in conn.execute('PRAGMA table_info(items)').fetchall()}
@@ -2277,6 +2356,343 @@ class Database:
                         conn.commit()
                         return None
                 return dict(row)
+            finally:
+                conn.close()
+
+    # ---------- Cuentas de restaurante @salelisto.com y sesiones de dispositivo ----------
+
+    @staticmethod
+    def normalize_salelisto_email(raw: Any) -> str:
+        """Normaliza el usuario: 'laesquina' o 'LaEsquina@salelisto.com' -> 'laesquina@salelisto.com'."""
+        txt = str(raw or '').strip().lower()
+        if txt and '@' not in txt:
+            txt = f'{txt}@{SALELISTO_DOMAIN}'
+        if not SALELISTO_EMAIL_RE.match(txt):
+            raise ActionError('Ingresá un usuario válido @salelisto.com (letras, números, punto, guion)')
+        return txt
+
+    @staticmethod
+    def _validate_new_password(password: Any) -> str:
+        pw = str(password or '')
+        if len(pw) < ACCOUNT_PASSWORD_MIN:
+            raise ActionError(f'La contraseña debe tener al menos {ACCOUNT_PASSWORD_MIN} caracteres')
+        if len(pw) > ACCOUNT_PASSWORD_MAX:
+            raise ActionError('La contraseña es demasiado larga')
+        return pw
+
+    @staticmethod
+    def _account_public(row: sqlite3.Row | dict[str, Any]) -> dict[str, Any]:
+        r = dict(row)
+        out = {
+            'id': r['id'],
+            'email': r['email'],
+            'restaurantName': r['restaurant_name'],
+            'role': r['role'],
+            'active': bool(r['active']),
+            'createdAt': int(r['created_at'] or 0),
+            'lastLoginAt': int(r['last_login_at'] or 0),
+        }
+        if 'active_sessions' in r:
+            out['activeSessions'] = int(r['active_sessions'] or 0)
+        return out
+
+    def _insert_account(
+        self,
+        conn: sqlite3.Connection,
+        email: str,
+        restaurant_name: str,
+        password_hash: str,
+        role: str,
+    ) -> str:
+        acc_id = 'acc_' + secrets.token_hex(6)
+        conn.execute(
+            """
+            INSERT INTO restaurant_accounts (id, email, restaurant_name, role, password_hash, active, created_at, last_login_at)
+            VALUES (?, ?, ?, ?, ?, 1, ?, 0)
+            """,
+            (acc_id, email, restaurant_name, role, password_hash, now_ms()),
+        )
+        return acc_id
+
+    def _ensure_founder_accounts(self) -> None:
+        """Garantiza las cuentas superadmin de Simón y Valentín sin inventar claves débiles en cloud.
+
+        - Con SALELISTO_FOUNDERS_PASSWORD: crea las cuentas faltantes y, solo cuando la variable
+          cambió desde la última vez que se aplicó, sincroniza esa clave (rotación explícita).
+          Si la variable no cambió, respeta cualquier cambio manual hecho desde el portal.
+        - Sin la variable y fuera de cloud: si no hay ninguna cuenta, crea las fundadoras con la
+          clave de desarrollo SALELISTO_DEV_PASSWORD (por defecto 'salelisto2026').
+        - Sin la variable en cloud: no crea nada (preserva lo que ya exista en el volumen SQLite).
+        """
+        if self._mem_uri or str(self.db_path) == ':memory:':
+            return
+        env_pw = str(os.environ.get('SALELISTO_FOUNDERS_PASSWORD') or '').strip()
+        if env_pw and len(env_pw) < ACCOUNT_PASSWORD_MIN:
+            print(
+                f'  [AVISO CUENTAS] SALELISTO_FOUNDERS_PASSWORD debe tener al menos {ACCOUNT_PASSWORD_MIN} caracteres; se ignora.',
+                flush=True,
+            )
+            env_pw = ''
+        with self.lock:
+            conn = self._connect()
+            try:
+                existing = {
+                    r['email']: dict(r)
+                    for r in conn.execute(
+                        'SELECT id, email, password_hash FROM restaurant_accounts WHERE email IN (?, ?)',
+                        tuple(email for email, _ in FOUNDER_ACCOUNTS),
+                    ).fetchall()
+                }
+                if env_pw:
+                    meta = conn.execute('SELECT value FROM app_meta WHERE key = ?', (FOUNDERS_META_KEY,)).fetchone()
+                    env_changed = not (meta and verify_password(env_pw, meta['value']))
+                    shared_hash = ''
+                    for email, label in FOUNDER_ACCOUNTS:
+                        cur = existing.get(email)
+                        if cur is None:
+                            shared_hash = shared_hash or hash_password(env_pw)
+                            self._insert_account(conn, email, label, shared_hash, 'superadmin')
+                        elif env_changed and not verify_password(env_pw, cur['password_hash']):
+                            shared_hash = shared_hash or hash_password(env_pw)
+                            conn.execute(
+                                "UPDATE restaurant_accounts SET password_hash = ?, role = 'superadmin', active = 1 WHERE id = ?",
+                                (shared_hash, cur['id']),
+                            )
+                            conn.execute('DELETE FROM account_sessions WHERE account_id = ?', (cur['id'],))
+                        elif env_changed:
+                            conn.execute(
+                                "UPDATE restaurant_accounts SET role = 'superadmin', active = 1 WHERE id = ?",
+                                (cur['id'],),
+                            )
+                    if env_changed:
+                        conn.execute(
+                            'INSERT INTO app_meta (key, value) VALUES (?, ?) '
+                            'ON CONFLICT(key) DO UPDATE SET value = excluded.value',
+                            (FOUNDERS_META_KEY, hash_password(env_pw)),
+                        )
+                elif not _cloud_env_active():
+                    total = conn.execute('SELECT COUNT(*) AS c FROM restaurant_accounts').fetchone()['c']
+                    if int(total) == 0:
+                        dev_pw = str(os.environ.get('SALELISTO_DEV_PASSWORD') or 'salelisto2026')
+                        dev_hash = hash_password(dev_pw)
+                        for email, label in FOUNDER_ACCOUNTS:
+                            self._insert_account(conn, email, label, dev_hash, 'superadmin')
+                conn.commit()
+            finally:
+                conn.close()
+
+    def verify_account_login(self, email: Any, password: Any) -> dict[str, Any]:
+        clean_email = self.normalize_salelisto_email(email)
+        pw = str(password or '')
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute('SELECT * FROM restaurant_accounts WHERE email = ?', (clean_email,)).fetchone()
+                if not row:
+                    verify_password(pw, _DUMMY_PASSWORD_HASH)
+                    raise AuthError('Usuario o contraseña incorrectos', 401)
+                if not pw or not verify_password(pw, row['password_hash']):
+                    raise AuthError('Usuario o contraseña incorrectos', 401)
+                if not int(row['active']):
+                    raise AuthError('Esta cuenta está desactivada. Escribinos a ventas@salelisto.com para reactivarla.', 403)
+                ts = now_ms()
+                conn.execute('UPDATE restaurant_accounts SET last_login_at = ? WHERE id = ?', (ts, row['id']))
+                conn.commit()
+                out = dict(row)
+                out['last_login_at'] = ts
+                return self._account_public(out)
+            finally:
+                conn.close()
+
+    def create_account_session(
+        self,
+        account_id: str,
+        device_mode: str = 'station',
+        ttl_days: int = ACCOUNT_SESSION_TTL_DAYS,
+    ) -> dict[str, Any]:
+        mode = device_mode if device_mode in ACCOUNT_DEVICE_MODES else 'station'
+        tok = 'acs_' + secrets.token_urlsafe(32)
+        now = now_ms()
+        exp = now + max(1, int(ttl_days)) * 86_400_000
+        with self.lock:
+            conn = self._connect()
+            try:
+                if not conn.execute('SELECT 1 FROM restaurant_accounts WHERE id = ? AND active = 1', (account_id,)).fetchone():
+                    raise AuthError('Cuenta inexistente o desactivada', 401)
+                conn.execute('DELETE FROM account_sessions WHERE expires_at <= ?', (now,))
+                conn.execute(
+                    """
+                    INSERT INTO account_sessions (token, account_id, device_mode, created_at, expires_at)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (tok, account_id, mode, now, exp),
+                )
+                conn.commit()
+                return {'token': tok, 'accountId': account_id, 'deviceMode': mode, 'createdAt': now, 'expiresAt': exp}
+            finally:
+                conn.close()
+
+    def resolve_account_session(self, token: Any) -> dict[str, Any] | None:
+        tok = str(token or '').strip()
+        if not tok or len(tok) > 128:
+            return None
+        now = now_ms()
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute(
+                    """
+                    SELECT s.token, s.device_mode, s.created_at AS s_created, s.expires_at,
+                           a.id, a.email, a.restaurant_name, a.role, a.active, a.created_at, a.last_login_at
+                    FROM account_sessions s
+                    JOIN restaurant_accounts a ON a.id = s.account_id
+                    WHERE s.token = ?
+                    """,
+                    (tok,),
+                ).fetchone()
+                if not row:
+                    return None
+                if int(row['expires_at']) <= now:
+                    conn.execute('DELETE FROM account_sessions WHERE expires_at <= ?', (now,))
+                    conn.commit()
+                    return None
+                if not int(row['active']):
+                    return None
+                return {
+                    'token': row['token'],
+                    'deviceMode': row['device_mode'],
+                    'expiresAt': int(row['expires_at']),
+                    'account': self._account_public(row),
+                }
+            finally:
+                conn.close()
+
+    def revoke_account_session(self, token: Any) -> bool:
+        tok = str(token or '').strip()
+        if not tok:
+            return False
+        with self.lock:
+            conn = self._connect()
+            try:
+                cur = conn.execute('DELETE FROM account_sessions WHERE token = ?', (tok,))
+                conn.commit()
+                return cur.rowcount > 0
+            finally:
+                conn.close()
+
+    def revoke_all_account_sessions(self, account_id: str, keep_token: str = '') -> int:
+        with self.lock:
+            conn = self._connect()
+            try:
+                cur = conn.execute(
+                    'DELETE FROM account_sessions WHERE account_id = ? AND token != ?',
+                    (str(account_id or ''), str(keep_token or '')),
+                )
+                conn.commit()
+                return int(cur.rowcount or 0)
+            finally:
+                conn.close()
+
+    def list_restaurant_accounts(self) -> list[dict[str, Any]]:
+        now = now_ms()
+        with self.lock:
+            conn = self._connect()
+            try:
+                rows = conn.execute(
+                    """
+                    SELECT a.id, a.email, a.restaurant_name, a.role, a.active, a.created_at, a.last_login_at,
+                           (SELECT COUNT(*) FROM account_sessions s WHERE s.account_id = a.id AND s.expires_at > ?) AS active_sessions
+                    FROM restaurant_accounts a
+                    ORDER BY CASE a.role WHEN 'superadmin' THEN 0 ELSE 1 END, a.created_at DESC, a.email
+                    """,
+                    (now,),
+                ).fetchall()
+                return [self._account_public(r) for r in rows]
+            finally:
+                conn.close()
+
+    def get_restaurant_account(self, account_id: str) -> dict[str, Any] | None:
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute(
+                    'SELECT id, email, restaurant_name, role, active, created_at, last_login_at FROM restaurant_accounts WHERE id = ?',
+                    (str(account_id or ''),),
+                ).fetchone()
+                return self._account_public(row) if row else None
+            finally:
+                conn.close()
+
+    def create_restaurant_account(
+        self,
+        email: Any,
+        restaurant_name: Any,
+        password: Any,
+        role: str = 'owner',
+    ) -> dict[str, Any]:
+        clean_email = self.normalize_salelisto_email(email)
+        name = ' '.join(str(restaurant_name or '').split())[:80]
+        if len(name) < 2:
+            raise ActionError('Ingresá el nombre del local')
+        pw = self._validate_new_password(password)
+        use_role = role if role in ACCOUNT_ROLES else 'owner'
+        pw_hash = hash_password(pw)
+        with self.lock:
+            conn = self._connect()
+            try:
+                if conn.execute('SELECT 1 FROM restaurant_accounts WHERE email = ?', (clean_email,)).fetchone():
+                    raise ActionError(f'Ya existe una cuenta {clean_email}')
+                acc_id = self._insert_account(conn, clean_email, name, pw_hash, use_role)
+                conn.commit()
+                row = conn.execute('SELECT * FROM restaurant_accounts WHERE id = ?', (acc_id,)).fetchone()
+                return self._account_public(row)
+            finally:
+                conn.close()
+
+    def update_restaurant_account(
+        self,
+        account_id: str,
+        *,
+        active: bool | None = None,
+        password: Any = None,
+        restaurant_name: Any = None,
+        keep_session_token: str = '',
+    ) -> dict[str, Any]:
+        sets: list[str] = []
+        vals: list[Any] = []
+        revoke = False
+        if restaurant_name is not None:
+            name = ' '.join(str(restaurant_name or '').split())[:80]
+            if len(name) < 2:
+                raise ActionError('Ingresá el nombre del local')
+            sets.append('restaurant_name = ?')
+            vals.append(name)
+        if password is not None:
+            sets.append('password_hash = ?')
+            vals.append(hash_password(self._validate_new_password(password)))
+            revoke = True
+        if active is not None:
+            sets.append('active = ?')
+            vals.append(1 if active else 0)
+            if not active:
+                revoke = True
+        with self.lock:
+            conn = self._connect()
+            try:
+                row = conn.execute('SELECT id FROM restaurant_accounts WHERE id = ?', (str(account_id or ''),)).fetchone()
+                if not row:
+                    raise ActionError('Cuenta inexistente')
+                if sets:
+                    conn.execute(f"UPDATE restaurant_accounts SET {', '.join(sets)} WHERE id = ?", (*vals, row['id']))
+                if revoke:
+                    keep = '' if active is False else str(keep_session_token or '')
+                    conn.execute(
+                        'DELETE FROM account_sessions WHERE account_id = ? AND token != ?',
+                        (row['id'], keep),
+                    )
+                conn.commit()
+                fresh = conn.execute('SELECT * FROM restaurant_accounts WHERE id = ?', (row['id'],)).fetchone()
+                return self._account_public(fresh)
             finally:
                 conn.close()
 

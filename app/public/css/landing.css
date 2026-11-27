@@ -565,7 +565,7 @@ h3 { font-weight: 800; letter-spacing: -0.015em; line-height: 1.2; }
 .r-call { border-left-color: var(--ink-3); }
 
 /* ==========================================================================
-   SECCIÓN OSCURA · SIN CELULARES
+   SECCIÓN OSCURA · OPERACIÓN EN SALÓN
    ========================================================================== */
 .dark { background: var(--dark-bg); color: var(--dark-ink); }
 .dark::before {
@@ -782,7 +782,7 @@ h3 { font-weight: 800; letter-spacing: -0.015em; line-height: 1.2; }
    FOOTER
    ========================================================================== */
 .footer { background: var(--bg); padding: 72px 0 32px; border-top: 1px solid var(--line); }
-.footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.1fr; gap: 40px; }
+.footer-top { display: grid; grid-template-columns: 1.5fr 1fr 1.1fr; gap: 40px; }
 .footer-brand img { height: 38px; width: auto; }
 .footer-brand p { margin: 18px 0 20px; color: var(--ink-2); font-size: 14.5px; max-width: 340px; }
 .footer-col { display: flex; flex-direction: column; gap: 10px; }

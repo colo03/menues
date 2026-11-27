@@ -322,11 +322,11 @@ function buildD3() {
     </div></div>
   </div>
   <div class="card" id="d3Val" style="left:1202px;top:236px;width:344px;height:400px">
-    <div class="abs" style="left:112px;top:40px;width:120px;height:120px;border-radius:50%;background:var(--acc-soft);display:flex;align-items:center;justify-content:center">
+    <div class="abs" style="left:112px;top:40px;width:120px;height:120px;border-radius:50%;background:var(--ok-soft);display:flex;align-items:center;justify-content:center">
       <svg width="70" height="70" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="14" y="5" width="20" height="38" rx="5" stroke="${INK}" stroke-width="3.5"/><path d="M21 37h6" stroke="${INK}" stroke-width="3.5"/>
-        <path id="d3Slash" d="M7 7L41 41" stroke="${ACC}" stroke-width="5"/></svg></div>
-    <div class="abs" style="left:0;top:186px;width:344px;text-align:center;font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">Sin celulares<br>en la mano</div>
+        <circle cx="24" cy="24" r="20" stroke="${OK}" stroke-width="3.5" opacity="0.28"/>
+        <path id="d3Check" d="M14 25L21 32L35 17" stroke="${OK}" stroke-width="5"/></svg></div>
+    <div class="abs" style="left:0;top:186px;width:344px;text-align:center;font-size:34px;font-weight:800;line-height:1.15;letter-spacing:-0.02em">Retiro rápido<br>sin confusiones</div>
     <div class="abs" style="left:40px;right:40px;top:290px;height:2px;background:#efe9df"></div>
     <div class="abs" style="left:0;top:316px;width:344px;display:flex;justify-content:center;align-items:center;gap:10px;font-size:24px;font-weight:800;color:${OK};white-space:nowrap">
       <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="${OK}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="12.5" rx="2.5"/><path d="M12 16.5V20M8 20h8"/></svg>
@@ -423,7 +423,7 @@ function build() {
     <div class="it"><div class="ic" style="background:#fceae6"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="${ACC}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg></div><div class="v">ventas@salelisto.com</div></div>`;
   R.L = [$('L0'), $('L1')].map(l => ({ el: l, img: l.querySelector('img'), veil: l.querySelector('.veil'), warm: l.querySelector('.warm'), cream: l.querySelector('.cream') }));
   R.d1Arr = drawable($('d1Arr')); R.d2Ck = drawable($('d2Ck')); R.d2CkG = drawable($('d2CkG')); R.d2Cb = drawable($('d2Cb')); R.d2CbG = drawable($('d2CbG')); R.d4Arr = drawable($('d4Arr'));
-  R.d3Slash = drawable($('d3Slash'));
+  R.d3Check = drawable($('d3Check'));
 }
 
 // ------------------------------------------------------------ animacion por escena
@@ -497,10 +497,10 @@ function renderD2(t) {
 
 function renderD3(t) {
   // monitor centrado y luego se corre a la izquierda para la tarjeta de valor
-  const mv = A(t, M.celulares - 0.45, 0.7);
+  const mv = A(t, M.retirar - 0.45, 0.7);
   $('d3Mon').style.transform = `translateX(${(194 * (1 - mv)).toFixed(2)}px)`;
-  const pv = A(t, M.celulares, 0.5); set($('d3Val'), pv, 40 * (1 - pv), 0);
-  R.d3Slash(A(t, M.celulares + 0.3, 0.45));
+  const pv = A(t, M.retirar, 0.5); set($('d3Val'), pv, 40 * (1 - pv), 0);
+  R.d3Check(A(t, M.retirar + 0.25, 0.45));
   // caida de la tarjeta T4 en la columna de Martin
   const pd = A(t, M.sale - 0.05, 0.6);
   set($('d3T4'), pd, 0, -70 * (1 - pd));

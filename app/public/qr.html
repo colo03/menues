@@ -335,9 +335,10 @@
     <form class="qr-pin-box" id="qrPinForm">
       <img src="logo.svg" alt="SaleListo" style="height:38px;display:block;margin:0 auto 16px">
       <h2>Estudio de Impresión QR</h2>
-      <p>Modo producción activo. Ingresá el PIN del local para ver e imprimir los tokens QR fijos de tus mesas.</p>
+      <p id="qrPinHint">Modo producción activo. Ingresá el PIN del local para ver e imprimir los tokens QR fijos de tus mesas.</p>
       <input class="input" type="password" id="qrPinInput" inputmode="numeric" placeholder="PIN del local" required autocomplete="off" style="text-align:center;font-size:20px;font-weight:800;letter-spacing:0.2em;margin-bottom:12px">
       <button class="btn btn-primary" type="submit" style="width:100%">Abrir Estudio QR</button>
+      <a href="/operacion?elegir=1" style="display:block;margin-top:14px;font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;text-align:center">← Cambiar puesto</a>
     </form>
   </div>
 
@@ -349,8 +350,8 @@
         <p>Elegí formato físico, estilo de marca y sector antes de imprimir en A4 o descargar el arte vectorial <code>.svg</code> individual listo para imprenta gráfica.</p>
       </div>
       <div class="top-actions">
-        <a class="btn btn-ghost" href="operacion.html">Tablero</a>
-        <a class="btn btn-ghost" href="restaurante.html">← Panel</a>
+        <a class="btn btn-ghost" href="/operacion?elegir=1">← Cambiar puesto</a>
+        <a class="btn btn-ghost" href="restaurante.html">Panel</a>
         <button class="btn btn-primary" type="button" id="printBtn">🖨️ Imprimir / Guardar PDF A4</button>
       </div>
     </header>
@@ -481,6 +482,22 @@
         || sessionStorage.getItem('salelisto:kdsToken')
         || sessionStorage.getItem('salelisto:waiterToken')
         || '';
+
+      // Cuenta @salelisto.com: Equipo del Encargado entra directo; estación compartida pide el PIN del Encargado
+      const qrDemoSid = typeof getDemoSid === 'function' ? getDemoSid() : '';
+      if (!qrDemoSid && !sessionStorage.getItem('salelisto:adminToken') && typeof fetchAccountSession === 'function') {
+        const me = await fetchAccountSession();
+        if (me && me.authenticated) {
+          if (me.autoAdminToken) {
+            qrToken = me.autoAdminToken;
+            sessionStorage.setItem('salelisto:adminToken', qrToken);
+          } else {
+            qrToken = '';
+            const hint = $('#qrPinHint');
+            if (hint) hint.textContent = 'Equipo compartido del local: ingresá el PIN rápido de 4 dígitos del Encargado para ver e imprimir los QR de tus mesas.';
+          }
+        }
+      }
 
       function fetchQrs(tok) {
         const headers = tok ? { 'X-Auth-Token': tok } : {};

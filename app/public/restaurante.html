@@ -16,9 +16,10 @@
     <form class="pin-box" id="pinForm">
       <img src="logo.svg" alt="SaleListo" style="height:40px;margin:0 auto 16px;display:block">
       <h2>Panel del Encargado</h2>
-      <p class="muted">Ingresá el PIN del restaurante para administrar salón, mozos, menú y caja.</p>
+      <p class="muted" id="pinGateHint">Ingresá el PIN del restaurante para administrar salón, mozos, menú y caja.</p>
       <input class="input" type="password" id="pinInput" placeholder="PIN (ej: 1234)" required style="text-align:center;font-size:20px;letter-spacing:0.2em;margin:14px 0">
       <button class="btn btn-primary" style="width:100%">Ingresar al panel</button>
+      <a href="/operacion?elegir=1" style="display:block;margin-top:14px;font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;text-align:center">← Cambiar puesto</a>
     </form>
   </div>
 
@@ -51,7 +52,7 @@
         <a class="btn btn-ghost btn-sm" href="cocina.html" target="_blank">🍳<span class="lbl"> Cocina / Barra</span></a>
         <a class="btn btn-ghost btn-sm" href="qr.html" target="_blank">🖨️<span class="lbl"> QRs fijos</span></a>
         <a class="btn btn-ghost btn-sm" href="mozo.html" target="_blank">⌚<span class="lbl"> App / Pulsera</span></a>
-        <a class="btn btn-ghost btn-sm" href="demo.html" target="_top">▶<span class="lbl"> Demo en vivo</span></a>
+        <a class="btn btn-ghost btn-sm" href="/operacion?elegir=1" target="_top">←<span class="lbl"> Cambiar puesto</span></a>
       </div>
     </aside>
 

@@ -26,10 +26,11 @@ import sys
 import threading
 import time
 from datetime import datetime, timedelta
+from http.cookies import CookieError, SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, quote, unquote, urlparse
 import urllib.request
 
 from db import (
@@ -262,6 +263,31 @@ def is_cloud_env() -> bool:
         bool((os.environ.get(var) or '').strip())
         for var in ('RENDER', 'FLY_APP_NAME', 'RAILWAY_ENVIRONMENT')
     )
+
+
+# ---------- Cuentas @salelisto.com: cookie de dispositivo y rutas internas protegidas ----------
+
+ACCOUNT_COOKIE = 'sl_account'
+ACCOUNT_COOKIE_MAX_AGE = 30 * 24 * 3600
+ACCOUNT_DEVICE_MODES = ('station', 'owner_device')
+ACCOUNT_ID_PATH_RE = re.compile(r'^/api/accounts/(acc_[A-Za-z0-9]{4,40})/?$')
+DEMO_APP_PATHS = frozenset({'/demo', '/demo/', '/demo.html'})
+PROTECTED_APP_PATHS = frozenset({
+    '/operacion', '/operacion/', '/operacion.html',
+    '/demo', '/demo/', '/demo.html',
+    '/pase', '/pase/', '/pase.html',
+    '/cocina', '/cocina/', '/cocina.html',
+    '/qr', '/qr/', '/qr.html',
+    '/mozo', '/mozo/', '/mozo.html',
+    '/restaurante', '/restaurante/', '/restaurante.html',
+})
+
+
+def require_account_gate() -> bool:
+    """Exige sesión de cuenta @salelisto.com para las pantallas internas (siempre en cloud)."""
+    if is_cloud_env():
+        return True
+    return (os.environ.get('SALELISTO_REQUIRE_ACCOUNT_LOGIN') or '').strip().lower() in ('1', 'true', 'yes', 'on')
 
 
 def _explicit_trust_proxy() -> bool | None:
@@ -1100,7 +1126,10 @@ class Handler(SimpleHTTPRequestHandler):
             pass
 
     def do_HEAD(self) -> None:
-        path = urlparse(self.path).path
+        parsed_head = urlparse(self.path)
+        path = parsed_head.path
+        if self._enforce_app_gate(path, parsed_head.query):
+            return
         if path.startswith('/uploads/'):
             return self._serve_upload(path[len('/uploads/'):], head_only=True)
         if path.startswith('/media/'):
@@ -1165,6 +1194,152 @@ class Handler(SimpleHTTPRequestHandler):
             if len(auth_failures) > 2000:
                 for k in [k for k, v in auth_failures.items() if not v or now - v[-1] > AUTH_WINDOW_S]:
                     auth_failures.pop(k, None)
+
+    # ---------- Cuentas @salelisto.com (cookie HttpOnly sl_account) ----------
+
+    def _require_account_gate(self) -> bool:
+        return require_account_gate()
+
+    def _account_cookie_token(self) -> str:
+        raw = '; '.join(_header_get_all(self.headers, 'Cookie'))
+        if not raw or ACCOUNT_COOKIE not in raw:
+            return ''
+        jar = SimpleCookie()
+        try:
+            jar.load(raw)
+        except CookieError:
+            # Cookie malformada de otro sitio/extensión: buscar sl_account a mano sin romper la request
+            for part in raw.split(';'):
+                k, _, v = part.strip().partition('=')
+                if k == ACCOUNT_COOKIE:
+                    return v.strip().strip('"')[:128]
+            return ''
+        morsel = jar.get(ACCOUNT_COOKIE)
+        return (morsel.value if morsel else '').strip()[:128]
+
+    def _current_account_session(self) -> dict[str, Any] | None:
+        tok = self._account_cookie_token()
+        if not tok:
+            return None
+        try:
+            return db.resolve_account_session(tok)
+        except Exception:
+            return None
+
+    def _cookie_secure_suffix(self) -> str:
+        xf_proto = (_header_get_one(self.headers, 'X-Forwarded-Proto') or '').split(',')[0].strip().lower()
+        return '; Secure' if (is_cloud_env() or xf_proto == 'https') else ''
+
+    def _account_cookie_header(self, token: str) -> str:
+        return (
+            f'{ACCOUNT_COOKIE}={token}; Path=/; Max-Age={ACCOUNT_COOKIE_MAX_AGE}; HttpOnly; SameSite=Lax'
+            + self._cookie_secure_suffix()
+        )
+
+    def _account_cookie_clear_header(self) -> str:
+        return f'{ACCOUNT_COOKIE}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax' + self._cookie_secure_suffix()
+
+    def _send_json_headers(self, code: int, body: Any, headers: dict[str, str]) -> None:
+        raw = json.dumps(body, ensure_ascii=False).encode('utf-8')
+        self.send_bytes(code, raw, 'application/json; charset=utf-8', extra_headers=headers, compressible=True)
+
+    def _send_redirect(self, location: str, code: int = 302) -> None:
+        # end_headers() agrega Cache-Control: no-store en todas las rutas que no son /media ni /uploads
+        self.send_response(code)
+        self.send_header('Location', location)
+        self.send_header('Content-Length', '0')
+        self.end_headers()
+
+    @staticmethod
+    def _account_payload(sess: dict[str, Any]) -> dict[str, Any]:
+        acc = dict(sess['account'])
+        acc['deviceMode'] = sess['deviceMode']
+        acc['sessionExpiresAt'] = sess['expiresAt']
+        return acc
+
+    @staticmethod
+    def _account_tokens(device_mode: str) -> dict[str, str]:
+        out = {'stationToken': create_staff_token('kitchen')}
+        if device_mode == 'owner_device':
+            out['autoAdminToken'] = create_staff_token('admin')
+        return out
+
+    def _enforce_app_gate(self, path: str, query: str) -> bool:
+        """Redirige las pantallas internas a /login cuando falta la sesión de cuenta. True si respondió."""
+        if path not in PROTECTED_APP_PATHS or not self._require_account_gate():
+            return False
+        sess = self._current_account_session()
+        if not sess:
+            target = path + (f'?{query}' if query else '')
+            self._send_redirect(f'/login?next={quote(target, safe="/")}')
+            return True
+        if path in DEMO_APP_PATHS and sess['account']['role'] != 'superadmin':
+            self._send_redirect('/operacion')
+            return True
+        return False
+
+    def _demo_api_blocked(self, qs: dict[str, list[str]] | None = None, explicit_sid: str = '') -> bool:
+        """Con el gate activo, los sandboxes de /demo (X-Demo-Session) son solo para superadmin."""
+        if not self._require_account_gate():
+            return False
+        if not (explicit_sid or self._extract_demo_sid(qs)):
+            return False
+        sess = self._current_account_session()
+        if sess and sess['account']['role'] == 'superadmin':
+            return False
+        self.send_json(401, {'ok': False, 'error': 'El simulador interno requiere una cuenta SaleListo autorizada'})
+        return True
+
+    def _superadmin_session(self) -> dict[str, Any] | None:
+        sess = self._current_account_session()
+        if not sess:
+            self.send_json(401, {'ok': False, 'error': 'Iniciá sesión con tu cuenta @salelisto.com'})
+            return None
+        if sess['account']['role'] != 'superadmin':
+            self.send_json(403, {'ok': False, 'error': 'Solo los administradores de SaleListo pueden gestionar cuentas'})
+            return None
+        return sess
+
+    def _handle_account_update(self, account_id: str, body: dict[str, Any]) -> None:
+        sess = self._superadmin_session()
+        if not sess:
+            return
+        active_raw = body.get('active')
+        active = None if active_raw is None else bool(active_raw)
+        if active is False and account_id == sess['account']['id']:
+            return self.send_json(400, {'ok': False, 'error': 'No podés desactivar tu propia cuenta'})
+        password = body.get('password')
+        if password is not None and not str(password):
+            password = None
+        name = body.get('restaurantName')
+        try:
+            acc = db.update_restaurant_account(
+                account_id,
+                active=active,
+                password=password,
+                restaurant_name=name,
+                keep_session_token=sess['token'] if account_id == sess['account']['id'] else '',
+            )
+        except ActionError as e:
+            code = 404 if 'inexistente' in str(e).lower() else 400
+            return self.send_json(code, {'ok': False, 'error': str(e)})
+        return self.send_json(200, {'ok': True, 'account': acc})
+
+    def do_PATCH(self) -> None:
+        parsed = urlparse(self.path)
+        try:
+            length = int(self.headers.get('Content-Length') or 0)
+            if length < 0 or length > 64_000:
+                return self.send_json(400, {'ok': False, 'error': 'Content-Length inválido'})
+            body = json.loads(self.rfile.read(length) if length > 0 else b'{}')
+        except (ValueError, TypeError):
+            return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
+        if not isinstance(body, dict):
+            return self.send_json(400, {'ok': False, 'error': 'JSON inválido'})
+        m = ACCOUNT_ID_PATH_RE.match(parsed.path)
+        if not m:
+            return self.send_json(404, {'ok': False, 'error': 'Ruta no encontrada'})
+        return self._handle_account_update(m.group(1), body)
 
     # ---------- Exportación contable CSV (arqueo en hora Argentina UTC-3 con corte 06:00) ----------
 
@@ -1268,6 +1443,34 @@ class Handler(SimpleHTTPRequestHandler):
         if path.startswith('/media/'):
             return self._serve_media(path[len('/media/'):])
 
+        # Pantallas internas: requieren cuenta @salelisto.com cuando el gate está activo (cloud)
+        if self._enforce_app_gate(path, parsed.query):
+            return
+
+        if path.startswith('/api/') and self._demo_api_blocked(qs):
+            return
+
+        if path == '/api/auth/account/me':
+            sess = self._current_account_session()
+            if not sess:
+                return self.send_json(
+                    200,
+                    {'ok': True, 'authenticated': False, 'requireLogin': self._require_account_gate()},
+                )
+            out: dict[str, Any] = {
+                'ok': True,
+                'authenticated': True,
+                'requireLogin': self._require_account_gate(),
+                'account': self._account_payload(sess),
+            }
+            if (qs.get('lite') or [''])[0] != '1':
+                out.update(self._account_tokens(sess['deviceMode']))
+            return self.send_json(200, out)
+
+        if path == '/api/accounts':
+            if not self._superadmin_session():
+                return
+            return self.send_json(200, {'ok': True, 'accounts': db.list_restaurant_accounts()})
         # Ruta corta 4G/5G para QRs de baja densidad: /q/<qr_token>
         if path in ('/q', '/q/'):
             self.send_response(302)
@@ -1537,10 +1740,67 @@ class Handler(SimpleHTTPRequestHandler):
             broadcast_updates()
             return self.send_json(200, {'ok': True, 'lead': lead})
 
+        if path == '/api/auth/account/login':
+            if self._auth_rate_limited():
+                return self.send_json(
+                    429,
+                    {'ok': False, 'error': 'Demasiados intentos fallidos. Esperá 5 minutos antes de volver a probar.'},
+                )
+            device_mode = str(body.get('deviceMode') or 'station').strip()
+            if device_mode not in ACCOUNT_DEVICE_MODES:
+                device_mode = 'station'
+            try:
+                acc = db.verify_account_login(body.get('email'), body.get('password'))
+                sess_new = db.create_account_session(acc['id'], device_mode=device_mode)
+            except AuthError as e:
+                self._record_auth_failure()
+                return self.send_json(e.status, {'ok': False, 'error': str(e)})
+            except ActionError as e:
+                self._record_auth_failure()
+                return self.send_json(400, {'ok': False, 'error': str(e)})
+            sess = db.resolve_account_session(sess_new['token'])
+            if not sess:
+                return self.send_json(401, {'ok': False, 'error': 'No se pudo iniciar la sesión'})
+            payload = {'ok': True, 'account': self._account_payload(sess), **self._account_tokens(device_mode)}
+            return self._send_json_headers(200, payload, {'Set-Cookie': self._account_cookie_header(sess_new['token'])})
+
+        if path == '/api/auth/account/logout':
+            tok = self._account_cookie_token()
+            if tok:
+                db.revoke_account_session(tok)
+            return self._send_json_headers(
+                200,
+                {'ok': True, 'authenticated': False},
+                {'Set-Cookie': self._account_cookie_clear_header()},
+            )
+
+        if path == '/api/accounts':
+            if not self._superadmin_session():
+                return
+            role_req = str(body.get('role') or 'owner').strip()
+            try:
+                acc = db.create_restaurant_account(
+                    body.get('email'),
+                    body.get('restaurantName'),
+                    body.get('password'),
+                    role=role_req if role_req in ('owner', 'superadmin') else 'owner',
+                )
+            except ActionError as e:
+                return self.send_json(400, {'ok': False, 'error': str(e)})
+            return self.send_json(201, {'ok': True, 'account': acc})
+
+        if path == '/api/accounts/update':
+            return self._handle_account_update(str(body.get('id') or '').strip(), body)
+
         if path == '/api/demo/discard':
             sid = self._extract_demo_sid(parse_qs(parsed.query)) or str(body.get('demoSid') or '').strip()
+            if self._demo_api_blocked(explicit_sid=sid or 'discard'):
+                return
             discarded = discard_demo_sandbox(sid)
             return self.send_json(200, {'ok': True, 'discarded': discarded})
+
+        if self._demo_api_blocked(parse_qs(parsed.query)):
+            return
 
         tdb, tsubs, tlock, is_sb = self._ctx(parse_qs(parsed.query))
 
@@ -1958,6 +2218,9 @@ def main() -> None:
         print('  Modo red local:         usa --tunnel o el Panel (> Caja y Ajustes) para enlace publico HTTPS')
     print(f'  Red local (LAN):        {lan_base}')
     print(f'  Inicio / Portada:       {eff_base}/')
+    print(f'  Iniciar sesion:         {eff_base}/login   (cuentas @salelisto.com)')
+    gate_txt = 'ACTIVO (pantallas internas requieren cuenta)' if require_account_gate() else 'desactivado en local (SALELISTO_REQUIRE_ACCOUNT_LOGIN=1 para activarlo)'
+    print(f'  Login de cuentas:       {gate_txt}')
     print(f'  Tablero operativo:      {eff_base}/operacion.html')
     print(f'  Demo 4 pantallas:       {eff_base}/demo.html')
     print(f'  Panel Encargado (PIN):  {eff_base}/restaurante.html   (PIN inicial: 1234)')

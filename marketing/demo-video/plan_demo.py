@@ -65,7 +65,7 @@ MARKS_CFG = {
     "sale": ("sale", 1, -0.05),
     "mozo1": ("mozo", 1, -0.05),
     "pase": ("pase", 1, -0.05),
-    "celulares": ("celulares", 1, -0.05),
+    "retirar": ("retirar", 1, -0.05),
     "terminar": ("terminar", 1, -0.05),
     "cuenta": ("cuenta", 1, -0.05),
     "qr2": ("qr", 2, -0.05),

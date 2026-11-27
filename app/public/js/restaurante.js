@@ -79,8 +79,28 @@
   let savedToken = demoSid ? '' : (sessionStorage.getItem('salelisto:adminToken') || '');
   if (savedToken) setAuthToken(savedToken);
 
+  // Cuenta @salelisto.com: en el Equipo del Encargado entra directo; en estación compartida pide PIN rápido
+  async function tryAccountAdminToken() {
+    if (demoSid || wantDemoAuth || typeof fetchAccountSession !== 'function') return false;
+    const me = await fetchAccountSession();
+    if (!me || !me.authenticated) return false;
+    if (me.autoAdminToken) {
+      setAuthToken(me.autoAdminToken);
+      adminRole = 'admin';
+      sessionStorage.setItem('salelisto:adminToken', me.autoAdminToken);
+      sessionStorage.setItem('salelisto:adminRole', adminRole);
+      return true;
+    }
+    const hint = $('#pinGateHint');
+    if (hint) {
+      hint.textContent = `${me.account?.restaurantName || 'Equipo compartido del local'}: ingresá el PIN rápido de 4 dígitos del Encargado para abrir caja, precios y ajustes.`;
+    }
+    return false;
+  }
+
   async function tryBoot() {
     try {
+      if (!getAuthToken() && !wantDemoAuth) await tryAccountAdminToken();
       if (!getAuthToken() && wantDemoAuth) {
         const r = await apiPost('api/auth/admin', { demo: true });
         setAuthToken(r.token);
@@ -120,6 +140,8 @@
     adminRole = '';
     setAuthToken('');
     showPinGate();
+    // Equipo del Encargado con cuenta iniciada: renovar el acceso sin pedir PIN
+    if (!wantDemoAuth && !demoSid) tryBoot();
   });
 
   $('#pinForm').onsubmit = async (e) => {

@@ -63,6 +63,17 @@ function setAuthToken(tok) {
   authToken = tok || '';
 }
 
+// Cuenta del local (@salelisto.com): la cookie HttpOnly sl_account vincula el dispositivo por 30 días.
+// Devuelve { authenticated, account, stationToken, autoAdminToken? } o null (sandbox /demo, file:// o sin red).
+function fetchAccountSession(opts = {}) {
+  if (DEMO_SID) return Promise.resolve(null);
+  if (typeof window === 'undefined' || window.location.protocol === 'file:') return Promise.resolve(null);
+  const url = opts.lite ? '/api/auth/account/me?lite=1' : '/api/auth/account/me';
+  return fetch(url, { cache: 'no-store', credentials: 'same-origin' })
+    .then((r) => (r.ok ? r.json() : null))
+    .catch(() => null);
+}
+
 function getAuthToken() {
   return authToken;
 }

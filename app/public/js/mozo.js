@@ -79,6 +79,7 @@
             <button type="submit" class="btn btn-primary" style="flex:1">Ingresar</button>
           </div>
         </form>
+        ${demoSid ? '' : '<a href="/operacion?elegir=1" style="display:block;margin-top:16px;font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;text-align:center">← Cambiar puesto</a>'}
       </div>`;
 
     let pendingWid = '';

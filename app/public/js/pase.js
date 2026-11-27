@@ -175,7 +175,21 @@
     });
   }
 
+  // Local con cuenta @salelisto.com iniciada: la estación abre directo, sin PIN
+  async function tryAccountStationToken() {
+    if (demoSid || typeof fetchAccountSession !== 'function') return false;
+    const me = await fetchAccountSession();
+    if (!me || !me.authenticated || !me.stationToken) return false;
+    token = me.stationToken;
+    setAuthToken(token);
+    sessionStorage.setItem('salelisto:kdsToken', token);
+    $('#pPinGate').hidden = true;
+    $('#pApp').hidden = false;
+    return true;
+  }
+
   async function ensureKitchenAuth() {
+    if (await tryAccountStationToken()) return true;
     try {
       const res = await apiPost('api/auth/kitchen', {});
       token = res.token;
@@ -213,7 +227,7 @@
     toast('🔒 La sesión del local expiró o cambió el PIN. Ingresá nuevamente.');
     sessionStorage.removeItem('salelisto:kdsToken');
     setAuthToken('');
-    await askPinViaGate();
+    if (!(await tryAccountStationToken())) await askPinViaGate();
     await openStaffStream();
     state = conn.state;
     seedKnownAlerts(state);
